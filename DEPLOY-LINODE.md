@@ -1,0 +1,261 @@
+# 部署到 Linode Nanode（與 99gold 同機、獨立站點）
+
+Soft Boring Weekly 與 [99gold](https://github.com/stanleyf123/99gold) **共用同一台 Linode VPS**，但是 **另一個站點**：另一套目錄、環境檔、systemd、Nginx `server`、SQLite。不要和 99gold 共用資料庫或服務單元。
+
+本階段應用仍是 MVP 骨架（回顧先存在瀏覽器 `localStorage`）。`SQLITE_PATH` 先寫進環境檔，方便之後接上本機 SQLite；**現在還不會跑 Soft Boring 的 migration。**
+
+目標主機範例：`172.237.11.195`（與 99gold 文件裡同一台，1GB RAM + swap）。
+
+| | 99gold | Soft Boring |
+| --- | --- | --- |
+| 應用目錄 | `/var/www/99gold` | `/var/www/softboring` |
+| SQLite | `/var/www/99gold/data/99gold.sqlite` | `/var/www/softboring/data/softboring.sqlite` |
+| 環境檔 | `/etc/99gold.env` | `/etc/softboring.env` |
+| systemd | `99gold.service` → `127.0.0.1:3000` | `softboring.service` → `127.0.0.1:3001` |
+| Nginx `server_name` | `99gold.net` | `softboring.com` `www.softboring.com` |
+| `SITE_URL` | `https://99gold.net` | `https://softboring.com` |
+
+**不要：**
+
+- 把 Soft Boring 放進 `/var/www/99gold`
+- 把 `SQLITE_PATH` 指到 `99gold.sqlite`
+- 改 `99gold.service` 的 port 或 `WorkingDirectory`
+- 在 Soft Boring 的 Nginx 裡加 `default_server`（99gold 已經占用 HTTP default）
+
+## 1. 系統套件
+
+99gold 若已在跑，Nginx、Node 22、`build-essential`、`sqlite3` 多半已經裝好。若這是全新機器：
+
+```bash
+sudo apt update
+sudo apt install -y nginx build-essential python3 sqlite3 certbot python3-certbot-nginx
+# Node.js 22：依 NodeSource 或 nvm 安裝，確認 `node -v` >= 22
+```
+
+1GB RAM 建議保留 1–2GB swap。`next build` 很吃記憶體，**最好在本機或較大的機器 build**，再把 `.next/`、`node_modules/`、原始碼同步到 VPS。若一定要在 Nanode 上 build：
+
+```bash
+export NODE_OPTIONS=--max-old-space-size=768
+npm run build
+```
+
+同機還有 99gold 時，不要兩個 `next build` 同時跑。
+
+## 2. 應用程式目錄
+
+```bash
+sudo mkdir -p /var/www/softboring/data
+sudo chown -R www-data:www-data /var/www/softboring
+# 將 repo 放到 /var/www/softboring 後：
+cd /var/www/softboring
+sudo -u www-data npm ci
+sudo -u www-data npm run build   # 若未在其他機器先 build
+```
+
+SQLite 檔預定為 `/var/www/softboring/data/softboring.sqlite`（可用 `SQLITE_PATH` 覆寫）。請把 `data/` 列入備份，不要提交到 git。這個檔案與 `/var/www/99gold/data/` **完全分開**。
+
+v1 骨架還不會自動建立 `.sqlite`；先把目錄與環境變數準備好即可。
+
+## 3. 環境變數
+
+`/etc/softboring.env`（權限 `0600`，所有者 `www-data`）：
+
+```bash
+SITE_URL=https://softboring.com
+SQLITE_PATH=/var/www/softboring/data/softboring.sqlite
+NODE_ENV=production
+
+# 本機開發用 3000；這台 VPS 上 99gold 已占用 3000，Soft Boring 用 3001。
+# 實際監聽看 systemd 的 ExecStart（--port 3001），不要改成 3000。
+```
+
+不要把真實密鑰寫進 git。也不要複製 `/etc/99gold.env` 來用。
+
+`SITE_URL` 是反代後面的公開 origin。Nginx 會轉 `Host` 與 `X-Forwarded-Proto`，但 Next.js 的 `request.url` 仍可能是 `http://127.0.0.1:3001`。以後若有 **絕對** 轉址，用 `SITE_URL`（去掉結尾斜線）當 origin。
+
+Supabase / Stripe 是之後可選階段，v1 部署不需要。
+
+## 4. systemd：網站行程
+
+範例檔也在 repo 的 `deploy/systemd/softboring.service`。
+
+`/etc/systemd/system/softboring.service`：
+
+```ini
+[Unit]
+Description=Soft Boring Weekly Next.js
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/softboring
+EnvironmentFile=/etc/softboring.env
+ExecStart=/usr/bin/npm start -- --hostname 127.0.0.1 --port 3001
+Restart=on-failure
+RestartSec=5
+# 與 99gold 同機：給 Soft Boring 留較小上限，避免吃掉 Nanode 記憶體
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo cp /var/www/softboring/deploy/systemd/softboring.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now softboring.service
+```
+
+確認 **沒有** 改到 `99gold.service`。`ss -tlnp | grep -E '3000|3001'` 應看到 99gold 在 `127.0.0.1:3000`、Soft Boring 在 `127.0.0.1:3001`。
+
+## 5. DNS
+
+在網域註冊商把 **同一個 A 記錄** 指到這台 VPS：
+
+| 名稱 | 類型 | 值 |
+| --- | --- | --- |
+| `softboring.com` | A | `172.237.11.195` |
+| `www.softboring.com` | A | `172.237.11.195` |
+
+這與 99gold.net 的 IP 相同，靠 Nginx 的 `server_name` 分流，不是靠不同 IP。TTL 生效後再申請憑證。
+
+不要把 Soft Boring 指到 Vercel 當 v1 正式環境。
+
+## 6. Nginx
+
+範例檔在 `deploy/nginx/softboring`。`server_name` 只用 Soft Boring 的網域；**不要** `default_server`，也 **不要** 把 `99gold.net` 寫進這個檔案。
+
+`/etc/nginx/sites-available/softboring`：
+
+```nginx
+upstream softboring {
+    server 127.0.0.1:3001;
+    keepalive 8;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name softboring.com www.softboring.com;
+
+    client_max_body_size 2m;
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        proxy_pass http://softboring;
+    }
+}
+```
+
+```bash
+sudo cp /var/www/softboring/deploy/nginx/softboring /etc/nginx/sites-available/softboring
+sudo ln -sf /etc/nginx/sites-available/softboring /etc/nginx/sites-enabled/softboring
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+`nginx -t` 失敗時先檢查是否與 99gold 的 site 衝突（兩個 `default_server`、重複 `upstream` 名稱等）。
+
+## 7. HTTPS（Certbot）
+
+DNS A 記錄生效、HTTP `:80` 已反代之後：
+
+```bash
+sudo certbot --nginx -d softboring.com -d www.softboring.com
+```
+
+Certbot 會改 Soft Boring 的 Nginx site（加上 `:443` 與 redirect）。憑證路徑通常為：
+
+- `/etc/letsencrypt/live/softboring.com/fullchain.pem`
+- `/etc/letsencrypt/live/softboring.com/privkey.pem`
+
+這與 99gold 的 `/etc/letsencrypt/live/99gold.net/` **分開**。不要把 99gold 的憑證路徑貼到 Soft Boring。
+
+HTTPS 範例（Certbot 完成後大致長這樣；以 certbot 實際寫入為準）：
+
+```nginx
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name softboring.com www.softboring.com;
+    ssl_certificate     /etc/letsencrypt/live/softboring.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/softboring.com/privkey.pem;
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        proxy_pass http://softboring;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name softboring.com www.softboring.com;
+    return 301 https://$host$request_uri;
+}
+```
+
+啟用 HTTPS 後確認 `/etc/softboring.env` 裡是 `SITE_URL=https://softboring.com`，然後：
+
+```bash
+sudo systemctl restart softboring.service
+```
+
+續期：若已裝 `python3-certbot-nginx`，Let's Encrypt timer 通常會自動續。抽查：
+
+```bash
+sudo certbot certificates
+sudo systemctl list-timers | grep -i certbot
+```
+
+## 8. 檢查
+
+```bash
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/en
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/zh-tw
+# 99gold 應仍在 3000
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3000/
+sudo systemctl status softboring.service
+sudo systemctl status 99gold.service
+```
+
+DNS 與憑證好了之後：
+
+```bash
+curl -sSI https://softboring.com/en | head
+```
+
+## 9. 更新
+
+```bash
+cd /var/www/softboring
+sudo -u www-data git pull
+sudo -u www-data npm ci
+sudo -u www-data npm run build
+sudo systemctl restart softboring.service
+```
+
+只重啟 `softboring.service`。除非 99gold 也要發版，否則不要 `restart 99gold.service`。
+
+SQLite 接上之後，更新流程再加 Soft Boring 自己的 migration（不要跑 99gold 的 `npm run db:migrate`）。
+
+## 10. 備份
+
+分開備份：
+
+- `/var/www/softboring/data/`
+- `/etc/softboring.env`
+
+不要只備份 99gold 的 `data/` 就當作 Soft Boring 也備份了。
