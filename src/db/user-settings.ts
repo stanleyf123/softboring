@@ -129,7 +129,7 @@ export function listDueReminderUsers(now = new Date()): DueReminderUser[] {
   startOfToday.setHours(0, 0, 0, 0);
   const todayIso = startOfToday.toISOString();
 
-  return getDb()
+  const rows = getDb()
     .prepare(
       `SELECT u.id AS user_id, u.email
        FROM user_settings s
@@ -139,6 +139,7 @@ export function listDueReminderUsers(now = new Date()): DueReminderUser[] {
          AND (s.reminder_last_sent_at IS NULL OR datetime(s.reminder_last_sent_at) < datetime(?))`,
     )
     .all(weekday, todayIso) as Array<{ user_id: string; email: string }>;
+  return rows.map((row) => ({ userId: row.user_id, email: row.email }));
 }
 
 export function markReminderSent(userId: string, sentAt = new Date().toISOString()) {

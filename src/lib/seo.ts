@@ -28,6 +28,7 @@ export function pageMetadata({
   }
 
   return {
+    metadataBase: new URL(origin),
     title,
     description,
     alternates: {

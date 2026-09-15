@@ -24,12 +24,6 @@ export async function generateMetadata({ params }: Props) {
   });
 }
 
-export const dynamic = "force-dynamic";
-
-type Props = {
-  params: Promise<{ locale: string }>;
-};
-
 export default async function PricingPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(assertLocale(locale));

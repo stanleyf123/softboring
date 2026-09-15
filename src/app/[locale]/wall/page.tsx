@@ -25,13 +25,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export const dynamic = "force-dynamic";
-
-type Props = {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sticker?: string }>;
-};
-
 export default async function WallPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const query = await searchParams;
