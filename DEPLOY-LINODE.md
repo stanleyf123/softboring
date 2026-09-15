@@ -2,7 +2,7 @@
 
 Soft Boring Weekly 與 [99gold](https://github.com/stanleyf123/99gold) **共用同一台 Linode VPS**，但是 **另一個站點**：另一套目錄、環境檔、systemd、Nginx `server`、SQLite。不要和 99gold 共用資料庫或服務單元。
 
-本階段應用仍是 MVP 骨架（回顧先存在瀏覽器 `localStorage`）。`SQLITE_PATH` 先寫進環境檔，方便之後接上本機 SQLite；**現在還不會跑 Soft Boring 的 migration。**
+每週回顧存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate）。
 
 目標主機範例：`172.237.11.195`（與 99gold 文件裡同一台，1GB RAM + swap）。
 
@@ -52,9 +52,16 @@ sudo -u www-data npm ci
 sudo -u www-data npm run build   # 若未在其他機器先 build
 ```
 
-SQLite 檔預定為 `/var/www/softboring/data/softboring.sqlite`（可用 `SQLITE_PATH` 覆寫）。請把 `data/` 列入備份，不要提交到 git。這個檔案與 `/var/www/99gold/data/` **完全分開**。
+SQLite 檔為 `/var/www/softboring/data/softboring.sqlite`（可用 `SQLITE_PATH` 覆寫）。請把 `data/` 列入備份，不要提交到 git。這個檔案與 `/var/www/99gold/data/` **完全分開**。
 
-v1 骨架還不會自動建立 `.sqlite`；先把目錄與環境變數準備好即可。
+建表：
+
+```bash
+cd /var/www/softboring
+sudo -u www-data SQLITE_PATH=/var/www/softboring/data/softboring.sqlite npm run db:migrate
+```
+
+若 systemd 已載入 `/etc/softboring.env`，之後行程會用同一個路徑。首次 `get`/`post` 也會套用同一份 schema，但仍應在 pull 之後明確跑 migrate。
 
 ## 3. 環境變數
 
@@ -243,13 +250,13 @@ curl -sSI https://softboring.com/en | head
 cd /var/www/softboring
 sudo -u www-data git pull
 sudo -u www-data npm ci
+# 載入本站環境檔裡的 SQLITE_PATH，不要跑 99gold 的 db:migrate
+sudo -u www-data bash -lc 'set -a; source /etc/softboring.env; set +a; npm run db:migrate'
 sudo -u www-data npm run build
 sudo systemctl restart softboring.service
 ```
 
 只重啟 `softboring.service`。除非 99gold 也要發版，否則不要 `restart 99gold.service`。
-
-SQLite 接上之後，更新流程再加 Soft Boring 自己的 migration（不要跑 99gold 的 `npm run db:migrate`）。
 
 ## 10. 備份
 

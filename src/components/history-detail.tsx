@@ -1,9 +1,10 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { loadReview } from "@/lib/reviews";
+import { ensureLocalReviewsMigrated, fetchReview, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useFormatter, useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 const DETAIL_FIELDS = [
   "energy",
@@ -19,12 +20,43 @@ export function HistoryDetail({ id }: { id: string }) {
   const tHistory = useTranslations("History");
   const format = useFormatter();
   const hydrated = useHydrated();
+  const [review, setReview] = useState<Review | null | undefined>(undefined);
+  const [error, setError] = useState(false);
 
-  if (!hydrated) {
+  useEffect(() => {
+    if (!hydrated) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        await ensureLocalReviewsMigrated();
+        const next = await fetchReview(id);
+        if (!cancelled) setReview(next ?? null);
+      } catch {
+        if (!cancelled) setError(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, id]);
+
+  if (!hydrated || (review === undefined && !error)) {
     return <div className="min-h-64" aria-hidden="true" />;
   }
 
-  const review = loadReview(id);
+  if (error) {
+    return (
+      <section className="rounded-[2rem] bg-paper px-8 py-12">
+        <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
+        <p className="mt-3 max-w-md text-muted leading-relaxed">{t("loadError")}</p>
+        <Link href="/history" className="mt-8 inline-block text-sm text-accent">
+          {t("back")}
+        </Link>
+      </section>
+    );
+  }
 
   if (!review) {
     return (

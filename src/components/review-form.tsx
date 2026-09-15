@@ -3,14 +3,14 @@
 import { Link } from "@/i18n/navigation";
 import {
   clearDraft,
+  createReview,
   emptyDraft,
   loadDraft,
   saveDraft,
-  saveReview,
   type ReviewAnswers,
 } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 const TEXT_FIELDS = [
@@ -34,8 +34,11 @@ export function ReviewForm() {
 function ReviewFormFields() {
   const t = useTranslations("Review");
   const tQuestions = useTranslations("Questions");
+  const locale = useLocale();
   const [draft, setDraft] = useState<ReviewAnswers>(loadDraft);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(false);
 
   function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K]) {
     setDraft((current) => {
@@ -45,16 +48,26 @@ function ReviewFormFields() {
     });
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    saveReview(draft);
-    setSaved(true);
+    if (saving) return;
+    setSaving(true);
+    setError(false);
+    try {
+      await createReview({ ...draft, locale });
+      setSaved(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSaving(false);
+    }
   }
 
   function handleWriteAnother() {
     clearDraft();
     setDraft(emptyDraft());
     setSaved(false);
+    setError(false);
   }
 
   if (saved) {
@@ -125,10 +138,12 @@ function ReviewFormFields() {
       <div className="flex flex-col items-start gap-3 pt-2">
         <button
           type="submit"
-          className="rounded-full bg-accent px-6 py-3 text-paper"
+          disabled={saving}
+          className="rounded-full bg-accent px-6 py-3 text-paper disabled:opacity-60"
         >
-          {t("submit")}
+          {saving ? t("saving") : t("submit")}
         </button>
+        {error ? <p className="text-sm text-muted">{t("saveError")}</p> : null}
         <p className="text-sm text-muted">{t("draftHint")}</p>
       </div>
     </form>

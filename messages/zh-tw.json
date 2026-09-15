@@ -43,11 +43,13 @@
     "title": "本週回顧",
     "lead": "能答多少就答多少。沒有分數。",
     "submit": "儲存這次回顧",
+    "saving": "儲存中…",
+    "saveError": "這次回顧沒有存成。請稍後再試。",
     "successTitle": "已儲存。",
     "successBody": "本週回顧已存好。之後可在紀錄裡隨時回來看。",
     "viewHistory": "查看紀錄",
     "writeAnother": "再寫一篇",
-    "draftHint": "草稿會留在這台裝置上。"
+    "draftHint": "草稿會留在這台裝置上，直到你儲存。"
   },
   "History": {
     "title": "紀錄",
@@ -55,6 +57,8 @@
     "emptyTitle": "還沒有回顧",
     "emptyBody": "完成每週回顧後，就會出現在這裡。",
     "emptyCta": "開始回顧",
+    "loadErrorTitle": "暫時看不到紀錄",
+    "loadError": "現在無法載入回顧。請稍後再試。",
     "open": "打開",
     "feeling": "感覺 {value}／5",
     "untitled": "安靜的一週"
@@ -62,7 +66,9 @@
   "HistoryDetail": {
     "back": "回到紀錄",
     "notFound": "找不到這篇回顧。",
-    "notFoundBody": "它可能已從這台裝置清除。",
+    "notFoundBody": "可能是另一個瀏覽器工作階段，或連結不正確。",
+    "loadErrorTitle": "打不開這篇回顧",
+    "loadError": "請稍後再試。",
     "savedOn": "儲存於 {date}"
   },
   "NotFound": {

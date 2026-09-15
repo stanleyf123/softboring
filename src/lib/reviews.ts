@@ -1,33 +1,21 @@
 /**
- * Local-only weekly review store.
- * Swap this for Supabase (see .env.example) when auth + persistence are wired up.
+ * Browser helpers for weekly reviews.
+ * Submitted reviews live in SQLite via /api/reviews.
+ * Drafts still stay in localStorage on this device.
+ * A one-time import copies older localStorage reviews into the API.
  */
 
-export type ReviewAnswers = {
-  energy: string;
-  drain: string;
-  lessOf: string;
-  priorities: string;
-  feeling: number | null;
-  summary: string;
-};
+import {
+  emptyDraft,
+  type Review,
+  type ReviewAnswers,
+} from "@/lib/review-types";
 
-export type Review = ReviewAnswers & {
-  id: string;
-  createdAt: string;
-};
-
-export const emptyDraft = (): ReviewAnswers => ({
-  energy: "",
-  drain: "",
-  lessOf: "",
-  priorities: "",
-  feeling: null,
-  summary: "",
-});
+export { emptyDraft, type Review, type ReviewAnswers };
 
 const REVIEWS_KEY = "softboring.weekly.reviews.v1";
 const DRAFT_KEY = "softboring.weekly.draft.v1";
+const MIGRATED_KEY = "softboring.weekly.migrated-to-sqlite.v1";
 
 function canUseStorage() {
   return typeof window !== "undefined";
@@ -63,25 +51,74 @@ export function clearDraft() {
   window.localStorage.removeItem(DRAFT_KEY);
 }
 
-export function loadReviews(): Review[] {
+function loadLocalReviews(): Review[] {
   const reviews = readJson<Review[]>(REVIEWS_KEY, []);
   return [...reviews].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 }
 
-export function loadReview(id: string): Review | undefined {
-  return loadReviews().find((review) => review.id === id);
+async function readJsonResponse<T>(response: Response): Promise<T> {
+  const data = (await response.json().catch(() => ({}))) as T & { error?: string };
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed.");
+  }
+  return data;
 }
 
-export function saveReview(answers: ReviewAnswers): Review {
-  const review: Review = {
-    ...answers,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-  };
-  const reviews = loadReviews();
-  writeJson(REVIEWS_KEY, [review, ...reviews]);
+export async function fetchReviews(): Promise<Review[]> {
+  const data = await readJsonResponse<{ reviews: Review[] }>(
+    await fetch("/api/reviews", { cache: "no-store" }),
+  );
+  return data.reviews;
+}
+
+export async function fetchReview(id: string): Promise<Review | undefined> {
+  const response = await fetch(`/api/reviews/${encodeURIComponent(id)}`, {
+    cache: "no-store",
+  });
+  if (response.status === 404) return undefined;
+  const data = await readJsonResponse<{ review: Review }>(response);
+  return data.review;
+}
+
+export async function createReview(
+  answers: ReviewAnswers & { locale?: string },
+): Promise<Review> {
+  const data = await readJsonResponse<{ review: Review }>(
+    await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(answers),
+    }),
+  );
   clearDraft();
-  return review;
+  return data.review;
+}
+
+let migratePromise: Promise<void> | null = null;
+
+export function ensureLocalReviewsMigrated() {
+  if (!migratePromise) {
+    migratePromise = migrateLocalReviewsOnce();
+  }
+  return migratePromise;
+}
+
+async function migrateLocalReviewsOnce() {
+  if (!canUseStorage()) return;
+  if (window.localStorage.getItem(MIGRATED_KEY)) return;
+
+  const reviews = loadLocalReviews();
+  if (reviews.length > 0) {
+    await readJsonResponse(
+      await fetch("/api/reviews/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews }),
+      }),
+    );
+  }
+
+  window.localStorage.setItem(MIGRATED_KEY, "1");
 }

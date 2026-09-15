@@ -43,11 +43,13 @@
     "title": "This week's review",
     "lead": "Answer what you can. Leave the rest. There is no score.",
     "submit": "Save this review",
+    "saving": "Saving…",
+    "saveError": "Could not save this review. Try again in a moment.",
     "successTitle": "Saved.",
     "successBody": "This week's review is saved. You can come back to it in History anytime.",
     "viewHistory": "See history",
     "writeAnother": "Write another",
-    "draftHint": "Your draft stays on this device."
+    "draftHint": "Your draft stays on this device until you save."
   },
   "History": {
     "title": "History",
@@ -55,6 +57,8 @@
     "emptyTitle": "No reviews yet",
     "emptyBody": "When you finish a weekly review, it will show up here.",
     "emptyCta": "Start a review",
+    "loadErrorTitle": "History is unavailable",
+    "loadError": "Could not load reviews just now. Try again in a moment.",
     "open": "Open",
     "feeling": "Feeling {value} of 5",
     "untitled": "A quiet week"
@@ -62,7 +66,9 @@
   "HistoryDetail": {
     "back": "Back to history",
     "notFound": "This review is not here.",
-    "notFoundBody": "It may have been cleared from this device.",
+    "notFoundBody": "It may belong to another browser, or the link may be wrong.",
+    "loadErrorTitle": "Could not open this review",
+    "loadError": "Try again in a moment.",
     "savedOn": "Saved {date}"
   },
   "NotFound": {
