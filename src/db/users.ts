@@ -1,25 +1,57 @@
 import { getDb } from "./client";
+import {
+  displayPlan,
+  PLAN_FREE,
+  type PlanId,
+} from "@/lib/plan";
 
 export type UserRow = {
   id: string;
   email: string;
   password_hash: string;
   created_at: string;
+  plan: string;
+  plan_status: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  stripe_price_id: string | null;
+  plan_updated_at: string | null;
 };
 
 export type PublicUser = {
   id: string;
   email: string;
   createdAt: string;
+  plan: PlanId;
+  planStatus: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
 };
 
-export function toPublicUser(row: Pick<UserRow, "id" | "email" | "created_at">): PublicUser {
+type PublicUserRow = Pick<
+  UserRow,
+  | "id"
+  | "email"
+  | "created_at"
+  | "plan"
+  | "plan_status"
+  | "stripe_customer_id"
+  | "stripe_subscription_id"
+>;
+
+export function toPublicUser(row: PublicUserRow): PublicUser {
   return {
     id: row.id,
     email: row.email,
     createdAt: row.created_at,
+    plan: displayPlan(row.plan, row.plan_status),
+    planStatus: row.plan_status,
+    stripeCustomerId: row.stripe_customer_id,
+    stripeSubscriptionId: row.stripe_subscription_id,
   };
 }
+
+const PUBLIC_USER_COLUMNS = `id, email, created_at, plan, plan_status, stripe_customer_id, stripe_subscription_id`;
 
 export function createUser(email: string, passwordHash: string): PublicUser {
   const id = crypto.randomUUID();
@@ -27,14 +59,15 @@ export function createUser(email: string, passwordHash: string): PublicUser {
   try {
     getDb()
       .prepare(
-        `INSERT INTO users (id, email, password_hash, created_at)
-         VALUES (@id, @email, @password_hash, @created_at)`,
+        `INSERT INTO users (id, email, password_hash, created_at, plan)
+         VALUES (@id, @email, @password_hash, @created_at, @plan)`,
       )
       .run({
         id,
         email,
         password_hash: passwordHash,
         created_at: createdAt,
+        plan: PLAN_FREE,
       });
   } catch (error) {
     const code = (error as { code?: string }).code;
@@ -45,7 +78,15 @@ export function createUser(email: string, passwordHash: string): PublicUser {
     }
     throw error;
   }
-  return { id, email, createdAt };
+  return {
+    id,
+    email,
+    createdAt,
+    plan: PLAN_FREE,
+    planStatus: null,
+    stripeCustomerId: null,
+    stripeSubscriptionId: null,
+  };
 }
 
 export function getUserByEmail(email: string): UserRow | undefined {
@@ -56,9 +97,68 @@ export function getUserByEmail(email: string): UserRow | undefined {
 
 export function getUserById(id: string): PublicUser | undefined {
   const row = getDb()
-    .prepare(`SELECT id, email, created_at FROM users WHERE id = ?`)
-    .get(id) as Pick<UserRow, "id" | "email" | "created_at"> | undefined;
+    .prepare(`SELECT ${PUBLIC_USER_COLUMNS} FROM users WHERE id = ?`)
+    .get(id) as PublicUserRow | undefined;
   return row ? toPublicUser(row) : undefined;
+}
+
+export function getUserByStripeCustomerId(customerId: string): PublicUser | undefined {
+  const row = getDb()
+    .prepare(`SELECT ${PUBLIC_USER_COLUMNS} FROM users WHERE stripe_customer_id = ?`)
+    .get(customerId) as PublicUserRow | undefined;
+  return row ? toPublicUser(row) : undefined;
+}
+
+export function getUserByStripeSubscriptionId(
+  subscriptionId: string,
+): PublicUser | undefined {
+  const row = getDb()
+    .prepare(`SELECT ${PUBLIC_USER_COLUMNS} FROM users WHERE stripe_subscription_id = ?`)
+    .get(subscriptionId) as PublicUserRow | undefined;
+  return row ? toPublicUser(row) : undefined;
+}
+
+export type BillingPatch = {
+  plan?: PlanId;
+  planStatus?: string | null;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  stripePriceId?: string | null;
+};
+
+export function updateUserBilling(userId: string, patch: BillingPatch) {
+  const current = getDb()
+    .prepare(`SELECT * FROM users WHERE id = ?`)
+    .get(userId) as UserRow | undefined;
+  if (!current) return 0;
+
+  return getDb()
+    .prepare(
+      `UPDATE users
+       SET plan = @plan,
+           plan_status = @plan_status,
+           stripe_customer_id = @stripe_customer_id,
+           stripe_subscription_id = @stripe_subscription_id,
+           stripe_price_id = @stripe_price_id,
+           plan_updated_at = @plan_updated_at
+       WHERE id = @id`,
+    )
+    .run({
+      id: userId,
+      plan: patch.plan ?? current.plan,
+      plan_status: patch.planStatus === undefined ? current.plan_status : patch.planStatus,
+      stripe_customer_id:
+        patch.stripeCustomerId === undefined
+          ? current.stripe_customer_id
+          : patch.stripeCustomerId,
+      stripe_subscription_id:
+        patch.stripeSubscriptionId === undefined
+          ? current.stripe_subscription_id
+          : patch.stripeSubscriptionId,
+      stripe_price_id:
+        patch.stripePriceId === undefined ? current.stripe_price_id : patch.stripePriceId,
+      plan_updated_at: new Date().toISOString(),
+    }).changes;
 }
 
 export function deleteUser(id: string) {

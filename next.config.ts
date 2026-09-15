@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Native addon; must stay external for `next start` on the VPS.
-  serverExternalPackages: ["better-sqlite3", "bcryptjs"],
+  serverExternalPackages: ["better-sqlite3", "bcryptjs", "stripe"],
 };
 
 export default withNextIntl(nextConfig);

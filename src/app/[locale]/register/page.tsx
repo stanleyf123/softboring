@@ -1,4 +1,5 @@
 import { AuthForm } from "@/components/auth-form";
+import { AuthPageShell } from "@/components/auth-page-shell";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { redirect } from "@/i18n/navigation";
@@ -24,14 +25,8 @@ export default async function RegisterPage({ params, searchParams }: Props) {
   const { next } = await searchParams;
 
   return (
-    <div className="pt-6">
-      <h1 className="font-display text-4xl tracking-tight">{t("registerTitle")}</h1>
-      <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">
-        {t("registerLead")}
-      </p>
-      <div className="mt-10 max-w-md">
-        <AuthForm mode="register" nextPath={next} />
-      </div>
-    </div>
+    <AuthPageShell title={t("registerTitle")} lead={t("registerLead")} doodle="register">
+      <AuthForm mode="register" nextPath={next} />
+    </AuthPageShell>
   );
 }

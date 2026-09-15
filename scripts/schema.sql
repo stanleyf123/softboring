@@ -2,7 +2,13 @@ CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL UNIQUE COLLATE NOCASE,
   password_hash TEXT NOT NULL,
-  created_at TEXT NOT NULL
+  created_at TEXT NOT NULL,
+  plan TEXT NOT NULL DEFAULT 'free',
+  plan_status TEXT,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  stripe_price_id TEXT,
+  plan_updated_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS sessions (

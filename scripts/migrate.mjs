@@ -18,13 +18,41 @@ db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 db.exec(readFileSync(join(root, "scripts/schema.sql"), "utf8"));
 
-const cols = db.prepare("PRAGMA table_info(reviews)").all();
-if (!cols.some((col) => col.name === "user_id")) {
+function columnNames(table) {
+  return db.prepare(`PRAGMA table_info(${table})`).all().map((col) => col.name);
+}
+
+function ensureColumn(table, name, definition) {
+  if (!columnNames(table).includes(name)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
+  }
+}
+
+const reviewCols = columnNames("reviews");
+if (!reviewCols.includes("user_id")) {
   db.exec("ALTER TABLE reviews ADD COLUMN user_id TEXT");
 }
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)",
 );
+
+const userTable = db
+  .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'`)
+  .get();
+if (userTable) {
+  ensureColumn("users", "plan", "TEXT NOT NULL DEFAULT 'free'");
+  ensureColumn("users", "plan_status", "TEXT");
+  ensureColumn("users", "stripe_customer_id", "TEXT");
+  ensureColumn("users", "stripe_subscription_id", "TEXT");
+  ensureColumn("users", "stripe_price_id", "TEXT");
+  ensureColumn("users", "plan_updated_at", "TEXT");
+  db.exec(
+    "CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users (stripe_customer_id)",
+  );
+  db.exec(
+    "CREATE INDEX IF NOT EXISTS idx_users_stripe_subscription ON users (stripe_subscription_id)",
+  );
+}
 
 db.close();
 

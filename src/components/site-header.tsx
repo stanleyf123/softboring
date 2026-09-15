@@ -9,15 +9,23 @@ const links = [
   { href: "/", key: "home" as const },
   { href: "/review", key: "review" as const },
   { href: "/history", key: "history" as const },
+  { href: "/pricing", key: "pricing" as const },
 ];
 
-export function SiteHeader({ email }: { email: string | null }) {
+export function SiteHeader({
+  email,
+  softPlus,
+}: {
+  email: string | null;
+  softPlus: boolean;
+}) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
   const authHref = email ? "/account" : "/login";
   const authKey = email ? ("account" as const) : ("login" as const);
   const authActive =
     pathname === authHref || pathname.startsWith(`${authHref}/`);
+  const trendsActive = pathname === "/trends" || pathname.startsWith("/trends/");
 
   return (
     <header className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-4 px-6 py-6">
@@ -49,6 +57,18 @@ export function SiteHeader({ email }: { email: string | null }) {
             </Link>
           );
         })}
+        {softPlus ? (
+          <Link
+            href="/trends"
+            className={
+              trendsActive
+                ? "rounded-full bg-mint px-2.5 py-1 text-foreground"
+                : "rounded-full px-2.5 py-1 hover:text-foreground"
+            }
+          >
+            {t("trends")}
+          </Link>
+        ) : null}
         <Link
           href={authHref}
           className={

@@ -5,6 +5,8 @@ export type AdminUserListItem = {
   email: string;
   createdAt: string;
   reviewCount: number;
+  plan: string;
+  planStatus: string | null;
 };
 
 export type AdminReviewListItem = {
@@ -29,13 +31,23 @@ export function adminCounts() {
   const db = getDb();
   const users = (db.prepare(`SELECT COUNT(*) AS n FROM users`).get() as { n: number }).n;
   const reviews = (db.prepare(`SELECT COUNT(*) AS n FROM reviews`).get() as { n: number }).n;
-  return { users, reviews };
+  const paid = (
+    db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM users
+         WHERE plan = 'soft_plus'
+           AND (plan_status IS NULL OR plan_status IN ('active', 'trialing', 'past_due'))`,
+      )
+      .get() as { n: number }
+  ).n;
+  const free = users - paid;
+  return { users, reviews, paid, free };
 }
 
 export function listAdminUsers(limit = 200): AdminUserListItem[] {
   const rows = getDb()
     .prepare(
-      `SELECT u.id, u.email, u.created_at,
+      `SELECT u.id, u.email, u.created_at, u.plan, u.plan_status,
               (SELECT COUNT(*) FROM reviews r WHERE r.user_id = u.id) AS review_count
        FROM users u
        ORDER BY datetime(u.created_at) DESC
@@ -45,6 +57,8 @@ export function listAdminUsers(limit = 200): AdminUserListItem[] {
     id: string;
     email: string;
     created_at: string;
+    plan: string;
+    plan_status: string | null;
     review_count: number;
   }>;
 
@@ -53,6 +67,8 @@ export function listAdminUsers(limit = 200): AdminUserListItem[] {
     email: row.email,
     createdAt: row.created_at,
     reviewCount: row.review_count,
+    plan: row.plan,
+    planStatus: row.plan_status,
   }));
 }
 
