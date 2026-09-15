@@ -25,9 +25,72 @@ Pages:
 
 - `/en/login` and `/zh-tw/login`
 - `/en/register` and `/zh-tw/register`
-- `/en/account` and `/zh-tw/account` (email, review count, log out)
+- `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade)
+- `/en/pricing` and `/zh-tw/pricing`
+- `/en/trends` and `/zh-tw/trends` (Soft+)
 
-The header shows **Log in** or **Account**. It never links to admin.
+The header shows **Pricing**, plus **Log in** or **Account**. It never links to admin.
+
+## Plans
+
+| Plan | Write reviews | History | Trends |
+| --- | --- | --- | --- |
+| **Free** (and guests) | Yes | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked |
+| **Soft+** | Yes | Unlimited | Feeling 1–5 over time |
+
+Guests can try 1–4 reviews in the browser. After the first save, the app nudges them to register so the paid path is clear. Registering as Free still caps visible history at four; Soft+ is the unlock.
+
+Plan is stored on the user row (`plan`, `plan_status`, Stripe ids). Soft+ is active when `plan` is `soft_plus` and status is empty, `active`, `trialing`, or `past_due`.
+
+## Stripe (Soft+)
+
+Checkout is **Stripe Checkout** (subscription). The customer portal is for manage/cancel. The app never fakes a successful payment: if Stripe env is missing, pricing and upgrade still look complete but buttons say payments are not configured.
+
+### 1. Create the product and prices
+
+In [Stripe Dashboard](https://dashboard.stripe.com) (test mode first):
+
+1. Create a product named **Soft+**.
+2. Add a **recurring monthly** price. Copy the price id (`price_...`) into `STRIPE_PRICE_MONTHLY`.
+3. Optionally add a **recurring yearly** price and set `STRIPE_PRICE_YEARLY`.
+4. Copy the secret key (`sk_test_...` or `sk_live_...`) into `STRIPE_SECRET_KEY`.
+5. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is optional. Checkout sessions are created on the server.
+
+### 2. Webhook
+
+Endpoint URL (production):
+
+`https://softboring.com/api/stripe/webhook`
+
+Listen to:
+
+- `checkout.session.completed`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
+
+Copy the signing secret (`whsec_...`) into `STRIPE_WEBHOOK_SECRET`.
+
+Local forwarding:
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+The handler reads the **raw request body** to verify the signature. Default nginx `proxy_pass` is enough; do not add a body-rewriting filter in front of `/api/stripe/webhook`.
+
+After a successful checkout, the webhook writes `plan`, `plan_status`, `stripe_customer_id`, and `stripe_subscription_id` on the user.
+
+### 3. Environment
+
+Set these in `.env.local` or `/etc/softboring.env` (never commit real values):
+
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_PRICE_MONTHLY`
+- `STRIPE_PRICE_YEARLY` (optional)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (optional)
+
+Checkout is treated as configured only when the first three are non-empty.
 
 ## Admin
 
@@ -35,11 +98,11 @@ The header shows **Log in** or **Account**. It never links to admin.
 
 1. Set `ADMIN_TOKEN` in `.env.local` or `/etc/softboring.env` (`openssl rand -hex 32`)
 2. Open `/admin/login` and paste the token, **or** call admin APIs with `Authorization: Bearer <token>` or `x-admin-token`
-3. Dashboard: user count and review count; lists of users and reviews; open a review; optional delete with confirm
+3. Dashboard: user, review, Free, and Soft+ counts; users list includes plan; open a review; optional delete with confirm
 
 Without a matching token the admin UI and `/api/admin/*` stay closed. Do not commit a real token.
 
-Paid plans (Stripe), Google OAuth, and email verification are later.
+OAuth and email verification are later.
 
 ## Locales
 
@@ -47,6 +110,8 @@ Paid plans (Stripe), Google OAuth, and email verification are later.
 | --- | --- | --- |
 | English (default) | `en` | `/en` |
 | 繁體中文 | `zh-tw` | `/zh-tw` |
+
+Use `/zh-tw` only (not `/zh-TW`).
 
 ## Run locally
 
@@ -59,10 +124,11 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/en` or `/zh-tw`.
 
-`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this auth change, migrate again so `users`, `sessions`, and `reviews.user_id` exist.
+`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so user billing columns exist (`plan`, `stripe_customer_id`, …).
 
 ```bash
 npm run build
+npm test
 npm start
 ```
 
@@ -72,7 +138,7 @@ npm start
 
 v1 hosting is **not Vercel-first**. Deploy next to 99gold on Linode Nanode (`172.237.11.195`): Nginx + systemd + Node 22, Soft Boring on port **3001**, SQLite path `/var/www/softboring/data/softboring.sqlite`.
 
-Full steps, Nginx, systemd, DNS, Certbot, `ADMIN_TOKEN`: **[DEPLOY-LINODE.md](./DEPLOY-LINODE.md)**.
+Full steps, Nginx, systemd, DNS, Certbot, `ADMIN_TOKEN`, Stripe env: **[DEPLOY-LINODE.md](./DEPLOY-LINODE.md)**.
 
 ## Environment variables
 
@@ -81,20 +147,18 @@ Copy `.env.example` to `.env.local`.
 - `SITE_URL` — public origin (`http://localhost:3000` locally, `https://softboring.com` in production)
 - `SQLITE_PATH` — database file (local `./data/softboring.sqlite`; VPS `/var/www/softboring/data/softboring.sqlite`)
 - `ADMIN_TOKEN` — long random string for `/admin` (generate with `openssl rand -hex 32`; never commit a real value)
-
-Optional later phases (not needed to deploy v1):
-
-- **Stripe** — free for 4 weeks of reviews; paid unlocks history and trends
-- **OAuth / email verification** — password auth is enough for v1
+- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY` — required together to enable checkout
+- `STRIPE_PRICE_YEARLY` — optional yearly price
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — optional
 
 Do not put real secrets in the repo.
 
 ## What's next
 
 1. **Deploy** — same Linode VPS as 99gold, separate site (see [DEPLOY-LINODE.md](./DEPLOY-LINODE.md))
-2. **Stripe** (optional) — connect the pricing teaser
-3. Later still: OAuth, email reminders, charts
+2. **Stripe live keys** — create the Soft+ product, set env, add the webhook
+3. Later still: OAuth, email reminders
 
 ## Stack
 
-Next.js App Router, TypeScript, Tailwind CSS, next-intl, better-sqlite3, bcryptjs. Production v1: Ubuntu + Node 22 + Nginx + systemd + local SQLite.
+Next.js App Router, TypeScript, Tailwind CSS, next-intl, better-sqlite3, bcryptjs, Stripe. Production v1: Ubuntu + Node 22 + Nginx + systemd + local SQLite.

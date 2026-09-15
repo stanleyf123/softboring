@@ -8,15 +8,43 @@ import Database from "better-sqlite3";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+function columnNames(db, table) {
+  return db.prepare(`PRAGMA table_info(${table})`).all().map((col) => col.name);
+}
+
 function migrate(db) {
   db.exec(readFileSync(join(root, "scripts/schema.sql"), "utf8"));
-  const cols = db.prepare("PRAGMA table_info(reviews)").all();
-  if (!cols.some((col) => col.name === "user_id")) {
+  if (!columnNames(db, "reviews").includes("user_id")) {
     db.exec("ALTER TABLE reviews ADD COLUMN user_id TEXT");
   }
   db.exec(
     "CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)",
   );
+
+  const userTable = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'`)
+    .get();
+  if (userTable) {
+    const cols = columnNames(db, "users");
+    if (!cols.includes("plan")) {
+      db.exec("ALTER TABLE users ADD COLUMN plan TEXT NOT NULL DEFAULT 'free'");
+    }
+    if (!cols.includes("plan_status")) {
+      db.exec("ALTER TABLE users ADD COLUMN plan_status TEXT");
+    }
+    if (!cols.includes("stripe_customer_id")) {
+      db.exec("ALTER TABLE users ADD COLUMN stripe_customer_id TEXT");
+    }
+    if (!cols.includes("stripe_subscription_id")) {
+      db.exec("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT");
+    }
+    if (!cols.includes("stripe_price_id")) {
+      db.exec("ALTER TABLE users ADD COLUMN stripe_price_id TEXT");
+    }
+    if (!cols.includes("plan_updated_at")) {
+      db.exec("ALTER TABLE users ADD COLUMN plan_updated_at TEXT");
+    }
+  }
 }
 
 test("users, sessions, and review ownership", () => {
@@ -94,6 +122,12 @@ test("users, sessions, and review ownership", () => {
     .all("22222222-2222-2222-2222-222222222222");
   assert.equal(guestAfterClaim.length, 0);
 
+  const plan = db
+    .prepare(`SELECT plan, plan_status FROM users WHERE id = ?`)
+    .get("user-a");
+  assert.equal(plan.plan, "free");
+  assert.equal(plan.plan_status, null);
+
   db.close();
   rmSync(dir, { recursive: true, force: true });
 });
@@ -117,7 +151,7 @@ test("existing reviews table gains user_id via ALTER", () => {
     );
   `);
   migrate(db);
-  const cols = db.prepare("PRAGMA table_info(reviews)").all().map((col) => col.name);
+  const cols = columnNames(db, "reviews");
   assert.ok(cols.includes("user_id"));
   assert.ok(cols.includes("guest_id"));
   const tables = db
@@ -126,6 +160,39 @@ test("existing reviews table gains user_id via ALTER", () => {
     .map((row) => row.name);
   assert.ok(tables.includes("users"));
   assert.ok(tables.includes("sessions"));
+  db.close();
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test("existing users table gains billing columns via ALTER", () => {
+  const dir = mkdtempSync(join(tmpdir(), "softboring-billing-"));
+  const sqlitePath = join(dir, "test.sqlite");
+  const db = new Database(sqlitePath);
+  db.exec(`
+    CREATE TABLE users (
+      id TEXT PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      password_hash TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+  `);
+  db.prepare(
+    `INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)`,
+  ).run("user-old", "old@example.com", "hash", "2026-01-01T00:00:00.000Z");
+  migrate(db);
+  const cols = columnNames(db, "users");
+  for (const name of [
+    "plan",
+    "plan_status",
+    "stripe_customer_id",
+    "stripe_subscription_id",
+    "stripe_price_id",
+    "plan_updated_at",
+  ]) {
+    assert.ok(cols.includes(name), `missing ${name}`);
+  }
+  const row = db.prepare(`SELECT plan FROM users WHERE id = ?`).get("user-old");
+  assert.equal(row.plan, "free");
   db.close();
   rmSync(dir, { recursive: true, force: true });
 });

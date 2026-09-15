@@ -202,6 +202,63 @@ export function SummaryIcon() {
   );
 }
 
+export function TeacupDoodle({ className = "h-auto w-full" }: DoodleProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 160 140"
+      fill="none"
+      aria-hidden="true"
+    >
+      <ellipse cx="78" cy="122" rx="42" ry="8" fill="#ead6c8" />
+      <path
+        d="M38 58c0-18 18-28 40-28s40 10 40 28v28c0 14-16 24-40 24s-40-10-40-24V58Z"
+        fill="#fff8f2"
+      />
+      <path
+        d="M38 72c8 8 24 12 40 12s32-4 40-12"
+        stroke="#ead6c8"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M118 68c12 2 20 12 16 22-4 10-16 14-26 10"
+        stroke="#c47f6e"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <path
+        d="M64 36c0-10 6-16 10-16 2 8-2 14-10 16Z"
+        fill="#d5e6d8"
+      />
+      <path
+        d="M84 32c0-12 7-18 12-18 2 10-3 16-12 18Z"
+        fill="#f4d4c6"
+      />
+      <circle cx="58" cy="84" r="3" fill="#f4d4c6" />
+      <circle cx="96" cy="90" r="2.4" fill="#d5e6d8" />
+    </svg>
+  );
+}
+
+export function EnvelopeDoodle({ className = "h-auto w-full" }: DoodleProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 160 120"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect x="18" y="28" width="124" height="72" rx="16" fill="#fff8f2" />
+      <path d="M18 44l62 34 62-34" stroke="#c47f6e" strokeWidth="2.4" />
+      <path d="M18 92l46-30" stroke="#ead6c8" strokeWidth="2" />
+      <path d="M142 92l-46-30" stroke="#ead6c8" strokeWidth="2" />
+      <circle cx="128" cy="28" r="14" fill="#d5e6d8" />
+      <circle cx="128" cy="28" r="7" fill="#f8dcc8" />
+    </svg>
+  );
+}
+
 export function StampFlower({ className = "h-10 w-10" }: DoodleProps) {
   return (
     <svg

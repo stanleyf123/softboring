@@ -21,6 +21,7 @@ export function HistoryDetail({ id }: { id: string }) {
   const format = useFormatter();
   const hydrated = useHydrated();
   const [review, setReview] = useState<Review | null | undefined>(undefined);
+  const [locked, setLocked] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -31,7 +32,19 @@ export function HistoryDetail({ id }: { id: string }) {
       try {
         await ensureLocalReviewsMigrated();
         const next = await fetchReview(id);
-        if (!cancelled) setReview(next ?? null);
+        if (cancelled) return;
+        if (!next) {
+          setReview(null);
+          return;
+        }
+        if ("locked" in next && next.locked) {
+          setLocked(true);
+          setReview(null);
+          return;
+        }
+        if ("review" in next) {
+          setReview(next.review);
+        }
       } catch {
         if (!cancelled) setError(true);
       }
@@ -42,7 +55,7 @@ export function HistoryDetail({ id }: { id: string }) {
     };
   }, [hydrated, id]);
 
-  if (!hydrated || (review === undefined && !error)) {
+  if (!hydrated || (review === undefined && !error && !locked)) {
     return <div className="min-h-64" aria-hidden="true" />;
   }
 
@@ -54,6 +67,26 @@ export function HistoryDetail({ id }: { id: string }) {
         <Link href="/history" className="mt-8 inline-block text-sm text-accent">
           {t("back")}
         </Link>
+      </section>
+    );
+  }
+
+  if (locked) {
+    return (
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
+        <h1 className="font-display text-3xl tracking-tight">{t("lockedTitle")}</h1>
+        <p className="mt-3 max-w-md text-muted leading-relaxed">{t("lockedBody")}</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/pricing"
+            className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+          >
+            {t("lockedCta")}
+          </Link>
+          <Link href="/history" className="rounded-full px-5 py-2.5 text-sm text-muted">
+            {t("back")}
+          </Link>
+        </div>
       </section>
     );
   }

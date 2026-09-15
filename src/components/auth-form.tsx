@@ -4,6 +4,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { safeAppPath } from "@/lib/public-origin";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { SoftMark } from "./soft-doodles";
 
 type Mode = "login" | "register";
 
@@ -68,77 +69,99 @@ export function AuthForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8"
+      className="overflow-hidden rounded-[2rem] bg-paper shadow-card"
     >
-      <label className="block">
-        <span className="text-sm text-muted">{t("email")}</span>
-        <input
-          type="email"
-          name="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          className="mt-2 w-full rounded-full border border-line bg-background px-5 py-3 text-foreground outline-none focus:border-accent"
-        />
-      </label>
-      <label className="mt-5 block">
-        <span className="text-sm text-muted">{t("password")}</span>
-        <input
-          type="password"
-          name="password"
-          autoComplete={mode === "login" ? "current-password" : "new-password"}
-          required
-          minLength={mode === "register" ? 8 : undefined}
-          maxLength={72}
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          className="mt-2 w-full rounded-full border border-line bg-background px-5 py-3 text-foreground outline-none focus:border-accent"
-        />
-      </label>
-      {mode === "register" ? (
-        <p className="mt-2 text-sm text-muted">{t("passwordHint")}</p>
-      ) : null}
+      <div className="flex items-center gap-3 bg-blush/70 px-6 py-4 sm:px-8">
+        <SoftMark className="h-8 w-8" />
+        <div>
+          <p className="font-display text-lg tracking-tight">
+            {mode === "login" ? t("cardLogin") : t("cardRegister")}
+          </p>
+          <p className="text-sm text-muted">
+            {mode === "login" ? t("cardLoginNote") : t("cardRegisterNote")}
+          </p>
+        </div>
+      </div>
 
-      {error ? (
-        <p className="mt-5 text-sm text-accent" role="alert">
-          {error === "invalid_credentials"
-            ? t("error.invalid_credentials")
-            : error === "email_taken"
-              ? t("error.email_taken")
-              : error === "weak_password"
-                ? t("error.weak_password")
-                : error === "invalid_email"
-                  ? t("error.invalid_email")
-                  : t("error.generic")}
-        </p>
-      ) : null}
+      <div className="px-6 py-8 sm:px-8">
+        <label className="block">
+          <span className="text-sm text-muted">{t("email")}</span>
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            className="mt-2 w-full rounded-full border border-line bg-background px-5 py-3 text-foreground outline-none focus:border-accent"
+          />
+        </label>
+        <label className="mt-5 block">
+          <span className="text-sm text-muted">{t("password")}</span>
+          <input
+            type="password"
+            name="password"
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
+            required
+            minLength={mode === "register" ? 8 : undefined}
+            maxLength={72}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className="mt-2 w-full rounded-full border border-line bg-background px-5 py-3 text-foreground outline-none focus:border-accent"
+          />
+        </label>
+        {mode === "register" ? (
+          <p className="mt-2 text-sm text-muted">{t("passwordHint")}</p>
+        ) : null}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-8 w-full rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
-      >
-        {submitting ? t("submitting") : t(mode === "login" ? "loginSubmit" : "registerSubmit")}
-      </button>
+        {error ? (
+          <p className="mt-5 text-sm text-accent" role="alert">
+            {error === "invalid_credentials"
+              ? t("error.invalid_credentials")
+              : error === "email_taken"
+                ? t("error.email_taken")
+                : error === "weak_password"
+                  ? t("error.weak_password")
+                  : error === "invalid_email"
+                    ? t("error.invalid_email")
+                    : t("error.generic")}
+          </p>
+        ) : null}
 
-      <p className="mt-6 text-sm text-muted">{t("guestHint")}</p>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-8 w-full rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
+        >
+          {submitting
+            ? t("submitting")
+            : t(mode === "login" ? "loginSubmit" : "registerSubmit")}
+        </button>
 
-      {mode === "login" ? (
-        <p className="mt-4 text-sm text-muted">
-          {t("toRegister")}{" "}
-          <Link href="/register" className="text-accent hover:text-foreground">
-            {t("toRegisterLink")}
-          </Link>
-        </p>
-      ) : (
-        <p className="mt-4 text-sm text-muted">
-          {t("toLogin")}{" "}
-          <Link href="/login" className="text-accent hover:text-foreground">
-            {t("toLoginLink")}
-          </Link>
-        </p>
-      )}
+        <p className="mt-6 text-sm leading-relaxed text-muted">{t("guestHint")}</p>
+
+        {mode === "login" ? (
+          <p className="mt-4 text-sm text-muted">
+            {t("toRegister")}{" "}
+            <Link
+              href={nextPath ? { pathname: "/register", query: { next: nextPath } } : "/register"}
+              className="text-accent hover:text-foreground"
+            >
+              {t("toRegisterLink")}
+            </Link>
+          </p>
+        ) : (
+          <p className="mt-4 text-sm text-muted">
+            {t("toLogin")}{" "}
+            <Link
+              href={nextPath ? { pathname: "/login", query: { next: nextPath } } : "/login"}
+              className="text-accent hover:text-foreground"
+            >
+              {t("toLoginLink")}
+            </Link>
+          </p>
+        )}
+      </div>
     </form>
   );
 }

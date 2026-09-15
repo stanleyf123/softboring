@@ -1,5 +1,6 @@
-import { getReviewForOwner } from "@/db/reviews";
-import { getReviewOwner } from "@/lib/review-owner";
+import { getReviewForOwner, listReviewsForOwner } from "@/db/reviews";
+import { isHistoryIndexUnlocked } from "@/lib/history-access";
+import { getReviewAccess } from "@/lib/review-access";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -12,11 +13,21 @@ type Context = {
 export async function GET(_request: Request, context: Context) {
   try {
     const { id } = await context.params;
-    const owner = await getReviewOwner();
-    const review = getReviewForOwner(owner, id);
+    const access = await getReviewAccess();
+    const review = getReviewForOwner(access.owner, id);
     if (!review) {
       return NextResponse.json({ error: "Review not found." }, { status: 404 });
     }
+
+    const all = listReviewsForOwner(access.owner);
+    const index = all.findIndex((item) => item.id === id);
+    if (index >= 0 && !isHistoryIndexUnlocked(index, access.softPlus)) {
+      return NextResponse.json(
+        { error: "locked", locked: true, createdAt: review.createdAt },
+        { status: 403 },
+      );
+    }
+
     return NextResponse.json({ review });
   } catch (error) {
     console.error("GET /api/reviews/[id] failed", error);

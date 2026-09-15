@@ -2,6 +2,7 @@ import { AdminDeleteButton } from "@/components/admin-delete-button";
 import { AdminShell } from "@/components/admin-shell";
 import { listAdminUsers } from "@/db/admin";
 import { requireAdmin } from "@/lib/admin";
+import { displayPlan } from "@/lib/plan";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -22,6 +23,7 @@ export default async function AdminUsersPage() {
             <thead className="text-muted">
               <tr className="border-b border-line">
                 <th className="px-5 py-3 font-normal">Email</th>
+                <th className="px-5 py-3 font-normal">Plan</th>
                 <th className="px-5 py-3 font-normal">Created</th>
                 <th className="px-5 py-3 font-normal">Reviews</th>
                 <th className="px-5 py-3 font-normal"> </th>
@@ -31,6 +33,11 @@ export default async function AdminUsersPage() {
               {users.map((user) => (
                 <tr key={user.id} className="border-b border-line/70 last:border-0">
                   <td className="px-5 py-3 break-all">{user.email}</td>
+                  <td className="px-5 py-3">
+                    {displayPlan(user.plan, user.planStatus) === "soft_plus"
+                      ? "Soft+"
+                      : "Free"}
+                  </td>
                   <td className="px-5 py-3 text-muted">
                     {new Date(user.createdAt).toLocaleString("en")}
                   </td>

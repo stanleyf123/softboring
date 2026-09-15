@@ -69,7 +69,12 @@ export default async function HomePage({ params }: Props) {
         <h2 className="font-display text-2xl tracking-tight">{t("pricingTitle")}</h2>
         <p className="mt-4 leading-relaxed text-muted">{t("pricingFree")}</p>
         <p className="mt-2 leading-relaxed text-muted">{t("pricingPaid")}</p>
-        <p className="mt-4 text-sm text-muted">{t("pricingNote")}</p>
+        <Link
+          href="/pricing"
+          className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+        >
+          {t("pricingCta")}
+        </Link>
       </section>
 
       <section className="mt-14 rounded-[2rem] bg-blush/70 px-6 py-8 text-center shadow-card sm:px-8">

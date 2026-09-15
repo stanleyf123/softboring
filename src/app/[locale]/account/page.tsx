@@ -1,6 +1,8 @@
 import { AccountPanel } from "@/components/account-panel";
 import { countReviewsForUser } from "@/db/reviews";
 import { getCurrentUser } from "@/lib/auth";
+import { isSoftPlusPlan } from "@/lib/plan";
+import { isStripeConfigured } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
 import { redirect } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -9,9 +11,10 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ checkout?: string }>;
 };
 
-export default async function AccountPage({ params }: Props) {
+export default async function AccountPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const appLocale = assertLocale(locale);
   setRequestLocale(appLocale);
@@ -24,6 +27,8 @@ export default async function AccountPage({ params }: Props) {
 
   const t = await getTranslations("Account");
   const reviewCount = countReviewsForUser(user.id);
+  const { checkout } = await searchParams;
+  const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
 
   return (
     <div className="pt-6">
@@ -34,6 +39,10 @@ export default async function AccountPage({ params }: Props) {
           email={user.email}
           createdAt={user.createdAt}
           reviewCount={reviewCount}
+          softPlus={softPlus}
+          stripeConfigured={isStripeConfigured()}
+          hasStripeCustomer={Boolean(user.stripeCustomerId)}
+          checkoutSuccess={checkout === "success"}
         />
       </div>
     </div>

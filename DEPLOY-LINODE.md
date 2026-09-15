@@ -2,7 +2,7 @@
 
 Soft Boring Weekly 與 [99gold](https://github.com/stanleyf123/99gold) **共用同一台 Linode VPS**，但是 **另一個站點**：另一套目錄、環境檔、systemd、Nginx `server`、SQLite。不要和 99gold 共用資料庫或服務單元。
 
-每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id`。
+每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id` / 訂閱欄位。
 
 目標主機範例：`172.237.11.195`（與 99gold 文件裡同一台，1GB RAM + swap）。
 
@@ -73,6 +73,13 @@ SQLITE_PATH=/var/www/softboring/data/softboring.sqlite
 ADMIN_TOKEN=請改成足夠長的隨機字串
 NODE_ENV=production
 
+# Soft+（Stripe Checkout）。三個都填才會打開結帳；留空則方案頁仍可看，按鈕會顯示 payments not configured。
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_MONTHLY=
+# STRIPE_PRICE_YEARLY=
+# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+
 # 本機開發用 3000；這台 VPS 上 99gold 已占用 3000，Soft Boring 用 3001。
 # 實際監聽看 systemd 的 ExecStart（--port 3001），不要改成 3000。
 ```
@@ -85,7 +92,7 @@ NODE_ENV=production
 
 `SITE_URL` 是反代後面的公開 origin。Nginx 會轉 `Host` 與 `X-Forwarded-Proto`，但 Next.js 的 `request.url` 仍可能是 `http://127.0.0.1:3001`。凡是 **絕對** 轉址（例如 `/api/admin/session` 的 `Location`）必須用 `SITE_URL`（去掉結尾斜線）當 origin，不要用 `request.url`。
 
-Stripe / OAuth / 驗證信是之後可選階段，v1 部署不需要。
+Stripe / OAuth / 驗證信：OAuth 與驗證信仍是之後可選。Soft+ 若要真的能收款，在 `/etc/softboring.env` 填 Stripe 變數，並在 Stripe Dashboard 把 webhook 指到 `https://softboring.com/api/stripe/webhook`（事件：`checkout.session.completed`、`customer.subscription.updated`、`customer.subscription.deleted`）。App Router 會讀 raw body 驗簽；Nginx 預設 `proxy_pass` 即可，不要對 webhook 路徑做 body rewrite。步驟見 README。
 
 ## 4. systemd：網站行程
 

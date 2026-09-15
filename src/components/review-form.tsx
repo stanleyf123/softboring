@@ -7,6 +7,7 @@ import {
   emptyDraft,
   loadDraft,
   saveDraft,
+  type ReviewAccessInfo,
   type ReviewAnswers,
 } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
@@ -21,17 +22,17 @@ const TEXT_FIELDS = [
   "summary",
 ] as const;
 
-export function ReviewForm() {
+export function ReviewForm({ signedIn }: { signedIn: boolean }) {
   const hydrated = useHydrated();
 
   if (!hydrated) {
     return <div className="min-h-[28rem]" aria-hidden="true" />;
   }
 
-  return <ReviewFormFields />;
+  return <ReviewFormFields signedIn={signedIn} />;
 }
 
-function ReviewFormFields() {
+function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("Review");
   const tQuestions = useTranslations("Questions");
   const locale = useLocale();
@@ -39,6 +40,7 @@ function ReviewFormFields() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
+  const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
 
   function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K]) {
     setDraft((current) => {
@@ -54,7 +56,8 @@ function ReviewFormFields() {
     setSaving(true);
     setError(false);
     try {
-      await createReview({ ...draft, locale });
+      const result = await createReview({ ...draft, locale });
+      setAccess(result.access);
       setSaved(true);
     } catch {
       setError(true);
@@ -68,28 +71,71 @@ function ReviewFormFields() {
     setDraft(emptyDraft());
     setSaved(false);
     setError(false);
+    setAccess(null);
   }
 
   if (saved) {
+    const guest = !signedIn;
+    const manyWeeks = (access?.totalCount ?? 0) >= 4;
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
-        <h2 className="font-display text-3xl tracking-tight">{t("successTitle")}</h2>
-        <p className="mt-4 max-w-md text-muted leading-relaxed">{t("successBody")}</p>
-        <div className="mt-10 flex flex-wrap gap-4 text-sm">
-          <Link
-            href="/history"
-            className="rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
-          >
-            {t("viewHistory")}
-          </Link>
-          <button
-            type="button"
-            onClick={handleWriteAnother}
-            className="rounded-full px-5 py-2.5 text-muted hover:text-foreground"
-          >
-            {t("writeAnother")}
-          </button>
+      <section className="space-y-6">
+        <div className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
+          <h2 className="font-display text-3xl tracking-tight">{t("successTitle")}</h2>
+          <p className="mt-4 max-w-md text-muted leading-relaxed">{t("successBody")}</p>
+          <div className="mt-10 flex flex-wrap gap-4 text-sm">
+            <Link
+              href="/history"
+              className="rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
+            >
+              {t("viewHistory")}
+            </Link>
+            <button
+              type="button"
+              onClick={handleWriteAnother}
+              className="rounded-full px-5 py-2.5 text-muted hover:text-foreground"
+            >
+              {t("writeAnother")}
+            </button>
+          </div>
         </div>
+
+        {guest ? (
+          <div className="rounded-[1.75rem] bg-blush/80 px-6 py-6 shadow-card sm:px-8">
+            <h3 className="font-display text-2xl tracking-tight">
+              {manyWeeks ? t("guestNudgeTitleMany") : t("guestNudgeTitle")}
+            </h3>
+            <p className="mt-3 max-w-md leading-relaxed text-muted">
+              {manyWeeks ? t("guestNudgeBodyMany") : t("guestNudgeBody")}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href={{ pathname: "/register", query: { next: "/history" } }}
+                className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+              >
+                {t("guestNudgeCta")}
+              </Link>
+              <Link
+                href={{ pathname: "/login", query: { next: "/history" } }}
+                className="rounded-full border border-line px-5 py-2.5 text-sm text-muted"
+              >
+                {t("guestNudgeLogin")}
+              </Link>
+            </div>
+          </div>
+        ) : null}
+
+        {signedIn && access && !access.softPlus && (access.lockedCount > 0 || manyWeeks) ? (
+          <div className="rounded-[1.75rem] bg-peach/80 px-6 py-6 shadow-card sm:px-8">
+            <h3 className="font-display text-2xl tracking-tight">{t("upgradeNudgeTitle")}</h3>
+            <p className="mt-3 max-w-md leading-relaxed text-muted">{t("upgradeNudgeBody")}</p>
+            <Link
+              href="/pricing"
+              className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+            >
+              {t("upgradeNudgeCta")}
+            </Link>
+          </div>
+        ) : null}
       </section>
     );
   }
