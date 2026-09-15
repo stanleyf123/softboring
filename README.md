@@ -15,7 +15,7 @@ This repository is an MVP scaffold: the core loop works locally in the browser (
 | Language | Locale | URL |
 | --- | --- | --- |
 | English (default) | `en` | `/en` |
-| 繁體中文 | `zh-TW` | `/zh-tw` |
+| 繁體中文 | `zh-tw` | `/zh-tw` |
 
 ## Run locally
 
