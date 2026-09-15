@@ -1,0 +1,72 @@
+{
+  "Metadata": {
+    "title": "Soft Boring Weekly",
+    "description": "一份安靜的每週回顧。每週六個小問題。"
+  },
+  "Nav": {
+    "home": "首頁",
+    "review": "回顧",
+    "history": "紀錄",
+    "brand": "Soft Boring"
+  },
+  "Footer": {
+    "note": "Soft Boring"
+  },
+  "LocaleSwitcher": {
+    "en": "EN",
+    "zhTW": "繁中",
+    "label": "語言"
+  },
+  "Home": {
+    "eyebrow": "每週一次的停下來",
+    "title": "一份安靜的回顧，換一週更輕的節奏。",
+    "lead": "Soft Boring Weekly 是每週一次的小停頓。六個小問題。沒有儀表板、沒有連續打卡、也沒有噪音。",
+    "cta": "開始本週回顧",
+    "ideaTitle": "這個想法",
+    "ideaBody": "每週坐下來幾分鐘。看看什麼給你能量、什麼耗掉它、以及你希望下週留下什麼。存起來。想起來的時候，再回來看看。",
+    "questionsTitle": "六個問題",
+    "pricingTitle": "方案",
+    "pricingFree": "前四週的回顧免費。",
+    "pricingPaid": "之後以小額付費解鎖歷史紀錄與趨勢。",
+    "pricingNote": "付款尚未接上。這只是即將推出內容的預告。"
+  },
+  "Questions": {
+    "energy": "這週最給你能量的是什麼？",
+    "drain": "這週最耗掉能量的是什麼？",
+    "lessOf": "有什麼可以少做一點？",
+    "priorities": "下週只要三件優先的事，是哪些？",
+    "feeling": "這週整體的感覺？",
+    "feelingHint": "1 比較沉重，5 比較輕盈。",
+    "summary": "用一句話總結這一週。"
+  },
+  "Review": {
+    "title": "本週回顧",
+    "lead": "能答多少就答多少。沒有分數。",
+    "submit": "儲存這次回顧",
+    "successTitle": "已儲存。",
+    "successBody": "本週回顧已存好。之後可在紀錄裡隨時回來看。",
+    "viewHistory": "查看紀錄",
+    "writeAnother": "再寫一篇",
+    "draftHint": "草稿會留在這台裝置上。"
+  },
+  "History": {
+    "title": "紀錄",
+    "lead": "過去的回顧安靜地放在這裡。",
+    "emptyTitle": "還沒有回顧",
+    "emptyBody": "完成每週回顧後，就會出現在這裡。",
+    "emptyCta": "開始回顧",
+    "open": "打開",
+    "feeling": "感覺 {value}／5",
+    "untitled": "安靜的一週"
+  },
+  "HistoryDetail": {
+    "back": "回到紀錄",
+    "notFound": "找不到這篇回顧。",
+    "notFoundBody": "它可能已從這台裝置清除。",
+    "savedOn": "儲存於 {date}"
+  },
+  "NotFound": {
+    "title": "沒有這個頁面。",
+    "home": "回到首頁"
+  }
+}

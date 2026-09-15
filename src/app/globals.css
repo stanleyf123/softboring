@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --background: #f3f1ec;
+  --foreground: #3a3732;
+  --paper: #faf8f4;
+  --muted: #8b857c;
+  --line: #e4dfd6;
+  --accent: #6d7a68;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-body), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
+    sans-serif;
+  --font-display: var(--font-display-face), "Noto Serif TC", "Songti TC", serif;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family: var(--font-sans);
+  min-height: 100%;
+}
+
+textarea,
+button,
+a {
+  font: inherit;
+}

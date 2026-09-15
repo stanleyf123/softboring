@@ -1,0 +1,72 @@
+{
+  "Metadata": {
+    "title": "Soft Boring Weekly",
+    "description": "A quiet weekly review. Six small questions, once a week."
+  },
+  "Nav": {
+    "home": "Home",
+    "review": "Review",
+    "history": "History",
+    "brand": "Soft Boring"
+  },
+  "Footer": {
+    "note": "Soft Boring"
+  },
+  "LocaleSwitcher": {
+    "en": "EN",
+    "zhTW": "繁中",
+    "label": "Language"
+  },
+  "Home": {
+    "eyebrow": "A weekly pause",
+    "title": "A quiet review for a quieter week.",
+    "lead": "Soft Boring Weekly is a once-a-week check-in. Six small questions. No dashboards, no streaks, no noise.",
+    "cta": "Start this week's review",
+    "ideaTitle": "The idea",
+    "ideaBody": "Once a week, sit down for a few minutes. Notice what gave you energy, what took it, and what you want next week to hold. Save it. Come back later if you want to remember.",
+    "questionsTitle": "Six questions",
+    "pricingTitle": "Pricing",
+    "pricingFree": "Free for your first four weeks of reviews.",
+    "pricingPaid": "A small paid plan later unlocks history and trends.",
+    "pricingNote": "Payments are not connected yet. This is a teaser for what is coming."
+  },
+  "Questions": {
+    "energy": "What gave you the most energy this week?",
+    "drain": "What drained the most energy this week?",
+    "lessOf": "What could you do less of?",
+    "priorities": "What are only three priorities for next week?",
+    "feeling": "Overall feeling this week?",
+    "feelingHint": "1 is heavy. 5 is light.",
+    "summary": "One sentence to sum up the week."
+  },
+  "Review": {
+    "title": "This week's review",
+    "lead": "Answer what you can. Leave the rest. There is no score.",
+    "submit": "Save this review",
+    "successTitle": "Saved.",
+    "successBody": "This week's review is saved. You can come back to it in History anytime.",
+    "viewHistory": "See history",
+    "writeAnother": "Write another",
+    "draftHint": "Your draft stays on this device."
+  },
+  "History": {
+    "title": "History",
+    "lead": "Past reviews live here. Quietly.",
+    "emptyTitle": "No reviews yet",
+    "emptyBody": "When you finish a weekly review, it will show up here.",
+    "emptyCta": "Start a review",
+    "open": "Open",
+    "feeling": "Feeling {value} of 5",
+    "untitled": "A quiet week"
+  },
+  "HistoryDetail": {
+    "back": "Back to history",
+    "notFound": "This review is not here.",
+    "notFoundBody": "It may have been cleared from this device.",
+    "savedOn": "Saved {date}"
+  },
+  "NotFound": {
+    "title": "This page is not here.",
+    "home": "Back home"
+  }
+}
