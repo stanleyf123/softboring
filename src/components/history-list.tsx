@@ -1,22 +1,51 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { loadReviews } from "@/lib/reviews";
+import { ensureLocalReviewsMigrated, fetchReviews, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useFormatter, useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 export function HistoryList() {
   const t = useTranslations("History");
   const format = useFormatter();
   const hydrated = useHydrated();
+  const [reviews, setReviews] = useState<Review[] | null>(null);
+  const [error, setError] = useState(false);
 
-  if (!hydrated) {
+  useEffect(() => {
+    if (!hydrated) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        await ensureLocalReviewsMigrated();
+        const next = await fetchReviews();
+        if (!cancelled) setReviews(next);
+      } catch {
+        if (!cancelled) setError(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated]);
+
+  if (!hydrated || (reviews === null && !error)) {
     return <div className="min-h-48" aria-hidden="true" />;
   }
 
-  const reviews = loadReviews();
+  if (error) {
+    return (
+      <section className="rounded-[2rem] bg-paper px-8 py-12">
+        <h2 className="font-display text-2xl tracking-tight">{t("loadErrorTitle")}</h2>
+        <p className="mt-3 max-w-md text-muted leading-relaxed">{t("loadError")}</p>
+      </section>
+    );
+  }
 
-  if (reviews.length === 0) {
+  if (!reviews || reviews.length === 0) {
     return (
       <section className="rounded-[2rem] bg-paper px-8 py-12">
         <h2 className="font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
