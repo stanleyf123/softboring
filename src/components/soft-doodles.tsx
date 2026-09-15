@@ -127,20 +127,13 @@ export function DrainIcon() {
   return (
     <IconFrame fill="#f4d4c6">
       <path
-        d="M12 18c0-5 3.4-8 8-8s8 3 8 8"
-        stroke="#9a7f74"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M11 19h18c0 6-4 10-9 10s-9-4-9-10Z"
+        d="M20 9.5c0 0-7.4 9.2-7.4 14.1a7.4 7.4 0 1 0 14.8 0C27.4 18.7 20 9.5 20 9.5Z"
         fill="#c47f6e"
-        opacity="0.85"
       />
       <path
-        d="M16 31c.6 1.4 1.6 2 2.8 2M24 31c-.6 1.4-1.6 2-2.8 2"
-        stroke="#9a7f74"
-        strokeWidth="1.6"
+        d="M17.2 22.2c.2-1.5 1.3-2.8 2.5-3.8"
+        stroke="#fff8f2"
+        strokeWidth="1.7"
         strokeLinecap="round"
       />
     </IconFrame>
@@ -209,19 +202,20 @@ export function SummaryIcon() {
   );
 }
 
-export function StampFlower({ className = "h-8 w-8" }: DoodleProps) {
+export function StampFlower({ className = "h-10 w-10" }: DoodleProps) {
   return (
     <svg
       className={className}
-      viewBox="0 0 32 32"
+      viewBox="0 0 40 40"
       fill="none"
       aria-hidden="true"
     >
-      <circle cx="16" cy="16" r="4" fill="#c47f6e" />
-      <circle cx="16" cy="8.5" r="3.2" fill="#f4d4c6" />
-      <circle cx="16" cy="23.5" r="3.2" fill="#d5e6d8" />
-      <circle cx="8.5" cy="16" r="3.2" fill="#f8dcc8" />
-      <circle cx="23.5" cy="16" r="3.2" fill="#f4d4c6" />
+      <circle cx="20" cy="12" r="6" fill="#c47f6e" />
+      <circle cx="12" cy="20" r="6" fill="#7d9b8c" />
+      <circle cx="28" cy="20" r="6" fill="#f8dcc8" />
+      <circle cx="20" cy="28" r="6" fill="#d5e6d8" />
+      <circle cx="20" cy="20" r="4.2" fill="#fff8f2" />
+      <circle cx="20" cy="20" r="2.4" fill="#c47f6e" />
     </svg>
   );
 }

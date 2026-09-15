@@ -40,7 +40,7 @@ export async function SampleReviewCard() {
           </p>
         </div>
         <div
-          className="hidden shrink-0 flex-col items-center rounded-2xl border-2 border-line bg-peach/70 px-3 py-2 sm:flex"
+          className="flex shrink-0 flex-col items-center rounded-2xl border-2 border-line bg-peach px-2.5 py-2 sm:px-3"
           aria-hidden="true"
         >
           <StampFlower />
