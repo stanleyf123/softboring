@@ -38,7 +38,7 @@ export function HistoryList() {
 
   if (error) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12">
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
         <h2 className="font-display text-2xl tracking-tight">{t("loadErrorTitle")}</h2>
         <p className="mt-3 max-w-md text-muted leading-relaxed">{t("loadError")}</p>
       </section>
@@ -47,12 +47,12 @@ export function HistoryList() {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12">
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
         <h2 className="font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
         <p className="mt-3 max-w-md text-muted leading-relaxed">{t("emptyBody")}</p>
         <Link
           href="/review"
-          className="mt-8 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper"
+          className="mt-8 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
         >
           {t("emptyCta")}
         </Link>
@@ -66,7 +66,7 @@ export function HistoryList() {
         <li key={review.id}>
           <Link
             href={`/history/${review.id}`}
-            className="block rounded-[1.75rem] bg-paper px-6 py-5"
+            className="block rounded-[1.75rem] bg-paper px-6 py-5 shadow-card"
           >
             <p className="text-sm text-muted">
               {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}

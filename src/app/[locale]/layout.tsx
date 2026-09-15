@@ -4,16 +4,16 @@ import { routing } from "@/i18n/routing";
 import { assertLocale, htmlLang } from "@/lib/locale";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Figtree, Newsreader } from "next/font/google";
+import { Fraunces, Nunito } from "next/font/google";
 import type { ReactNode } from "react";
 
-const figtree = Figtree({
+const nunito = Nunito({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
 });
 
-const newsreader = Newsreader({
+const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-display-face",
   display: "swap",
@@ -53,7 +53,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html
       lang={htmlLang(locale)}
-      className={`${figtree.variable} ${newsreader.variable} h-full antialiased`}
+      className={`${nunito.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <NextIntlClientProvider>

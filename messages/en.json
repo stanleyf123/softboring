@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "Soft Boring Weekly",
-    "description": "A quiet weekly review. Six small questions, once a week."
+    "description": "A gentle weekly review. Six small questions, once a week — not a to-do list."
   },
   "Nav": {
     "home": "Home",
@@ -10,7 +10,7 @@
     "brand": "Soft Boring"
   },
   "Footer": {
-    "note": "Soft Boring"
+    "note": "Soft Boring — a quiet weekly pause"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -18,17 +18,43 @@
     "label": "Language"
   },
   "Home": {
-    "eyebrow": "A weekly pause",
-    "title": "A quiet review for a quieter week.",
-    "lead": "Soft Boring Weekly is a once-a-week check-in. Six small questions. No dashboards, no streaks, no noise.",
+    "eyebrow": "Once a week · not a to-do list",
+    "chipOnce": "Once a week",
+    "chipQuestions": "Six small questions",
+    "chipNotTodo": "Not a to-do list",
+    "title": "A gentle weekly review, like a postcard to yourself.",
+    "lead": "Soft Boring Weekly is a quiet check-in. Sit down once, answer six small questions, and save how the week felt. No streaks, no dashboards, no chores — just a soft place to notice.",
     "cta": "Start this week's review",
-    "ideaTitle": "The idea",
-    "ideaBody": "Once a week, sit down for a few minutes. Notice what gave you energy, what took it, and what you want next week to hold. Save it. Come back later if you want to remember.",
-    "questionsTitle": "Six questions",
+    "sampleKicker": "See it filled in",
+    "sampleHeading": "This is what a week looks like.",
+    "sampleLead": "New here? Read a completed review first. Then write yours — yours starts blank.",
+    "sampleLabel": "Example",
+    "sampleStamp": "SAMPLE",
+    "sampleDate": "A sample week · late spring",
+    "sampleTitle": "A week that already happened",
+    "sampleIntro": "Demo content — a cozy, ordinary week, already answered.",
+    "sampleCta": "Write yours",
+    "sampleCtaHint": "Same six questions. Your page starts empty.",
+    "sampleAnswers": {
+      "energy": "A slow Saturday walk after the rain. The air smelled like wet leaves, and I didn't rush anywhere.",
+      "drain": "Three meetings that could have been a note. I came home tired in a way that tea couldn't fix.",
+      "lessOf": "Checking messages before I even sat down. The week felt like it started already behind.",
+      "priorities": "Finish the kitchen shelf. Call my sister. Leave one evening empty on purpose.",
+      "feeling": "Lighter than last week. Still a little tired, but the walk helped.",
+      "summary": "A slightly messy week that still had a few quiet corners."
+    },
+    "ideaOneTitle": "Sit down once",
+    "ideaOneBody": "Not every morning. Not a daily habit tracker. Just a few unhurried minutes, once a week.",
+    "ideaTwoTitle": "Six small questions",
+    "ideaTwoBody": "Energy, drain, less of, three priorities, a feeling, one sentence. That's the whole page.",
+    "ideaThreeTitle": "Save it for later",
+    "ideaThreeBody": "Come back when you want to remember. History stays quiet until you open it.",
     "pricingTitle": "Pricing",
     "pricingFree": "Free for your first four weeks of reviews.",
     "pricingPaid": "A small paid plan later unlocks history and trends.",
-    "pricingNote": "Payments are not connected yet. This is a teaser for what is coming."
+    "pricingNote": "Payments are not connected yet. This is a teaser for what is coming.",
+    "bottomTitle": "Your week can have a quiet corner too.",
+    "bottomBody": "No setup. No account yet. Just six questions and a save button."
   },
   "Questions": {
     "energy": "What gave you the most energy this week?",

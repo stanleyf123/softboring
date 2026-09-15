@@ -72,13 +72,13 @@ function ReviewFormFields() {
 
   if (saved) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12">
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
         <h2 className="font-display text-3xl tracking-tight">{t("successTitle")}</h2>
         <p className="mt-4 max-w-md text-muted leading-relaxed">{t("successBody")}</p>
         <div className="mt-10 flex flex-wrap gap-4 text-sm">
           <Link
             href="/history"
-            className="rounded-full bg-accent px-5 py-2.5 text-paper"
+            className="rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
           >
             {t("viewHistory")}
           </Link>
@@ -105,7 +105,7 @@ function ReviewFormFields() {
             value={draft[field]}
             onChange={(event) => update(field, event.target.value)}
             rows={field === "summary" ? 2 : 3}
-            className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground outline-none focus:border-accent"
+            className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
           />
         </label>
       ))}
@@ -124,8 +124,8 @@ function ReviewFormFields() {
                 aria-pressed={selected}
                 className={
                   selected
-                    ? "h-12 w-12 rounded-full bg-accent text-paper"
-                    : "h-12 w-12 rounded-full border border-line bg-paper text-muted"
+                    ? "h-12 w-12 rounded-full bg-accent text-paper shadow-card"
+                    : "h-12 w-12 rounded-full border border-line bg-peach/60 text-muted"
                 }
               >
                 {value}
@@ -139,7 +139,7 @@ function ReviewFormFields() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-full bg-accent px-6 py-3 text-paper disabled:opacity-60"
+          className="rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
         >
           {saving ? t("saving") : t("submit")}
         </button>

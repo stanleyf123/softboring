@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "Soft Boring Weekly",
-    "description": "一份安靜的每週回顧。每週六個小問題。"
+    "description": "一份溫柔的每週回顧。每週六個小問題——不是待辦清單。"
   },
   "Nav": {
     "home": "首頁",
@@ -10,7 +10,7 @@
     "brand": "Soft Boring"
   },
   "Footer": {
-    "note": "Soft Boring"
+    "note": "Soft Boring — 每週一次的安靜停頓"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -18,17 +18,43 @@
     "label": "語言"
   },
   "Home": {
-    "eyebrow": "每週一次的停下來",
-    "title": "一份安靜的回顧，換一週更輕的節奏。",
-    "lead": "Soft Boring Weekly 是每週一次的小停頓。六個小問題。沒有儀表板、沒有連續打卡、也沒有噪音。",
+    "eyebrow": "每週一次 · 不是待辦清單",
+    "chipOnce": "每週一次",
+    "chipQuestions": "六個小問題",
+    "chipNotTodo": "不是待辦清單",
+    "title": "一份溫柔的每週回顧，像寄給自己的明信片。",
+    "lead": "Soft Boring Weekly 是每週一次的小停頓。坐下來，回答六個小問題，把這週的感覺存起來。沒有連續打卡、沒有儀表板、也不是待辦清單——只是一個安靜的角落，看看這週過得怎麼樣。",
     "cta": "開始本週回顧",
-    "ideaTitle": "這個想法",
-    "ideaBody": "每週坐下來幾分鐘。看看什麼給你能量、什麼耗掉它、以及你希望下週留下什麼。存起來。想起來的時候，再回來看看。",
-    "questionsTitle": "六個問題",
+    "sampleKicker": "先看一週寫好的樣子",
+    "sampleHeading": "真正的回顧，長這樣。",
+    "sampleLead": "第一次來？先讀一份寫好的回顧。然後再寫你的——你的會從空白開始。",
+    "sampleLabel": "範例",
+    "sampleStamp": "範例",
+    "sampleDate": "示範的一週 · 晚春",
+    "sampleTitle": "已經過完的一週",
+    "sampleIntro": "這是示範內容——平凡、柔軟、已經寫好的一週。",
+    "sampleCta": "寫你自己的",
+    "sampleCtaHint": "同樣六個問題。你的頁面是空白的。",
+    "sampleAnswers": {
+      "energy": "週六雨停之後，慢慢走了一段路。空氣有濕葉子的味道，我哪裡都不趕。",
+      "drain": "三場其實寫個便條就好的會議。回家時累得連喝茶都救不了。",
+      "lessOf": "還沒坐下，就先滑訊息。整週都像一開始就落後。",
+      "priorities": "把廚房層架做完。打電話給妹妹。故意空出一個晚上。",
+      "feeling": "比上週輕一點。還是有點累，但那次散步有幫忙。",
+      "summary": "有一點亂的一週，但還是留了幾個安靜的角落。"
+    },
+    "ideaOneTitle": "坐下來一次就好",
+    "ideaOneBody": "不是每天早上。也不是習慣打卡。只是每週幾分鐘，不趕。",
+    "ideaTwoTitle": "六個小問題",
+    "ideaTwoBody": "能量、消耗、少做一點、三件優先、整體感覺、一句話。整頁就這些。",
+    "ideaThreeTitle": "存起來以後看",
+    "ideaThreeBody": "想起來的時候再回來。紀錄會安靜地待著，直到你打開它。",
     "pricingTitle": "方案",
     "pricingFree": "前四週的回顧免費。",
     "pricingPaid": "之後以小額付費解鎖歷史紀錄與趨勢。",
-    "pricingNote": "付款尚未接上。這只是即將推出內容的預告。"
+    "pricingNote": "付款尚未接上。這只是即將推出內容的預告。",
+    "bottomTitle": "你的一週，也可以有一個安靜的角落。",
+    "bottomBody": "不用設定。現在也還不用帳號。就是六個問題，再按儲存。"
   },
   "Questions": {
     "energy": "這週最給你能量的是什麼？",

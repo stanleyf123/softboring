@@ -2,12 +2,16 @@
 
 :root {
   color-scheme: light;
-  --background: #f3f1ec;
-  --foreground: #3a3732;
-  --paper: #faf8f4;
-  --muted: #8b857c;
-  --line: #e4dfd6;
-  --accent: #6d7a68;
+  --background: #f6ebe3;
+  --foreground: #4a3c35;
+  --paper: #fff8f2;
+  --muted: #9a7f74;
+  --line: #ead6c8;
+  --accent: #c47f6e;
+  --blush: #f4d4c6;
+  --peach: #f8dcc8;
+  --mint: #d5e6d8;
+  --sage: #7d9b8c;
 }
 
 @theme inline {
@@ -17,6 +21,12 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-blush: var(--blush);
+  --color-peach: var(--peach);
+  --color-mint: var(--mint);
+  --color-sage: var(--sage);
+  --shadow-soft: 0 12px 32px rgba(154, 111, 90, 0.12);
+  --shadow-card: 0 6px 20px rgba(154, 111, 90, 0.08);
   --font-sans: var(--font-body), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
     sans-serif;
   --font-display: var(--font-display-face), "Noto Serif TC", "Songti TC", serif;
@@ -31,6 +41,11 @@ body {
 body {
   font-family: var(--font-sans);
   min-height: 100%;
+  background-image:
+    radial-gradient(ellipse 55% 42% at 8% -4%, rgba(244, 212, 198, 0.85), transparent 62%),
+    radial-gradient(ellipse 42% 36% at 96% 8%, rgba(213, 230, 216, 0.6), transparent 58%),
+    radial-gradient(ellipse 48% 32% at 82% 100%, rgba(248, 220, 200, 0.5), transparent 52%);
+  background-attachment: fixed;
 }
 
 textarea,

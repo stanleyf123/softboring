@@ -48,7 +48,7 @@ export function HistoryDetail({ id }: { id: string }) {
 
   if (error) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12">
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
         <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
         <p className="mt-3 max-w-md text-muted leading-relaxed">{t("loadError")}</p>
         <Link href="/history" className="mt-8 inline-block text-sm text-accent">
@@ -60,7 +60,7 @@ export function HistoryDetail({ id }: { id: string }) {
 
   if (!review) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12">
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
         <h1 className="font-display text-3xl tracking-tight">{t("notFound")}</h1>
         <p className="mt-3 max-w-md text-muted leading-relaxed">
           {t("notFoundBody")}
