@@ -1,7 +1,7 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
-import { assertLocale } from "@/lib/locale";
+import { assertLocale, htmlLang } from "@/lib/locale";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Figtree, Newsreader } from "next/font/google";
@@ -46,12 +46,13 @@ type Props = {
 };
 
 export default async function LocaleLayout({ children, params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(assertLocale(locale));
+  const { locale: localeParam } = await params;
+  const locale = assertLocale(localeParam);
+  setRequestLocale(locale);
 
   return (
     <html
-      lang={locale}
+      lang={htmlLang(locale)}
       className={`${figtree.variable} ${newsreader.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">

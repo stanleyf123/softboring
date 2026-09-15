@@ -8,3 +8,10 @@ export function assertLocale(locale: string): AppLocale {
   }
   return locale;
 }
+
+export function htmlLang(locale: AppLocale): string {
+  if (locale === "zh-tw") {
+    return "zh-TW";
+  }
+  return locale;
+}

@@ -28,9 +28,9 @@ export function LocaleSwitcher() {
       <span aria-hidden="true">·</span>
       <Link
         href={pathname}
-        locale="zh-TW"
+        locale="zh-tw"
         className={
-          locale === "zh-TW"
+          locale === "zh-tw"
             ? "rounded-full px-2 py-1 text-foreground"
             : "rounded-full px-2 py-1 hover:text-foreground"
         }
