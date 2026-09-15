@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { ShareToWall } from "@/components/share-to-wall";
 import { ensureLocalReviewsMigrated, fetchReview, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useFormatter, useTranslations } from "next-intl";
@@ -21,6 +22,9 @@ export function HistoryDetail({ id }: { id: string }) {
   const format = useFormatter();
   const hydrated = useHydrated();
   const [review, setReview] = useState<Review | null | undefined>(undefined);
+  const [wall, setWall] = useState<{ noteId: string | null; canShare: boolean } | null>(
+    null,
+  );
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState(false);
 
@@ -44,6 +48,7 @@ export function HistoryDetail({ id }: { id: string }) {
         }
         if ("review" in next) {
           setReview(next.review);
+          setWall(next.wall);
         }
       } catch {
         if (!cancelled) setError(true);
@@ -137,6 +142,9 @@ export function HistoryDetail({ id }: { id: string }) {
           </dd>
         </div>
       </dl>
+      {wall?.canShare ? (
+        <ShareToWall reviewId={review.id} initialNoteId={wall.noteId} />
+      ) : null}
     </article>
   );
 }

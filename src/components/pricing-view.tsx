@@ -40,6 +40,7 @@ export async function PricingView({
             <li>{t("featureHistoryFree")}</li>
             <li className="text-muted">{t("featureHistoryLocked")}</li>
             <li className="text-muted">{t("featureTrendsFree")}</li>
+            <li className="text-muted">{t("featureWallFree")}</li>
           </ul>
         </article>
 
@@ -61,6 +62,7 @@ export async function PricingView({
             <li>{t("featureWrite")}</li>
             <li>{t("featureHistoryPlus")}</li>
             <li>{t("featureTrendsPlus")}</li>
+            <li>{t("featureWallPlus")}</li>
             <li>{t("featurePortal")}</li>
           </ul>
           <div className="mt-8">

@@ -12,6 +12,9 @@
   --peach: #f8dcc8;
   --mint: #d5e6d8;
   --sage: #7d9b8c;
+  --cream: #fff4e8;
+  --lemon: #f3e3b6;
+  --sky: #d5e4ea;
 }
 
 @theme inline {
@@ -25,6 +28,9 @@
   --color-peach: var(--peach);
   --color-mint: var(--mint);
   --color-sage: var(--sage);
+  --color-cream: var(--cream);
+  --color-lemon: var(--lemon);
+  --color-sky: var(--sky);
   --shadow-soft: 0 12px 32px rgba(154, 111, 90, 0.12);
   --shadow-card: 0 6px 20px rgba(154, 111, 90, 0.08);
   --font-sans: var(--font-body), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",

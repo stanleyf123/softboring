@@ -1,4 +1,5 @@
 import { getReviewForOwner, listReviewsForOwner } from "@/db/reviews";
+import { getWallNoteIdForReview } from "@/db/wall";
 import { isHistoryIndexUnlocked } from "@/lib/history-access";
 import { getReviewAccess } from "@/lib/review-access";
 import { NextResponse } from "next/server";
@@ -28,7 +29,13 @@ export async function GET(_request: Request, context: Context) {
       );
     }
 
-    return NextResponse.json({ review });
+    return NextResponse.json({
+      review,
+      wall: {
+        noteId: access.owner.kind === "user" ? getWallNoteIdForReview(id) : null,
+        canShare: access.owner.kind === "user",
+      },
+    });
   } catch (error) {
     console.error("GET /api/reviews/[id] failed", error);
     return NextResponse.json({ error: "Could not load review." }, { status: 500 });

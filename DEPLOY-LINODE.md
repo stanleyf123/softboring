@@ -79,6 +79,8 @@ STRIPE_WEBHOOK_SECRET=
 STRIPE_PRICE_MONTHLY=
 # STRIPE_PRICE_YEARLY=
 # NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+# Optional sticker one-time prices (Soft Wall). Unset = catalog cents via price_data.
+# STRIPE_PRICE_STICKER_PACK=
 
 # 本機開發用 3000；這台 VPS 上 99gold 已占用 3000，Soft Boring 用 3001。
 # 實際監聽看 systemd 的 ExecStart（--port 3001），不要改成 3000。

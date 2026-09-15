@@ -91,7 +91,14 @@ export async function fetchReviews(): Promise<{
 
 export async function fetchReview(
   id: string,
-): Promise<{ review: Review } | { locked: true; createdAt?: string } | undefined> {
+): Promise<
+  | {
+      review: Review;
+      wall: { noteId: string | null; canShare: boolean };
+    }
+  | { locked: true; createdAt?: string }
+  | undefined
+> {
   const response = await fetch(`/api/reviews/${encodeURIComponent(id)}`, {
     cache: "no-store",
   });
@@ -103,8 +110,14 @@ export async function fetchReview(
     };
     if (data.locked) return { locked: true, createdAt: data.createdAt };
   }
-  const data = await readJsonResponse<{ review: Review }>(response);
-  return { review: data.review };
+  const data = await readJsonResponse<{
+    review: Review;
+    wall?: { noteId: string | null; canShare: boolean };
+  }>(response);
+  return {
+    review: data.review,
+    wall: data.wall ?? { noteId: null, canShare: false },
+  };
 }
 
 export async function createReview(
