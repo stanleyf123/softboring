@@ -4,6 +4,7 @@ import type { Review, ReviewAnswers } from "@/lib/review-types";
 type ReviewRow = {
   id: string;
   guest_id: string;
+  user_id: string | null;
   energy: string;
   drain: string;
   less_of: string;
@@ -20,6 +21,10 @@ export type NewReview = ReviewAnswers & {
   locale?: string | null;
 };
 
+export type ReviewOwner =
+  | { kind: "user"; userId: string; guestId: string }
+  | { kind: "guest"; guestId: string };
+
 function rowToReview(row: ReviewRow): Review {
   return {
     id: row.id,
@@ -34,19 +39,40 @@ function rowToReview(row: ReviewRow): Review {
   };
 }
 
-export function listReviewsForGuest(guestId: string): Review[] {
-  const rows = getDb()
-    .prepare(
-      `SELECT * FROM reviews WHERE guest_id = ? ORDER BY datetime(created_at) DESC`,
-    )
-    .all(guestId) as ReviewRow[];
+export function listReviewsForOwner(owner: ReviewOwner): Review[] {
+  const db = getDb();
+  const rows =
+    owner.kind === "user"
+      ? (db
+          .prepare(
+            `SELECT * FROM reviews WHERE user_id = ? ORDER BY datetime(created_at) DESC`,
+          )
+          .all(owner.userId) as ReviewRow[])
+      : (db
+          .prepare(
+            `SELECT * FROM reviews
+             WHERE guest_id = ? AND user_id IS NULL
+             ORDER BY datetime(created_at) DESC`,
+          )
+          .all(owner.guestId) as ReviewRow[]);
   return rows.map(rowToReview);
 }
 
-export function getReviewForGuest(guestId: string, id: string): Review | undefined {
-  const row = getDb()
-    .prepare(`SELECT * FROM reviews WHERE id = ? AND guest_id = ?`)
-    .get(id, guestId) as ReviewRow | undefined;
+export function getReviewForOwner(
+  owner: ReviewOwner,
+  id: string,
+): Review | undefined {
+  const db = getDb();
+  const row =
+    owner.kind === "user"
+      ? (db
+          .prepare(`SELECT * FROM reviews WHERE id = ? AND user_id = ?`)
+          .get(id, owner.userId) as ReviewRow | undefined)
+      : (db
+          .prepare(
+            `SELECT * FROM reviews WHERE id = ? AND guest_id = ? AND user_id IS NULL`,
+          )
+          .get(id, owner.guestId) as ReviewRow | undefined);
   return row ? rowToReview(row) : undefined;
 }
 
@@ -56,31 +82,41 @@ function getReviewRow(id: string): ReviewRow | undefined {
     .get(id) as ReviewRow | undefined;
 }
 
-export function createReview(guestId: string, input: NewReview): Review {
-  const id = input.id ?? crypto.randomUUID();
-  const createdAt = input.createdAt ?? new Date().toISOString();
-  const locale = input.locale ?? null;
-
+function insertReview(
+  guestId: string,
+  userId: string | null,
+  input: NewReview & { id: string; createdAt: string },
+) {
   getDb()
     .prepare(
       `INSERT INTO reviews (
-        id, guest_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
+        id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
       ) VALUES (
-        @id, @guest_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @created_at
+        @id, @guest_id, @user_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @created_at
       )`,
     )
     .run({
-      id,
+      id: input.id,
       guest_id: guestId,
+      user_id: userId,
       energy: input.energy,
       drain: input.drain,
       less_of: input.lessOf,
       priorities: input.priorities,
       feeling: input.feeling,
       summary: input.summary,
-      locale,
-      created_at: createdAt,
+      locale: input.locale ?? null,
+      created_at: input.createdAt,
     });
+}
+
+export function createReview(owner: ReviewOwner, input: NewReview): Review {
+  const id = input.id ?? crypto.randomUUID();
+  const createdAt = input.createdAt ?? new Date().toISOString();
+  const locale = input.locale ?? null;
+  const userId = owner.kind === "user" ? owner.userId : null;
+
+  insertReview(owner.guestId, userId, { ...input, id, createdAt, locale });
 
   return {
     id,
@@ -100,18 +136,19 @@ export type ImportResult = {
   skipped: number;
 };
 
-export function importReviewsForGuest(
-  guestId: string,
+export function importReviewsForOwner(
+  owner: ReviewOwner,
   reviews: Array<NewReview & { id: string; createdAt: string }>,
 ): ImportResult {
   const db = getDb();
   const insert = db.prepare(
     `INSERT INTO reviews (
-      id, guest_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
+      id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
     ) VALUES (
-      @id, @guest_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @created_at
+      @id, @guest_id, @user_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @created_at
     )`,
   );
+  const userId = owner.kind === "user" ? owner.userId : null;
 
   const run = db.transaction((items: typeof reviews) => {
     let imported = 0;
@@ -123,7 +160,8 @@ export function importReviewsForGuest(
       }
       insert.run({
         id: item.id,
-        guest_id: guestId,
+        guest_id: owner.guestId,
+        user_id: userId,
         energy: item.energy,
         drain: item.drain,
         less_of: item.lessOf,
@@ -139,4 +177,19 @@ export function importReviewsForGuest(
   });
 
   return run(reviews);
+}
+
+export function claimGuestReviews(userId: string, guestId: string) {
+  return getDb()
+    .prepare(
+      `UPDATE reviews SET user_id = ? WHERE guest_id = ? AND user_id IS NULL`,
+    )
+    .run(userId, guestId).changes;
+}
+
+export function countReviewsForUser(userId: string) {
+  const row = getDb()
+    .prepare(`SELECT COUNT(*) AS n FROM reviews WHERE user_id = ?`)
+    .get(userId) as { n: number };
+  return row.n;
 }

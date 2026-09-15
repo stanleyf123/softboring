@@ -2,7 +2,7 @@
 
 Soft Boring Weekly 與 [99gold](https://github.com/stanleyf123/99gold) **共用同一台 Linode VPS**，但是 **另一個站點**：另一套目錄、環境檔、systemd、Nginx `server`、SQLite。不要和 99gold 共用資料庫或服務單元。
 
-每週回顧存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate）。
+每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id`。
 
 目標主機範例：`172.237.11.195`（與 99gold 文件裡同一台，1GB RAM + swap）。
 
@@ -70,17 +70,22 @@ sudo -u www-data SQLITE_PATH=/var/www/softboring/data/softboring.sqlite npm run 
 ```bash
 SITE_URL=https://softboring.com
 SQLITE_PATH=/var/www/softboring/data/softboring.sqlite
+ADMIN_TOKEN=請改成足夠長的隨機字串
 NODE_ENV=production
 
 # 本機開發用 3000；這台 VPS 上 99gold 已占用 3000，Soft Boring 用 3001。
 # 實際監聽看 systemd 的 ExecStart（--port 3001），不要改成 3000。
 ```
 
-不要把真實密鑰寫進 git。也不要複製 `/etc/99gold.env` 來用。
+產生權杖範例：`openssl rand -hex 32`。不要把真實密鑰寫進 git。也不要複製 `/etc/99gold.env` 來用（99gold 的 `ADMIN_TOKEN` 是另一組）。
 
-`SITE_URL` 是反代後面的公開 origin。Nginx 會轉 `Host` 與 `X-Forwarded-Proto`，但 Next.js 的 `request.url` 仍可能是 `http://127.0.0.1:3001`。以後若有 **絕對** 轉址，用 `SITE_URL`（去掉結尾斜線）當 origin。
+管理後台：`https://softboring.com/admin/login`（不在前台導覽列）。也可用標頭 `Authorization: Bearer <ADMIN_TOKEN>` 或 `x-admin-token` 呼叫 `/api/admin/*`。
 
-Supabase / Stripe 是之後可選階段，v1 部署不需要。
+`SITE_URL` 除了給登入／管理 cookie 加 `Secure`，也是反代後面絕對轉址的公開 origin。不要省略。
+
+`SITE_URL` 是反代後面的公開 origin。Nginx 會轉 `Host` 與 `X-Forwarded-Proto`，但 Next.js 的 `request.url` 仍可能是 `http://127.0.0.1:3001`。凡是 **絕對** 轉址（例如 `/api/admin/session` 的 `Location`）必須用 `SITE_URL`（去掉結尾斜線）當 origin，不要用 `request.url`。
+
+Stripe / OAuth / 驗證信是之後可選階段，v1 部署不需要。
 
 ## 4. systemd：網站行程
 
@@ -232,6 +237,9 @@ sudo systemctl list-timers | grep -i certbot
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/en
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/zh-tw
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/admin/login
+# 未帶 token 應不是 200 儀表板
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/admin
 # 99gold 應仍在 3000
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3000/
 sudo systemctl status softboring.service

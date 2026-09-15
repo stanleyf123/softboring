@@ -7,6 +7,8 @@
     "home": "首頁",
     "review": "回顧",
     "history": "紀錄",
+    "login": "登入",
+    "account": "帳號",
     "brand": "Soft Boring"
   },
   "Footer": {
@@ -54,7 +56,7 @@
     "pricingPaid": "之後以小額付費解鎖歷史紀錄與趨勢。",
     "pricingNote": "付款尚未接上。這只是即將推出內容的預告。",
     "bottomTitle": "你的一週，也可以有一個安靜的角落。",
-    "bottomBody": "不用設定。現在也還不用帳號。就是六個問題，再按儲存。"
+    "bottomBody": "不用設定。可以先用訪客身分寫，或註冊帳號，換裝置也能看到紀錄。"
   },
   "Questions": {
     "energy": "這週最給你能量的是什麼？",
@@ -92,7 +94,7 @@
   "HistoryDetail": {
     "back": "回到紀錄",
     "notFound": "找不到這篇回顧。",
-    "notFoundBody": "可能是另一個瀏覽器工作階段，或連結不正確。",
+    "notFoundBody": "可能屬於另一個帳號或瀏覽器，或連結不正確。",
     "loadErrorTitle": "打不開這篇回顧",
     "loadError": "請稍後再試。",
     "savedOn": "儲存於 {date}"
@@ -100,5 +102,41 @@
   "NotFound": {
     "title": "沒有這個頁面。",
     "home": "回到首頁"
+  },
+  "Auth": {
+    "loginTitle": "歡迎回來",
+    "loginLead": "登入後，每週回顧會跟著你的帳號走，不只留在這個瀏覽器。",
+    "registerTitle": "建立帳號",
+    "registerLead": "換瀏覽器也能看到紀錄。不想註冊的話，仍可以用訪客身分寫。",
+    "email": "電子郵件",
+    "password": "密碼",
+    "passwordHint": "至少 8 個字。目前不用驗證信箱。",
+    "loginSubmit": "登入",
+    "registerSubmit": "建立帳號",
+    "submitting": "請稍候…",
+    "toRegister": "還沒有帳號？",
+    "toRegisterLink": "註冊",
+    "toLogin": "已經有帳號？",
+    "toLoginLink": "登入",
+    "guestHint": "如果這個瀏覽器裡已經用訪客身分寫過，登入時會把那些回顧接到你的帳號。",
+    "error": {
+      "invalid_credentials": "電子郵件或密碼不對。",
+      "email_taken": "這個信箱已經有帳號了。試試登入。",
+      "weak_password": "請使用 8 到 72 個字。",
+      "invalid_email": "這不像是電子郵件地址。",
+      "generic": "出了一點問題。請稍後再試。"
+    }
+  },
+  "Account": {
+    "title": "你的帳號",
+    "lead": "這是你登入用的信箱，安靜地放在這裡。",
+    "email": "電子郵件",
+    "joined": "加入時間",
+    "since": "{date} 加入",
+    "reviewsLabel": "回顧",
+    "reviewCount": "已儲存 {count} 篇",
+    "history": "查看紀錄",
+    "logout": "登出",
+    "loggingOut": "登出中…"
   }
 }

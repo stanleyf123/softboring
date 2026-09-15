@@ -1,6 +1,6 @@
-import { importReviewsForGuest } from "@/db/reviews";
-import { getOrCreateGuestId } from "@/lib/guest";
+import { importReviewsForOwner } from "@/db/reviews";
 import { InputError, parseImportReviews } from "@/lib/review-input";
+import { getReviewOwner } from "@/lib/review-owner";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -10,8 +10,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const reviews = parseImportReviews(body);
-    const guestId = await getOrCreateGuestId();
-    const result = importReviewsForGuest(guestId, reviews);
+    const owner = await getReviewOwner();
+    const result = importReviewsForOwner(owner, reviews);
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof InputError) {

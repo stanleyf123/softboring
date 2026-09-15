@@ -1,6 +1,7 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
+import { getCurrentUser } from "@/lib/auth";
 import { assertLocale, htmlLang } from "@/lib/locale";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -49,6 +50,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   const { locale: localeParam } = await params;
   const locale = assertLocale(localeParam);
   setRequestLocale(locale);
+  const user = await getCurrentUser();
 
   return (
     <html
@@ -57,7 +59,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <NextIntlClientProvider>
-          <SiteHeader />
+          <SiteHeader email={user?.email ?? null} />
           <main className="mx-auto w-full max-w-3xl flex-1 px-6 pb-16">
             {children}
           </main>

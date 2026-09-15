@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-/** HttpOnly guest cookie. Real auth (email / OAuth) comes later. */
+/** HttpOnly guest cookie for anonymous reviews. Logged-in reviews use user_id. */
 export const GUEST_COOKIE = "softboring_guest";
 
 const UUID_RE =

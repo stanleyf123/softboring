@@ -17,6 +17,15 @@ const db = new Database(sqlitePath);
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 db.exec(readFileSync(join(root, "scripts/schema.sql"), "utf8"));
+
+const cols = db.prepare("PRAGMA table_info(reviews)").all();
+if (!cols.some((col) => col.name === "user_id")) {
+  db.exec("ALTER TABLE reviews ADD COLUMN user_id TEXT");
+}
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)",
+);
+
 db.close();
 
 console.log(`SQLite ready at ${sqlitePath}`);

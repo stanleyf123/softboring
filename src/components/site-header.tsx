@@ -11,9 +11,13 @@ const links = [
   { href: "/history", key: "history" as const },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ email }: { email: string | null }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
+  const authHref = email ? "/account" : "/login";
+  const authKey = email ? ("account" as const) : ("login" as const);
+  const authActive =
+    pathname === authHref || pathname.startsWith(`${authHref}/`);
 
   return (
     <header className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-4 px-6 py-6">
@@ -45,6 +49,16 @@ export function SiteHeader() {
             </Link>
           );
         })}
+        <Link
+          href={authHref}
+          className={
+            authActive
+              ? "rounded-full bg-blush px-2.5 py-1 text-foreground"
+              : "rounded-full px-2.5 py-1 hover:text-foreground"
+          }
+        >
+          {t(authKey)}
+        </Link>
         <LocaleSwitcher />
       </nav>
     </header>
