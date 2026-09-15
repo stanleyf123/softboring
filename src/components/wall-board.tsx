@@ -234,7 +234,11 @@ export function WallBoard({
     } catch {
       void loadNotes();
     }
-    event.currentTarget.releasePointerCapture(event.pointerId);
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      // Capture may already have been released.
+    }
   }
 
   async function sendComment(event: React.FormEvent) {
@@ -449,7 +453,7 @@ export function WallBoard({
         </div>
 
         {locked ? (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6">
+          <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center px-6">
             <div className="pointer-events-auto max-w-md rounded-[2rem] bg-paper/95 px-6 py-8 text-center shadow-soft">
               <h2 className="font-display text-2xl tracking-tight">{t("lockedTitle")}</h2>
               <p className="mt-3 leading-relaxed text-muted">
@@ -477,8 +481,8 @@ export function WallBoard({
       </div>
 
       {softPlus && shopOpen ? (
-        <section className="mx-auto mt-8 max-w-3xl px-6">
-          <div className="rounded-[2rem] bg-paper px-6 py-6 shadow-card sm:px-8">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
@@ -550,7 +554,7 @@ export function WallBoard({
               <p className="mt-3 text-sm text-muted">{t("paymentsOff")}</p>
             ) : null}
           </div>
-        </section>
+        </div>
       ) : null}
 
       {selectedId && detail ? (

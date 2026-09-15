@@ -64,7 +64,9 @@ export function ShareToWall({
 
   return (
     <div className="mt-10 rounded-[1.75rem] bg-mint/60 px-6 py-5 shadow-card">
-      <p className="font-display text-lg tracking-tight">{t("shareTitle")}</p>
+      <p className="font-display text-lg tracking-tight">
+        {noteId ? t("sharedTitle") : t("shareTitle")}
+      </p>
       <p className="mt-2 text-sm leading-relaxed text-muted">
         {noteId ? t("sharedBody") : t("shareBody")}
       </p>
