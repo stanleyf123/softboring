@@ -1,19 +1,10 @@
 import Database from "better-sqlite3";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { ensureSqliteDir, getSqlitePath } from "./path";
+import { migrateDb } from "./migrate";
 
 type GlobalDb = typeof globalThis & {
   __softboringSqlite?: Database.Database;
 };
-
-function schemaSql() {
-  return readFileSync(join(process.cwd(), "scripts/schema.sql"), "utf8");
-}
-
-export function migrateDb(db: Database.Database) {
-  db.exec(schemaSql());
-}
 
 function openDatabase() {
   const sqlitePath = getSqlitePath();

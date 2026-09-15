@@ -7,6 +7,8 @@
     "home": "Home",
     "review": "Review",
     "history": "History",
+    "login": "Log in",
+    "account": "Account",
     "brand": "Soft Boring"
   },
   "Footer": {
@@ -54,7 +56,7 @@
     "pricingPaid": "A small paid plan later unlocks history and trends.",
     "pricingNote": "Payments are not connected yet. This is a teaser for what is coming.",
     "bottomTitle": "Your week can have a quiet corner too.",
-    "bottomBody": "No setup. No account yet. Just six questions and a save button."
+    "bottomBody": "No setup required. Write as a guest, or create an account so history follows you."
   },
   "Questions": {
     "energy": "What gave you the most energy this week?",
@@ -92,7 +94,7 @@
   "HistoryDetail": {
     "back": "Back to history",
     "notFound": "This review is not here.",
-    "notFoundBody": "It may belong to another browser, or the link may be wrong.",
+    "notFoundBody": "It may belong to another account or browser, or the link may be wrong.",
     "loadErrorTitle": "Could not open this review",
     "loadError": "Try again in a moment.",
     "savedOn": "Saved {date}"
@@ -100,5 +102,41 @@
   "NotFound": {
     "title": "This page is not here.",
     "home": "Back home"
+  },
+  "Auth": {
+    "loginTitle": "Welcome back",
+    "loginLead": "Log in to keep your weekly reviews with you, on this browser and the next.",
+    "registerTitle": "Create an account",
+    "registerLead": "Save reviews across browsers. You can still write as a guest if you prefer.",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters. No email verification for now.",
+    "loginSubmit": "Log in",
+    "registerSubmit": "Create account",
+    "submitting": "Please wait…",
+    "toRegister": "Need an account?",
+    "toRegisterLink": "Register",
+    "toLogin": "Already have an account?",
+    "toLoginLink": "Log in",
+    "guestHint": "If you already wrote as a guest in this browser, those reviews will move to your account when you log in.",
+    "error": {
+      "invalid_credentials": "Email or password is not right.",
+      "email_taken": "That email already has an account. Try logging in.",
+      "weak_password": "Use 8 to 72 characters.",
+      "invalid_email": "That does not look like an email address.",
+      "generic": "Something went wrong. Try again in a moment."
+    }
+  },
+  "Account": {
+    "title": "Your account",
+    "lead": "A quiet place for the email you signed in with.",
+    "email": "Email",
+    "joined": "Joined",
+    "since": "Since {date}",
+    "reviewsLabel": "Reviews",
+    "reviewCount": "{count} saved",
+    "history": "See history",
+    "logout": "Log out",
+    "loggingOut": "Logging out…"
   }
 }

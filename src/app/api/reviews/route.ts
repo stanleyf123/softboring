@@ -1,15 +1,15 @@
-import { createReview, listReviewsForGuest } from "@/db/reviews";
-import { getOrCreateGuestId } from "@/lib/guest";
-import { InputError, parseAnswers } from "@/lib/review-input";
 import { NextResponse } from "next/server";
+import { createReview, listReviewsForOwner } from "@/db/reviews";
+import { InputError, parseAnswers } from "@/lib/review-input";
+import { getReviewOwner } from "@/lib/review-owner";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const guestId = await getOrCreateGuestId();
-    const reviews = listReviewsForGuest(guestId);
+    const owner = await getReviewOwner();
+    const reviews = listReviewsForOwner(owner);
     return NextResponse.json({ reviews });
   } catch (error) {
     console.error("GET /api/reviews failed", error);
@@ -21,8 +21,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const answers = parseAnswers(body);
-    const guestId = await getOrCreateGuestId();
-    const review = createReview(guestId, answers);
+    const owner = await getReviewOwner();
+    const review = createReview(owner, answers);
     return NextResponse.json({ review }, { status: 201 });
   } catch (error) {
     if (error instanceof InputError) {

@@ -1,5 +1,5 @@
-import { getReviewForGuest } from "@/db/reviews";
-import { getOrCreateGuestId } from "@/lib/guest";
+import { getReviewForOwner } from "@/db/reviews";
+import { getReviewOwner } from "@/lib/review-owner";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -12,8 +12,8 @@ type Context = {
 export async function GET(_request: Request, context: Context) {
   try {
     const { id } = await context.params;
-    const guestId = await getOrCreateGuestId();
-    const review = getReviewForGuest(guestId, id);
+    const owner = await getReviewOwner();
+    const review = getReviewForOwner(owner, id);
     if (!review) {
       return NextResponse.json({ error: "Review not found." }, { status: 404 });
     }
