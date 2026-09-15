@@ -21,6 +21,8 @@ type FullNote = TeaserNote & {
   feeling: number | null;
   summary: string;
   createdAt: string;
+  pinned?: boolean;
+  ownerSoftPlus?: boolean;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
   energy?: string;
   drain?: string;
@@ -231,7 +233,7 @@ export function WallBoard({
     setNotes((list) =>
       list.map((note) =>
         note.id === current.id
-          ? { ...note, x, y, z: 10_000 }
+          ? { ...note, x, y, z: "pinned" in note && note.pinned ? 100_000 : 10_000 }
           : note,
       ),
     );
@@ -302,6 +304,24 @@ export function WallBoard({
     setNotes((list) => list.filter((item) => item.id !== id));
     setSelectedId(null);
     setDetail(null);
+  }
+
+  async function togglePin(note: FullNote) {
+    if (busy) return;
+    setBusy("pin");
+    try {
+      const data = await readJson<{ note: FullNote }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(note.id)}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pin: !note.pinned }),
+        }),
+      );
+      setDetail(data.note);
+      await loadNotes();
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function placeSticker(stickerId: string) {
@@ -388,6 +408,9 @@ export function WallBoard({
             {softPlus ? (
               <p className="mt-3 text-sm text-muted">{t("dragHint")}</p>
             ) : null}
+            {softPlus ? (
+              <p className="mt-1 text-sm text-muted">{t("pinHint")}</p>
+            ) : null}
           </div>
           {softPlus ? (
             <button
@@ -471,7 +494,19 @@ export function WallBoard({
                     </span>
                   ) : (
                     <>
-                      <span className="line-clamp-5 text-sm leading-relaxed">
+                      <span className="flex items-center justify-between gap-2 text-[11px]">
+                        {full.ownerSoftPlus ? (
+                          <span className="rounded-full bg-mint/90 px-2 py-0.5">{t("plusBadge")}</span>
+                        ) : (
+                          <span />
+                        )}
+                        {full.pinned ? (
+                          <span className="rounded-full bg-paper/80 px-2 py-0.5 text-muted">
+                            {t("pinned")}
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="mt-2 line-clamp-5 text-sm leading-relaxed">
                         {full.excerpt || t("untitled")}
                       </span>
                       <span className="mt-4 flex items-center justify-between text-xs text-muted">
@@ -630,9 +665,11 @@ export function WallBoard({
               </button>
             </div>
             <p className="mt-1 text-sm text-muted">
+              {detail.ownerSoftPlus ? `${t("plusBadge")} · ` : ""}
               {detail.feeling ? t("feeling", { value: detail.feeling }) : null}
               {detail.mine ? ` · ${t("yours")}` : ` · ${t("neighbor")}`}
               {` · ${t("praise", { count: detail.praiseCount })}`}
+              {detail.pinned ? ` · ${t("pinned")}` : ""}
             </p>
             <dl className="mt-6 space-y-4 text-sm leading-relaxed">
               {(["energy", "drain", "lessOf", "priorities"] as const).map((field) => (
@@ -719,13 +756,23 @@ export function WallBoard({
             </section>
 
             {detail.mine ? (
-              <button
-                type="button"
-                onClick={() => unshare(detail.id)}
-                className="mt-6 text-sm text-muted hover:text-foreground"
-              >
-                {t("unshare")}
-              </button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => togglePin(detail)}
+                  disabled={busy !== null}
+                  className="rounded-full bg-mint px-4 py-2 text-sm shadow-card disabled:opacity-60"
+                >
+                  {detail.pinned ? t("unpin") : t("pin")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => unshare(detail.id)}
+                  className="text-sm text-muted hover:text-foreground"
+                >
+                  {t("unshare")}
+                </button>
+              </div>
             ) : null}
           </div>
         </div>

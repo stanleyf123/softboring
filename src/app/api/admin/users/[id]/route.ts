@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { getAdminMember } from "@/db/admin";
-import { deleteUser, updateUserBilling } from "@/db/users";
+import { deleteUser } from "@/db/users";
 import { isAdminRequest } from "@/lib/admin";
 import { asPlanId } from "@/lib/admin-format";
-import { PLAN_FREE, PLAN_SOFT_PLUS } from "@/lib/plan";
+import { applyAdminPlanChange } from "@/lib/admin-plan";
+import { PLAN_FREE } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -55,24 +56,7 @@ export async function PATCH(request: Request, context: Context) {
     );
   }
 
-  if (plan === PLAN_SOFT_PLUS) {
-    updateUserBilling(id, {
-      plan: PLAN_SOFT_PLUS,
-      planStatus: "active",
-    });
-  } else {
-    updateUserBilling(id, {
-      plan: PLAN_FREE,
-      planStatus: "canceled",
-      ...(clearStripeIds
-        ? {
-            stripeCustomerId: null,
-            stripeSubscriptionId: null,
-            stripePriceId: null,
-          }
-        : {}),
-    });
-  }
+  applyAdminPlanChange(id, plan, clearStripeIds);
 
   return NextResponse.json({ user: getAdminMember(id) });
 }

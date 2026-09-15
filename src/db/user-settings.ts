@@ -1,4 +1,9 @@
 import { getDb } from "./client";
+import {
+  normalizeCustomQuestions,
+  parseCustomQuestionsJson,
+  type CustomQuestion,
+} from "@/lib/custom-questions";
 
 export type UserSettings = {
   userId: string;
@@ -8,6 +13,7 @@ export type UserSettings = {
   reminderEnabled: boolean;
   reminderWeekday: number;
   reminderLastSentAt: string | null;
+  customQuestions: CustomQuestion[];
 };
 
 type SettingsRow = {
@@ -18,6 +24,7 @@ type SettingsRow = {
   reminder_enabled: number;
   reminder_weekday: number;
   reminder_last_sent_at: string | null;
+  custom_questions: string | null;
 };
 
 function toSettings(row: SettingsRow): UserSettings {
@@ -29,6 +36,7 @@ function toSettings(row: SettingsRow): UserSettings {
     reminderEnabled: Boolean(row.reminder_enabled),
     reminderWeekday: clampWeekday(row.reminder_weekday),
     reminderLastSentAt: row.reminder_last_sent_at,
+    customQuestions: parseCustomQuestionsJson(row.custom_questions),
   };
 }
 
@@ -57,6 +65,7 @@ export type SettingsPatch = {
   reminderEnabled?: boolean;
   reminderWeekday?: number;
   reminderLastSentAt?: string | null;
+  customQuestions?: CustomQuestion[];
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -69,7 +78,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            onboarding_wall_seen = @onboarding_wall_seen,
            reminder_enabled = @reminder_enabled,
            reminder_weekday = @reminder_weekday,
-           reminder_last_sent_at = @reminder_last_sent_at
+           reminder_last_sent_at = @reminder_last_sent_at,
+           custom_questions = @custom_questions
        WHERE user_id = @user_id`,
     )
     .run({
@@ -114,6 +124,11 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
         patch.reminderLastSentAt === undefined
           ? current.reminderLastSentAt
           : patch.reminderLastSentAt,
+      custom_questions: JSON.stringify(
+        patch.customQuestions === undefined
+          ? current.customQuestions
+          : normalizeCustomQuestions(patch.customQuestions),
+      ),
     });
   return ensureUserSettings(userId);
 }

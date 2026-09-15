@@ -1,5 +1,5 @@
 import { getDb } from "./client";
-import { displayPlan } from "@/lib/plan";
+import { displayPlan, type PlanId } from "@/lib/plan";
 import { paymentRevenueSummary, type PaymentRevenueSummary } from "./payments";
 
 const LAST_ACTIVE_SQL = `(
@@ -22,6 +22,7 @@ export type AdminUserListItem = {
   planStatus: string | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  displayPlan: PlanId;
 };
 
 export type AdminMemberDetail = AdminUserListItem & {
@@ -104,6 +105,7 @@ function toListItem(row: AdminUserRow): AdminUserListItem {
     planStatus: row.plan_status,
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
+    displayPlan: displayPlan(row.plan, row.plan_status),
   };
 }
 
@@ -135,7 +137,6 @@ export function getAdminMember(id: string): AdminMemberDetail | undefined {
     ...toListItem(row),
     stripePriceId: row.stripe_price_id ?? null,
     planUpdatedAt: row.plan_updated_at ?? null,
-    displayPlan: displayPlan(row.plan, row.plan_status),
   };
 }
 

@@ -97,7 +97,9 @@
     "guestNudgeLogin": "登入",
     "upgradeNudgeTitle": "較早的週次，先收起來了。",
     "upgradeNudgeBody": "免費方案會打開最近四篇。Soft+ 會記住其餘的，並畫一條小小的感覺線。",
-    "upgradeNudgeCta": "看看 Soft+"
+    "upgradeNudgeCta": "看看 Soft+",
+    "customHeading": "你加的題目",
+    "customLead": "帳號頁最多可以加三題，會出現在這裡。"
   },
   "History": {
     "title": "紀錄",
@@ -118,7 +120,13 @@
     "guestBanner": "回顧先留在這個瀏覽器。建立帳號，它們才能跟著你——之後也能訂閱。",
     "guestCta": "建立帳號",
     "freeBannerTitle": "最近四篇是打開的",
-    "freeBanner": "Soft+ 會留下每一週，並加上一條小小的感覺圖。"
+    "freeBanner": "Soft+ 會留下每一週，並加上一條小小的感覺圖。",
+    "plusToolsTitle": "Soft+ 工具",
+    "searchLabel": "搜尋回顧",
+    "searchPlaceholder": "搜尋標題與答案…",
+    "searchEmpty": "沒有符合的週次。",
+    "exportCsv": "下載 CSV",
+    "exportPrint": "可列印的頁面"
   },
   "HistoryDetail": {
     "back": "回到紀錄",
@@ -196,9 +204,9 @@
     "planFree": "Free",
     "planSoftPlus": "Soft+",
     "planFreeBody": "每週都能寫。紀錄會打開最近四篇。",
-    "planSoftPlusBody": "完整紀錄、感覺趨勢，還有軟軟牆。",
+    "planSoftPlusBody": "完整紀錄、更細的趨勢、匯出、自訂題目，還有軟軟牆。",
     "upgradeTitle": "留下超過四週",
-    "upgradeBody": "Soft+ 會打開較早的回顧、一條小小的感覺線，還有社群牆。",
+    "upgradeBody": "Soft+ 會打開較早的回顧、更細的趨勢、匯出、自訂題目，還有社群牆。",
     "upgrade": "看看 Soft+",
     "history": "查看紀錄",
     "wall": "去軟軟牆",
@@ -225,7 +233,23 @@
     },
     "reminderEmailOn": "排程跑起來時就會寄提醒。",
     "reminderEmailOff": "這台伺服器還沒設定信件，所以在填好 RESEND_API_KEY 或 SMTP 之前，提醒會安靜地略過。",
-    "reminderSaving": "儲存中…"
+    "reminderSaving": "儲存中…",
+    "digestTitle": "這個月",
+    "digestBody": "從本月存下的回顧，安靜地加總。",
+    "digestCountLabel": "回顧",
+    "digestCount": "{count}",
+    "digestFeelingLabel": "平均感覺",
+    "digestFeeling": "{value}／5",
+    "digestFeelingEmpty": "還沒有感覺數字",
+    "customTitle": "自訂每週題目",
+    "customBody": "最多再加三題。會出現在本週回顧表單。",
+    "customPlaceholder": "第 {n} 題",
+    "customAdd": "加一題",
+    "customRemove": "拿掉",
+    "customSave": "儲存題目",
+    "customSaved": "已儲存。",
+    "customError": "現在沒能存下這些題目。",
+    "export": "匯出回顧"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -247,6 +271,10 @@
     "featureTrendsPlus": "感覺趨勢（1–5，隨時間）",
     "featureWallFree": "軟軟牆隔著一層柔柔的簾子",
     "featureWallPlus": "軟軟牆：讀別人的便利貼、拖來拖去、留言、貼貼紙",
+    "featureExportPlus": "把週次匯出成 CSV 或可列印頁面",
+    "featureSearchPlus": "搜尋完整紀錄",
+    "featureCustomPlus": "最多三題自訂每週問題",
+    "featureDigestPlus": "帳號頁有本月摘要",
     "featurePortal": "可在 Stripe 顧客入口管理或取消",
     "ctaRegister": "建立免費帳號",
     "ctaLogin": "登入",
@@ -278,7 +306,14 @@
     "signedOutBody": "請用 Soft+ 帳號登入，才能看到你的感覺線。",
     "loginCta": "登入",
     "loadErrorTitle": "暫時看不到趨勢",
-    "loadError": "現在無法載入圖表。"
+    "loadError": "現在無法載入圖表。",
+    "streakTitle": "連續週數",
+    "streakCount": "連續 {count} 週",
+    "pointsTitle": "感覺點",
+    "pointsCount": "{count}",
+    "energyChips": "能量關鍵詞",
+    "drainChips": "消耗關鍵詞",
+    "chipsEmpty": "詞還不夠。再寫幾週就會出現。"
   },
   "Wall": {
     "eyebrow": "共用的軟木板 · 要自己貼上去",
@@ -293,6 +328,11 @@
     "emptyCta": "去看紀錄",
     "loading": "正在鋪軟木板",
     "dragHint": "用手機時，按住便利貼拖移——拖的時候木板會先停住。",
+    "plusBadge": "Soft+",
+    "pin": "釘到最上面",
+    "unpin": "取消釘選",
+    "pinned": "已釘選",
+    "pinHint": "自己的便利貼可以釘一張在最上面。",
     "lockedTitle": "別人的便利貼在 Soft+ 後面。",
     "lockedBody": "你還是可以私下寫。Soft+ 會打開牆：讀、拖、留言、貼貼紙。",
     "signedOutBody": "請用 Soft+ 登入才能讀這些便利貼。免費訪客只看得到模糊的木板。",
@@ -328,6 +368,15 @@
     "saving": "等一下…",
     "shareCta": "釘到軟軟牆",
     "shareError": "現在沒能更新牆。"
+  },
+  "Export": {
+    "title": "可列印的回顧",
+    "lead": "把週次安靜地疊在一起。用瀏覽器列印對話框就能存成 PDF。",
+    "back": "← 回到紀錄",
+    "print": "列印／存成 PDF",
+    "csv": "下載 CSV",
+    "empty": "還沒有可列印的回顧。",
+    "noFeeling": "沒有感覺數字"
   },
   "WallStickers": {
     "star": "星星",

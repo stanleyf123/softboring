@@ -43,6 +43,8 @@ export const adminCopy = {
     reviews: "回顧",
     wall: "軟軟牆",
     stripe: "Stripe",
+    actions: "方案操作",
+    select: "選取",
     noCustomer: "沒有顧客編號",
     noSubscription: "沒有訂閱編號",
     delete: "刪除",
@@ -63,7 +65,15 @@ export const adminCopy = {
     reviews: "回顧",
     wallNotes: "牆上便利貼",
     planHint: "手動改方案是給補償或客服用的，不會向 Stripe 收費，也不會建立訂閱。",
+    listHint:
+      "在列表上就能給 Soft+：按「設為 Soft+」，確認後立刻生效。不必先點進會員頁。",
     grantPlus: "給予 Soft+",
+    setRowPlus: "設為 Soft+",
+    setRowFree: "改回免費",
+    bulkPlus: "將已選設為 Soft+",
+    bulkConfirm: (count: number) =>
+      `要將 ${count} 位會員設為 Soft+ 嗎？這是補償／客服用，不會向 Stripe 收費。`,
+    select: "選取",
     setFree: "改為 Free",
     setFreeClear: "改為 Free 並清除 Stripe 編號",
     grantConfirm: (email: string) =>

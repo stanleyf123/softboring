@@ -28,6 +28,9 @@ export async function POST(request: Request) {
     const body = await request.json();
     const answers = parseAnswers(body);
     const access = await getReviewAccess();
+    if (!access.softPlus) {
+      answers.customAnswers = [];
+    }
     const review = createReview(access.owner, answers);
     const all = listReviewsForOwner(access.owner);
     const visible = withHistoryAccess(all, access.softPlus);

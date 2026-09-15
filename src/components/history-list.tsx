@@ -2,6 +2,7 @@
 
 import { EmptyState, ListSkeleton } from "@/components/empty-state";
 import { Link } from "@/i18n/navigation";
+import { reviewMatchesQuery } from "@/lib/plus-insights";
 import {
   ensureLocalReviewsMigrated,
   fetchReviews,
@@ -10,7 +11,7 @@ import {
 } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useFormatter, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export function HistoryList() {
   const t = useTranslations("History");
@@ -19,6 +20,7 @@ export function HistoryList() {
   const [reviews, setReviews] = useState<HistoryReview[] | null>(null);
   const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
   const [error, setError] = useState(false);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     if (!hydrated) return;
@@ -41,6 +43,12 @@ export function HistoryList() {
       cancelled = true;
     };
   }, [hydrated]);
+
+  const visible = useMemo(() => {
+    if (!reviews) return [];
+    if (!access?.softPlus || !query.trim()) return reviews;
+    return reviews.filter((review) => !review.locked && reviewMatchesQuery(review, query));
+  }, [reviews, access, query]);
 
   if (!hydrated || (reviews === null && !error)) {
     return <ListSkeleton label={t("loading")} />;
@@ -99,44 +107,80 @@ export function HistoryList() {
         </section>
       ) : null}
 
-      <ul className="space-y-4">
-        {reviews.map((review) =>
-          review.locked ? (
-            <li key={review.id}>
-              <div className="rounded-[1.75rem] border border-dashed border-line bg-paper/70 px-6 py-5">
-                <p className="text-sm text-muted">
-                  {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
-                </p>
-                <p className="mt-2 font-display text-lg tracking-tight">{t("lockedTitle")}</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{t("lockedBody")}</p>
-                <Link href="/pricing" className="mt-4 inline-block text-sm text-accent">
-                  {t("lockedCta")}
-                </Link>
-              </div>
-            </li>
-          ) : (
-            <li key={review.id}>
-              <Link
-                href={`/history/${review.id}`}
-                className="block rounded-[1.75rem] bg-paper px-6 py-5 shadow-card"
-              >
-                <p className="text-sm text-muted">
-                  {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
-                </p>
-                <p className="mt-2 text-base leading-relaxed">
-                  {review.summary.trim() || t("untitled")}
-                </p>
-                {review.feeling ? (
-                  <p className="mt-3 text-sm text-muted">
-                    {t("feeling", { value: review.feeling })}
+      {access?.softPlus ? (
+        <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">
+          <p className="font-display text-lg tracking-tight">{t("plusToolsTitle")}</p>
+          <label className="mt-4 block">
+            <span className="sr-only">{t("searchLabel")}</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="w-full rounded-full border border-line bg-cream/70 px-4 py-2.5 text-sm outline-none focus:border-accent"
+            />
+          </label>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              href="/api/reviews/export"
+              className="rounded-full bg-mint px-4 py-2 text-sm shadow-card"
+            >
+              {t("exportCsv")}
+            </a>
+            <Link
+              href="/history/export"
+              className="rounded-full bg-blush px-4 py-2 text-sm shadow-card"
+            >
+              {t("exportPrint")}
+            </Link>
+          </div>
+        </section>
+      ) : null}
+
+      {visible.length === 0 ? (
+        <p className="rounded-[1.5rem] bg-paper px-6 py-8 text-sm text-muted shadow-card">
+          {t("searchEmpty")}
+        </p>
+      ) : (
+        <ul className="space-y-4">
+          {visible.map((review) =>
+            review.locked ? (
+              <li key={review.id}>
+                <div className="rounded-[1.75rem] border border-dashed border-line bg-paper/70 px-6 py-5">
+                  <p className="text-sm text-muted">
+                    {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
                   </p>
-                ) : null}
-                <span className="mt-4 inline-block text-sm text-accent">{t("open")}</span>
-              </Link>
-            </li>
-          ),
-        )}
-      </ul>
+                  <p className="mt-2 font-display text-lg tracking-tight">{t("lockedTitle")}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">{t("lockedBody")}</p>
+                  <Link href="/pricing" className="mt-4 inline-block text-sm text-accent">
+                    {t("lockedCta")}
+                  </Link>
+                </div>
+              </li>
+            ) : (
+              <li key={review.id}>
+                <Link
+                  href={`/history/${review.id}`}
+                  className="block rounded-[1.75rem] bg-paper px-6 py-5 shadow-card"
+                >
+                  <p className="text-sm text-muted">
+                    {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
+                  </p>
+                  <p className="mt-2 text-base leading-relaxed">
+                    {review.summary.trim() || t("untitled")}
+                  </p>
+                  {review.feeling ? (
+                    <p className="mt-3 text-sm text-muted">
+                      {t("feeling", { value: review.feeling })}
+                    </p>
+                  ) : null}
+                  <span className="mt-4 inline-block text-sm text-accent">{t("open")}</span>
+                </Link>
+              </li>
+            ),
+          )}
+        </ul>
+      )}
     </div>
   );
 }

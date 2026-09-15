@@ -32,7 +32,7 @@ export function SiteHeader({
   const trendsActive = pathname === "/trends" || pathname.startsWith("/trends/");
 
   return (
-    <header className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-4 px-6 py-6">
+    <header className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-4 px-6 py-6 print:hidden">
       <Link
         href="/"
         className="flex items-center gap-2.5 font-display text-lg tracking-tight text-foreground"

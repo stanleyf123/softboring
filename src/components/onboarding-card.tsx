@@ -12,6 +12,7 @@ const HIDDEN_PATHS = new Set([
   "/reset-password",
   "/privacy",
   "/terms",
+  "/history/export",
 ]);
 
 export function OnboardingCard({
@@ -73,7 +74,7 @@ export function OnboardingCard({
   }
 
   return (
-    <section className="mx-auto mb-8 w-full max-w-3xl px-6">
+    <section className="mx-auto mb-8 w-full max-w-3xl px-6 print:hidden">
       <div className="overflow-hidden rounded-[2rem] bg-paper shadow-card">
         <div className="flex items-start justify-between gap-4 bg-mint/70 px-6 py-5 sm:px-8">
           <div className="flex items-center gap-3">

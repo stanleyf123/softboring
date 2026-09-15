@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   deleteWallNoteForUser,
   getWallNote,
+  pinWallNoteForUser,
   updateWallNotePosition,
 } from "@/db/wall";
 import { getWallViewer, parsePosition, requireSoftPlus, requireUser } from "@/lib/wall-access";
@@ -46,6 +47,19 @@ export async function PATCH(request: Request, context: Context) {
         return NextResponse.json({ error: "invalid_json" }, { status: 400 });
       }
       throw error;
+    }
+
+    const pinValue =
+      body && typeof body === "object" && "pin" in body
+        ? (body as { pin?: unknown }).pin
+        : undefined;
+    if (typeof pinValue === "boolean") {
+      const changes = pinWallNoteForUser(id, viewer.user!.id, pinValue);
+      if (!changes) {
+        return NextResponse.json({ error: "not_found" }, { status: 404 });
+      }
+      const note = getWallNote(id, viewer.userId);
+      return NextResponse.json({ note });
     }
 
     const position = parsePosition(body);

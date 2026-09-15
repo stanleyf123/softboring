@@ -1,6 +1,8 @@
 "use client";
 
+import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { Link, useRouter } from "@/i18n/navigation";
+import type { CustomQuestion } from "@/lib/custom-questions";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
@@ -39,6 +41,8 @@ export function AccountPanel({
   reminderEnabled,
   reminderWeekday,
   emailConfigured,
+  customQuestions,
+  digest,
 }: {
   email: string;
   createdAt: string;
@@ -50,6 +54,8 @@ export function AccountPanel({
   reminderEnabled: boolean;
   reminderWeekday: number;
   emailConfigured: boolean;
+  customQuestions: CustomQuestion[];
+  digest: { year: number; month: number; count: number; avgFeeling: number | null };
 }) {
   const t = useTranslations("Account");
   const tPricing = useTranslations("Pricing");
@@ -123,6 +129,29 @@ export function AccountPanel({
             </div>
           </dl>
 
+          {softPlus ? (
+            <div className="mt-8 rounded-[1.5rem] bg-peach/50 px-5 py-5">
+              <p className="font-display text-lg tracking-tight">{t("digestTitle")}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t("digestBody")}</p>
+              <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-[1.1rem] bg-paper/80 px-4 py-3">
+                  <dt className="text-xs text-muted">{t("digestCountLabel")}</dt>
+                  <dd className="mt-1 font-display text-2xl tracking-tight">
+                    {t("digestCount", { count: digest.count })}
+                  </dd>
+                </div>
+                <div className="rounded-[1.1rem] bg-paper/80 px-4 py-3">
+                  <dt className="text-xs text-muted">{t("digestFeelingLabel")}</dt>
+                  <dd className="mt-1 font-display text-2xl tracking-tight">
+                    {digest.avgFeeling == null
+                      ? t("digestFeelingEmpty")
+                      : t("digestFeeling", { value: digest.avgFeeling })}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          ) : null}
+
           <div className="mt-8 rounded-[1.5rem] bg-mint/50 px-5 py-5">
             <p className="font-display text-lg tracking-tight">{t("reminderTitle")}</p>
             <p className="mt-2 text-sm leading-relaxed text-muted">{t("reminderBody")}</p>
@@ -181,6 +210,8 @@ export function AccountPanel({
             </p>
           </div>
 
+          {softPlus ? <CustomQuestionsEditor initialQuestions={customQuestions} /> : null}
+
           {!softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/60 px-5 py-5">
               <p className="font-display text-lg tracking-tight">{t("upgradeTitle")}</p>
@@ -238,6 +269,14 @@ export function AccountPanel({
                 {tPricing("navHint")}
               </Link>
             )}
+            {softPlus ? (
+              <Link
+                href="/history/export"
+                className="rounded-full border border-line px-5 py-2.5 text-sm"
+              >
+                {t("export")}
+              </Link>
+            ) : null}
             {softPlus && hasStripeCustomer ? <PortalButton /> : null}
             <button
               type="button"

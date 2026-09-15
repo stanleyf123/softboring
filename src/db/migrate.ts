@@ -25,6 +25,7 @@ function ensureColumn(
 
 export function ensureReviewUserId(db: Database.Database) {
   ensureColumn(db, "reviews", "user_id", "TEXT");
+  ensureColumn(db, "reviews", "custom_answers", "TEXT NOT NULL DEFAULT '[]'");
   db.exec(
     `CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)`,
   );
@@ -62,6 +63,15 @@ export function ensureUserSettingsColumns(db: Database.Database) {
   ensureColumn(db, "user_settings", "reminder_enabled", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn(db, "user_settings", "reminder_weekday", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn(db, "user_settings", "reminder_last_sent_at", "TEXT");
+  ensureColumn(db, "user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
+}
+
+export function ensureWallNotePinned(db: Database.Database) {
+  const tables = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wall_notes'`)
+    .get() as { name: string } | undefined;
+  if (!tables) return;
+  ensureColumn(db, "wall_notes", "pinned", "INTEGER NOT NULL DEFAULT 0");
 }
 
 export function migrateDb(db: Database.Database) {
@@ -69,4 +79,5 @@ export function migrateDb(db: Database.Database) {
   ensureReviewUserId(db);
   ensureUserBillingColumns(db);
   ensureUserSettingsColumns(db);
+  ensureWallNotePinned(db);
 }
