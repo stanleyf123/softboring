@@ -1,0 +1,17 @@
+[Unit]
+Description=Soft Boring Weekly Next.js
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/softboring
+EnvironmentFile=/etc/softboring.env
+ExecStart=/usr/bin/npm start -- --hostname 127.0.0.1 --port 3001
+Restart=on-failure
+RestartSec=5
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

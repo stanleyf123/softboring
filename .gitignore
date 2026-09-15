@@ -20,6 +20,12 @@
 # production
 /build
 
+# local / VPS sqlite (never share 99gold's database file)
+/data/*
+!/data/.gitkeep
+*.sqlite
+*.sqlite-journal
+
 # misc
 .DS_Store
 *.pem
