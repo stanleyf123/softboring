@@ -122,3 +122,31 @@ INSERT OR IGNORE INTO stickers (id, slug, name, price_cents, stripe_price_id, em
   ('sticker-cloud', 'cloud', 'Cloud', 99, NULL, '☁️', 6),
   ('sticker-peach', 'peach', 'Peach', 99, NULL, '🍑', 7),
   ('sticker-sparkle', 'sparkle', 'Sparkle', 99, NULL, '✨', 8);
+
+CREATE TABLE IF NOT EXISTS payments (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  email TEXT,
+  kind TEXT NOT NULL CHECK (kind IN ('subscription', 'sticker', 'other')),
+  stripe_event_id TEXT,
+  checkout_session_id TEXT,
+  payment_intent_id TEXT,
+  amount_cents INTEGER,
+  currency TEXT,
+  status TEXT NOT NULL CHECK (status IN ('succeeded', 'pending', 'failed', 'refunded')),
+  description TEXT,
+  created_at TEXT NOT NULL,
+  metadata TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_stripe_event_unique
+  ON payments (stripe_event_id) WHERE stripe_event_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_checkout_session_unique
+  ON payments (checkout_session_id) WHERE checkout_session_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_payment_intent_unique
+  ON payments (payment_intent_id) WHERE payment_intent_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_payments_user ON payments (user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_email ON payments (email);
+CREATE INDEX IF NOT EXISTS idx_payments_created ON payments (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_payments_kind_status ON payments (kind, status);
