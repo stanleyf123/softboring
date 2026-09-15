@@ -50,8 +50,23 @@ export function ensureUserBillingColumns(db: Database.Database) {
   );
 }
 
+export function ensureUserSettingsColumns(db: Database.Database) {
+  const tables = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'user_settings'`)
+    .get() as { name: string } | undefined;
+  if (!tables) return;
+
+  ensureColumn(db, "user_settings", "onboarding_dismissed", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "user_settings", "onboarding_history_seen", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "user_settings", "onboarding_wall_seen", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "user_settings", "reminder_enabled", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "user_settings", "reminder_weekday", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "user_settings", "reminder_last_sent_at", "TEXT");
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
   ensureUserBillingColumns(db);
+  ensureUserSettingsColumns(db);
 }

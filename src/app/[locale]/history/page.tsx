@@ -1,4 +1,6 @@
 import { HistoryList } from "@/components/history-list";
+import { updateUserSettings } from "@/db/user-settings";
+import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -9,6 +11,11 @@ type Props = {
 export default async function HistoryPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(assertLocale(locale));
+
+  const user = await getCurrentUser();
+  if (user) {
+    updateUserSettings(user.id, { onboardingHistorySeen: true });
+  }
 
   const t = await getTranslations("History");
 

@@ -112,7 +112,13 @@ export function AuthForm({
         </label>
         {mode === "register" ? (
           <p className="mt-2 text-sm text-muted">{t("passwordHint")}</p>
-        ) : null}
+        ) : (
+          <p className="mt-3 text-sm">
+            <Link href="/forgot-password" className="text-accent hover:text-foreground">
+              {t("forgotLink")}
+            </Link>
+          </p>
+        )}
 
         {error ? (
           <p className="mt-5 text-sm text-accent" role="alert">
@@ -151,15 +157,27 @@ export function AuthForm({
             </Link>
           </p>
         ) : (
-          <p className="mt-4 text-sm text-muted">
-            {t("toLogin")}{" "}
-            <Link
-              href={nextPath ? { pathname: "/login", query: { next: nextPath } } : "/login"}
-              className="text-accent hover:text-foreground"
-            >
-              {t("toLoginLink")}
-            </Link>
-          </p>
+          <>
+            <p className="mt-4 text-sm text-muted">
+              {t("toLogin")}{" "}
+              <Link
+                href={nextPath ? { pathname: "/login", query: { next: nextPath } } : "/login"}
+                className="text-accent hover:text-foreground"
+              >
+                {t("toLoginLink")}
+              </Link>
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-muted">
+              {t("legalPrefix")}{" "}
+              <Link href="/terms" className="text-accent hover:text-foreground">
+                {t("terms")}
+              </Link>
+              {" · "}
+              <Link href="/privacy" className="text-accent hover:text-foreground">
+                {t("privacy")}
+              </Link>
+            </p>
+          </>
         )}
       </div>
     </form>

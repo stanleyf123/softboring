@@ -2,7 +2,7 @@
 
 Soft Boring Weekly 與 [99gold](https://github.com/stanleyf123/99gold) **共用同一台 Linode VPS**，但是 **另一個站點**：另一套目錄、環境檔、systemd、Nginx `server`、SQLite。不要和 99gold 共用資料庫或服務單元。
 
-每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id` / 訂閱欄位 / `payments` 繳費記錄。
+每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id` / 訂閱欄位 / `payments` 繳費記錄 / `user_settings` / `password_reset_tokens` / `notifications`。
 
 目標主機範例：`172.237.11.195`（與 99gold 文件裡同一台，1GB RAM + swap）。
 
@@ -82,6 +82,17 @@ STRIPE_PRICE_MONTHLY=
 # Optional sticker one-time prices (Soft Wall). Unset = catalog cents via price_data.
 # STRIPE_PRICE_STICKER_PACK=
 
+# 密碼重設與每週提醒信件。優先 Resend；也可 SMTP（與 99gold 類似）。
+# 兩者都空時：忘記密碼仍會產生 token，連結只寫進 journalctl／stdout；
+# npm run reminders:dispatch 會成功略過（no-op）。
+# EMAIL_FROM=Soft Boring Weekly <noreply@softboring.com>
+# RESEND_API_KEY=
+# SMTP_HOST=
+# SMTP_PORT=587
+# SMTP_USER=
+# SMTP_PASS=
+# SMTP_SECURE=false
+
 # 本機開發用 3000；這台 VPS 上 99gold 已占用 3000，Soft Boring 用 3001。
 # 實際監聽看 systemd 的 ExecStart（--port 3001），不要改成 3000。
 ```
@@ -94,7 +105,9 @@ STRIPE_PRICE_MONTHLY=
 
 `SITE_URL` 是反代後面的公開 origin。Nginx 會轉 `Host` 與 `X-Forwarded-Proto`，但 Next.js 的 `request.url` 仍可能是 `http://127.0.0.1:3001`。凡是 **絕對** 轉址（例如 `/api/admin/session` 的 `Location`）必須用 `SITE_URL`（去掉結尾斜線）當 origin，不要用 `request.url`。
 
-Stripe / OAuth / 驗證信：OAuth 與驗證信仍是之後可選。Soft+ 若要真的能收款，在 `/etc/softboring.env` 填 Stripe 變數，並在 Stripe Dashboard 把 webhook 指到 `https://softboring.com/api/stripe/webhook`（事件：`checkout.session.completed`、`checkout.session.async_payment_succeeded`、`customer.subscription.updated`、`customer.subscription.deleted`、`invoice.paid`、`invoice.payment_failed`、`charge.refunded`）。成功的結帳／發票會寫入 `payments` 表；管理後台 `/admin/payments` 與會員詳情可看繳費記錄。App Router 會讀 raw body 驗簽；Nginx 預設 `proxy_pass` 即可，不要對 webhook 路徑做 body rewrite。步驟見 README。更新後務必再跑一次 `npm run db:migrate` 以建立 `payments` 表。
+Stripe / OAuth / 驗證信：OAuth 與驗證信仍是之後可選。密碼重設與每週提醒若要真的寄信，在 `/etc/softboring.env` 填 `RESEND_API_KEY`（或 SMTP_*）與 `EMAIL_FROM`。Soft+ 若要真的能收款，在 `/etc/softboring.env` 填 Stripe 變數，並在 Stripe Dashboard 把 webhook 指到 `https://softboring.com/api/stripe/webhook`（事件：`checkout.session.completed`、`checkout.session.async_payment_succeeded`、`customer.subscription.updated`、`customer.subscription.deleted`、`invoice.paid`、`invoice.payment_failed`、`charge.refunded`）。成功的結帳／發票會寫入 `payments` 表；管理後台 `/admin/payments` 與會員詳情可看繳費記錄。App Router 會讀 raw body 驗簽；Nginx 預設 `proxy_pass` 即可，不要對 webhook 路徑做 body rewrite。步驟見 README。更新後務必再跑一次 `npm run db:migrate`。
+
+管理後台介面為繁體中文：`https://softboring.com/admin/login`。
 
 ## 4. systemd：網站行程
 
@@ -283,3 +296,14 @@ sudo systemctl restart softboring.service
 - `/etc/softboring.env`
 
 不要只備份 99gold 的 `data/` 就當作 Soft Boring 也備份了。
+
+## 11. 每週提醒排程
+
+帳號頁可開關每週提醒與星期幾。伺服器排程：
+
+```bash
+# /etc/cron.d/softboring-reminders  （每天跑一次即可；腳本會再依 weekday 過濾）
+15 7 * * * www-data bash -lc 'set -a; source /etc/softboring.env; set +a; cd /var/www/softboring && npm run reminders:dispatch'
+```
+
+沒有設定 `RESEND_API_KEY` 或 `SMTP_HOST` 時，這個指令會印 `email not configured; no-op.` 並以 0 結束，不會失敗。時區以機器 local `Date#getDay()` 為準，請把 cron 跑在你希望的時區（通常是 Asia/Taipei）。

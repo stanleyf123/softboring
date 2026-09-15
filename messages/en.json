@@ -1,7 +1,13 @@
 {
   "Metadata": {
     "title": "Soft Boring Weekly",
-    "description": "A gentle weekly review. Six small questions, once a week — not a to-do list."
+    "description": "A gentle weekly review. Six small questions, once a week — not a to-do list.",
+    "homeTitle": "Soft Boring Weekly — a gentle weekly review",
+    "homeDescription": "Sit down once a week, answer six small questions, and save how the week felt. Free to write. Soft+ remembers more, and opens Soft Wall.",
+    "pricingTitle": "Pricing — Free and Soft+",
+    "pricingDescription": "Write for free. Soft+ keeps unlimited history, a small feeling chart, and Soft Wall: read, drag, comment, and stickers.",
+    "wallTitle": "Soft Wall — a shared corkboard",
+    "wallDescription": "Pin a week as a sticky note. Soft+ members can read, drag, comment, and leave a little praise. Free visitors see a locked teaser only."
   },
   "Nav": {
     "home": "Home",
@@ -15,7 +21,9 @@
     "brand": "Soft Boring"
   },
   "Footer": {
-    "note": "Soft Boring — a quiet weekly pause"
+    "note": "Soft Boring — a quiet weekly pause",
+    "privacy": "Privacy",
+    "terms": "Terms"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -97,6 +105,7 @@
     "emptyTitle": "No reviews yet",
     "emptyBody": "When you finish a weekly review, it will show up here.",
     "emptyCta": "Start a review",
+    "loading": "Loading your reviews",
     "loadErrorTitle": "History is unavailable",
     "loadError": "Could not load reviews just now. Try again in a moment.",
     "open": "Open",
@@ -141,6 +150,24 @@
     "loginSubmit": "Log in",
     "registerSubmit": "Create account",
     "submitting": "Please wait…",
+    "forgotLink": "Forgot password?",
+    "forgotTitle": "A quieter way back in.",
+    "forgotLead": "Tell us the email on the account. If it exists, we will send a reset link — or, on a server without email, the operator can find the link in the logs.",
+    "forgotCard": "Reset password",
+    "forgotCardNote": "The link lasts one hour.",
+    "forgotSubmit": "Send reset link",
+    "forgotSent": "If that email has an account, a reset link is on its way. Check the inbox, and maybe junk.",
+    "forgotNoEmail": "This server has no email provider yet (set RESEND_API_KEY or SMTP_HOST). If you run the app, the reset link is in the server log — and only there.",
+    "backToLogin": "Back to log in",
+    "resetTitle": "Choose a new password.",
+    "resetLead": "Eight characters is enough. Then you can log in again.",
+    "resetCard": "New password",
+    "resetCardNote": "This link works once, for an hour.",
+    "resetSubmit": "Save new password",
+    "resetMissing": "This reset link is missing or incomplete. Request a new one.",
+    "legalPrefix": "By creating an account you agree to the",
+    "terms": "Terms",
+    "privacy": "Privacy Policy",
     "toRegister": "Need an account?",
     "toRegisterLink": "Register",
     "toLogin": "Already have an account?",
@@ -151,6 +178,7 @@
       "email_taken": "That email already has an account. Try logging in.",
       "weak_password": "Use 8 to 72 characters.",
       "invalid_email": "That does not look like an email address.",
+      "invalid_token": "This reset link is expired or already used. Request a new one.",
       "generic": "Something went wrong. Try again in a moment."
     }
   },
@@ -181,7 +209,23 @@
     "logout": "Log out",
     "loggingOut": "Logging out…",
     "checkoutSuccess": "Checkout finished. Soft+ unlocks when Stripe confirms the payment.",
-    "checkoutSuccessPlus": "Welcome to Soft+. Older weeks and trends are yours."
+    "checkoutSuccessPlus": "Welcome to Soft+. Older weeks and trends are yours.",
+    "reminderTitle": "Weekly reminder",
+    "reminderBody": "A quiet email on the weekday you pick — if this server can send mail.",
+    "reminderToggle": "Send me a weekly reminder",
+    "reminderWeekday": "Preferred weekday",
+    "weekday": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+    "reminderEmailOn": "Reminders will send when the cron job runs.",
+    "reminderEmailOff": "Email is not configured on this server yet, so reminders will no-op until RESEND_API_KEY or SMTP is set.",
+    "reminderSaving": "Saving…"
   },
   "Pricing": {
     "eyebrow": "Free to write · paid to remember more",
@@ -245,6 +289,10 @@
     "loadErrorTitle": "The wall is napping",
     "loadError": "Could not load Soft Wall just now.",
     "empty": "Empty corkboard. Pin a week from History when you're ready.",
+    "emptyTitle": "The wall is still quiet",
+    "emptyCta": "Go to history",
+    "loading": "Laying out the corkboard",
+    "dragHint": "On a phone, press and drag the note — the board will hold still while you move it.",
     "lockedTitle": "Other people's notes are behind Soft+.",
     "lockedBody": "You can still write privately. Soft+ opens the wall: read, drag, comment, stick stickers.",
     "signedOutBody": "Log in on Soft+ to read the notes. Free visitors only see the blurred corkboard.",
@@ -290,5 +338,64 @@
     "cloud": "Cloud",
     "peach": "Peach",
     "sparkle": "Sparkle"
+  },
+  "Onboarding": {
+    "title": "A tiny first walk.",
+    "lead": "Three soft steps. Dismiss anytime — it stays off for this account.",
+    "dismiss": "Not now",
+    "writeTitle": "Write a first review",
+    "writeBody": "Six small questions. There is no score.",
+    "writeCta": "Write",
+    "historyTitle": "See history",
+    "historyBody": "Past weeks wait here, quietly.",
+    "historyCta": "Open history",
+    "wallTitle": "Peek at Soft Wall",
+    "wallBody": "A shared corkboard. Soft+ opens the notes; Free still gets a teaser.",
+    "wallCta": "See the wall"
+  },
+  "Notifications": {
+    "label": "Notifications",
+    "bell": "Inbox",
+    "title": "Soft inbox",
+    "markAll": "Mark all read",
+    "loading": "Checking…",
+    "empty": "Nothing waiting. Comments on your wall notes will land here.",
+    "wallComment": "A neighbor left a comment on your note"
+  },
+  "Privacy": {
+    "title": "Privacy Policy",
+    "updated": "Last updated: 15 September 2026",
+    "lead": "Soft Boring Weekly is a small weekly-review product. This page explains what we collect, why, and how long we keep it.",
+    "home": "Back home",
+    "s1Title": "Who we are",
+    "s1Body": "Soft Boring Weekly (softboring.com) is operated as an independent site. If you have a privacy question, contact us through the email on your account or the operator listed on the public site.",
+    "s2Title": "What we collect",
+    "s2Body": "Account: email and a hashed password. Reviews you save (the six answers, optional feeling, locale, timestamps). Optional Soft Wall notes, comments, and stickers you choose to share. Billing identifiers from Stripe if you subscribe or buy stickers (we do not store full card numbers). Session and guest cookies so the app can stay signed in or keep unclaimed drafts in this browser. Server logs needed to run the service, including password-reset links if email is not configured.",
+    "s3Title": "How we use it",
+    "s3Body": "We use this data to provide the weekly review, history, Soft+ features, Soft Wall, password reset, optional weekly reminders, and customer support. We do not sell personal data. We do not use reviews for advertising profiles.",
+    "s4Title": "Cookies and sessions",
+    "s4Body": "We use an httpOnly session cookie when you log in, a guest cookie for unclaimed reviews, and an admin cookie for the separate /admin backend. Analytics may run on public pages if a measurement ID is configured. You can use the product as a guest without creating an account; guest reviews stay in that browser until claimed.",
+    "s5Title": "Sharing and processors",
+    "s5Body": "Stripe processes payments. If we send email, we use Resend or an SMTP provider you configure. Hosting and backups are on the operator’s server (SQLite on disk). Shared Soft Wall content is visible to Soft+ members you do not personally know; sharing is off by default.",
+    "s6Title": "Retention and your choices",
+    "s6Body": "We keep account and review data until you delete the account (or an operator deletes it for you). You can take a note off Soft Wall at any time. You can turn weekly reminders off on the account page. To request deletion or a copy of your data, sign in and contact the operator. This policy may be updated; the date above will change."
+  },
+  "Terms": {
+    "title": "Terms of Use",
+    "updated": "Last updated: 15 September 2026",
+    "lead": "These terms are a simple contract for using Soft Boring Weekly. If you do not agree, please do not create an account.",
+    "home": "Back home",
+    "s1Title": "The service",
+    "s1Body": "Soft Boring Weekly lets you write a short weekly review and, with a paid Soft+ plan, unlock unlimited history, feeling trends, and Soft Wall. The product is provided as-is. We may change features, prices, or availability with reasonable notice on the site.",
+    "s2Title": "Accounts",
+    "s2Body": "You must provide a real email you control and keep your password secret. You are responsible for activity on your account. Do not use the service to store illegal content, harass others, or attempt to break into the app, other accounts, or the admin backend.",
+    "s3Title": "Soft+ and payments",
+    "s3Body": "Paid plans and sticker purchases are billed by Stripe. Taxes, receipts, and card details are handled there. You can cancel in the Stripe customer portal; access continues until the end of the paid period unless we say otherwise. Manual plan changes in admin do not create a Stripe charge.",
+    "s4Title": "Your content and Soft Wall",
+    "s4Body": "You keep the rights to the reviews you write. By saving them you give us a license to store and display them to you. If you pin a week to Soft Wall, you allow other Soft+ members to read that week, comment, and place stickers. Sharing is optional and can be reversed. Do not post other people’s private information.",
+    "s5Title": "Limitation of liability",
+    "s5Body": "The service is a writing tool, not medical, legal, or therapeutic advice. To the extent allowed by law, we are not liable for lost reviews, downtime, or indirect damages. Our total liability for a claim is limited to the amount you paid us in the 12 months before the claim, or zero if you are on Free.",
+    "s6Title": "Ending the agreement",
+    "s6Body": "You may stop using the service and request account deletion. We may suspend accounts that break these terms or harm the community wall. The privacy policy explains how data is handled after deletion. These terms are governed by the laws applicable to the operator unless a mandatory consumer law says otherwise."
   }
 }

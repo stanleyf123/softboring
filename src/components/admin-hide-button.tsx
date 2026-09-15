@@ -1,5 +1,6 @@
 "use client";
 
+import { adminCopy } from "@/lib/admin-copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -23,7 +24,7 @@ export function AdminHideButton({
         body: JSON.stringify({ hidden: !hidden }),
       });
       if (!response.ok) {
-        window.alert("Could not update this note.");
+        window.alert(adminCopy.wall.updateError);
         return;
       }
       router.refresh();
@@ -39,7 +40,7 @@ export function AdminHideButton({
       disabled={busy}
       className="rounded-full border border-line px-3 py-1.5 text-sm text-muted hover:bg-blush/70 hover:text-foreground disabled:opacity-60"
     >
-      {hidden ? "Unhide" : "Hide"}
+      {hidden ? adminCopy.wall.unhide : adminCopy.wall.hide}
     </button>
   );
 }

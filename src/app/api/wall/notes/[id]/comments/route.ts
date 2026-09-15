@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createNotification } from "@/db/notifications";
 import { addWallComment, getWallNote, listWallComments } from "@/db/wall";
 import { getWallViewer, parseCommentBody, requireSoftPlus } from "@/lib/wall-access";
 
@@ -62,6 +63,16 @@ export async function POST(request: Request, context: Context) {
       userId: viewer.user!.id,
       body: text,
     });
+    if (note.ownerUserId !== viewer.user!.id) {
+      const preview = text.length > 80 ? `${text.slice(0, 77)}…` : text;
+      createNotification({
+        userId: note.ownerUserId,
+        kind: "wall_comment",
+        title: "wall_comment",
+        body: preview,
+        href: "/wall",
+      });
+    }
     return NextResponse.json({ comment }, { status: 201 });
   } catch (error) {
     console.error("POST /api/wall/notes/[id]/comments failed", error);

@@ -12,7 +12,7 @@ Submitted reviews are stored in **SQLite** on the server. Drafts stay in the bro
 
 ## Accounts
 
-Email + password on SQLite (bcrypt hashes, httpOnly session cookie). There is no OAuth, magic link, or email verification in v1.
+Email + password on SQLite (bcrypt hashes, httpOnly session cookie). There is no OAuth or email verification in v1. Password reset uses a one-hour token in SQLite.
 
 | You are | Reviews belong to | History shows |
 | --- | --- | --- |
@@ -25,12 +25,20 @@ Pages:
 
 - `/en/login` and `/zh-tw/login`
 - `/en/register` and `/zh-tw/register`
-- `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade)
+- `/en/forgot-password` and `/zh-tw/forgot-password`
+- `/en/reset-password` and `/zh-tw/reset-password`
+- `/en/privacy` and `/zh-tw/privacy`
+- `/en/terms` and `/zh-tw/terms`
+- `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade, weekly reminder)
 - `/en/pricing` and `/zh-tw/pricing`
 - `/en/trends` and `/zh-tw/trends` (Soft+)
 - `/en/wall` and `/zh-tw/wall` (Soft Wall / 軟軟牆)
 
-The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account**. It never links to admin.
+The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account** (and an inbox bell when signed in). It never links to admin.
+
+Password reset: `POST /api/auth/forgot-password` always creates a hashed token when the email exists. If `RESEND_API_KEY` or `SMTP_HOST` is set, it sends the link. If email is not configured, the UI says so (without revealing whether the address has an account beyond that server-level message) and the reset URL is printed only in the server log. `POST /api/auth/reset-password` consumes a valid unused token.
+
+Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
 ## Plans
 
@@ -107,12 +115,13 @@ Checkout is treated as configured only when the first three are non-empty.
 - Stickers are a Stripe **one-time** Checkout (`mode: payment`). The webhook `checkout.session.completed` grants inventory. If Stripe env is missing, the catalog still renders and purchase returns `not_configured`, same as Soft+ subscriptions.
 - Optional price IDs: `STRIPE_PRICE_STICKER_PACK` and `STRIPE_PRICE_STICKER_<SLUG>` (star, heart, sprout, tea, moon, cloud, peach, sparkle). If unset, Checkout uses `price_data` from the catalog cents in SQLite.
 - Admin: `/admin/wall` can hide a note (`hidden`). Hidden notes drop off the public board.
+- Commenting notifies the note owner in the signed-in inbox (bell). Own comments do not.
 
 After pull, run `npm run db:migrate` so wall tables and the eight seed stickers exist.
 
 ## Admin
 
-`/admin` is a separate backend (not under public nav). Protect it with `ADMIN_TOKEN`:
+`/admin` is a separate backend (not under public nav). The visible UI is **繁體中文**. Protect it with `ADMIN_TOKEN`:
 
 1. Set `ADMIN_TOKEN` in `.env.local` or `/etc/softboring.env` (`openssl rand -hex 32`)
 2. Open `/admin/login` and paste the token, **or** call admin APIs with `Authorization: Bearer <token>` or `x-admin-token`
@@ -123,7 +132,7 @@ After pull, run `npm run db:migrate` so wall tables and the eight seed stickers 
 
 Without a matching token the admin UI and `/api/admin/*` stay closed. Do not commit a real token.
 
-OAuth and email verification are later.
+OAuth and email verification are later. Password reset and optional weekly reminder email use `RESEND_API_KEY` or SMTP when set.
 
 ## Locales
 
@@ -173,6 +182,9 @@ Copy `.env.example` to `.env.local`.
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — optional
 - `STRIPE_PRICE_STICKER_PACK` / `STRIPE_PRICE_STICKER_<SLUG>` — optional one-time sticker prices; unset is fine (catalog cents via `price_data`)
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID` — Google Analytics measurement ID (defaults to `G-MFQ9J6B9DH` if unset; inlined at `next build`)
+- `EMAIL_FROM` — from-address for reset and reminder mail (optional default is `Soft Boring Weekly <noreply@softboring.com>`)
+- `RESEND_API_KEY` — preferred mail provider
+- `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_SECURE` — optional SMTP, same idea as 99gold
 
 Do not put real secrets in the repo.
 
@@ -180,7 +192,13 @@ Do not put real secrets in the repo.
 
 1. **Deploy** — same Linode VPS as 99gold, separate site (see [DEPLOY-LINODE.md](./DEPLOY-LINODE.md))
 2. **Stripe live keys** — create the Soft+ product, set env, add the webhook
-3. Later still: OAuth, email reminders
+3. Later still: OAuth, richer email templates
+
+Weekly reminder cron (after email is configured):
+
+```bash
+npm run reminders:dispatch
+```
 
 ## Stack
 

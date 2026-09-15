@@ -2,7 +2,24 @@ import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
 import { Link } from "@/i18n/navigation";
 import { assertLocale } from "@/lib/locale";
+import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const appLocale = assertLocale(locale);
+  const t = await getTranslations({ locale: appLocale, namespace: "Metadata" });
+  return pageMetadata({
+    locale: appLocale,
+    title: t("homeTitle"),
+    description: t("homeDescription"),
+    path: "/",
+  });
+}
 
 type Props = {
   params: Promise<{ locale: string }>;

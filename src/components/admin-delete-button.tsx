@@ -1,5 +1,6 @@
 "use client";
 
+import { adminCopy } from "@/lib/admin-copy";
 import { useRouter } from "next/navigation";
 
 export function AdminDeleteButton({
@@ -19,7 +20,7 @@ export function AdminDeleteButton({
     if (!window.confirm(confirmText)) return;
     const response = await fetch(endpoint, { method: "DELETE" });
     if (!response.ok) {
-      window.alert("Could not delete.");
+      window.alert(adminCopy.common.deleteError);
       return;
     }
     router.push(redirectTo);

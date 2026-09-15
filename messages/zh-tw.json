@@ -1,7 +1,13 @@
 {
   "Metadata": {
     "title": "Soft Boring Weekly",
-    "description": "一份溫柔的每週回顧。每週六個小問題——不是待辦清單。"
+    "description": "一份溫柔的每週回顧。每週六個小問題——不是待辦清單。",
+    "homeTitle": "Soft Boring Weekly — 一份溫柔的每週回顧",
+    "homeDescription": "每週坐下來一次，回答六個小問題，把這週的感覺存起來。免費就能寫。Soft+ 會記得更多，並打開軟軟牆。",
+    "pricingTitle": "方案 — Free 與 Soft+",
+    "pricingDescription": "免費就能寫。Soft+ 保有完整紀錄、一條小小的感覺折線，以及軟軟牆：讀、拖、留言、貼紙。",
+    "wallTitle": "軟軟牆 — 共用的軟木板",
+    "wallDescription": "把一週釘成便利貼。Soft+ 可以讀、拖、留言，留下一點小小的稱讚。免費訪客只看得到上鎖的預覽。"
   },
   "Nav": {
     "home": "首頁",
@@ -15,7 +21,9 @@
     "brand": "Soft Boring"
   },
   "Footer": {
-    "note": "Soft Boring — 每週一次的安靜停頓"
+    "note": "Soft Boring — 每週一次的安靜停頓",
+    "privacy": "隱私權",
+    "terms": "使用條款"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -97,6 +105,7 @@
     "emptyTitle": "還沒有回顧",
     "emptyBody": "完成每週回顧後，就會出現在這裡。",
     "emptyCta": "開始回顧",
+    "loading": "正在載入你的回顧",
     "loadErrorTitle": "暫時看不到紀錄",
     "loadError": "現在無法載入回顧。請稍後再試。",
     "open": "打開",
@@ -141,6 +150,24 @@
     "loginSubmit": "登入",
     "registerSubmit": "建立帳號",
     "submitting": "請稍候…",
+    "forgotLink": "忘記密碼？",
+    "forgotTitle": "用更安靜的方式回來。",
+    "forgotLead": "告訴我們帳號的電子郵件。若帳號存在，我們會寄重設連結——若這台伺服器還沒設定信件，維運者可以在伺服器紀錄裡找到連結。",
+    "forgotCard": "重設密碼",
+    "forgotCardNote": "連結一小時內有效。",
+    "forgotSubmit": "寄出重設連結",
+    "forgotSent": "如果這個信箱有帳號，重設連結就在路上。請看收件匣，也許也看一下垃圾郵件。",
+    "forgotNoEmail": "這台伺服器還沒設定信件（請設定 RESEND_API_KEY 或 SMTP_HOST）。若你是維運者，重設連結只會出現在伺服器紀錄裡。",
+    "backToLogin": "回到登入",
+    "resetTitle": "選一組新密碼。",
+    "resetLead": "八個字就夠了。然後可以再登入。",
+    "resetCard": "新密碼",
+    "resetCardNote": "這個連結只能用一次，一小時內有效。",
+    "resetSubmit": "儲存新密碼",
+    "resetMissing": "重設連結不完整。請再申請一次。",
+    "legalPrefix": "建立帳號即表示你同意",
+    "terms": "使用條款",
+    "privacy": "隱私權政策",
     "toRegister": "還沒有帳號？",
     "toRegisterLink": "註冊",
     "toLogin": "已經有帳號？",
@@ -151,6 +178,7 @@
       "email_taken": "這個信箱已經有帳號了。試試登入。",
       "weak_password": "請使用 8 到 72 個字。",
       "invalid_email": "這不像是電子郵件地址。",
+      "invalid_token": "這個重設連結已過期或用過了。請再申請一次。",
       "generic": "出了一點問題。請稍後再試。"
     }
   },
@@ -181,7 +209,23 @@
     "logout": "登出",
     "loggingOut": "登出中…",
     "checkoutSuccess": "結帳已結束。Stripe 確認付款後，就會打開 Soft+。",
-    "checkoutSuccessPlus": "歡迎來到 Soft+。較早的週次與趨勢都是你的了。"
+    "checkoutSuccessPlus": "歡迎來到 Soft+。較早的週次與趨勢都是你的了。",
+    "reminderTitle": "每週提醒",
+    "reminderBody": "在你選的星期幾寄一封安靜的信——如果這台伺服器寄得出信。",
+    "reminderToggle": "每週寄提醒給我",
+    "reminderWeekday": "希望的星期",
+    "weekday": {
+      "0": "星期日",
+      "1": "星期一",
+      "2": "星期二",
+      "3": "星期三",
+      "4": "星期四",
+      "5": "星期五",
+      "6": "星期六"
+    },
+    "reminderEmailOn": "排程跑起來時就會寄提醒。",
+    "reminderEmailOff": "這台伺服器還沒設定信件，所以在填好 RESEND_API_KEY 或 SMTP 之前，提醒會安靜地略過。",
+    "reminderSaving": "儲存中…"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -245,6 +289,10 @@
     "loadErrorTitle": "牆在小睡",
     "loadError": "現在沒能打開軟軟牆。",
     "empty": "木板還是空的。準備好時，從紀錄把一週釘上來。",
+    "emptyTitle": "牆還很安靜",
+    "emptyCta": "去看紀錄",
+    "loading": "正在鋪軟木板",
+    "dragHint": "用手機時，按住便利貼拖移——拖的時候木板會先停住。",
     "lockedTitle": "別人的便利貼在 Soft+ 後面。",
     "lockedBody": "你還是可以私下寫。Soft+ 會打開牆：讀、拖、留言、貼貼紙。",
     "signedOutBody": "請用 Soft+ 登入才能讀這些便利貼。免費訪客只看得到模糊的木板。",
@@ -290,5 +338,64 @@
     "cloud": "雲",
     "peach": "桃子",
     "sparkle": "亮晶晶"
+  },
+  "Onboarding": {
+    "title": "先走三小步。",
+    "lead": "可以隨時關掉。關掉後，這個帳號不會再出現。",
+    "dismiss": "先不要",
+    "writeTitle": "寫第一篇回顧",
+    "writeBody": "六個小問題。沒有分數。",
+    "writeCta": "去寫",
+    "historyTitle": "看看紀錄",
+    "historyBody": "過去的週次會安靜地待在這裡。",
+    "historyCta": "打開紀錄",
+    "wallTitle": "瞄一眼軟軟牆",
+    "wallBody": "一塊共用的軟木板。Soft+ 會打開便利貼；Free 還是看得到預覽。",
+    "wallCta": "去看牆"
+  },
+  "Notifications": {
+    "label": "通知",
+    "bell": "信箱",
+    "title": "軟軟信箱",
+    "markAll": "全部標為已讀",
+    "loading": "查看中…",
+    "empty": "目前沒有消息。別人在你的便利貼留言，會出現在這裡。",
+    "wallComment": "有鄰居在你的便利貼留了言"
+  },
+  "Privacy": {
+    "title": "隱私權政策",
+    "updated": "最後更新：2026 年 9 月 15 日",
+    "lead": "Soft Boring Weekly 是一份小小的每週回顧產品。這頁說明我們收集什麼、為什麼，以及會留多久。",
+    "home": "回到首頁",
+    "s1Title": "我們是誰",
+    "s1Body": "Soft Boring Weekly（softboring.com）是獨立營運的網站。隱私相關問題，請用你帳號的電子郵件，或公開網站上的維運者聯絡。",
+    "s2Title": "我們收集什麼",
+    "s2Body": "帳號：電子郵件與雜湊後的密碼。你儲存的回顧（六題答案、可選的感覺、語系、時間）。你選擇公開的軟軟牆便利貼、留言與貼紙。若你訂閱或購買貼紙，會有來自 Stripe 的帳單識別（我們不保存完整卡號）。登入工作階段與訪客 cookie，讓應用保持登入，或把尚未認領的草稿留在這個瀏覽器。營運所需的伺服器紀錄；若尚未設定信件，也可能包含密碼重設連結。",
+    "s3Title": "我們怎麼用",
+    "s3Body": "用來提供每週回顧、紀錄、Soft+ 功能、軟軟牆、密碼重設、可選的每週提醒，以及客服。我們不出售個人資料，也不用回顧做廣告輪廓。",
+    "s4Title": "Cookie 與工作階段",
+    "s4Body": "登入時使用 httpOnly 工作階段 cookie；訪客回顧使用訪客 cookie；獨立的 /admin 後台另有管理 cookie。若設定了測量 ID，公開頁面可能會跑分析。你可以先以訪客使用、不必註冊；訪客回顧會留在該瀏覽器，直到被認領。",
+    "s5Title": "分享與處理者",
+    "s5Body": "付款由 Stripe 處理。若寄信，會使用你設定的 Resend 或 SMTP。託管與備份在維運者的伺服器（磁碟上的 SQLite）。釘上軟軟牆的內容，其他 Soft+ 會員也看得到；預設不公開。",
+    "s6Title": "保存期間與你的選擇",
+    "s6Body": "帳號與回顧會保存到你刪除帳號（或維運者代你刪除）。你可以隨時把便利貼從軟軟牆拿下來。可在帳號頁關掉每週提醒。若要刪除或索取資料副本，請登入後聯絡維運者。本政策可能更新；上方日期會一併修改。"
+  },
+  "Terms": {
+    "title": "使用條款",
+    "updated": "最後更新：2026 年 9 月 15 日",
+    "lead": "這是使用 Soft Boring Weekly 的一份簡單約定。若不同意，請不要建立帳號。",
+    "home": "回到首頁",
+    "s1Title": "服務內容",
+    "s1Body": "Soft Boring Weekly 讓你寫短短的每週回顧；付費的 Soft+ 則打開完整紀錄、感覺趨勢與軟軟牆。服務依現況提供。我們可能在網站上合理告知後，調整功能、價格或可用性。",
+    "s2Title": "帳號",
+    "s2Body": "請提供你能控制的真實電子郵件，並保管密碼。帳號上的活動由你負責。請勿用來存放違法內容、騷擾他人，或試圖侵入應用、他人帳號或管理後台。",
+    "s3Title": "Soft+ 與付款",
+    "s3Body": "付費方案與貼紙購買由 Stripe 收費。稅額、收據與卡片資料在那邊處理。可在 Stripe 顧客入口取消；除非另有說明，權益會持續到已付期間結束。管理後台手動改方案不會向 Stripe 收費。",
+    "s4Title": "你的內容與軟軟牆",
+    "s4Body": "你寫下的回顧，權利仍是你的。儲存即授權我們為你保存與顯示。若把一週釘上軟軟牆，即允許其他 Soft+ 會員閱讀、留言與貼貼紙。分享是自願的，也可以撤回。請勿張貼他人的私人資訊。",
+    "s5Title": "責任限制",
+    "s5Body": "本服務是書寫工具，不是醫療、法律或治療建議。在法律允許範圍內，我們不對遺失的回顧、中斷或間接損害負責。單一請求的總責任，以請求前 12 個月你支付的金額為限；若你使用免費方案，則為零。",
+    "s6Title": "結束約定",
+    "s6Body": "你可以停止使用並要求刪除帳號。我們可能暫停違反條款或傷害社群牆的帳號。刪除後的資料處理見隱私權政策。除非有強制的消費者保護法規，本條款適用維運者所在地的法律。"
   }
 }

@@ -3,6 +3,7 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "./locale-switcher";
+import { NotificationBell } from "./notification-bell";
 import { SoftMark } from "./soft-doodles";
 
 const links = [
@@ -16,9 +17,11 @@ const links = [
 export function SiteHeader({
   email,
   softPlus,
+  unreadNotifications = 0,
 }: {
   email: string | null;
   softPlus: boolean;
+  unreadNotifications?: number;
 }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
@@ -70,6 +73,7 @@ export function SiteHeader({
             {t("trends")}
           </Link>
         ) : null}
+        {email ? <NotificationBell unreadCount={unreadNotifications} /> : null}
         <Link
           href={authHref}
           className={
