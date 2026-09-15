@@ -1,3 +1,5 @@
+import type { CustomAnswer } from "@/lib/custom-questions";
+
 export type ReviewAnswers = {
   energy: string;
   drain: string;
@@ -5,6 +7,7 @@ export type ReviewAnswers = {
   priorities: string;
   feeling: number | null;
   summary: string;
+  customAnswers: CustomAnswer[];
 };
 
 export type Review = ReviewAnswers & {
@@ -20,4 +23,5 @@ export const emptyDraft = (): ReviewAnswers => ({
   priorities: "",
   feeling: null,
   summary: "",
+  customAnswers: [],
 });

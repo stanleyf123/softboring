@@ -1,10 +1,12 @@
 import { getDb } from "./client";
+import { isSoftPlusPlan } from "@/lib/plan";
 import {
   clampNotePosition,
   colorForIndex,
   isWallColor,
   noteExcerpt,
   notePositionForIndex,
+  WALL_PIN_Z,
   type WallColor,
 } from "@/lib/wall-canvas";
 import { stickerCountsByNote } from "./stickers";
@@ -18,6 +20,7 @@ export type WallNoteRow = {
   z: number;
   color: string;
   hidden: number;
+  pinned: number;
   created_at: string;
   updated_at: string;
   energy: string;
@@ -29,6 +32,8 @@ export type WallNoteRow = {
   locale: string | null;
   review_created_at: string;
   praise_count: number;
+  owner_plan: string | null;
+  owner_plan_status: string | null;
 };
 
 export type WallNoteListItem = {
@@ -43,6 +48,8 @@ export type WallNoteListItem = {
   excerpt: string;
   feeling: number | null;
   summary: string;
+  pinned: boolean;
+  ownerSoftPlus: boolean;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
 };
 
@@ -64,13 +71,15 @@ export type WallComment = {
 };
 
 const NOTE_SELECT = `
-  SELECT n.id, n.review_id, n.user_id, n.x, n.y, n.z, n.color, n.hidden,
+  SELECT n.id, n.review_id, n.user_id, n.x, n.y, n.z, n.color, n.hidden, n.pinned,
          n.created_at, n.updated_at,
          r.energy, r.drain, r.less_of, r.priorities, r.feeling, r.summary, r.locale,
          r.created_at AS review_created_at,
+         u.plan AS owner_plan, u.plan_status AS owner_plan_status,
          (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count
   FROM wall_notes n
   JOIN reviews r ON r.id = n.review_id
+  LEFT JOIN users u ON u.id = n.user_id
 `;
 
 function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem {
@@ -87,6 +96,8 @@ function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem
     excerpt: noteExcerpt(row.summary, row.energy),
     feeling: row.feeling,
     summary: row.summary,
+    pinned: Boolean(row.pinned),
+    ownerSoftPlus: isSoftPlusPlan(row.owner_plan, row.owner_plan_status),
     stickers: [],
   };
 }
@@ -176,9 +187,9 @@ export function shareWallNote(input: {
 
   db.prepare(
     `INSERT INTO wall_notes (
-      id, review_id, user_id, x, y, z, color, hidden, created_at, updated_at
+      id, review_id, user_id, x, y, z, color, hidden, pinned, created_at, updated_at
     ) VALUES (
-      @id, @review_id, @user_id, @x, @y, @z, @color, 0, @created_at, @updated_at
+      @id, @review_id, @user_id, @x, @y, @z, @color, 0, 0, @created_at, @updated_at
     )`,
   ).run({
     id,
@@ -217,15 +228,20 @@ export function updateWallNotePosition(input: {
   z?: number;
 }) {
   const current = getDb()
-    .prepare(`SELECT id, hidden FROM wall_notes WHERE id = ?`)
-    .get(input.id) as { id: string; hidden: number } | undefined;
+    .prepare(`SELECT id, hidden, pinned FROM wall_notes WHERE id = ?`)
+    .get(input.id) as { id: string; hidden: number; pinned: number } | undefined;
   if (!current || current.hidden) return 0;
 
   const next = clampNotePosition(input.x, input.y);
   const maxZ = getDb()
     .prepare(`SELECT COALESCE(MAX(z), 0) AS z FROM wall_notes`)
     .get() as { z: number };
-  const z = input.z == null ? maxZ.z + 1 : Math.max(0, Math.round(input.z));
+  let z = input.z == null ? maxZ.z + 1 : Math.max(0, Math.round(input.z));
+  if (current.pinned) {
+    z = Math.max(WALL_PIN_Z, z);
+  } else if (z >= WALL_PIN_Z) {
+    z = WALL_PIN_Z - 1;
+  }
 
   return getDb()
     .prepare(
@@ -240,6 +256,54 @@ export function updateWallNotePosition(input: {
       z,
       updated_at: new Date().toISOString(),
     }).changes;
+}
+
+export function pinWallNoteForUser(id: string, userId: string, pinned: boolean) {
+  const db = getDb();
+  const current = db
+    .prepare(`SELECT id, user_id, hidden, pinned FROM wall_notes WHERE id = ?`)
+    .get(id) as
+    | { id: string; user_id: string; hidden: number; pinned: number }
+    | undefined;
+  if (!current || current.hidden || current.user_id !== userId) return 0;
+
+  const now = new Date().toISOString();
+  const run = db.transaction(() => {
+    if (pinned) {
+      db.prepare(
+        `UPDATE wall_notes
+         SET pinned = 0,
+             z = CASE WHEN z >= @pin THEN z - @pin ELSE z END,
+             updated_at = @now
+         WHERE user_id = @userId AND pinned = 1 AND id != @id`,
+      ).run({ pin: WALL_PIN_Z, now, userId, id });
+      const maxZ = db
+        .prepare(`SELECT COALESCE(MAX(z), 0) AS z FROM wall_notes`)
+        .get() as { z: number };
+      return db
+        .prepare(
+          `UPDATE wall_notes
+           SET pinned = 1, z = @z, updated_at = @now
+           WHERE id = @id AND user_id = @userId AND hidden = 0`,
+        )
+        .run({
+          id,
+          userId,
+          now,
+          z: Math.max(WALL_PIN_Z, maxZ.z + 1),
+        }).changes;
+    }
+    return db
+      .prepare(
+        `UPDATE wall_notes
+         SET pinned = 0,
+             z = CASE WHEN z >= @pin THEN z - @pin ELSE z END,
+             updated_at = @now
+         WHERE id = @id AND user_id = @userId`,
+      )
+      .run({ pin: WALL_PIN_Z, now, id, userId }).changes;
+  });
+  return run();
 }
 
 export function listWallComments(noteId: string, viewerId: string | null): WallComment[] {

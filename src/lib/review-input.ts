@@ -1,4 +1,5 @@
 import { routing } from "@/i18n/routing";
+import { normalizeCustomAnswers } from "@/lib/custom-questions";
 import { isGuestId } from "@/lib/guest";
 import type { Review, ReviewAnswers } from "@/lib/review-types";
 
@@ -51,6 +52,7 @@ export function parseAnswers(body: unknown): ReviewAnswers & { locale?: string }
     priorities: asText(input.priorities),
     feeling: asFeeling(input.feeling),
     summary: asText(input.summary),
+    customAnswers: normalizeCustomAnswers(input.customAnswers),
     locale: asLocale(input.locale),
   };
 }

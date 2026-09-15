@@ -1,5 +1,5 @@
 import { AccountPanel } from "@/components/account-panel";
-import { countReviewsForUser } from "@/db/reviews";
+import { countReviewsForUser, monthlyDigestForUser } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { isEmailConfigured } from "@/lib/email";
@@ -49,6 +49,8 @@ export default async function AccountPage({ params, searchParams }: Props) {
           reminderEnabled={settings.reminderEnabled}
           reminderWeekday={settings.reminderWeekday}
           emailConfigured={isEmailConfigured()}
+          customQuestions={settings.customQuestions}
+          digest={monthlyDigestForUser(user.id)}
         />
       </div>
     </div>

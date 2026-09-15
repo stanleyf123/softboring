@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS reviews (
   feeling INTEGER,
   summary TEXT NOT NULL DEFAULT '',
   locale TEXT,
+  custom_answers TEXT NOT NULL DEFAULT '[]',
   created_at TEXT NOT NULL,
   CHECK (feeling IS NULL OR (feeling >= 1 AND feeling <= 5)),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS wall_notes (
   z INTEGER NOT NULL DEFAULT 0,
   color TEXT NOT NULL DEFAULT 'peach',
   hidden INTEGER NOT NULL DEFAULT 0,
+  pinned INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
@@ -159,6 +161,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
   reminder_enabled INTEGER NOT NULL DEFAULT 0,
   reminder_weekday INTEGER NOT NULL DEFAULT 0,
   reminder_last_sent_at TEXT,
+  custom_questions TEXT NOT NULL DEFAULT '[]',
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

@@ -7,12 +7,16 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 type Point = { id: string; createdAt: string; feeling: number };
+type Chip = { word: string; count: number };
 
 export function TrendsPanel() {
   const t = useTranslations("Trends");
   const format = useFormatter();
   const hydrated = useHydrated();
   const [points, setPoints] = useState<Point[] | null>(null);
+  const [streak, setStreak] = useState(0);
+  const [energyKeywords, setEnergyKeywords] = useState<Chip[]>([]);
+  const [drainKeywords, setDrainKeywords] = useState<Chip[]>([]);
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState(false);
 
@@ -28,6 +32,9 @@ export function TrendsPanel() {
           return;
         }
         setPoints(next.points);
+        setStreak(next.streak);
+        setEnergyKeywords(next.energyKeywords);
+        setDrainKeywords(next.drainKeywords);
       } catch {
         if (!cancelled) setError(true);
       }
@@ -81,19 +88,74 @@ export function TrendsPanel() {
   }
 
   return (
-    <section className="rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8">
-      <FeelingChart points={points} />
-      <ol className="mt-8 space-y-3">
-        {points.map((point) => (
-          <li key={point.id} className="flex items-center justify-between gap-4 text-sm">
-            <span className="text-muted">
-              {format.dateTime(new Date(point.createdAt), { dateStyle: "medium" })}
-            </span>
-            <span>{t("feelingPoint", { value: point.feeling })}</span>
-          </li>
-        ))}
-      </ol>
-    </section>
+    <div className="space-y-5">
+      <section className="rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8">
+        <FeelingChart points={points} />
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-[1.4rem] bg-mint/60 px-4 py-4">
+            <p className="text-sm text-muted">{t("streakTitle")}</p>
+            <p className="mt-1 font-display text-2xl tracking-tight">
+              {t("streakCount", { count: streak })}
+            </p>
+          </div>
+          <div className="rounded-[1.4rem] bg-peach/60 px-4 py-4">
+            <p className="text-sm text-muted">{t("pointsTitle")}</p>
+            <p className="mt-1 font-display text-2xl tracking-tight">
+              {t("pointsCount", { count: points.length })}
+            </p>
+          </div>
+        </div>
+        <KeywordRow title={t("energyChips")} chips={energyKeywords} tone="mint" empty={t("chipsEmpty")} />
+        <KeywordRow title={t("drainChips")} chips={drainKeywords} tone="blush" empty={t("chipsEmpty")} />
+        <ol className="mt-8 space-y-3">
+          {points.map((point) => (
+            <li key={point.id} className="flex items-center justify-between gap-4 text-sm">
+              <span className="text-muted">
+                {format.dateTime(new Date(point.createdAt), { dateStyle: "medium" })}
+              </span>
+              <span>{t("feelingPoint", { value: point.feeling })}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  );
+}
+
+function KeywordRow({
+  title,
+  chips,
+  tone,
+  empty,
+}: {
+  title: string;
+  chips: Chip[];
+  tone: "mint" | "blush";
+  empty: string;
+}) {
+  return (
+    <div className="mt-6">
+      <p className="text-sm text-muted">{title}</p>
+      {chips.length === 0 ? (
+        <p className="mt-2 text-sm text-muted">{empty}</p>
+      ) : (
+        <ul className="mt-2 flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <li
+              key={chip.word}
+              className={
+                tone === "mint"
+                  ? "rounded-full bg-mint px-3 py-1 text-sm"
+                  : "rounded-full bg-blush px-3 py-1 text-sm"
+              }
+            >
+              {chip.word}
+              <span className="ml-1 text-xs text-muted">{chip.count}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

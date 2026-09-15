@@ -49,7 +49,7 @@ export function AdminPlanButtons({
         type="button"
         disabled={busy}
         onClick={() => setPlan("soft_plus")}
-        className="rounded-full border border-line px-4 py-2 text-sm hover:bg-mint/70 disabled:opacity-60"
+        className="rounded-full bg-mint px-4 py-2 text-sm shadow-card hover:bg-mint disabled:opacity-60"
       >
         {adminCopy.member.grantPlus}
       </button>

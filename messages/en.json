@@ -97,7 +97,9 @@
     "guestNudgeLogin": "Log in",
     "upgradeNudgeTitle": "Older weeks are tucking themselves away.",
     "upgradeNudgeBody": "Free keeps the latest four open. Soft+ remembers the rest, and draws a small feeling line.",
-    "upgradeNudgeCta": "See Soft+"
+    "upgradeNudgeCta": "See Soft+",
+    "customHeading": "Your extra questions",
+    "customLead": "Up to three questions from your account page."
   },
   "History": {
     "title": "History",
@@ -118,7 +120,13 @@
     "guestBanner": "This browser is holding your reviews. Create an account so they can follow you — and so you can subscribe.",
     "guestCta": "Create an account",
     "freeBannerTitle": "Latest four are open",
-    "freeBanner": "Soft+ keeps every week, and adds a small feeling chart."
+    "freeBanner": "Soft+ keeps every week, and adds a small feeling chart.",
+    "plusToolsTitle": "Soft+ tools",
+    "searchLabel": "Search reviews",
+    "searchPlaceholder": "Search titles and answers…",
+    "searchEmpty": "No weeks match that search.",
+    "exportCsv": "Download CSV",
+    "exportPrint": "Printable pages"
   },
   "HistoryDetail": {
     "back": "Back to history",
@@ -196,9 +204,9 @@
     "planFree": "Free",
     "planSoftPlus": "Soft+",
     "planFreeBody": "Write every week. History keeps the latest four open.",
-    "planSoftPlusBody": "Unlimited history, feeling trends, and Soft Wall.",
+    "planSoftPlusBody": "Unlimited history, richer trends, export, custom questions, and Soft Wall.",
     "upgradeTitle": "Keep more than four weeks",
-    "upgradeBody": "Soft+ unlocks older reviews, a small chart of feeling, and the community wall.",
+    "upgradeBody": "Soft+ unlocks older reviews, richer trends, export, custom questions, and the community wall.",
     "upgrade": "See Soft+",
     "history": "See history",
     "wall": "See Soft Wall",
@@ -225,7 +233,23 @@
     },
     "reminderEmailOn": "Reminders will send when the cron job runs.",
     "reminderEmailOff": "Email is not configured on this server yet, so reminders will no-op until RESEND_API_KEY or SMTP is set.",
-    "reminderSaving": "Saving…"
+    "reminderSaving": "Saving…",
+    "digestTitle": "This month",
+    "digestBody": "A quiet tally from the reviews saved this calendar month.",
+    "digestCountLabel": "Reviews",
+    "digestCount": "{count}",
+    "digestFeelingLabel": "Average feeling",
+    "digestFeeling": "{value} / 5",
+    "digestFeelingEmpty": "No feeling numbers yet",
+    "customTitle": "Custom weekly questions",
+    "customBody": "Add up to three extra questions. They appear on this week’s review form.",
+    "customPlaceholder": "Question {n}",
+    "customAdd": "Add a question",
+    "customRemove": "Remove",
+    "customSave": "Save questions",
+    "customSaved": "Saved.",
+    "customError": "Could not save those questions just now.",
+    "export": "Export reviews"
   },
   "Pricing": {
     "eyebrow": "Free to write · paid to remember more",
@@ -247,6 +271,10 @@
     "featureTrendsPlus": "Feeling trends (1–5 over time)",
     "featureWallFree": "Soft Wall stays behind a soft curtain",
     "featureWallPlus": "Soft Wall: read, drag, comment, and stick stickers",
+    "featureExportPlus": "Export your weeks as CSV or a printable page",
+    "featureSearchPlus": "Search the full history",
+    "featureCustomPlus": "Up to three custom weekly questions",
+    "featureDigestPlus": "A monthly digest on your account page",
     "featurePortal": "Manage or cancel in the Stripe customer portal",
     "ctaRegister": "Create a free account",
     "ctaLogin": "Log in",
@@ -278,7 +306,14 @@
     "signedOutBody": "Log in on Soft+ to see your feeling line.",
     "loginCta": "Log in",
     "loadErrorTitle": "Trends are unavailable",
-    "loadError": "Could not load the chart just now."
+    "loadError": "Could not load the chart just now.",
+    "streakTitle": "Weekly streak",
+    "streakCount": "{count} weeks in a row",
+    "pointsTitle": "Feeling points",
+    "pointsCount": "{count}",
+    "energyChips": "Energy words",
+    "drainChips": "Drain words",
+    "chipsEmpty": "Not enough words yet. Write a few more weeks."
   },
   "Wall": {
     "eyebrow": "A shared corkboard · opt-in",
@@ -293,6 +328,11 @@
     "emptyCta": "Go to history",
     "loading": "Laying out the corkboard",
     "dragHint": "On a phone, press and drag the note — the board will hold still while you move it.",
+    "plusBadge": "Soft+",
+    "pin": "Pin to top",
+    "unpin": "Unpin",
+    "pinned": "Pinned",
+    "pinHint": "You can pin one of your notes so it sits above the others.",
     "lockedTitle": "Other people's notes are behind Soft+.",
     "lockedBody": "You can still write privately. Soft+ opens the wall: read, drag, comment, stick stickers.",
     "signedOutBody": "Log in on Soft+ to read the notes. Free visitors only see the blurred corkboard.",
@@ -328,6 +368,15 @@
     "saving": "One moment…",
     "shareCta": "Pin to Soft Wall",
     "shareError": "Could not update the wall just now."
+  },
+  "Export": {
+    "title": "Printable reviews",
+    "lead": "A quiet stack of your weeks. Use the browser print dialog to save a PDF.",
+    "back": "← Back to history",
+    "print": "Print / save PDF",
+    "csv": "Download CSV",
+    "empty": "No reviews to print yet.",
+    "noFeeling": "No feeling number"
   },
   "WallStickers": {
     "star": "Star",

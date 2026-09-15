@@ -1,4 +1,6 @@
 import { getDb } from "./client";
+import { parseCustomAnswersJson } from "@/lib/custom-questions";
+import { monthlyDigestFromReviews } from "@/lib/plus-insights";
 import type { Review, ReviewAnswers } from "@/lib/review-types";
 
 type ReviewRow = {
@@ -12,6 +14,7 @@ type ReviewRow = {
   feeling: number | null;
   summary: string;
   locale: string | null;
+  custom_answers: string | null;
   created_at: string;
 };
 
@@ -35,6 +38,7 @@ function rowToReview(row: ReviewRow): Review {
     feeling: row.feeling,
     summary: row.summary,
     createdAt: row.created_at,
+    customAnswers: parseCustomAnswersJson(row.custom_answers),
     ...(row.locale ? { locale: row.locale } : {}),
   };
 }
@@ -90,9 +94,9 @@ function insertReview(
   getDb()
     .prepare(
       `INSERT INTO reviews (
-        id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
+        id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, custom_answers, created_at
       ) VALUES (
-        @id, @guest_id, @user_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @created_at
+        @id, @guest_id, @user_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @custom_answers, @created_at
       )`,
     )
     .run({
@@ -106,6 +110,7 @@ function insertReview(
       feeling: input.feeling,
       summary: input.summary,
       locale: input.locale ?? null,
+      custom_answers: JSON.stringify(input.customAnswers ?? []),
       created_at: input.createdAt,
     });
 }
@@ -127,6 +132,7 @@ export function createReview(owner: ReviewOwner, input: NewReview): Review {
     feeling: input.feeling,
     summary: input.summary,
     createdAt,
+    customAnswers: input.customAnswers ?? [],
     ...(locale ? { locale } : {}),
   };
 }
@@ -143,9 +149,9 @@ export function importReviewsForOwner(
   const db = getDb();
   const insert = db.prepare(
     `INSERT INTO reviews (
-      id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
+      id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, custom_answers, created_at
     ) VALUES (
-      @id, @guest_id, @user_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @created_at
+      @id, @guest_id, @user_id, @energy, @drain, @less_of, @priorities, @feeling, @summary, @locale, @custom_answers, @created_at
     )`,
   );
   const userId = owner.kind === "user" ? owner.userId : null;
@@ -169,6 +175,7 @@ export function importReviewsForOwner(
         feeling: item.feeling,
         summary: item.summary,
         locale: item.locale ?? null,
+        custom_answers: JSON.stringify(item.customAnswers ?? []),
         created_at: item.createdAt,
       });
       imported += 1;
@@ -192,4 +199,13 @@ export function countReviewsForUser(userId: string) {
     .prepare(`SELECT COUNT(*) AS n FROM reviews WHERE user_id = ?`)
     .get(userId) as { n: number };
   return row.n;
+}
+
+export function monthlyDigestForUser(userId: string, now = new Date()) {
+  const reviews = listReviewsForOwner({
+    kind: "user",
+    userId,
+    guestId: "",
+  });
+  return monthlyDigestFromReviews(reviews, now);
 }

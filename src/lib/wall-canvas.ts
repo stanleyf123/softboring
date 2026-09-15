@@ -5,6 +5,8 @@ export const WALL_CANVAS = {
   noteHeight: 236,
 } as const;
 
+export const WALL_PIN_Z = 50_000;
+
 export const WALL_COLORS = [
   "peach",
   "blush",

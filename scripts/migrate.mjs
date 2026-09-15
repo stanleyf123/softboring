@@ -32,6 +32,7 @@ const reviewCols = columnNames("reviews");
 if (!reviewCols.includes("user_id")) {
   db.exec("ALTER TABLE reviews ADD COLUMN user_id TEXT");
 }
+ensureColumn("reviews", "custom_answers", "TEXT NOT NULL DEFAULT '[]'");
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)",
 );
@@ -64,6 +65,14 @@ if (settingsTable) {
   ensureColumn("user_settings", "reminder_enabled", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "reminder_weekday", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "reminder_last_sent_at", "TEXT");
+  ensureColumn("user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
+}
+
+const wallTable = db
+  .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wall_notes'`)
+  .get();
+if (wallTable) {
+  ensureColumn("wall_notes", "pinned", "INTEGER NOT NULL DEFAULT 0");
 }
 
 db.close();

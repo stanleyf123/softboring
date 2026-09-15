@@ -24,6 +24,7 @@ export function withHistoryAccess(
       priorities: "",
       feeling: null,
       summary: "",
+      customAnswers: [],
       locked: true,
     };
   });

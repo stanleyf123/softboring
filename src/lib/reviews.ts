@@ -135,15 +135,30 @@ export async function createReview(
 }
 
 export async function fetchTrendPoints(): Promise<
-  | { ok: true; points: Array<{ id: string; createdAt: string; feeling: number }> }
+  | {
+      ok: true;
+      points: Array<{ id: string; createdAt: string; feeling: number }>;
+      streak: number;
+      energyKeywords: Array<{ word: string; count: number }>;
+      drainKeywords: Array<{ word: string; count: number }>;
+    }
   | { ok: false; locked: boolean }
 > {
   const response = await fetch("/api/reviews/trends", { cache: "no-store" });
   if (response.status === 403) return { ok: false, locked: true };
   const data = await readJsonResponse<{
     points: Array<{ id: string; createdAt: string; feeling: number }>;
+    streak?: number;
+    energyKeywords?: Array<{ word: string; count: number }>;
+    drainKeywords?: Array<{ word: string; count: number }>;
   }>(response);
-  return { ok: true, points: data.points };
+  return {
+    ok: true,
+    points: data.points,
+    streak: data.streak ?? 0,
+    energyKeywords: data.energyKeywords ?? [],
+    drainKeywords: data.drainKeywords ?? [],
+  };
 }
 
 let migratePromise: Promise<void> | null = null;

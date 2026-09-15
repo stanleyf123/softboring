@@ -63,6 +63,10 @@ export async function PricingView({
             <li>{t("featureHistoryPlus")}</li>
             <li>{t("featureTrendsPlus")}</li>
             <li>{t("featureWallPlus")}</li>
+            <li>{t("featureExportPlus")}</li>
+            <li>{t("featureSearchPlus")}</li>
+            <li>{t("featureCustomPlus")}</li>
+            <li>{t("featureDigestPlus")}</li>
             <li>{t("featurePortal")}</li>
           </ul>
           <div className="mt-8">

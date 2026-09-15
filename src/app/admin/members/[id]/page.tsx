@@ -57,6 +57,17 @@ export default async function AdminMemberDetailPage({ params }: Props) {
 
       <article className="mt-6 rounded-[1.75rem] bg-paper px-6 py-8 shadow-card sm:px-8">
         <h2 className="font-display text-2xl tracking-tight">{member.email}</h2>
+        <p className="mt-3">
+          <span
+            className={
+              member.displayPlan === "soft_plus"
+                ? "inline-flex rounded-full bg-mint px-3 py-1 text-sm font-medium"
+                : "inline-flex rounded-full bg-peach px-3 py-1 text-sm"
+            }
+          >
+            {planLabel(member.plan, member.planStatus)}
+          </span>
+        </p>
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
           {fields.map(([label, value]) => (
             <div key={label}>

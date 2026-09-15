@@ -2,6 +2,7 @@
 
 import { ShareToWall } from "@/components/share-to-wall";
 import { Link } from "@/i18n/navigation";
+import { answersForQuestions, type CustomQuestion } from "@/lib/custom-questions";
 import {
   clearDraft,
   createReview,
@@ -13,7 +14,7 @@ import {
 } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const TEXT_FIELDS = [
   "energy",
@@ -23,21 +24,53 @@ const TEXT_FIELDS = [
   "summary",
 ] as const;
 
-export function ReviewForm({ signedIn }: { signedIn: boolean }) {
+export function ReviewForm({
+  signedIn,
+  softPlus = false,
+  customQuestions = [],
+}: {
+  signedIn: boolean;
+  softPlus?: boolean;
+  customQuestions?: CustomQuestion[];
+}) {
   const hydrated = useHydrated();
 
   if (!hydrated) {
     return <div className="min-h-[28rem]" aria-hidden="true" />;
   }
 
-  return <ReviewFormFields signedIn={signedIn} />;
+  return (
+    <ReviewFormFields
+      signedIn={signedIn}
+      softPlus={softPlus}
+      customQuestions={customQuestions}
+    />
+  );
 }
 
-function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
+function ReviewFormFields({
+  signedIn,
+  softPlus,
+  customQuestions,
+}: {
+  signedIn: boolean;
+  softPlus: boolean;
+  customQuestions: CustomQuestion[];
+}) {
   const t = useTranslations("Review");
   const tQuestions = useTranslations("Questions");
   const locale = useLocale();
-  const [draft, setDraft] = useState<ReviewAnswers>(loadDraft);
+  const initial = useMemo(() => {
+    const draft = loadDraft();
+    if (!softPlus || customQuestions.length === 0) {
+      return { ...draft, customAnswers: [] };
+    }
+    return {
+      ...draft,
+      customAnswers: answersForQuestions(customQuestions, draft.customAnswers ?? []),
+    };
+  }, [softPlus, customQuestions]);
+  const [draft, setDraft] = useState<ReviewAnswers>(initial);
   const [saved, setSaved] = useState(false);
   const [savedReviewId, setSavedReviewId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -52,13 +85,29 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
     });
   }
 
+  function updateCustom(id: string, answer: string) {
+    setDraft((current) => {
+      const nextAnswers = (current.customAnswers ?? []).map((item) =>
+        item.id === id ? { ...item, answer } : item,
+      );
+      const next = { ...current, customAnswers: nextAnswers };
+      saveDraft(next);
+      return next;
+    });
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
     setSaving(true);
     setError(false);
     try {
-      const result = await createReview({ ...draft, locale });
+      const payload = {
+        ...draft,
+        locale,
+        customAnswers: softPlus ? draft.customAnswers : [],
+      };
+      const result = await createReview(payload);
       setAccess(result.access);
       setSavedReviewId(result.review.id);
       setSaved(true);
@@ -71,7 +120,11 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
 
   function handleWriteAnother() {
     clearDraft();
-    setDraft(emptyDraft());
+    const next = emptyDraft();
+    if (softPlus && customQuestions.length > 0) {
+      next.customAnswers = answersForQuestions(customQuestions, []);
+    }
+    setDraft(next);
     setSaved(false);
     setSavedReviewId(null);
     setError(false);
@@ -163,6 +216,26 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
           />
         </label>
       ))}
+
+      {softPlus && draft.customAnswers.length > 0 ? (
+        <fieldset className="rounded-[1.75rem] bg-mint/40 px-5 py-6">
+          <legend className="font-display text-xl tracking-tight">{t("customHeading")}</legend>
+          <p className="mt-2 text-sm text-muted">{t("customLead")}</p>
+          <div className="mt-4 space-y-5">
+            {draft.customAnswers.map((item) => (
+              <label key={item.id} className="block">
+                <span className="block text-base leading-relaxed">{item.prompt}</span>
+                <textarea
+                  value={item.answer}
+                  onChange={(event) => updateCustom(item.id, event.target.value)}
+                  rows={3}
+                  className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
+                />
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
 
       <fieldset>
         <legend className="text-base leading-relaxed">{tQuestions("feeling")}</legend>

@@ -59,3 +59,10 @@ button,
 a {
   font: inherit;
 }
+
+@media print {
+  body {
+    background: #fff8f2;
+    background-image: none;
+  }
+}

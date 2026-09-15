@@ -133,6 +133,14 @@ export function HistoryDetail({ id }: { id: string }) {
             </dd>
           </div>
         ))}
+        {(review.customAnswers ?? []).map((item) => (
+          <div key={item.id}>
+            <dt className="text-sm text-muted">{item.prompt}</dt>
+            <dd className="mt-2 whitespace-pre-wrap leading-relaxed">
+              {item.answer.trim() || "—"}
+            </dd>
+          </div>
+        ))}
         <div>
           <dt className="text-sm text-muted">{tQuestions("feeling")}</dt>
           <dd className="mt-2">
