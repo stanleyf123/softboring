@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { applyCheckoutSession, applySubscription } from "@/lib/billing";
+import {
+  applyChargeRefunded,
+  applyCheckoutSession,
+  applyInvoicePaid,
+  applyInvoicePaymentFailed,
+  applySubscription,
+} from "@/lib/billing";
 import { getStripe, getStripeConfig } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -32,11 +38,21 @@ export async function POST(request: Request) {
   try {
     switch (event.type) {
       case "checkout.session.completed":
-        applyCheckoutSession(event.data.object);
+      case "checkout.session.async_payment_succeeded":
+        applyCheckoutSession(event.data.object, event.id);
         break;
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
         applySubscription(event.data.object);
+        break;
+      case "invoice.paid":
+        applyInvoicePaid(event.data.object, event.id);
+        break;
+      case "invoice.payment_failed":
+        applyInvoicePaymentFailed(event.data.object, event.id);
+        break;
+      case "charge.refunded":
+        applyChargeRefunded(event.data.object, event.id);
         break;
       default:
         break;

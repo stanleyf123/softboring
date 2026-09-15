@@ -66,8 +66,12 @@ Endpoint URL (production):
 Listen to:
 
 - `checkout.session.completed`
+- `checkout.session.async_payment_succeeded`
 - `customer.subscription.updated`
 - `customer.subscription.deleted`
+- `invoice.paid`
+- `invoice.payment_failed`
+- `charge.refunded`
 
 Copy the signing secret (`whsec_...`) into `STRIPE_WEBHOOK_SECRET`.
 
@@ -79,7 +83,7 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 The handler reads the **raw request body** to verify the signature. Default nginx `proxy_pass` is enough; do not add a body-rewriting filter in front of `/api/stripe/webhook`.
 
-After a successful checkout, the webhook writes `plan`, `plan_status`, `stripe_customer_id`, and `stripe_subscription_id` on the user.
+After a successful checkout, the webhook writes `plan`, `plan_status`, `stripe_customer_id`, and `stripe_subscription_id` on the user, and inserts a row in `payments` (subscription or sticker). Later `invoice.paid` events add renewals (deduped by payment intent / checkout session / invoice id when present). Refunds and failed invoices update status. If Stripe env is missing, `/admin/payments` still loads with an empty state.
 
 ### 3. Environment
 
@@ -112,7 +116,10 @@ After pull, run `npm run db:migrate` so wall tables and the eight seed stickers 
 
 1. Set `ADMIN_TOKEN` in `.env.local` or `/etc/softboring.env` (`openssl rand -hex 32`)
 2. Open `/admin/login` and paste the token, **or** call admin APIs with `Authorization: Bearer <token>` or `x-admin-token`
-3. Dashboard: user, review, Free, and Soft+ counts; users list includes plan; open a review; optional delete with confirm
+3. Dashboard: member / Soft+ / Free / review / wall counts, plus successful payment count and revenue when `payments` rows exist
+4. **Members** (`/admin/members`, formerly Users): email, plan, Stripe ids, review/wall counts, last active; open a member for reviews, wall notes, payment history, and confirmed plan changes (Grant Soft+ / Set Free, optionally clearing Stripe ids). Password hashes are never shown. `/admin/users` redirects here.
+5. **Payments** (`/admin/payments`): filter by kind, status, or email; each row can link to the member
+6. Open a review or hide a wall note; optional delete with confirm
 
 Without a matching token the admin UI and `/api/admin/*` stay closed. Do not commit a real token.
 
@@ -138,7 +145,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/en` or `/zh-tw`.
 
-`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so user billing columns exist (`plan`, `stripe_customer_id`, …).
+`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so the `payments` table exists (membership admin and billing history). Older billing columns on `users` (`plan`, `stripe_customer_id`, …) are still added if missing.
 
 ```bash
 npm run build

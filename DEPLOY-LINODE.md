@@ -2,7 +2,7 @@
 
 Soft Boring Weekly 與 [99gold](https://github.com/stanleyf123/99gold) **共用同一台 Linode VPS**，但是 **另一個站點**：另一套目錄、環境檔、systemd、Nginx `server`、SQLite。不要和 99gold 共用資料庫或服務單元。
 
-每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id` / 訂閱欄位。
+每週回顧與會員帳號存在 Soft Boring 自己的 SQLite（`SQLITE_PATH`）。部署或更新後跑 Soft Boring 的 `npm run db:migrate`（不要跑 99gold 的 migrate），以套用 `users` / `sessions` / `reviews.user_id` / 訂閱欄位 / `payments` 繳費記錄。
 
 目標主機範例：`172.237.11.195`（與 99gold 文件裡同一台，1GB RAM + swap）。
 
@@ -94,7 +94,7 @@ STRIPE_PRICE_MONTHLY=
 
 `SITE_URL` 是反代後面的公開 origin。Nginx 會轉 `Host` 與 `X-Forwarded-Proto`，但 Next.js 的 `request.url` 仍可能是 `http://127.0.0.1:3001`。凡是 **絕對** 轉址（例如 `/api/admin/session` 的 `Location`）必須用 `SITE_URL`（去掉結尾斜線）當 origin，不要用 `request.url`。
 
-Stripe / OAuth / 驗證信：OAuth 與驗證信仍是之後可選。Soft+ 若要真的能收款，在 `/etc/softboring.env` 填 Stripe 變數，並在 Stripe Dashboard 把 webhook 指到 `https://softboring.com/api/stripe/webhook`（事件：`checkout.session.completed`、`customer.subscription.updated`、`customer.subscription.deleted`）。App Router 會讀 raw body 驗簽；Nginx 預設 `proxy_pass` 即可，不要對 webhook 路徑做 body rewrite。步驟見 README。
+Stripe / OAuth / 驗證信：OAuth 與驗證信仍是之後可選。Soft+ 若要真的能收款，在 `/etc/softboring.env` 填 Stripe 變數，並在 Stripe Dashboard 把 webhook 指到 `https://softboring.com/api/stripe/webhook`（事件：`checkout.session.completed`、`checkout.session.async_payment_succeeded`、`customer.subscription.updated`、`customer.subscription.deleted`、`invoice.paid`、`invoice.payment_failed`、`charge.refunded`）。成功的結帳／發票會寫入 `payments` 表；管理後台 `/admin/payments` 與會員詳情可看繳費記錄。App Router 會讀 raw body 驗簽；Nginx 預設 `proxy_pass` 即可，不要對 webhook 路徑做 body rewrite。步驟見 README。更新後務必再跑一次 `npm run db:migrate` 以建立 `payments` 表。
 
 ## 4. systemd：網站行程
 

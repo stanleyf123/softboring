@@ -303,14 +303,34 @@ export type AdminWallNote = {
   praiseCount: number;
 };
 
-export function listAdminWallNotes(limit = 200): AdminWallNote[] {
-  const rows = getDb()
-    .prepare(
-      `SELECT n.id, n.created_at, n.hidden, r.summary, u.email AS user_email,
+function mapAdminWallNote(row: {
+  id: string;
+  created_at: string;
+  hidden: number;
+  summary: string;
+  user_email: string | null;
+  praise_count: number;
+}): AdminWallNote {
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    hidden: Boolean(row.hidden),
+    summary: row.summary,
+    userEmail: row.user_email,
+    praiseCount: row.praise_count,
+  };
+}
+
+const ADMIN_WALL_SELECT = `SELECT n.id, n.created_at, n.hidden, r.summary, u.email AS user_email,
               (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count
        FROM wall_notes n
        JOIN reviews r ON r.id = n.review_id
-       LEFT JOIN users u ON u.id = n.user_id
+       LEFT JOIN users u ON u.id = n.user_id`;
+
+export function listAdminWallNotes(limit = 200): AdminWallNote[] {
+  const rows = getDb()
+    .prepare(
+      `${ADMIN_WALL_SELECT}
        ORDER BY datetime(n.created_at) DESC
        LIMIT ?`,
     )
@@ -323,14 +343,30 @@ export function listAdminWallNotes(limit = 200): AdminWallNote[] {
     praise_count: number;
   }>;
 
-  return rows.map((row) => ({
-    id: row.id,
-    createdAt: row.created_at,
-    hidden: Boolean(row.hidden),
-    summary: row.summary,
-    userEmail: row.user_email,
-    praiseCount: row.praise_count,
-  }));
+  return rows.map(mapAdminWallNote);
+}
+
+export function listAdminWallNotesForUser(
+  userId: string,
+  limit = 200,
+): AdminWallNote[] {
+  const rows = getDb()
+    .prepare(
+      `${ADMIN_WALL_SELECT}
+       WHERE n.user_id = ?
+       ORDER BY datetime(n.created_at) DESC
+       LIMIT ?`,
+    )
+    .all(userId, limit) as Array<{
+    id: string;
+    created_at: string;
+    hidden: number;
+    summary: string;
+    user_email: string | null;
+    praise_count: number;
+  }>;
+
+  return rows.map(mapAdminWallNote);
 }
 
 export function countWallNotes() {

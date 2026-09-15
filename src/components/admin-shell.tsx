@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 
 const links = [
   { href: "/admin", label: "Dashboard" },
-  { href: "/admin/users", label: "Users" },
+  { href: "/admin/members", label: "Members" },
+  { href: "/admin/payments", label: "Payments" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/wall", label: "Wall" },
 ];
@@ -12,12 +13,14 @@ const links = [
 export function AdminShell({
   title,
   children,
+  wide = false,
 }: {
   title: string;
   children: ReactNode;
+  wide?: boolean;
 }) {
   return (
-    <div className="mx-auto w-full max-w-4xl px-6 py-8">
+    <div className={`mx-auto w-full ${wide ? "max-w-6xl" : "max-w-4xl"} px-6 py-8`}>
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-muted">Soft Boring</p>
