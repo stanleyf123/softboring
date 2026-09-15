@@ -76,7 +76,7 @@ export async function PricingView({
         </article>
       </div>
 
-      {!prices.configured ? (
+      {!prices.configured && !loggedIn ? (
         <div className="mt-8">
           <PaymentsNotice />
         </div>
