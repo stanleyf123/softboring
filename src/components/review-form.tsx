@@ -1,5 +1,6 @@
 "use client";
 
+import { ShareToWall } from "@/components/share-to-wall";
 import { Link } from "@/i18n/navigation";
 import {
   clearDraft,
@@ -38,6 +39,7 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
   const locale = useLocale();
   const [draft, setDraft] = useState<ReviewAnswers>(loadDraft);
   const [saved, setSaved] = useState(false);
+  const [savedReviewId, setSavedReviewId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
@@ -58,6 +60,7 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
     try {
       const result = await createReview({ ...draft, locale });
       setAccess(result.access);
+      setSavedReviewId(result.review.id);
       setSaved(true);
     } catch {
       setError(true);
@@ -70,6 +73,7 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
     clearDraft();
     setDraft(emptyDraft());
     setSaved(false);
+    setSavedReviewId(null);
     setError(false);
     setAccess(null);
   }
@@ -98,6 +102,10 @@ function ReviewFormFields({ signedIn }: { signedIn: boolean }) {
             </button>
           </div>
         </div>
+
+        {signedIn && savedReviewId ? (
+          <ShareToWall reviewId={savedReviewId} initialNoteId={null} />
+        ) : null}
 
         {guest ? (
           <div className="rounded-[1.75rem] bg-blush/80 px-6 py-6 shadow-card sm:px-8">

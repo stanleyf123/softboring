@@ -41,7 +41,10 @@ export function adminCounts() {
       .get() as { n: number }
   ).n;
   const free = users - paid;
-  return { users, reviews, paid, free };
+  const wallNotes = (
+    db.prepare(`SELECT COUNT(*) AS n FROM wall_notes`).get() as { n: number }
+  ).n;
+  return { users, reviews, paid, free, wallNotes };
 }
 
 export function listAdminUsers(limit = 200): AdminUserListItem[] {

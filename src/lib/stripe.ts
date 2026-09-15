@@ -36,6 +36,14 @@ export function isStripeConfigured() {
   return getStripeConfig() !== null;
 }
 
+export function formatOneTimeCents(cents: number, currency = "usd") {
+  return new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+    maximumFractionDigits: cents % 100 === 0 ? 0 : 2,
+  }).format(cents / 100);
+}
+
 let stripeClient: Stripe | null = null;
 
 export function getStripe(): Stripe {

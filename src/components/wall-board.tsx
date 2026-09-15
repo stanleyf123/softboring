@@ -1,0 +1,681 @@
+"use client";
+
+import { Link } from "@/i18n/navigation";
+import { WALL_CANVAS } from "@/lib/wall-canvas";
+import { useLocale, useTranslations } from "next-intl";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+type TeaserNote = {
+  id: string;
+  x: number;
+  y: number;
+  z: number;
+  color: string;
+  praiseCount: number;
+};
+
+type FullNote = TeaserNote & {
+  mine: boolean;
+  excerpt: string;
+  feeling: number | null;
+  summary: string;
+  createdAt: string;
+  stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
+  energy?: string;
+  drain?: string;
+  lessOf?: string;
+  priorities?: string;
+};
+
+type Comment = {
+  id: string;
+  body: string;
+  createdAt: string;
+  mine: boolean;
+};
+
+type Sticker = {
+  id: string;
+  slug: string;
+  name: string;
+  priceCents: number;
+  formatted: string;
+  emoji: string;
+};
+
+const COLOR_CLASS: Record<string, string> = {
+  peach: "bg-peach",
+  blush: "bg-blush",
+  mint: "bg-mint",
+  cream: "bg-cream",
+  lemon: "bg-lemon",
+  sky: "bg-sky",
+};
+
+function noteClass(color: string) {
+  return COLOR_CLASS[color] ?? "bg-peach";
+}
+
+function tiltFor(id: string) {
+  let n = 0;
+  for (const char of id) n += char.charCodeAt(0);
+  return (n % 7) - 3;
+}
+
+async function readJson<T>(response: Response): Promise<T> {
+  const data = (await response.json().catch(() => ({}))) as T & { error?: string };
+  if (!response.ok) {
+    const error = new Error(data.error || "request_failed");
+    error.name = data.error || "request_failed";
+    throw error;
+  }
+  return data;
+}
+
+export function WallBoard({
+  signedIn,
+  softPlus,
+  stickerSuccess = false,
+}: {
+  signedIn: boolean;
+  softPlus: boolean;
+  stickerSuccess?: boolean;
+}) {
+  const t = useTranslations("Wall");
+  const tStickers = useTranslations("WallStickers");
+  const tQuestions = useTranslations("Questions");
+  const locale = useLocale();
+  const [notes, setNotes] = useState<Array<TeaserNote | FullNote>>([]);
+  const [locked, setLocked] = useState(!softPlus);
+  const [loadError, setLoadError] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [detail, setDetail] = useState<FullNote | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentBody, setCommentBody] = useState("");
+  const [shopOpen, setShopOpen] = useState(false);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
+  const [inventory, setInventory] = useState<Record<string, number>>({});
+  const [packLabel, setPackLabel] = useState<string | null>(null);
+  const [stripeConfigured, setStripeConfigured] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [shopError, setShopError] = useState<"not_configured" | "generic" | null>(null);
+  const drag = useRef<{
+    id: string;
+    dx: number;
+    dy: number;
+    startX: number;
+    startY: number;
+    x: number;
+    y: number;
+    moved: boolean;
+  } | null>(null);
+
+  const loadNotes = useCallback(async () => {
+    const data = await readJson<{
+      locked: boolean;
+      notes: Array<TeaserNote | FullNote>;
+    }>(await fetch("/api/wall/notes", { cache: "no-store" }));
+    setLocked(data.locked);
+    setNotes(data.notes);
+  }, []);
+
+  const loadShop = useCallback(async () => {
+    const data = await readJson<{
+      stickers: Sticker[];
+      inventory: Record<string, number>;
+      pack: { formatted: string };
+      stripeConfigured: boolean;
+    }>(await fetch("/api/wall/stickers", { cache: "no-store" }));
+    setStickers(data.stickers);
+    setInventory(data.inventory);
+    setPackLabel(data.pack.formatted);
+    setStripeConfigured(data.stripeConfigured);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        await loadNotes();
+        if (softPlus) await loadShop();
+      } catch {
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [loadNotes, loadShop, softPlus]);
+
+  async function openNote(id: string) {
+    if (locked) return;
+    setSelectedId(id);
+    try {
+      const [noteData, commentData] = await Promise.all([
+        readJson<{ note: FullNote }>(
+          await fetch(`/api/wall/notes/${encodeURIComponent(id)}`, { cache: "no-store" }),
+        ),
+        readJson<{ comments: Comment[] }>(
+          await fetch(`/api/wall/notes/${encodeURIComponent(id)}/comments`, {
+            cache: "no-store",
+          }),
+        ),
+      ]);
+      setDetail(noteData.note);
+      setComments(commentData.comments);
+    } catch {
+      setSelectedId(null);
+    }
+  }
+
+  function onPointerDown(event: React.PointerEvent<HTMLButtonElement>, note: TeaserNote) {
+    if (locked || !softPlus) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = {
+      id: note.id,
+      dx: event.clientX - note.x,
+      dy: event.clientY - note.y,
+      startX: event.clientX,
+      startY: event.clientY,
+      x: note.x,
+      y: note.y,
+      moved: false,
+    };
+  }
+
+  function onPointerMove(event: React.PointerEvent<HTMLButtonElement>) {
+    const current = drag.current;
+    if (!current || current.id !== event.currentTarget.dataset.noteId) return;
+    const x = event.clientX - current.dx;
+    const y = event.clientY - current.dy;
+    if (
+      Math.abs(event.clientX - current.startX) > 6 ||
+      Math.abs(event.clientY - current.startY) > 6
+    ) {
+      current.moved = true;
+    }
+    current.x = x;
+    current.y = y;
+    setNotes((list) =>
+      list.map((note) =>
+        note.id === current.id
+          ? { ...note, x, y, z: 10_000 }
+          : note,
+      ),
+    );
+  }
+
+  async function onPointerUp(event: React.PointerEvent<HTMLButtonElement>, note: TeaserNote) {
+    const current = drag.current;
+    drag.current = null;
+    if (!current || current.id !== note.id) return;
+    if (!current.moved) {
+      void openNote(note.id);
+      return;
+    }
+    const x = current.x;
+    const y = current.y;
+    try {
+      const data = await readJson<{ note: FullNote }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(note.id)}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ x, y }),
+        }),
+      );
+      if (data.note) {
+        setNotes((list) =>
+          list.map((item) => (item.id === data.note.id ? { ...item, ...data.note } : item)),
+        );
+      }
+    } catch {
+      void loadNotes();
+    }
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      // Capture may already have been released.
+    }
+  }
+
+  async function sendComment(event: React.FormEvent) {
+    event.preventDefault();
+    if (!selectedId || busy) return;
+    const body = commentBody.trim();
+    if (!body) return;
+    setBusy("comment");
+    try {
+      const data = await readJson<{ comment: Comment }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(selectedId)}/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ body }),
+        }),
+      );
+      setComments((list) => [...list, data.comment]);
+      setCommentBody("");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function removeComment(id: string) {
+    await fetch(`/api/wall/comments/${encodeURIComponent(id)}`, { method: "DELETE" });
+    setComments((list) => list.filter((item) => item.id !== id));
+  }
+
+  async function unshare(id: string) {
+    await fetch(`/api/wall/notes/${encodeURIComponent(id)}`, { method: "DELETE" });
+    setNotes((list) => list.filter((item) => item.id !== id));
+    setSelectedId(null);
+    setDetail(null);
+  }
+
+  async function placeSticker(stickerId: string) {
+    if (!selectedId || busy) return;
+    if ((inventory[stickerId] ?? 0) < 1) {
+      setShopOpen(true);
+      return;
+    }
+    setBusy(stickerId);
+    try {
+      const data = await readJson<{ note: FullNote; praiseCount: number }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(selectedId)}/stickers`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ stickerId }),
+        }),
+      );
+      setDetail(data.note);
+      setNotes((list) =>
+        list.map((item) => (item.id === data.note.id ? { ...item, ...data.note } : item)),
+      );
+      setInventory((current) => ({
+        ...current,
+        [stickerId]: Math.max(0, (current[stickerId] ?? 1) - 1),
+      }));
+    } catch {
+      await loadShop();
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function buy(stickerId?: string, pack = false) {
+    if (busy) return;
+    setBusy(pack ? "pack" : stickerId ?? "pack");
+    setShopError(null);
+    try {
+      const response = await fetch("/api/wall/stickers/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stickerId, pack, locale }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+      if (data.url) {
+        window.location.assign(data.url);
+        return;
+      }
+      setShopError(data.error === "not_configured" ? "not_configured" : "generic");
+    } catch {
+      setShopError("generic");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  if (!ready && !loadError) {
+    return <div className="min-h-[28rem]" aria-hidden="true" />;
+  }
+
+  if (loadError) {
+    return (
+      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
+        <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
+        <p className="mt-3 max-w-md leading-relaxed text-muted">{t("loadError")}</p>
+      </section>
+    );
+  }
+
+  return (
+    <div className="pb-10">
+      <div className="mx-auto max-w-3xl px-6 pt-4">
+        <p className="font-display italic text-accent">{t("eyebrow")}</p>
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
+            <p className="mt-3 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
+          </div>
+          {softPlus ? (
+            <button
+              type="button"
+              onClick={() => setShopOpen((open) => !open)}
+              className="rounded-full bg-mint px-5 py-2.5 text-sm shadow-card"
+            >
+              {t("openShop")}
+            </button>
+          ) : null}
+        </div>
+        {stickerSuccess ? (
+          <p className="mt-4 rounded-[1.25rem] bg-mint/80 px-4 py-3 text-sm" role="status">
+            {t("stickerSuccess")}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="relative mt-8">
+        <div
+          className="mx-auto overflow-auto rounded-[1.5rem] border border-line/80 bg-paper/40 shadow-card"
+          style={{ height: "min(70vh, 44rem)" }}
+        >
+          <div
+            className="relative"
+            style={{
+              width: WALL_CANVAS.width,
+              height: WALL_CANVAS.height,
+              backgroundImage:
+                "radial-gradient(circle at 20px 20px, rgba(196,127,110,0.12) 1.2px, transparent 1.6px)",
+              backgroundSize: "42px 42px",
+            }}
+          >
+            {notes.length === 0 ? (
+              <p className="absolute left-10 top-10 max-w-sm font-display text-2xl text-muted">
+                {t("empty")}
+              </p>
+            ) : null}
+            {notes.map((note) => {
+              const full = "excerpt" in note ? (note as FullNote) : null;
+              return (
+                <button
+                  key={note.id}
+                  type="button"
+                  data-note-id={note.id}
+                  onPointerDown={(event) => onPointerDown(event, note)}
+                  onPointerMove={onPointerMove}
+                  onPointerUp={(event) => onPointerUp(event, note)}
+                  className={`absolute w-[216px] cursor-grab rounded-[1.4rem] px-4 py-4 text-left shadow-card touch-none ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
+                  style={{
+                    left: note.x,
+                    top: note.y,
+                    zIndex: note.z,
+                    transform: `rotate(${tiltFor(note.id)}deg)`,
+                  }}
+                >
+                  <span className="absolute right-4 top-0 h-3 w-10 -translate-y-1/2 rounded-sm bg-accent/30" />
+                  {locked || !full ? (
+                    <span className="block space-y-2 blur-[3px]">
+                      <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />
+                      <span className="block h-3 w-full rounded-full bg-foreground/10" />
+                      <span className="block h-3 w-2/3 rounded-full bg-foreground/10" />
+                      <span className="mt-6 block h-16 rounded-2xl bg-paper/50" />
+                    </span>
+                  ) : (
+                    <>
+                      <span className="line-clamp-5 text-sm leading-relaxed">
+                        {full.excerpt || t("untitled")}
+                      </span>
+                      <span className="mt-4 flex items-center justify-between text-xs text-muted">
+                        <span>
+                          {full.feeling
+                            ? t("feeling", { value: full.feeling })
+                            : full.mine
+                              ? t("yours")
+                              : t("neighbor")}
+                        </span>
+                        <span aria-label={t("praise", { count: note.praiseCount })}>
+                          {full.stickers?.[0]?.emoji ?? "♡"} {note.praiseCount}
+                        </span>
+                      </span>
+                      {full.stickers?.length ? (
+                        <span className="mt-2 flex flex-wrap gap-1 text-base">
+                          {full.stickers.slice(0, 6).map((sticker) => (
+                            <span key={sticker.stickerId}>
+                              {sticker.emoji}
+                              {sticker.count > 1 ? (
+                                <span className="text-[10px] text-muted">×{sticker.count}</span>
+                              ) : null}
+                            </span>
+                          ))}
+                        </span>
+                      ) : null}
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {locked ? (
+          <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center px-6">
+            <div className="pointer-events-auto max-w-md rounded-[2rem] bg-paper/95 px-6 py-8 text-center shadow-soft">
+              <h2 className="font-display text-2xl tracking-tight">{t("lockedTitle")}</h2>
+              <p className="mt-3 leading-relaxed text-muted">
+                {signedIn ? t("lockedBody") : t("signedOutBody")}
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/pricing"
+                  className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+                >
+                  {t("lockedCta")}
+                </Link>
+                {!signedIn ? (
+                  <Link
+                    href={{ pathname: "/login", query: { next: "/wall" } }}
+                    className="rounded-full border border-line px-5 py-2.5 text-sm text-muted"
+                  >
+                    {t("loginCta")}
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      {softPlus && shopOpen ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{t("shopLead")}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShopOpen(false)}
+                className="text-sm text-muted hover:text-foreground"
+              >
+                {t("close")}
+              </button>
+            </div>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {stickers.map((sticker) => (
+                <li
+                  key={sticker.id}
+                  className="flex items-center justify-between gap-3 rounded-[1.25rem] bg-peach/50 px-4 py-3"
+                >
+                  <div>
+                    <p className="font-display text-lg">
+                      {sticker.emoji}{" "}
+                      {tStickers(
+                        sticker.slug as
+                          | "star"
+                          | "heart"
+                          | "sprout"
+                          | "tea"
+                          | "moon"
+                          | "cloud"
+                          | "peach"
+                          | "sparkle",
+                      )}
+                    </p>
+                    <p className="text-sm text-muted">
+                      {sticker.formatted} · {t("owned", { count: inventory[sticker.id] ?? 0 })}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => buy(sticker.id)}
+                    disabled={busy !== null}
+                    className="rounded-full bg-accent px-3 py-1.5 text-sm text-paper disabled:opacity-60"
+                  >
+                    {busy === sticker.id ? t("redirecting") : t("buy")}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={() => buy(undefined, true)}
+              disabled={busy !== null}
+              className="mt-5 rounded-full bg-mint px-5 py-2.5 text-sm shadow-card disabled:opacity-60"
+            >
+              {busy === "pack"
+                ? t("redirecting")
+                : packLabel
+                  ? t("buyPackPrice", { price: packLabel })
+                  : t("buyPack")}
+            </button>
+            {shopError === "not_configured" ? (
+              <p className="mt-3 text-sm text-muted">{t("paymentsOff")}</p>
+            ) : null}
+            {shopError === "generic" ? (
+              <p className="mt-3 text-sm text-accent">{t("checkoutError")}</p>
+            ) : null}
+            {!stripeConfigured && !shopError ? (
+              <p className="mt-3 text-sm text-muted">{t("paymentsOff")}</p>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      {selectedId && detail ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
+            <div className="flex items-start justify-between gap-4">
+              <p className="font-display text-2xl tracking-tight">
+                {detail.summary.trim() || t("untitled")}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedId(null);
+                  setDetail(null);
+                }}
+                className="text-sm text-muted hover:text-foreground"
+              >
+                {t("close")}
+              </button>
+            </div>
+            <p className="mt-1 text-sm text-muted">
+              {detail.feeling ? t("feeling", { value: detail.feeling }) : null}
+              {detail.mine ? ` · ${t("yours")}` : ` · ${t("neighbor")}`}
+              {` · ${t("praise", { count: detail.praiseCount })}`}
+            </p>
+            <dl className="mt-6 space-y-4 text-sm leading-relaxed">
+              {(["energy", "drain", "lessOf", "priorities"] as const).map((field) => (
+                <div key={field}>
+                  <dt className="text-muted">{tQuestions(field)}</dt>
+                  <dd className="mt-1 whitespace-pre-wrap">{detail[field]?.trim() || "—"}</dd>
+                </div>
+              ))}
+            </dl>
+            {detail.stickers?.length ? (
+              <p className="mt-4 text-lg">
+                {detail.stickers.map((sticker) => (
+                  <span key={sticker.stickerId} className="mr-2">
+                    {sticker.emoji}
+                    {sticker.count > 1 ? `×${sticker.count}` : ""}
+                  </span>
+                ))}
+              </p>
+            ) : null}
+
+            <div className="mt-6">
+              <p className="text-sm text-muted">{t("placeHint")}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {stickers.map((sticker) => (
+                  <button
+                    key={sticker.id}
+                    type="button"
+                    onClick={() => placeSticker(sticker.id)}
+                    disabled={busy !== null}
+                    className="rounded-full bg-blush px-3 py-1.5 text-sm disabled:opacity-60"
+                    title={t("owned", { count: inventory[sticker.id] ?? 0 })}
+                  >
+                    {sticker.emoji} {inventory[sticker.id] ?? 0}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <section className="mt-8">
+              <h3 className="font-display text-xl">{t("commentsTitle")}</h3>
+              {comments.length === 0 ? (
+                <p className="mt-2 text-sm text-muted">{t("noComments")}</p>
+              ) : (
+                <ul className="mt-3 space-y-3">
+                  {comments.map((comment) => (
+                    <li key={comment.id} className="rounded-2xl bg-peach/40 px-4 py-3 text-sm">
+                      <p className="leading-relaxed">{comment.body}</p>
+                      <p className="mt-1 text-xs text-muted">
+                        {comment.mine ? t("yours") : t("neighbor")}
+                        {comment.mine ? (
+                          <>
+                            {" · "}
+                            <button
+                              type="button"
+                              onClick={() => removeComment(comment.id)}
+                              className="text-accent"
+                            >
+                              {t("deleteComment")}
+                            </button>
+                          </>
+                        ) : null}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <form onSubmit={sendComment} className="mt-4 flex flex-col gap-2">
+                <textarea
+                  value={commentBody}
+                  onChange={(event) => setCommentBody(event.target.value)}
+                  rows={2}
+                  maxLength={500}
+                  placeholder={t("commentPlaceholder")}
+                  className="w-full resize-none rounded-2xl border border-line bg-paper px-4 py-3 outline-none focus:border-accent"
+                />
+                <button
+                  type="submit"
+                  disabled={busy !== null || !commentBody.trim()}
+                  className="self-start rounded-full bg-accent px-4 py-2 text-sm text-paper disabled:opacity-60"
+                >
+                  {t("commentSubmit")}
+                </button>
+              </form>
+            </section>
+
+            {detail.mine ? (
+              <button
+                type="button"
+                onClick={() => unshare(detail.id)}
+                className="mt-6 text-sm text-muted hover:text-foreground"
+              >
+                {t("unshare")}
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}

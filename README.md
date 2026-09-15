@@ -28,15 +28,16 @@ Pages:
 - `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade)
 - `/en/pricing` and `/zh-tw/pricing`
 - `/en/trends` and `/zh-tw/trends` (Soft+)
+- `/en/wall` and `/zh-tw/wall` (Soft Wall / 軟軟牆)
 
-The header shows **Pricing**, plus **Log in** or **Account**. It never links to admin.
+The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account**. It never links to admin.
 
 ## Plans
 
-| Plan | Write reviews | History | Trends |
-| --- | --- | --- | --- |
-| **Free** (and guests) | Yes | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked |
-| **Soft+** | Yes | Unlimited | Feeling 1–5 over time |
+| Plan | Write reviews | History | Trends | Soft Wall |
+| --- | --- | --- | --- | --- |
+| **Free** (and guests) | Yes | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked | Locked teaser (no other people's text) |
+| **Soft+** | Yes | Unlimited | Feeling 1–5 over time | Read, drag, comment, stickers |
 
 Guests can try 1–4 reviews in the browser. After the first save, the app nudges them to register so the paid path is clear. Registering as Free still caps visible history at four; Soft+ is the unlock.
 
@@ -91,6 +92,19 @@ Set these in `.env.local` or `/etc/softboring.env` (never commit real values):
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (optional)
 
 Checkout is treated as configured only when the first three are non-empty.
+
+## Soft Wall
+
+`/en/wall` and `/zh-tw/wall` (UI: **Soft Wall** / **軟軟牆**) is an opt-in sticky-note corkboard.
+
+- Sharing is off by default. From a saved review (History, or right after save), a signed-in user can pin that week to the wall.
+- **Free / logged-out** visitors see a locked teaser: positions and colors only. Review text and comments are omitted by the API, not just blurred in CSS.
+- **Soft+** can read shared notes, drag them (x/y/z persist for everyone), comment, and buy/place stickers. Each placed sticker increments praise.
+- Stickers are a Stripe **one-time** Checkout (`mode: payment`). The webhook `checkout.session.completed` grants inventory. If Stripe env is missing, the catalog still renders and purchase returns `not_configured`, same as Soft+ subscriptions.
+- Optional price IDs: `STRIPE_PRICE_STICKER_PACK` and `STRIPE_PRICE_STICKER_<SLUG>` (star, heart, sprout, tea, moon, cloud, peach, sparkle). If unset, Checkout uses `price_data` from the catalog cents in SQLite.
+- Admin: `/admin/wall` can hide a note (`hidden`). Hidden notes drop off the public board.
+
+After pull, run `npm run db:migrate` so wall tables and the eight seed stickers exist.
 
 ## Admin
 
@@ -150,6 +164,7 @@ Copy `.env.example` to `.env.local`.
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY` — required together to enable checkout
 - `STRIPE_PRICE_YEARLY` — optional yearly price
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — optional
+- `STRIPE_PRICE_STICKER_PACK` / `STRIPE_PRICE_STICKER_<SLUG>` — optional one-time sticker prices; unset is fine (catalog cents via `price_data`)
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID` — Google Analytics measurement ID (defaults to `G-MFQ9J6B9DH` if unset; inlined at `next build`)
 
 Do not put real secrets in the repo.

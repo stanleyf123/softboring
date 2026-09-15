@@ -1,5 +1,6 @@
 import type Stripe from "stripe";
 import { planFromStripeStatus } from "@/lib/plan";
+import { fulfillStickerOrder } from "@/db/stickers";
 import {
   getUserById,
   getUserByStripeCustomerId,
@@ -42,7 +43,41 @@ function metadataUserId(metadata: Stripe.Metadata | null | undefined) {
   return value ? value : null;
 }
 
+export function applyStickerCheckout(session: Stripe.Checkout.Session) {
+  if (session.mode !== "payment") return;
+  const kind = session.metadata?.kind;
+  if (kind !== "sticker" && kind !== "sticker_pack") return;
+  if (session.payment_status && session.payment_status !== "paid") return;
+
+  const userId =
+    metadataUserId(session.metadata) ||
+    (typeof session.client_reference_id === "string"
+      ? session.client_reference_id
+      : null);
+  const customerId = asId(session.customer);
+  const user = findUserForStripe({ userId, customerId });
+  if (!user) {
+    console.error("Stripe sticker checkout: no matching user", {
+      userId,
+      customerId,
+      sessionId: session.id,
+    });
+    return;
+  }
+
+  fulfillStickerOrder({
+    sessionId: session.id,
+    userId: user.id,
+    kind,
+    stickerId: session.metadata?.stickerId?.trim() || null,
+  });
+}
+
 export function applyCheckoutSession(session: Stripe.Checkout.Session) {
+  if (session.mode === "payment") {
+    applyStickerCheckout(session);
+    return;
+  }
   if (session.mode !== "subscription") return;
 
   const userId =

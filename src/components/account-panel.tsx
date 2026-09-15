@@ -128,6 +128,12 @@ export function AccountPanel({
             >
               {t("history")}
             </Link>
+            <Link
+              href="/wall"
+              className="rounded-full bg-blush px-5 py-2.5 text-sm shadow-card"
+            >
+              {t("wall")}
+            </Link>
             {softPlus ? (
               <Link
                 href="/trends"

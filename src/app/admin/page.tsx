@@ -12,7 +12,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <AdminShell title="Dashboard">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard href="/admin/users" label="Users" value={counts.users} wash="bg-peach/80" />
         <StatCard
           href="/admin/reviews"
@@ -22,6 +22,7 @@ export default async function AdminDashboardPage() {
         />
         <StatCard href="/admin/users" label="Free" value={counts.free} wash="bg-blush/80" />
         <StatCard href="/admin/users" label="Soft+" value={counts.paid} wash="bg-peach/60" />
+        <StatCard href="/admin/wall" label="Wall notes" value={counts.wallNotes} wash="bg-mint/60" />
       </div>
       <p className="mt-8 max-w-lg text-sm leading-relaxed text-muted">
         Public navigation does not link here. Stripe Checkout updates plan via webhook.

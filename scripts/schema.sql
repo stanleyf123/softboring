@@ -40,3 +40,85 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 CREATE INDEX IF NOT EXISTS idx_reviews_guest_created
   ON reviews (guest_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS wall_notes (
+  id TEXT PRIMARY KEY,
+  review_id TEXT NOT NULL UNIQUE,
+  user_id TEXT NOT NULL,
+  x REAL NOT NULL DEFAULT 80,
+  y REAL NOT NULL DEFAULT 80,
+  z INTEGER NOT NULL DEFAULT 0,
+  color TEXT NOT NULL DEFAULT 'peach',
+  hidden INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_notes_hidden_z ON wall_notes (hidden, z);
+CREATE INDEX IF NOT EXISTS idx_wall_notes_user ON wall_notes (user_id);
+
+CREATE TABLE IF NOT EXISTS wall_comments (
+  id TEXT PRIMARY KEY,
+  note_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_comments_note ON wall_comments (note_id, created_at);
+
+CREATE TABLE IF NOT EXISTS stickers (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  price_cents INTEGER NOT NULL,
+  stripe_price_id TEXT,
+  emoji TEXT NOT NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS user_stickers (
+  user_id TEXT NOT NULL,
+  sticker_id TEXT NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, sticker_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (sticker_id) REFERENCES stickers(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS wall_note_stickers (
+  id TEXT PRIMARY KEY,
+  note_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  sticker_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (sticker_id) REFERENCES stickers(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_note_stickers_note ON wall_note_stickers (note_id);
+
+CREATE TABLE IF NOT EXISTS sticker_orders (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  sticker_id TEXT,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+INSERT OR IGNORE INTO stickers (id, slug, name, price_cents, stripe_price_id, emoji, sort_order) VALUES
+  ('sticker-star', 'star', 'Star', 99, NULL, '⭐', 1),
+  ('sticker-heart', 'heart', 'Heart', 99, NULL, '💗', 2),
+  ('sticker-sprout', 'sprout', 'Sprout', 99, NULL, '🌱', 3),
+  ('sticker-tea', 'tea', 'Tea', 99, NULL, '🍵', 4),
+  ('sticker-moon', 'moon', 'Moon', 99, NULL, '🌙', 5),
+  ('sticker-cloud', 'cloud', 'Cloud', 99, NULL, '☁️', 6),
+  ('sticker-peach', 'peach', 'Peach', 99, NULL, '🍑', 7),
+  ('sticker-sparkle', 'sparkle', 'Sparkle', 99, NULL, '✨', 8);
