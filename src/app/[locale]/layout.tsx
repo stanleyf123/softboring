@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
@@ -69,6 +70,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           </main>
           <SiteFooter />
         </NextIntlClientProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

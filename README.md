@@ -150,6 +150,7 @@ Copy `.env.example` to `.env.local`.
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY` — required together to enable checkout
 - `STRIPE_PRICE_YEARLY` — optional yearly price
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — optional
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` — Google Analytics measurement ID (defaults to `G-MFQ9J6B9DH` if unset; inlined at `next build`)
 
 Do not put real secrets in the repo.
 
