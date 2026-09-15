@@ -6,6 +6,7 @@ import {
   PAYMENT_KINDS,
   PAYMENT_STATUSES,
 } from "@/db/payments";
+import { adminCopy, paymentKindLabel, paymentStatusLabel } from "@/lib/admin-copy";
 import {
   formatAdminWhen,
   formatPaymentAmount,
@@ -36,50 +37,51 @@ export default async function AdminPaymentsPage({ searchParams }: Props) {
     email: email || undefined,
   });
   const filtered = Boolean(kind || status || email);
+  const copy = adminCopy.payments;
 
   return (
-    <AdminShell title="Payments" wide>
+    <AdminShell title={copy.title} wide>
       <form
         method="get"
         className="rounded-[1.75rem] bg-paper px-5 py-5 shadow-card sm:px-6"
       >
         <div className="flex flex-wrap items-end gap-3">
           <label className="text-sm">
-            <span className="mb-1 block text-muted">Kind</span>
+            <span className="mb-1 block text-muted">{copy.kind}</span>
             <select
               name="kind"
               defaultValue={isPaymentKind(kind) ? kind : ""}
               className="rounded-full border border-line bg-cream px-3 py-2"
             >
-              <option value="">All</option>
+              <option value="">{copy.all}</option>
               {PAYMENT_KINDS.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {paymentKindLabel(value)}
                 </option>
               ))}
             </select>
           </label>
           <label className="text-sm">
-            <span className="mb-1 block text-muted">Status</span>
+            <span className="mb-1 block text-muted">{copy.status}</span>
             <select
               name="status"
               defaultValue={isPaymentStatus(status) ? status : ""}
               className="rounded-full border border-line bg-cream px-3 py-2"
             >
-              <option value="">All</option>
+              <option value="">{copy.all}</option>
               {PAYMENT_STATUSES.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {paymentStatusLabel(value)}
                 </option>
               ))}
             </select>
           </label>
           <label className="min-w-[12rem] flex-1 text-sm">
-            <span className="mb-1 block text-muted">Email</span>
+            <span className="mb-1 block text-muted">{copy.email}</span>
             <input
               name="email"
               defaultValue={email}
-              placeholder="contains…"
+              placeholder={copy.emailPlaceholder}
               className="w-full rounded-full border border-line bg-cream px-3 py-2"
             />
           </label>
@@ -87,14 +89,14 @@ export default async function AdminPaymentsPage({ searchParams }: Props) {
             type="submit"
             className="rounded-full bg-peach px-4 py-2 text-sm hover:bg-blush"
           >
-            Filter
+            {copy.filter}
           </button>
           {filtered ? (
             <Link
               href="/admin/payments"
               className="rounded-full px-4 py-2 text-sm text-muted hover:text-foreground"
             >
-              Clear
+              {copy.clear}
             </Link>
           ) : null}
         </div>
@@ -102,10 +104,11 @@ export default async function AdminPaymentsPage({ searchParams }: Props) {
 
       {payments.length === 0 ? (
         <section className="mt-6 rounded-[1.75rem] bg-paper px-6 py-10 shadow-card">
-          <p className="text-muted">
-            {filtered
-              ? "No payments match these filters."
-              : "No payment records yet. Successful Stripe checkout, invoice, and sticker events write rows here. If Stripe is not configured, this list stays empty."}
+          <p className="font-display text-xl tracking-tight">
+            {filtered ? copy.emptyFiltered : "還沒有付款紀錄"}
+          </p>
+          <p className="mt-2 text-muted">
+            {filtered ? null : copy.empty}
           </p>
         </section>
       ) : (
@@ -113,12 +116,12 @@ export default async function AdminPaymentsPage({ searchParams }: Props) {
           <table className="w-full min-w-[56rem] text-left text-sm">
             <thead className="text-muted">
               <tr className="border-b border-line">
-                <th className="px-5 py-3 font-normal">When</th>
-                <th className="px-5 py-3 font-normal">Member</th>
-                <th className="px-5 py-3 font-normal">Kind</th>
-                <th className="px-5 py-3 font-normal">Status</th>
-                <th className="px-5 py-3 font-normal">Amount</th>
-                <th className="px-5 py-3 font-normal">Description</th>
+                <th className="px-5 py-3 font-normal">{copy.when}</th>
+                <th className="px-5 py-3 font-normal">{copy.member}</th>
+                <th className="px-5 py-3 font-normal">{copy.kind}</th>
+                <th className="px-5 py-3 font-normal">{copy.status}</th>
+                <th className="px-5 py-3 font-normal">{copy.amount}</th>
+                <th className="px-5 py-3 font-normal">{copy.description}</th>
               </tr>
             </thead>
             <tbody>
@@ -133,18 +136,18 @@ export default async function AdminPaymentsPage({ searchParams }: Props) {
                         href={`/admin/members/${encodeURIComponent(payment.userId)}`}
                         className="text-accent hover:text-foreground"
                       >
-                        {payment.email ?? "member"}
+                        {payment.email ?? copy.memberFallback}
                       </Link>
                     ) : (
-                      (payment.email ?? "—")
+                      (payment.email ?? adminCopy.common.dash)
                     )}
                   </td>
-                  <td className="px-5 py-3">{payment.kind}</td>
-                  <td className="px-5 py-3">{payment.status}</td>
+                  <td className="px-5 py-3">{paymentKindLabel(payment.kind)}</td>
+                  <td className="px-5 py-3">{paymentStatusLabel(payment.status)}</td>
                   <td className="px-5 py-3">
                     {formatPaymentAmount(payment.amountCents, payment.currency)}
                   </td>
-                  <td className="px-5 py-3">{payment.description ?? "—"}</td>
+                  <td className="px-5 py-3">{payment.description ?? adminCopy.common.dash}</td>
                 </tr>
               ))}
             </tbody>

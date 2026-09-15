@@ -15,7 +15,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata = {
-  title: "Admin · Soft Boring Weekly",
+  title: "管理後台 · Soft Boring Weekly",
   robots: {
     index: false,
     follow: false,
@@ -30,7 +30,7 @@ export const runtime = "nodejs";
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      lang="en"
+      lang="zh-TW"
       className={`${nunito.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground">{children}</body>

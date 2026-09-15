@@ -1,5 +1,6 @@
 "use client";
 
+import { adminCopy } from "@/lib/admin-copy";
 import { useRouter } from "next/navigation";
 
 export function AdminLogoutButton() {
@@ -17,7 +18,7 @@ export function AdminLogoutButton() {
       onClick={logout}
       className="rounded-full px-3 py-1.5 text-muted hover:text-foreground"
     >
-      Log out
+      {adminCopy.nav.logout}
     </button>
   );
 }

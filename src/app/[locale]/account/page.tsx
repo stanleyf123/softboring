@@ -1,6 +1,8 @@
 import { AccountPanel } from "@/components/account-panel";
 import { countReviewsForUser } from "@/db/reviews";
+import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
+import { isEmailConfigured } from "@/lib/email";
 import { isSoftPlusPlan } from "@/lib/plan";
 import { isStripeConfigured } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
@@ -27,6 +29,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
 
   const t = await getTranslations("Account");
   const reviewCount = countReviewsForUser(user.id);
+  const settings = ensureUserSettings(user.id);
   const { checkout } = await searchParams;
   const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
 
@@ -43,6 +46,9 @@ export default async function AccountPage({ params, searchParams }: Props) {
           stripeConfigured={isStripeConfigured()}
           hasStripeCustomer={Boolean(user.stripeCustomerId)}
           checkoutSuccess={checkout === "success"}
+          reminderEnabled={settings.reminderEnabled}
+          reminderWeekday={settings.reminderWeekday}
+          emailConfigured={isEmailConfigured()}
         />
       </div>
     </div>

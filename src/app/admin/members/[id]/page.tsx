@@ -4,6 +4,7 @@ import { AdminShell } from "@/components/admin-shell";
 import { getAdminMember, listAdminReviewsForUser } from "@/db/admin";
 import { listPaymentsForUser } from "@/db/payments";
 import { listAdminWallNotesForUser } from "@/db/wall";
+import { adminCopy, paymentKindLabel, paymentStatusLabel } from "@/lib/admin-copy";
 import {
   formatAdminWhen,
   formatPaymentAmount,
@@ -29,26 +30,28 @@ export default async function AdminMemberDetailPage({ params }: Props) {
   const reviews = listAdminReviewsForUser(member.id);
   const notes = listAdminWallNotesForUser(member.id);
   const payments = listPaymentsForUser(member.id);
+  const copy = adminCopy.member;
+  const dash = adminCopy.common.dash;
 
   const fields = [
-    ["Email", member.email],
-    ["Plan", planLabel(member.plan, member.planStatus)],
-    ["Subscription status", member.planStatus ?? "—"],
-    ["Created", formatAdminWhen(member.createdAt)],
-    ["Last active", formatAdminWhen(member.lastActive ?? member.createdAt)],
-    ["Plan updated", formatAdminWhen(member.planUpdatedAt)],
-    ["Stripe customer", member.stripeCustomerId ?? "—"],
-    ["Stripe subscription", member.stripeSubscriptionId ?? "—"],
-    ["Stripe price", member.stripePriceId ?? "—"],
-    ["Reviews", String(member.reviewCount)],
-    ["Wall notes", String(member.wallNoteCount)],
+    [copy.email, member.email],
+    [copy.plan, planLabel(member.plan, member.planStatus)],
+    [copy.subscriptionStatus, member.planStatus ?? dash],
+    [copy.created, formatAdminWhen(member.createdAt)],
+    [copy.lastActive, formatAdminWhen(member.lastActive ?? member.createdAt)],
+    [copy.planUpdated, formatAdminWhen(member.planUpdatedAt)],
+    [copy.stripeCustomer, member.stripeCustomerId ?? dash],
+    [copy.stripeSubscription, member.stripeSubscriptionId ?? dash],
+    [copy.stripePrice, member.stripePriceId ?? dash],
+    [copy.reviews, String(member.reviewCount)],
+    [copy.wallNotes, String(member.wallNoteCount)],
   ] as const;
 
   return (
-    <AdminShell title="Member" wide>
+    <AdminShell title={copy.title} wide>
       <p className="text-sm">
         <Link href="/admin/members" className="text-muted hover:text-foreground">
-          ← Members
+          {copy.back}
         </Link>
       </p>
 
@@ -64,8 +67,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
         </dl>
 
         <p className="mt-8 text-sm text-muted">
-          Manual plan changes are for comps and support. They do not create a Stripe
-          charge or subscription.
+          {copy.planHint}
         </p>
         <div className="mt-4">
           <AdminPlanButtons userId={member.id} email={member.email} />
@@ -73,27 +75,27 @@ export default async function AdminMemberDetailPage({ params }: Props) {
         <div className="mt-4">
           <AdminDeleteButton
             endpoint={`/api/admin/users/${encodeURIComponent(member.id)}`}
-            confirmText={`Delete ${member.email} and their reviews?`}
-            label="Delete member"
+            confirmText={adminCopy.members.deleteConfirm(member.email)}
+            label={copy.deleteMember}
             redirectTo="/admin/members"
           />
         </div>
       </article>
 
       <section className="mt-8">
-        <h2 className="font-display text-2xl tracking-tight">Reviews</h2>
+        <h2 className="font-display text-2xl tracking-tight">{copy.reviewsHeading}</h2>
         {reviews.length === 0 ? (
           <p className="mt-3 rounded-[1.75rem] bg-paper px-6 py-8 text-sm text-muted shadow-card">
-            No reviews yet.
+            {copy.reviewsEmpty}
           </p>
         ) : (
           <div className="mt-3 overflow-x-auto rounded-[1.75rem] bg-paper shadow-card">
             <table className="w-full min-w-[36rem] text-left text-sm">
               <thead className="text-muted">
                 <tr className="border-b border-line">
-                  <th className="px-5 py-3 font-normal">When</th>
-                  <th className="px-5 py-3 font-normal">Locale</th>
-                  <th className="px-5 py-3 font-normal">Summary</th>
+                  <th className="px-5 py-3 font-normal">{copy.when}</th>
+                  <th className="px-5 py-3 font-normal">{copy.locale}</th>
+                  <th className="px-5 py-3 font-normal">{copy.summary}</th>
                 </tr>
               </thead>
               <tbody>
@@ -102,13 +104,13 @@ export default async function AdminMemberDetailPage({ params }: Props) {
                     <td className="px-5 py-3 whitespace-nowrap text-muted">
                       {formatAdminWhen(review.createdAt)}
                     </td>
-                    <td className="px-5 py-3">{review.locale ?? "—"}</td>
+                    <td className="px-5 py-3">{review.locale ?? dash}</td>
                     <td className="px-5 py-3">
                       <Link
                         href={`/admin/reviews/${encodeURIComponent(review.id)}`}
                         className="text-accent hover:text-foreground"
                       >
-                        {review.summary.trim() || "A quiet week"}
+                        {review.summary.trim() || copy.quietWeek}
                       </Link>
                     </td>
                   </tr>
@@ -120,20 +122,20 @@ export default async function AdminMemberDetailPage({ params }: Props) {
       </section>
 
       <section className="mt-8">
-        <h2 className="font-display text-2xl tracking-tight">Wall notes</h2>
+        <h2 className="font-display text-2xl tracking-tight">{copy.wallHeading}</h2>
         {notes.length === 0 ? (
           <p className="mt-3 rounded-[1.75rem] bg-paper px-6 py-8 text-sm text-muted shadow-card">
-            No wall notes yet.
+            {copy.wallEmpty}
           </p>
         ) : (
           <div className="mt-3 overflow-x-auto rounded-[1.75rem] bg-paper shadow-card">
             <table className="w-full min-w-[36rem] text-left text-sm">
               <thead className="text-muted">
                 <tr className="border-b border-line">
-                  <th className="px-5 py-3 font-normal">When</th>
-                  <th className="px-5 py-3 font-normal">Summary</th>
-                  <th className="px-5 py-3 font-normal">Praise</th>
-                  <th className="px-5 py-3 font-normal">Hidden</th>
+                  <th className="px-5 py-3 font-normal">{copy.when}</th>
+                  <th className="px-5 py-3 font-normal">{copy.summary}</th>
+                  <th className="px-5 py-3 font-normal">{copy.praise}</th>
+                  <th className="px-5 py-3 font-normal">{copy.hidden}</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,9 +144,9 @@ export default async function AdminMemberDetailPage({ params }: Props) {
                     <td className="px-5 py-3 whitespace-nowrap text-muted">
                       {formatAdminWhen(note.createdAt)}
                     </td>
-                    <td className="px-5 py-3">{note.summary.trim() || "A quiet week"}</td>
+                    <td className="px-5 py-3">{note.summary.trim() || copy.quietWeek}</td>
                     <td className="px-5 py-3">{note.praiseCount}</td>
-                    <td className="px-5 py-3">{note.hidden ? "yes" : "no"}</td>
+                    <td className="px-5 py-3">{note.hidden ? copy.yes : copy.no}</td>
                   </tr>
                 ))}
               </tbody>
@@ -154,10 +156,10 @@ export default async function AdminMemberDetailPage({ params }: Props) {
       </section>
 
       <section className="mt-8">
-        <h2 className="font-display text-2xl tracking-tight">Payments</h2>
+        <h2 className="font-display text-2xl tracking-tight">{copy.paymentsHeading}</h2>
         {payments.length === 0 ? (
           <p className="mt-3 rounded-[1.75rem] bg-paper px-6 py-8 text-sm text-muted shadow-card">
-            No payment records for this member yet.
+            {copy.paymentsEmpty}
           </p>
         ) : (
           <PaymentTable payments={payments} />
@@ -172,16 +174,17 @@ function PaymentTable({
 }: {
   payments: ReturnType<typeof listPaymentsForUser>;
 }) {
+  const copy = adminCopy.member;
   return (
     <div className="mt-3 overflow-x-auto rounded-[1.75rem] bg-paper shadow-card">
       <table className="w-full min-w-[40rem] text-left text-sm">
         <thead className="text-muted">
           <tr className="border-b border-line">
-            <th className="px-5 py-3 font-normal">When</th>
-            <th className="px-5 py-3 font-normal">Kind</th>
-            <th className="px-5 py-3 font-normal">Status</th>
-            <th className="px-5 py-3 font-normal">Amount</th>
-            <th className="px-5 py-3 font-normal">Description</th>
+            <th className="px-5 py-3 font-normal">{copy.when}</th>
+            <th className="px-5 py-3 font-normal">{copy.kind}</th>
+            <th className="px-5 py-3 font-normal">{copy.status}</th>
+            <th className="px-5 py-3 font-normal">{copy.amount}</th>
+            <th className="px-5 py-3 font-normal">{copy.description}</th>
           </tr>
         </thead>
         <tbody>
@@ -190,12 +193,12 @@ function PaymentTable({
               <td className="px-5 py-3 whitespace-nowrap text-muted">
                 {formatAdminWhen(payment.createdAt)}
               </td>
-              <td className="px-5 py-3">{payment.kind}</td>
-              <td className="px-5 py-3">{payment.status}</td>
+              <td className="px-5 py-3">{paymentKindLabel(payment.kind)}</td>
+              <td className="px-5 py-3">{paymentStatusLabel(payment.status)}</td>
               <td className="px-5 py-3">
                 {formatPaymentAmount(payment.amountCents, payment.currency)}
               </td>
-              <td className="px-5 py-3">{payment.description ?? "—"}</td>
+              <td className="px-5 py-3">{payment.description ?? adminCopy.common.dash}</td>
             </tr>
           ))}
         </tbody>

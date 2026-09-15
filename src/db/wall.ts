@@ -53,6 +53,7 @@ export type WallNoteDetail = WallNoteListItem & {
   priorities: string;
   locale: string | null;
   reviewId: string;
+  ownerUserId: string;
 };
 
 export type WallComment = {
@@ -129,6 +130,7 @@ export function getWallNote(id: string, viewerId: string | null): WallNoteDetail
     priorities: row.priorities,
     locale: row.locale,
     reviewId: row.review_id,
+    ownerUserId: row.user_id,
   };
 }
 

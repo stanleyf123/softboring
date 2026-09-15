@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { Link } from "@/i18n/navigation";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { useLocale, useTranslations } from "next-intl";
@@ -109,7 +110,29 @@ export function WallBoard({
     x: number;
     y: number;
     moved: boolean;
+    threshold: number;
   } | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  function canvasPoint(event: React.PointerEvent) {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return { x: event.clientX, y: event.clientY };
+    }
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+  }
+
+  function setScrollerLock(lockedScroll: boolean) {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    scroller.style.touchAction = lockedScroll ? "none" : "";
+    scroller.style.overflow = lockedScroll ? "hidden" : "auto";
+  }
 
   const loadNotes = useCallback(async () => {
     const data = await readJson<{
@@ -173,28 +196,34 @@ export function WallBoard({
 
   function onPointerDown(event: React.PointerEvent<HTMLButtonElement>, note: TeaserNote) {
     if (locked || !softPlus) return;
+    if (event.pointerType === "touch") event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
+    const point = canvasPoint(event);
     drag.current = {
       id: note.id,
-      dx: event.clientX - note.x,
-      dy: event.clientY - note.y,
-      startX: event.clientX,
-      startY: event.clientY,
+      dx: point.x - note.x,
+      dy: point.y - note.y,
+      startX: point.x,
+      startY: point.y,
       x: note.x,
       y: note.y,
       moved: false,
+      threshold: event.pointerType === "touch" ? 14 : 6,
     };
   }
 
   function onPointerMove(event: React.PointerEvent<HTMLButtonElement>) {
     const current = drag.current;
     if (!current || current.id !== event.currentTarget.dataset.noteId) return;
-    const x = event.clientX - current.dx;
-    const y = event.clientY - current.dy;
+    event.preventDefault();
+    const point = canvasPoint(event);
+    const x = point.x - current.dx;
+    const y = point.y - current.dy;
     if (
-      Math.abs(event.clientX - current.startX) > 6 ||
-      Math.abs(event.clientY - current.startY) > 6
+      Math.abs(point.x - current.startX) > current.threshold ||
+      Math.abs(point.y - current.startY) > current.threshold
     ) {
+      if (!current.moved) setScrollerLock(true);
       current.moved = true;
     }
     current.x = x;
@@ -211,6 +240,7 @@ export function WallBoard({
   async function onPointerUp(event: React.PointerEvent<HTMLButtonElement>, note: TeaserNote) {
     const current = drag.current;
     drag.current = null;
+    setScrollerLock(false);
     if (!current || current.id !== note.id) return;
     if (!current.moved) {
       void openNote(note.id);
@@ -331,7 +361,11 @@ export function WallBoard({
   }
 
   if (!ready && !loadError) {
-    return <div className="min-h-[28rem]" aria-hidden="true" />;
+    return (
+      <div className="mx-auto max-w-3xl px-6 pt-8">
+        <WallSkeleton label={t("loading")} />
+      </div>
+    );
   }
 
   if (loadError) {
@@ -351,6 +385,9 @@ export function WallBoard({
           <div>
             <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
             <p className="mt-3 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
+            {softPlus ? (
+              <p className="mt-3 text-sm text-muted">{t("dragHint")}</p>
+            ) : null}
           </div>
           {softPlus ? (
             <button
@@ -371,10 +408,12 @@ export function WallBoard({
 
       <div className="relative mt-8">
         <div
-          className="mx-auto overflow-auto rounded-[1.5rem] border border-line/80 bg-paper/40 shadow-card"
+          ref={scrollerRef}
+          className="mx-auto overflow-auto rounded-[1.5rem] border border-line/80 bg-paper/40 shadow-card overscroll-contain"
           style={{ height: "min(70vh, 44rem)" }}
         >
           <div
+            ref={canvasRef}
             className="relative"
             style={{
               width: WALL_CANVAS.width,
@@ -385,9 +424,15 @@ export function WallBoard({
             }}
           >
             {notes.length === 0 ? (
-              <p className="absolute left-10 top-10 max-w-sm font-display text-2xl text-muted">
-                {t("empty")}
-              </p>
+              <div className="absolute left-8 top-8 max-w-md">
+                <EmptyState
+                  title={t("emptyTitle")}
+                  body={t("empty")}
+                  ctaHref="/history"
+                  ctaLabel={t("emptyCta")}
+                  wash="bg-peach/70"
+                />
+              </div>
             ) : null}
             {notes.map((note) => {
               const full = "excerpt" in note ? (note as FullNote) : null;
@@ -399,7 +444,16 @@ export function WallBoard({
                   onPointerDown={(event) => onPointerDown(event, note)}
                   onPointerMove={onPointerMove}
                   onPointerUp={(event) => onPointerUp(event, note)}
-                  className={`absolute w-[216px] cursor-grab rounded-[1.4rem] px-4 py-4 text-left shadow-card touch-none ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
+                  onPointerCancel={(event) => {
+                    drag.current = null;
+                    setScrollerLock(false);
+                    try {
+                      event.currentTarget.releasePointerCapture(event.pointerId);
+                    } catch {
+                      // already released
+                    }
+                  }}
+                  className={`absolute w-[216px] cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
                   style={{
                     left: note.x,
                     top: note.y,
@@ -407,7 +461,7 @@ export function WallBoard({
                     transform: `rotate(${tiltFor(note.id)}deg)`,
                   }}
                 >
-                  <span className="absolute right-4 top-0 h-3 w-10 -translate-y-1/2 rounded-sm bg-accent/30" />
+                  <span className="absolute left-1/2 top-0 h-4 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/40" />
                   {locked || !full ? (
                     <span className="block space-y-2 blur-[3px]">
                       <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { adminCopy } from "@/lib/admin-copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -16,10 +17,10 @@ export function AdminPlanButtons({
   async function setPlan(plan: "soft_plus" | "free", clearStripeIds = false) {
     const confirmText =
       plan === "soft_plus"
-        ? `Grant Soft+ to ${email}? This is for comps/support and does not charge Stripe.`
+        ? adminCopy.member.grantConfirm(email)
         : clearStripeIds
-          ? `Set ${email} to Free and clear Stripe customer/subscription ids?`
-          : `Set ${email} to Free? Stripe ids will be kept.`;
+          ? adminCopy.member.freeClearConfirm(email)
+          : adminCopy.member.freeConfirm(email);
     if (!window.confirm(confirmText)) return;
     if (busy) return;
     setBusy(true);
@@ -33,7 +34,7 @@ export function AdminPlanButtons({
         },
       );
       if (!response.ok) {
-        window.alert("Could not update this member.");
+        window.alert(adminCopy.member.updateError);
         return;
       }
       router.refresh();
@@ -50,7 +51,7 @@ export function AdminPlanButtons({
         onClick={() => setPlan("soft_plus")}
         className="rounded-full border border-line px-4 py-2 text-sm hover:bg-mint/70 disabled:opacity-60"
       >
-        Grant Soft+
+        {adminCopy.member.grantPlus}
       </button>
       <button
         type="button"
@@ -58,7 +59,7 @@ export function AdminPlanButtons({
         onClick={() => setPlan("free")}
         className="rounded-full border border-line px-4 py-2 text-sm text-muted hover:bg-blush/70 hover:text-foreground disabled:opacity-60"
       >
-        Set Free
+        {adminCopy.member.setFree}
       </button>
       <button
         type="button"
@@ -66,7 +67,7 @@ export function AdminPlanButtons({
         onClick={() => setPlan("free", true)}
         className="rounded-full border border-line px-4 py-2 text-sm text-muted hover:bg-blush/70 hover:text-foreground disabled:opacity-60"
       >
-        Set Free and clear Stripe ids
+        {adminCopy.member.setFreeClear}
       </button>
     </div>
   );

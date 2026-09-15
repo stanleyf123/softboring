@@ -78,6 +78,7 @@ export function createUser(email: string, passwordHash: string): PublicUser {
     }
     throw error;
   }
+  ensureSettingsForNewUser(id);
   return {
     id,
     email,
@@ -87,6 +88,16 @@ export function createUser(email: string, passwordHash: string): PublicUser {
     stripeCustomerId: null,
     stripeSubscriptionId: null,
   };
+}
+
+function ensureSettingsForNewUser(userId: string) {
+  try {
+    getDb()
+      .prepare(`INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)`)
+      .run(userId);
+  } catch {
+    // Migration may not have created the table yet in very old tests; ignore.
+  }
 }
 
 export function getUserByEmail(email: string): UserRow | undefined {

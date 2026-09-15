@@ -54,6 +54,18 @@ if (userTable) {
   );
 }
 
+const settingsTable = db
+  .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'user_settings'`)
+  .get();
+if (settingsTable) {
+  ensureColumn("user_settings", "onboarding_dismissed", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "onboarding_history_seen", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "onboarding_wall_seen", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "reminder_enabled", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "reminder_weekday", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "reminder_last_sent_at", "TEXT");
+}
+
 db.close();
 
 console.log(`SQLite ready at ${sqlitePath}`);

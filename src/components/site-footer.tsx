@@ -1,4 +1,5 @@
 import { SoftMark } from "@/components/soft-doodles";
+import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
 export async function SiteFooter() {
@@ -10,6 +11,14 @@ export async function SiteFooter() {
         <SoftMark className="h-6 w-6" />
         {t("note")}
       </span>
+      <nav className="mt-3 flex flex-wrap gap-3">
+        <Link href="/privacy" className="hover:text-foreground">
+          {t("privacy")}
+        </Link>
+        <Link href="/terms" className="hover:text-foreground">
+          {t("terms")}
+        </Link>
+      </nav>
     </footer>
   );
 }

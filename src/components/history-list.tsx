@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState, ListSkeleton } from "@/components/empty-state";
 import { Link } from "@/i18n/navigation";
 import {
   ensureLocalReviewsMigrated,
@@ -42,30 +43,24 @@ export function HistoryList() {
   }, [hydrated]);
 
   if (!hydrated || (reviews === null && !error)) {
-    return <div className="min-h-48" aria-hidden="true" />;
+    return <ListSkeleton label={t("loading")} />;
   }
 
   if (error) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
-        <h2 className="font-display text-2xl tracking-tight">{t("loadErrorTitle")}</h2>
-        <p className="mt-3 max-w-md text-muted leading-relaxed">{t("loadError")}</p>
-      </section>
+      <EmptyState title={t("loadErrorTitle")} body={t("loadError")} />
     );
   }
 
   if (!reviews || reviews.length === 0) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
-        <h2 className="font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
-        <p className="mt-3 max-w-md text-muted leading-relaxed">{t("emptyBody")}</p>
-        <Link
-          href="/review"
-          className="mt-8 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
-        >
-          {t("emptyCta")}
-        </Link>
-      </section>
+      <EmptyState
+        title={t("emptyTitle")}
+        body={t("emptyBody")}
+        ctaHref="/review"
+        ctaLabel={t("emptyCta")}
+        wash="bg-peach/50"
+      />
     );
   }
 

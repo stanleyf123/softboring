@@ -6,6 +6,28 @@ import { useState } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
 import { SoftMark } from "./soft-doodles";
 
+function weekdayLabel(
+  t: ReturnType<typeof useTranslations<"Account">>,
+  day: number,
+) {
+  switch (day) {
+    case 1:
+      return t("weekday.1");
+    case 2:
+      return t("weekday.2");
+    case 3:
+      return t("weekday.3");
+    case 4:
+      return t("weekday.4");
+    case 5:
+      return t("weekday.5");
+    case 6:
+      return t("weekday.6");
+    default:
+      return t("weekday.0");
+  }
+}
+
 export function AccountPanel({
   email,
   createdAt,
@@ -14,6 +36,9 @@ export function AccountPanel({
   stripeConfigured,
   hasStripeCustomer,
   checkoutSuccess,
+  reminderEnabled,
+  reminderWeekday,
+  emailConfigured,
 }: {
   email: string;
   createdAt: string;
@@ -22,12 +47,18 @@ export function AccountPanel({
   stripeConfigured: boolean;
   hasStripeCustomer: boolean;
   checkoutSuccess: boolean;
+  reminderEnabled: boolean;
+  reminderWeekday: number;
+  emailConfigured: boolean;
 }) {
   const t = useTranslations("Account");
   const tPricing = useTranslations("Pricing");
   const format = useFormatter();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
+  const [weekday, setWeekday] = useState(reminderWeekday);
+  const [savingReminder, setSavingReminder] = useState(false);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
 
   async function handleLogout() {
@@ -91,6 +122,64 @@ export function AccountPanel({
               </dd>
             </div>
           </dl>
+
+          <div className="mt-8 rounded-[1.5rem] bg-mint/50 px-5 py-5">
+            <p className="font-display text-lg tracking-tight">{t("reminderTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("reminderBody")}</p>
+            <label className="mt-4 flex items-center gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={weeklyOn}
+                onChange={async (event) => {
+                  const next = event.target.checked;
+                  setWeeklyOn(next);
+                  setSavingReminder(true);
+                  try {
+                    await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ reminderEnabled: next }),
+                    });
+                  } finally {
+                    setSavingReminder(false);
+                  }
+                }}
+              />
+              {t("reminderToggle")}
+            </label>
+            <label className="mt-3 block text-sm">
+              <span className="text-muted">{t("reminderWeekday")}</span>
+              <select
+                className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2"
+                value={weekday}
+                disabled={!weeklyOn}
+                onChange={async (event) => {
+                  const next = Number(event.target.value);
+                  setWeekday(next);
+                  setSavingReminder(true);
+                  try {
+                    await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ reminderWeekday: next }),
+                    });
+                  } finally {
+                    setSavingReminder(false);
+                  }
+                }}
+              >
+                {[0, 1, 2, 3, 4, 5, 6].map((day) => (
+                  <option key={day} value={day}>
+                    {weekdayLabel(t, day)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="mt-3 text-xs text-muted">
+              {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
+              {savingReminder ? ` · ${t("reminderSaving")}` : null}
+            </p>
+          </div>
 
           {!softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/60 px-5 py-5">

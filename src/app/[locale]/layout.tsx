@@ -1,10 +1,15 @@
 import { GoogleAnalytics } from "@/components/google-analytics";
+import { OnboardingCard } from "@/components/onboarding-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { countUnreadNotifications } from "@/db/notifications";
+import { countReviewsForUser } from "@/db/reviews";
+import { ensureUserSettings } from "@/db/user-settings";
 import { routing } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth";
 import { isSoftPlusPlan } from "@/lib/plan";
 import { assertLocale, htmlLang } from "@/lib/locale";
+import { pageMetadata } from "@/lib/seo";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Fraunces, Nunito } from "next/font/google";
@@ -38,8 +43,12 @@ export async function generateMetadata({
   });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    ...pageMetadata({
+      locale: assertLocale(locale),
+      title: t("title"),
+      description: t("description"),
+      path: "/",
+    }),
   };
 }
 
@@ -53,6 +62,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   const locale = assertLocale(localeParam);
   setRequestLocale(locale);
   const user = await getCurrentUser();
+  const settings = user ? ensureUserSettings(user.id) : null;
+  const unreadNotifications = user ? countUnreadNotifications(user.id) : 0;
+  const reviewCount = user ? countReviewsForUser(user.id) : 0;
 
   return (
     <html
@@ -64,7 +76,16 @@ export default async function LocaleLayout({ children, params }: Props) {
           <SiteHeader
             email={user?.email ?? null}
             softPlus={Boolean(user && isSoftPlusPlan(user.plan, user.planStatus))}
+            unreadNotifications={unreadNotifications}
           />
+          {user && settings ? (
+            <OnboardingCard
+              reviewCount={reviewCount}
+              historySeen={settings.onboardingHistorySeen}
+              wallSeen={settings.onboardingWallSeen}
+              dismissed={settings.onboardingDismissed}
+            />
+          ) : null}
           <main className="mx-auto w-full max-w-3xl flex-1 px-6 pb-16">
             {children}
           </main>
