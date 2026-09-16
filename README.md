@@ -12,7 +12,7 @@ Submitted reviews are stored in **SQLite** on the server. Drafts stay in the bro
 
 ## Accounts
 
-Email + password on SQLite (bcrypt hashes, httpOnly session cookie). There is no OAuth or email verification in v1. Password reset uses a one-hour token in SQLite.
+Email + password on SQLite (bcrypt hashes, httpOnly `softboring_session` cookie), plus optional **Google** and **LINE** login into the same membership. There is no email verification in v1. Password reset uses a one-hour token in SQLite. Admin (`/admin`) stays on `ADMIN_TOKEN` and does not use OAuth.
 
 | You are | Reviews belong to | History shows |
 | --- | --- | --- |
@@ -38,7 +38,7 @@ The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account** (and
 
 Password reset: `POST /api/auth/forgot-password` always creates a hashed token when the email exists. If `RESEND_API_KEY` or `SMTP_HOST` is set, it sends the link. If email is not configured, the UI says so (without revealing whether the address has an account beyond that server-level message) and the reset URL is printed only in the server log. `POST /api/auth/reset-password` consumes a valid unused token.
 
-Login, register, and forgot-password are **rate-limited** by IP and email in SQLite (`rate_limits`). Too many tries return HTTP 429 with a friendly en / zh-tw message. No extra env is required.
+Login, register, forgot-password, and OAuth start/callback are **rate-limited** by IP (and email where it applies) in SQLite (`rate_limits`). Too many tries return HTTP 429 or send you back to login with a calm message. No extra env is required.
 
 The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
@@ -121,7 +121,7 @@ Checkout is treated as configured only when the first three are non-empty.
 - Admin: `/admin/wall` can hide a note (`hidden`). Hidden notes drop off the public board.
 - Commenting notifies the note owner in the signed-in inbox (bell). A reply also notifies the parent comment author. Own comments do not.
 
-After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, the eight seed stickers, and `rate_limits` exist.
+After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
 
 ## Admin
 
@@ -136,7 +136,7 @@ After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, the ei
 
 Without a matching token the admin UI and `/api/admin/*` stay closed. Do not commit a real token.
 
-OAuth and email verification are later. Password reset and optional weekly reminder email use `RESEND_API_KEY` or SMTP when set.
+Password reset and optional weekly reminder email use `RESEND_API_KEY` or SMTP when set. Google / LINE login is optional; see below.
 
 ## Locales
 
@@ -158,7 +158,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/en` or `/zh-tw`.
 
-`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so `rate_limits` and `wall_comments.parent_id` exist (auth rate limits and one-level wall replies). Older billing columns on `users` (`plan`, `stripe_customer_id`, …) are still added if missing.
+`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so `oauth_accounts` exists and `users.password_hash` can be null for OAuth-only members. Older billing columns on `users` (`plan`, `stripe_customer_id`, …) are still added if missing.
 
 ```bash
 npm run build
@@ -189,14 +189,73 @@ Copy `.env.example` to `.env.local`.
 - `EMAIL_FROM` — from-address for reset and reminder mail (optional default is `Soft Boring Weekly <noreply@softboring.com>`)
 - `RESEND_API_KEY` — preferred mail provider
 - `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_SECURE` — optional SMTP, same idea as 99gold
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Google Login (both required to enable the Google button)
+- `LINE_CHANNEL_ID` / `LINE_CHANNEL_SECRET` — LINE Login (both required to enable the LINE button)
 
 Do not put real secrets in the repo.
+
+## Google and LINE login
+
+Same `softboring_session` cookie as email login. OAuth users start as **Free** (`users.plan = free`), like email signup. Soft+ stays on `plan` / `plan_status`. Guest reviews are claimed on first OAuth sign-in, same as password login.
+
+If a credential pair is missing, that button is **disabled** with a calm note. Email/password still works. The app does not crash.
+
+### Callback URLs
+
+Built from `SITE_URL` (no trailing slash):
+
+| Provider | Path |
+| --- | --- |
+| Google | `{SITE_URL}/api/auth/oauth/google/callback` |
+| LINE | `{SITE_URL}/api/auth/oauth/line/callback` |
+
+Production:
+
+- `https://softboring.com/api/auth/oauth/google/callback`
+- `https://softboring.com/api/auth/oauth/line/callback`
+
+Local:
+
+- `http://localhost:3000/api/auth/oauth/google/callback`
+- `http://localhost:3000/api/auth/oauth/line/callback`
+
+Start URLs (the login buttons hit these):
+
+- `https://softboring.com/api/auth/oauth/google`
+- `https://softboring.com/api/auth/oauth/line`
+
+`next` / `returnTo` query params are honored if they are already a safe in-app path (never `/admin`). After success the app redirects to `/{locale}{path}` (locales are `en` / `zh-tw` only).
+
+### Google Cloud Console
+
+1. APIs & Services → Credentials → Create **OAuth client ID** → **Web application**.
+2. Authorized JavaScript origins: `https://softboring.com` (and `http://localhost:3000` for local).
+3. Authorized redirect URIs: the Google callback URL above (production and/or local).
+4. Scopes: `openid`, `email`, `profile`.
+5. Copy the client id and secret into `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+
+### LINE Developers
+
+1. Create a **LINE Login** channel (web app).
+2. Callback URL: the LINE callback URL above.
+3. Scopes: `profile`, `openid`, and `email` if available (users may decline email).
+4. Copy Channel ID and Channel secret into `LINE_CHANNEL_ID` and `LINE_CHANNEL_SECRET`.
+
+### Account linking
+
+- If this Google/LINE **subject id** is already in `oauth_accounts`, sign in as that user. Never move the subject onto a different account.
+- Else if the provider gives a **verified email** that already has a user, attach this provider to that user — unless the user already has a *different* subject for the same provider (that is a conflict; we do not hijack).
+- Else create a new Free user. LINE without email uses a unique synthetic address (`line.{subject}@oauth.softboring.invalid`) so `users.email` stays unique.
+- OAuth-only users have `password_hash` NULL. Password login will not match them until they set a password (forgot-password works when they have a real email).
+
+CSRF: start sets an httpOnly `softboring_oauth` cookie (HMAC-signed state, nonce, PKCE verifier). The callback checks `state` and nonce. Rate limits use the existing `rate_limits` table (`oauth` action).
 
 ## What's next
 
 1. **Deploy** — same Linode VPS as 99gold, separate site (see [DEPLOY-LINODE.md](./DEPLOY-LINODE.md))
 2. **Stripe live keys** — create the Soft+ product, set env, add the webhook
-3. Later still: OAuth, richer email templates
+3. **Google / LINE credentials** — set the callback URLs, then the env pairs above
+4. Later still: richer email templates
 
 Weekly reminder cron (after email is configured):
 

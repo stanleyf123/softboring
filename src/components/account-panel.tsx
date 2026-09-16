@@ -3,6 +3,7 @@
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
+import { oauthIdentityLabel } from "@/lib/oauth-config";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
@@ -66,6 +67,7 @@ export function AccountPanel({
   const [weekday, setWeekday] = useState(reminderWeekday);
   const [savingReminder, setSavingReminder] = useState(false);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
+  const identity = oauthIdentityLabel(email);
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -111,7 +113,13 @@ export function AccountPanel({
           <dl className="grid gap-6 sm:grid-cols-2">
             <div>
               <dt className="text-sm text-muted">{t("email")}</dt>
-              <dd className="mt-1 break-all text-lg">{email}</dd>
+              <dd className="mt-1 break-all text-lg">
+                {identity === "google"
+                  ? t("signedInWithGoogle")
+                  : identity === "line"
+                    ? t("signedInWithLine")
+                    : email}
+              </dd>
             </div>
             <div>
               <dt className="text-sm text-muted">{t("joined")}</dt>

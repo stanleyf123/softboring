@@ -8,7 +8,7 @@ import {
 export type UserRow = {
   id: string;
   email: string;
-  password_hash: string;
+  password_hash: string | null;
   created_at: string;
   plan: string;
   plan_status: string | null;
@@ -90,7 +90,7 @@ export function createUser(email: string, passwordHash: string): PublicUser {
   };
 }
 
-function ensureSettingsForNewUser(userId: string) {
+export function ensureSettingsForNewUser(userId: string) {
   try {
     getDb()
       .prepare(`INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)`)
@@ -175,6 +175,7 @@ export function updateUserBilling(userId: string, patch: BillingPatch) {
 export function deleteUser(id: string) {
   const db = getDb();
   const run = db.transaction(() => {
+    db.prepare(`DELETE FROM oauth_accounts WHERE user_id = ?`).run(id);
     db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(id);
     db.prepare(`DELETE FROM reviews WHERE user_id = ?`).run(id);
     return db.prepare(`DELETE FROM users WHERE id = ?`).run(id).changes;

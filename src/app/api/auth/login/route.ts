@@ -23,7 +23,11 @@ export async function POST(request: Request) {
     const email = parseEmail(body.email);
     const password = parseLoginPassword(body.password);
     const user = getUserByEmail(email);
-    if (!user || !(await verifyPassword(password, user.password_hash))) {
+    if (
+      !user ||
+      !user.password_hash ||
+      !(await verifyPassword(password, user.password_hash))
+    ) {
       return NextResponse.json({ error: "invalid_credentials" }, { status: 401 });
     }
 
