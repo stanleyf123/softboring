@@ -71,3 +71,9 @@ a {
     background-image: none;
   }
 }
+
+@media (max-width: 767px) {
+  body:has([role="dialog"]) [data-bottom-nav] {
+    display: none;
+  }
+}

@@ -587,11 +587,16 @@ export function WallBoard({
       </div>
 
       {softPlus && shopOpen ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div
+            className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wall-shop-title"
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
+                <h2 id="wall-shop-title" className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{t("shopLead")}</p>
               </div>
               <button
@@ -665,10 +670,15 @@ export function WallBoard({
       ) : null}
 
       {selectedId && detail ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div
+            className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wall-note-title"
+          >
             <div className="flex items-start justify-between gap-4">
-              <p className="font-display text-2xl tracking-tight">
+              <p id="wall-note-title" className="font-display text-2xl tracking-tight">
                 {detail.summary.trim() || t("untitled")}
               </p>
               <button

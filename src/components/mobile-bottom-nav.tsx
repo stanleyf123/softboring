@@ -24,7 +24,8 @@ export function MobileBottomNav({ email }: { email: string | null }) {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line/80 bg-paper/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 shadow-soft backdrop-blur-md md:hidden print:hidden"
+      data-bottom-nav
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-paper/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 shadow-soft backdrop-blur-md md:hidden print:hidden"
       aria-label={t("memberNav")}
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
