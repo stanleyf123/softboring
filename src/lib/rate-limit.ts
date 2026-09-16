@@ -2,7 +2,7 @@ import { getDb } from "@/db/client";
 import { clientIp } from "@/lib/client-ip";
 import { NextResponse } from "next/server";
 
-export type AuthRateAction = "login" | "register" | "forgot-password";
+export type AuthRateAction = "login" | "register" | "forgot-password" | "oauth";
 
 export const AUTH_RATE_WINDOWS: Record<
   AuthRateAction,
@@ -11,6 +11,7 @@ export const AUTH_RATE_WINDOWS: Record<
   login: { windowMs: 15 * 60 * 1000, ipMax: 10, emailMax: 8 },
   register: { windowMs: 60 * 60 * 1000, ipMax: 5, emailMax: 5 },
   "forgot-password": { windowMs: 60 * 60 * 1000, ipMax: 5, emailMax: 3 },
+  oauth: { windowMs: 15 * 60 * 1000, ipMax: 20, emailMax: 10 },
 };
 
 export type RateLimitResult =

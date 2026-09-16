@@ -1,8 +1,10 @@
 "use client";
 
+import { GoogleMark, LineMark } from "@/components/oauth-marks";
 import { Link, useRouter } from "@/i18n/navigation";
+import { oauthStartPath, type OAuthProvider } from "@/lib/oauth-config";
 import { safeAppPath } from "@/lib/public-origin";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { SoftMark } from "./soft-doodles";
 
@@ -14,6 +16,10 @@ const ERROR_KEYS = [
   "weak_password",
   "invalid_email",
   "rate_limited",
+  "oauth_failed",
+  "oauth_denied",
+  "oauth_disabled",
+  "oauth_conflict",
 ] as const;
 
 type ErrorKey = (typeof ERROR_KEYS)[number];
@@ -28,19 +34,33 @@ function errorMessageKey(code: string | undefined): ErrorKey | "generic" {
 export function AuthForm({
   mode,
   nextPath,
+  oauth = { google: false, line: false },
+  oauthError = null,
 }: {
   mode: Mode;
   nextPath?: string | null;
+  oauth?: { google: boolean; line: boolean };
+  oauthError?: string | null;
 }) {
   const t = useTranslations("Auth");
+  const locale = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<ErrorKey | "generic" | null>(null);
+  const [error, setError] = useState<ErrorKey | "generic" | null>(
+    oauthError ? errorMessageKey(oauthError) : null,
+  );
 
   const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/register";
   const destination = safeAppPath(nextPath, "/account");
+
+  function oauthHref(provider: OAuthProvider) {
+    const params = new URLSearchParams();
+    params.set("locale", locale);
+    if (nextPath) params.set("next", nextPath);
+    return `${oauthStartPath(provider)}?${params.toString()}`;
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,6 +87,8 @@ export function AuthForm({
     }
   }
 
+  const oauthOff = !oauth.google || !oauth.line;
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -85,6 +107,55 @@ export function AuthForm({
       </div>
 
       <div className="px-6 py-8 sm:px-8">
+        <div className="flex flex-col gap-3">
+          {oauth.google ? (
+            <a
+              href={oauthHref("google")}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border border-line bg-cream px-6 py-3 text-foreground shadow-soft hover:bg-blush/50"
+            >
+              <GoogleMark />
+              {t("continueGoogle")}
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-3 rounded-full border border-line bg-cream/70 px-6 py-3 text-muted opacity-70"
+            >
+              <GoogleMark />
+              {t("continueGoogle")}
+            </button>
+          )}
+          {oauth.line ? (
+            <a
+              href={oauthHref("line")}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border border-line bg-mint/80 px-6 py-3 text-foreground shadow-soft hover:bg-mint"
+            >
+              <LineMark />
+              {t("continueLine")}
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-3 rounded-full border border-line bg-mint/50 px-6 py-3 text-muted opacity-70"
+            >
+              <LineMark />
+              {t("continueLine")}
+            </button>
+          )}
+        </div>
+        {oauthOff ? (
+          <p className="mt-3 text-sm leading-relaxed text-muted">{t("oauthOff")}</p>
+        ) : null}
+
+        <div className="relative my-7">
+          <div className="border-t border-line" />
+          <p className="absolute inset-x-0 -top-2.5 text-center">
+            <span className="bg-paper px-3 text-sm text-muted">{t("orEmail")}</span>
+          </p>
+        </div>
+
         <label className="block">
           <span className="text-sm text-muted">{t("email")}</span>
           <input
@@ -133,7 +204,15 @@ export function AuthForm({
                     ? t("error.invalid_email")
                     : error === "rate_limited"
                       ? t("error.rate_limited")
-                      : t("error.generic")}
+                      : error === "oauth_failed"
+                        ? t("error.oauth_failed")
+                        : error === "oauth_denied"
+                          ? t("error.oauth_denied")
+                          : error === "oauth_disabled"
+                            ? t("error.oauth_disabled")
+                            : error === "oauth_conflict"
+                              ? t("error.oauth_conflict")
+                              : t("error.generic")}
           </p>
         ) : null}
 
