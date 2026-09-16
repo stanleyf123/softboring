@@ -122,8 +122,18 @@ export async function fetchReview(
 
 export async function createReview(
   answers: ReviewAnswers & { locale?: string },
-): Promise<{ review: Review; access: ReviewAccessInfo }> {
-  const data = await readJsonResponse<{ review: Review; access: ReviewAccessInfo }>(
+): Promise<{
+  review: Review;
+  access: ReviewAccessInfo;
+  streak: number;
+  milestone: 2 | 4 | 8 | 12 | null;
+}> {
+  const data = await readJsonResponse<{
+    review: Review;
+    access: ReviewAccessInfo;
+    streak?: number;
+    milestone?: 2 | 4 | 8 | 12 | null;
+  }>(
     await fetch("/api/reviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -131,7 +141,12 @@ export async function createReview(
     }),
   );
   clearDraft();
-  return data;
+  return {
+    review: data.review,
+    access: data.access,
+    streak: data.streak ?? 0,
+    milestone: data.milestone ?? null,
+  };
 }
 
 export async function fetchTrendPoints(): Promise<

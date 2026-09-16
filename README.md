@@ -34,9 +34,13 @@ Pages:
 - `/en/trends` and `/zh-tw/trends` (Soft+)
 - `/en/wall` and `/zh-tw/wall` (Soft Wall / 軟軟牆)
 
-The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account** (and an inbox bell when signed in). It never links to admin.
+The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account** (and an inbox bell when signed in). It never links to admin. On small screens, member areas (home / review / history / wall / account) use a bottom nav; desktop keeps the top nav.
 
 Password reset: `POST /api/auth/forgot-password` always creates a hashed token when the email exists. If `RESEND_API_KEY` or `SMTP_HOST` is set, it sends the link. If email is not configured, the UI says so (without revealing whether the address has an account beyond that server-level message) and the reset URL is printed only in the server log. `POST /api/auth/reset-password` consumes a valid unused token.
+
+Login, register, and forgot-password are **rate-limited** by IP and email in SQLite (`rate_limits`). Too many tries return HTTP 429 with a friendly en / zh-tw message. No extra env is required.
+
+The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
 Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
@@ -45,7 +49,7 @@ Weekly reminders: on the account page, toggle a weekday. Cron later with `npm ru
 | Plan | Write reviews | History | Trends | Soft Wall |
 | --- | --- | --- | --- | --- |
 | **Free** (and guests) | Yes | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked | Locked teaser (no other people's text) |
-| **Soft+** | Yes | Unlimited | Feeling 1–5 over time | Read, drag, comment, stickers |
+| **Soft+** | Yes | Unlimited, search, export CSV/PDF, custom questions, monthly digest | Feeling 1–5 over time, plus a gentle weekly streak | Full access: read, drag, comment, one-level replies, stickers, badge, pin |
 
 Guests can try 1–4 reviews in the browser. After the first save, the app nudges them to register so the paid path is clear. Registering as Free still caps visible history at four; Soft+ is the unlock.
 
@@ -111,13 +115,13 @@ Checkout is treated as configured only when the first three are non-empty.
 
 - Sharing is off by default. From a saved review (History, or right after save), a signed-in user can pin that week to the wall.
 - **Free / logged-out** visitors see a locked teaser: positions and colors only. Review text and comments are omitted by the API, not just blurred in CSS.
-- **Soft+** can read shared notes, drag them (x/y/z persist for everyone), comment, and buy/place stickers. Each placed sticker increments praise.
+- **Soft+** can read shared notes, drag them (x/y/z persist for everyone), comment, leave **one-level replies**, and buy/place stickers. Each placed sticker increments praise.
 - Stickers are a Stripe **one-time** Checkout (`mode: payment`). The webhook `checkout.session.completed` grants inventory. If Stripe env is missing, the catalog still renders and purchase returns `not_configured`, same as Soft+ subscriptions.
 - Optional price IDs: `STRIPE_PRICE_STICKER_PACK` and `STRIPE_PRICE_STICKER_<SLUG>` (star, heart, sprout, tea, moon, cloud, peach, sparkle). If unset, Checkout uses `price_data` from the catalog cents in SQLite.
 - Admin: `/admin/wall` can hide a note (`hidden`). Hidden notes drop off the public board.
-- Commenting notifies the note owner in the signed-in inbox (bell). Own comments do not.
+- Commenting notifies the note owner in the signed-in inbox (bell). A reply also notifies the parent comment author. Own comments do not.
 
-After pull, run `npm run db:migrate` so wall tables and the eight seed stickers exist.
+After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, the eight seed stickers, and `rate_limits` exist.
 
 ## Admin
 
@@ -125,7 +129,7 @@ After pull, run `npm run db:migrate` so wall tables and the eight seed stickers 
 
 1. Set `ADMIN_TOKEN` in `.env.local` or `/etc/softboring.env` (`openssl rand -hex 32`)
 2. Open `/admin/login` and paste the token, **or** call admin APIs with `Authorization: Bearer <token>` or `x-admin-token`
-3. Dashboard: member / Soft+ / Free / review / wall counts, plus successful payment count and revenue when `payments` rows exist
+3. Dashboard: member / Soft+ / Free / review / wall counts, plus successful payment count and revenue when `payments` rows exist; simple charts for signups over the last 8 weeks and the Soft+ vs Free mix
 4. **Members** (`/admin/members`, formerly Users): email, plan, Stripe ids, review/wall counts, last active; open a member for reviews, wall notes, payment history, and confirmed plan changes (Grant Soft+ / Set Free, optionally clearing Stripe ids). Password hashes are never shown. `/admin/users` redirects here.
 5. **Payments** (`/admin/payments`): filter by kind, status, or email; each row can link to the member
 6. Open a review or hide a wall note; optional delete with confirm
@@ -154,7 +158,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/en` or `/zh-tw`.
 
-`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so the `payments` table exists (membership admin and billing history). Older billing columns on `users` (`plan`, `stripe_customer_id`, …) are still added if missing.
+`npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so `rate_limits` and `wall_comments.parent_id` exist (auth rate limits and one-level wall replies). Older billing columns on `users` (`plan`, `stripe_customer_id`, …) are still added if missing.
 
 ```bash
 npm run build

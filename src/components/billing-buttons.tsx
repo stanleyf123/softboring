@@ -77,13 +77,13 @@ export function CheckoutButtons({
       <div className="flex flex-wrap gap-2">
         <Link
           href={{ pathname: "/register", query: { next: "/pricing" } }}
-          className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+          className="inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
         >
           {t("ctaRegister")}
         </Link>
         <Link
           href={{ pathname: "/login", query: { next: "/pricing" } }}
-          className="rounded-full border border-line px-5 py-2.5 text-sm text-muted hover:text-foreground"
+          className="inline-flex min-h-11 items-center rounded-full border border-line px-5 py-2.5 text-sm text-muted hover:text-foreground"
         >
           {t("ctaLogin")}
         </Link>
@@ -102,7 +102,7 @@ export function CheckoutButtons({
           type="button"
           onClick={() => startCheckout("month")}
           disabled={busy !== null}
-          className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+          className="inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
         >
           {busy === "month"
             ? t("redirecting")
@@ -115,7 +115,7 @@ export function CheckoutButtons({
             type="button"
             onClick={() => startCheckout("year")}
             disabled={busy !== null}
-            className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm text-muted hover:text-foreground disabled:opacity-60"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-5 py-2.5 text-sm text-muted hover:text-foreground disabled:opacity-60"
           >
             {busy === "year"
               ? t("redirecting")

@@ -68,6 +68,16 @@ export type WallComment = {
   body: string;
   createdAt: string;
   mine: boolean;
+  parentId: string | null;
+};
+
+export type WallCommentRow = {
+  id: string;
+  note_id: string;
+  user_id: string;
+  body: string;
+  parent_id: string | null;
+  created_at: string;
 };
 
 const NOTE_SELECT = `
@@ -306,50 +316,84 @@ export function pinWallNoteForUser(id: string, userId: string, pinned: boolean) 
   return run();
 }
 
-export function listWallComments(noteId: string, viewerId: string | null): WallComment[] {
-  const rows = getDb()
-    .prepare(
-      `SELECT id, user_id, body, created_at
-       FROM wall_comments
-       WHERE note_id = ?
-       ORDER BY datetime(created_at) ASC`,
-    )
-    .all(noteId) as Array<{
-    id: string;
-    user_id: string;
-    body: string;
-    created_at: string;
-  }>;
-
-  return rows.map((row) => ({
+function toComment(row: WallCommentRow, viewerId: string | null): WallComment {
+  return {
     id: row.id,
     body: row.body,
     createdAt: row.created_at,
     mine: viewerId === row.user_id,
-  }));
+    parentId: row.parent_id,
+  };
 }
 
-export function addWallComment(input: { noteId: string; userId: string; body: string }) {
+export function getWallComment(id: string): WallCommentRow | undefined {
+  return getDb()
+    .prepare(
+      `SELECT id, note_id, user_id, body, parent_id, created_at
+       FROM wall_comments
+       WHERE id = ?`,
+    )
+    .get(id) as WallCommentRow | undefined;
+}
+
+export function listWallComments(noteId: string, viewerId: string | null): WallComment[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT id, note_id, user_id, body, parent_id, created_at
+       FROM wall_comments
+       WHERE note_id = ?
+       ORDER BY datetime(created_at) ASC`,
+    )
+    .all(noteId) as WallCommentRow[];
+
+  return rows.map((row) => toComment(row, viewerId));
+}
+
+export function addWallComment(input: {
+  noteId: string;
+  userId: string;
+  body: string;
+  parentId?: string | null;
+}) {
+  const parentId = input.parentId ?? null;
+  if (parentId) {
+    const parent = getWallComment(parentId);
+    if (!parent || parent.note_id !== input.noteId || parent.parent_id) {
+      const error = new Error("invalid_parent");
+      error.name = "WallCommentParentError";
+      throw error;
+    }
+  }
+
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   getDb()
     .prepare(
-      `INSERT INTO wall_comments (id, note_id, user_id, body, created_at)
-       VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO wall_comments (id, note_id, user_id, body, parent_id, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
     )
-    .run(id, input.noteId, input.userId, input.body, createdAt);
+    .run(id, input.noteId, input.userId, input.body, parentId, createdAt);
   return {
     id,
     body: input.body,
     createdAt,
     mine: true,
+    parentId,
   } satisfies WallComment;
 }
 
 export function deleteWallCommentForUser(id: string, userId: string) {
-  return getDb()
-    .prepare(`DELETE FROM wall_comments WHERE id = ? AND user_id = ?`)
-    .run(id, userId).changes;
+  const db = getDb();
+  const row = db
+    .prepare(`SELECT id FROM wall_comments WHERE id = ? AND user_id = ?`)
+    .get(id, userId) as { id: string } | undefined;
+  if (!row) return 0;
+  const run = db.transaction(() => {
+    db.prepare(`DELETE FROM wall_comments WHERE parent_id = ?`).run(id);
+    return db.prepare(`DELETE FROM wall_comments WHERE id = ? AND user_id = ?`).run(id, userId)
+      .changes;
+  });
+  return run();
 }
 
 export function setWallNoteHidden(id: string, hidden: boolean) {

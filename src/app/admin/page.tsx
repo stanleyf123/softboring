@@ -1,5 +1,6 @@
 import { AdminShell } from "@/components/admin-shell";
-import { adminCounts } from "@/db/admin";
+import { AdminPlanMixChart, AdminSignupChart } from "@/components/admin-charts";
+import { adminCounts, adminSignupWeeks } from "@/db/admin";
 import { adminCopy } from "@/lib/admin-copy";
 import { formatRevenueSummary } from "@/lib/admin-format";
 import { requireAdmin } from "@/lib/admin";
@@ -11,6 +12,7 @@ export const runtime = "nodejs";
 export default async function AdminDashboardPage() {
   await requireAdmin();
   const counts = adminCounts();
+  const signups = adminSignupWeeks();
   const revenue = formatRevenueSummary(counts.payments.byCurrency);
   const copy = adminCopy.dashboard;
 
@@ -34,6 +36,10 @@ export default async function AdminDashboardPage() {
           value={revenue}
           wash="bg-lemon/80"
         />
+      </div>
+      <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        <AdminSignupChart weeks={signups} />
+        <AdminPlanMixChart plus={counts.paid} free={counts.free} />
       </div>
       <p className="mt-8 max-w-lg text-sm leading-relaxed text-muted">
         {copy.note}

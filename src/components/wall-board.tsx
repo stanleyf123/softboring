@@ -35,6 +35,7 @@ type Comment = {
   body: string;
   createdAt: string;
   mine: boolean;
+  parentId?: string | null;
 };
 
 type Sticker = {
@@ -96,6 +97,7 @@ export function WallBoard({
   const [detail, setDetail] = useState<FullNote | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentBody, setCommentBody] = useState("");
+  const [replyToId, setReplyToId] = useState<string | null>(null);
   const [shopOpen, setShopOpen] = useState(false);
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [inventory, setInventory] = useState<Record<string, number>>({});
@@ -191,6 +193,8 @@ export function WallBoard({
       ]);
       setDetail(noteData.note);
       setComments(commentData.comments);
+      setReplyToId(null);
+      setCommentBody("");
     } catch {
       setSelectedId(null);
     }
@@ -284,11 +288,12 @@ export function WallBoard({
         await fetch(`/api/wall/notes/${encodeURIComponent(selectedId)}/comments`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ body }),
+          body: JSON.stringify({ body, parentId: replyToId }),
         }),
       );
       setComments((list) => [...list, data.comment]);
       setCommentBody("");
+      setReplyToId(null);
     } finally {
       setBusy(null);
     }
@@ -296,7 +301,10 @@ export function WallBoard({
 
   async function removeComment(id: string) {
     await fetch(`/api/wall/comments/${encodeURIComponent(id)}`, { method: "DELETE" });
-    setComments((list) => list.filter((item) => item.id !== id));
+    setComments((list) =>
+      list.filter((item) => item.id !== id && item.parentId !== id),
+    );
+    if (replyToId === id) setReplyToId(null);
   }
 
   async function unshare(id: string) {
@@ -477,6 +485,11 @@ export function WallBoard({
                     }
                   }}
                   className={`absolute w-[216px] cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
+                  aria-label={
+                    full
+                      ? t("noteAria", { excerpt: full.excerpt || t("untitled") })
+                      : t("noteLockedAria")
+                  }
                   style={{
                     left: note.x,
                     top: note.y,
@@ -484,7 +497,11 @@ export function WallBoard({
                     transform: `rotate(${tiltFor(note.id)}deg)`,
                   }}
                 >
-                  <span className="absolute left-1/2 top-0 h-4 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/40" />
+                  <span
+                    className="absolute left-1/2 top-0 h-4 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/40"
+                    aria-hidden="true"
+                  />
+                  <span className="sr-only">{t("dragHandle")}</span>
                   {locked || !full ? (
                     <span className="block space-y-2 blur-[3px]">
                       <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />
@@ -570,17 +587,23 @@ export function WallBoard({
       </div>
 
       {softPlus && shopOpen ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div
+            className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wall-shop-title"
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
+                <h2 id="wall-shop-title" className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{t("shopLead")}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShopOpen(false)}
-                className="text-sm text-muted hover:text-foreground"
+                className="min-h-11 min-w-11 text-sm text-muted hover:text-foreground"
+                aria-label={t("close")}
               >
                 {t("close")}
               </button>
@@ -647,10 +670,15 @@ export function WallBoard({
       ) : null}
 
       {selectedId && detail ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8">
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+          <div
+            className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wall-note-title"
+          >
             <div className="flex items-start justify-between gap-4">
-              <p className="font-display text-2xl tracking-tight">
+              <p id="wall-note-title" className="font-display text-2xl tracking-tight">
                 {detail.summary.trim() || t("untitled")}
               </p>
               <button
@@ -658,8 +686,10 @@ export function WallBoard({
                 onClick={() => {
                   setSelectedId(null);
                   setDetail(null);
+                  setReplyToId(null);
                 }}
-                className="text-sm text-muted hover:text-foreground"
+                className="min-h-11 min-w-11 text-sm text-muted hover:text-foreground"
+                aria-label={t("close")}
               >
                 {t("close")}
               </button>
@@ -714,43 +744,95 @@ export function WallBoard({
                 <p className="mt-2 text-sm text-muted">{t("noComments")}</p>
               ) : (
                 <ul className="mt-3 space-y-3">
-                  {comments.map((comment) => (
-                    <li key={comment.id} className="rounded-2xl bg-peach/40 px-4 py-3 text-sm">
-                      <p className="leading-relaxed">{comment.body}</p>
-                      <p className="mt-1 text-xs text-muted">
-                        {comment.mine ? t("yours") : t("neighbor")}
-                        {comment.mine ? (
-                          <>
+                  {comments
+                    .filter((comment) => !comment.parentId)
+                    .map((comment) => {
+                      const replies = comments.filter((item) => item.parentId === comment.id);
+                      return (
+                        <li key={comment.id} className="rounded-2xl bg-peach/40 px-4 py-3 text-sm">
+                          <p className="leading-relaxed">{comment.body}</p>
+                          <p className="mt-1 text-xs text-muted">
+                            {comment.mine ? t("yours") : t("neighbor")}
                             {" · "}
                             <button
                               type="button"
-                              onClick={() => removeComment(comment.id)}
-                              className="text-accent"
+                              onClick={() => setReplyToId(comment.id)}
+                              className="min-h-11 text-accent"
                             >
-                              {t("deleteComment")}
+                              {t("reply")}
                             </button>
-                          </>
-                        ) : null}
-                      </p>
-                    </li>
-                  ))}
+                            {comment.mine ? (
+                              <>
+                                {" · "}
+                                <button
+                                  type="button"
+                                  onClick={() => removeComment(comment.id)}
+                                  className="min-h-11 text-accent"
+                                >
+                                  {t("deleteComment")}
+                                </button>
+                              </>
+                            ) : null}
+                          </p>
+                          {replies.length > 0 ? (
+                            <ul className="mt-3 space-y-2 border-l border-line/80 pl-3">
+                              {replies.map((reply) => (
+                                <li
+                                  key={reply.id}
+                                  className="rounded-2xl bg-paper/80 px-3 py-2"
+                                >
+                                  <p className="leading-relaxed">{reply.body}</p>
+                                  <p className="mt-1 text-xs text-muted">
+                                    {reply.mine ? t("yours") : t("neighbor")}
+                                    {reply.mine ? (
+                                      <>
+                                        {" · "}
+                                        <button
+                                          type="button"
+                                          onClick={() => removeComment(reply.id)}
+                                          className="min-h-11 text-accent"
+                                        >
+                                          {t("deleteComment")}
+                                        </button>
+                                      </>
+                                    ) : null}
+                                  </p>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </li>
+                      );
+                    })}
                 </ul>
               )}
               <form onSubmit={sendComment} className="mt-4 flex flex-col gap-2">
+                {replyToId ? (
+                  <p className="text-xs text-muted">
+                    {t("replying")}{" "}
+                    <button
+                      type="button"
+                      onClick={() => setReplyToId(null)}
+                      className="text-accent"
+                    >
+                      {t("cancelReply")}
+                    </button>
+                  </p>
+                ) : null}
                 <textarea
                   value={commentBody}
                   onChange={(event) => setCommentBody(event.target.value)}
                   rows={2}
                   maxLength={500}
-                  placeholder={t("commentPlaceholder")}
+                  placeholder={replyToId ? t("replyPlaceholder") : t("commentPlaceholder")}
                   className="w-full resize-none rounded-2xl border border-line bg-paper px-4 py-3 outline-none focus:border-accent"
                 />
                 <button
                   type="submit"
                   disabled={busy !== null || !commentBody.trim()}
-                  className="self-start rounded-full bg-accent px-4 py-2 text-sm text-paper disabled:opacity-60"
+                  className="inline-flex min-h-11 items-center self-start rounded-full bg-accent px-4 py-2 text-sm text-paper disabled:opacity-60"
                 >
-                  {t("commentSubmit")}
+                  {replyToId ? t("replySubmit") : t("commentSubmit")}
                 </button>
               </form>
             </section>
@@ -761,7 +843,7 @@ export function WallBoard({
                   type="button"
                   onClick={() => togglePin(detail)}
                   disabled={busy !== null}
-                  className="rounded-full bg-mint px-4 py-2 text-sm shadow-card disabled:opacity-60"
+                  className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 py-2 text-sm shadow-card disabled:opacity-60"
                 >
                   {detail.pinned ? t("unpin") : t("pin")}
                 </button>

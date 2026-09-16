@@ -60,9 +60,20 @@ a {
   font: inherit;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 @media print {
   body {
     background: #fff8f2;
     background-image: none;
+  }
+}
+
+@media (max-width: 767px) {
+  body:has([role="dialog"]) [data-bottom-nav] {
+    display: none;
   }
 }

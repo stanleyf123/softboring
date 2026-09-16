@@ -8,6 +8,7 @@ import {
 } from "@/lib/auth";
 import { AuthError, parseEmail, parseLoginPassword } from "@/lib/auth-input";
 import { verifyPassword } from "@/lib/password";
+import { enforceAuthRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,10 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as { email?: unknown; password?: unknown };
+    const emailHint = typeof body.email === "string" ? body.email : null;
+    const limited = enforceAuthRateLimit(request, "login", emailHint);
+    if (limited) return limited;
+
     const email = parseEmail(body.email);
     const password = parseLoginPassword(body.password);
     const user = getUserByEmail(email);
@@ -38,6 +43,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: code }, { status });
     }
     if (error instanceof SyntaxError) {
+      const limited = enforceAuthRateLimit(request, "login");
+      if (limited) return limited;
       return NextResponse.json({ error: "invalid_json" }, { status: 400 });
     }
     console.error("POST /api/auth/login failed", error);

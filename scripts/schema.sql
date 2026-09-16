@@ -66,12 +66,15 @@ CREATE TABLE IF NOT EXISTS wall_comments (
   note_id TEXT NOT NULL,
   user_id TEXT NOT NULL,
   body TEXT NOT NULL,
+  parent_id TEXT,
   created_at TEXT NOT NULL,
   FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (parent_id) REFERENCES wall_comments(id) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_wall_comments_note ON wall_comments (note_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_wall_comments_parent ON wall_comments (parent_id);
 
 CREATE TABLE IF NOT EXISTS stickers (
   id TEXT PRIMARY KEY,
@@ -193,3 +196,9 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_created
   ON notifications (user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
   ON notifications (user_id, read_at);
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key TEXT PRIMARY KEY,
+  hits INTEGER NOT NULL,
+  window_start INTEGER NOT NULL
+);

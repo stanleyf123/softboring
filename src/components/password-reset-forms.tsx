@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { SoftMark } from "./soft-doodles";
 
-const ERROR_KEYS = ["invalid_email", "generic"] as const;
+const ERROR_KEYS = ["invalid_email", "rate_limited", "generic"] as const;
 type ErrorKey = (typeof ERROR_KEYS)[number];
 
 export function ForgotPasswordForm() {
@@ -32,7 +32,13 @@ export function ForgotPasswordForm() {
         emailConfigured?: boolean;
       };
       if (!response.ok) {
-        setError(data.error === "invalid_email" ? "invalid_email" : "generic");
+        setError(
+          response.status === 429
+            ? "rate_limited"
+            : data.error === "invalid_email"
+              ? "invalid_email"
+              : "generic",
+        );
         return;
       }
       setDone(data.emailConfigured === false ? "no_email" : "sent");
@@ -82,13 +88,15 @@ export function ForgotPasswordForm() {
               <p className="mt-5 text-sm text-accent" role="alert">
                 {error === "invalid_email"
                   ? t("error.invalid_email")
-                  : t("error.generic")}
+                  : error === "rate_limited"
+                    ? t("error.rate_limited")
+                    : t("error.generic")}
               </p>
             ) : null}
             <button
               type="submit"
               disabled={submitting}
-              className="mt-8 w-full rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
+              className="mt-8 min-h-11 w-full rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
             >
               {submitting ? t("submitting") : t("forgotSubmit")}
             </button>

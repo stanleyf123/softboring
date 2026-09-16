@@ -4,6 +4,7 @@ import { getUserByEmail } from "@/db/users";
 import { AuthError, parseEmail } from "@/lib/auth-input";
 import { isEmailConfigured, sendEmail } from "@/lib/email";
 import { publicOrigin } from "@/lib/public-origin";
+import { enforceAuthRateLimit } from "@/lib/rate-limit";
 import { routing, type AppLocale } from "@/i18n/routing";
 
 export const runtime = "nodejs";
@@ -32,6 +33,13 @@ function resetCopy(locale: AppLocale, resetUrl: string) {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as { email?: unknown; locale?: unknown };
+    const limited = enforceAuthRateLimit(
+      request,
+      "forgot-password",
+      typeof body.email === "string" ? body.email : null,
+    );
+    if (limited) return limited;
+
     const email = parseEmail(body.email);
     const locale = parseLocale(body.locale);
     const user = getUserByEmail(email);
@@ -64,6 +72,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.code }, { status: 400 });
     }
     if (error instanceof SyntaxError) {
+      const limited = enforceAuthRateLimit(request, "forgot-password");
+      if (limited) return limited;
       return NextResponse.json({ error: "invalid_json" }, { status: 400 });
     }
     console.error("POST /api/auth/forgot-password failed", error);

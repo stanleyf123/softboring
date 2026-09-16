@@ -3,6 +3,7 @@ import { createReview, listReviewsForOwner } from "@/db/reviews";
 import { withHistoryAccess } from "@/lib/history-access";
 import { InputError, parseAnswers } from "@/lib/review-input";
 import { accessPayload, getReviewAccess } from "@/lib/review-access";
+import { streakMilestone, weeklyStreak } from "@/lib/plus-insights";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,10 +36,13 @@ export async function POST(request: Request) {
     const all = listReviewsForOwner(access.owner);
     const visible = withHistoryAccess(all, access.softPlus);
     const lockedCount = visible.filter((item) => item.locked).length;
+    const streak = weeklyStreak(all.map((item) => item.createdAt));
     return NextResponse.json(
       {
         review,
         access: accessPayload(access, all.length, lockedCount),
+        streak,
+        milestone: streakMilestone(streak),
       },
       { status: 201 },
     );

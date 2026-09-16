@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createNotification } from "@/db/notifications";
-import { addWallComment, getWallNote, listWallComments } from "@/db/wall";
+import {
+  addWallComment,
+  getWallComment,
+  getWallNote,
+  listWallComments,
+} from "@/db/wall";
 import { getWallViewer, parseCommentBody, requireSoftPlus } from "@/lib/wall-access";
 
 export const runtime = "nodejs";
@@ -29,6 +34,10 @@ export async function GET(_request: Request, context: Context) {
   }
 }
 
+function previewText(text: string) {
+  return text.length > 80 ? `${text.slice(0, 77)}…` : text;
+}
+
 export async function POST(request: Request, context: Context) {
   try {
     const { id } = await context.params;
@@ -51,29 +60,59 @@ export async function POST(request: Request, context: Context) {
       throw error;
     }
 
-    const text = parseCommentBody(
-      body && typeof body === "object" ? (body as { body?: unknown }).body : null,
-    );
+    const payload = body && typeof body === "object" ? (body as { body?: unknown; parentId?: unknown }) : {};
+    const text = parseCommentBody(payload.body);
     if (!text) {
       return NextResponse.json({ error: "body_required" }, { status: 400 });
     }
 
-    const comment = addWallComment({
-      noteId: id,
-      userId: viewer.user!.id,
-      body: text,
-    });
-    if (note.ownerUserId !== viewer.user!.id) {
-      const preview = text.length > 80 ? `${text.slice(0, 77)}…` : text;
-      createNotification({
-        userId: note.ownerUserId,
-        kind: "wall_comment",
-        title: "wall_comment",
-        body: preview,
-        href: "/wall",
-      });
+    const parentId =
+      typeof payload.parentId === "string" && payload.parentId.trim()
+        ? payload.parentId.trim()
+        : null;
+    const parent = parentId ? getWallComment(parentId) : undefined;
+    if (parentId && (!parent || parent.note_id !== id || parent.parent_id)) {
+      return NextResponse.json({ error: "invalid_parent" }, { status: 400 });
     }
-    return NextResponse.json({ comment }, { status: 201 });
+
+    const commenterId = viewer.user!.id;
+    try {
+      const comment = addWallComment({
+        noteId: id,
+        userId: commenterId,
+        body: text,
+        parentId,
+      });
+      const preview = previewText(text);
+      const parentAuthorId = parent?.user_id ?? null;
+      if (parentAuthorId && parentAuthorId !== commenterId) {
+        createNotification({
+          userId: parentAuthorId,
+          kind: "wall_reply",
+          title: "wall_reply",
+          body: preview,
+          href: "/wall",
+        });
+      }
+      if (
+        note.ownerUserId !== commenterId &&
+        note.ownerUserId !== parentAuthorId
+      ) {
+        createNotification({
+          userId: note.ownerUserId,
+          kind: parentId ? "wall_reply" : "wall_comment",
+          title: parentId ? "wall_reply" : "wall_comment",
+          body: preview,
+          href: "/wall",
+        });
+      }
+      return NextResponse.json({ comment }, { status: 201 });
+    } catch (error) {
+      if (error instanceof Error && error.name === "WallCommentParentError") {
+        return NextResponse.json({ error: "invalid_parent" }, { status: 400 });
+      }
+      throw error;
+    }
   } catch (error) {
     console.error("POST /api/wall/notes/[id]/comments failed", error);
     return NextResponse.json({ error: "Could not save this comment." }, { status: 500 });

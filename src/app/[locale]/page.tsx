@@ -49,10 +49,24 @@ export default async function HomePage({ params }: Props) {
           <p className="mt-5 text-lg leading-relaxed text-muted">{t("lead")}</p>
           <Link
             href="/review"
-            className="mt-8 inline-flex rounded-full bg-accent px-6 py-3 text-paper shadow-soft"
+            className="mt-8 inline-flex min-h-11 items-center rounded-full bg-accent px-6 py-3 text-paper shadow-soft"
           >
             {t("cta")}
           </Link>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/pricing"
+              className="inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-5 py-2.5 text-sm text-muted shadow-card hover:text-foreground"
+            >
+              {t("ctaPricing")}
+            </Link>
+            <Link
+              href="/wall"
+              className="inline-flex min-h-11 items-center rounded-full bg-blush/80 px-5 py-2.5 text-sm shadow-card hover:text-foreground"
+            >
+              {t("ctaWall")}
+            </Link>
+          </div>
         </div>
         <div className="mx-auto w-full max-w-[17.5rem] shrink-0 sm:mx-0 sm:max-w-[15.5rem] md:max-w-[17.5rem]">
           <HeroDoodle />
@@ -84,7 +98,7 @@ export default async function HomePage({ params }: Props) {
         <p className="mt-2 leading-relaxed text-muted">{t("pricingPaid")}</p>
         <Link
           href="/pricing"
-          className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+          className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
         >
           {t("pricingCta")}
         </Link>
@@ -97,7 +111,7 @@ export default async function HomePage({ params }: Props) {
         </p>
         <Link
           href="/review"
-          className="mt-6 inline-flex rounded-full bg-accent px-6 py-3 text-paper shadow-soft"
+          className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-6 py-3 text-paper shadow-soft"
         >
           {t("cta")}
         </Link>

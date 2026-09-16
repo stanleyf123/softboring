@@ -1,5 +1,7 @@
 import { GoogleAnalytics } from "@/components/google-analytics";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { OnboardingCard } from "@/components/onboarding-card";
+import { PwaRegister } from "@/components/pwa-register";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { countUnreadNotifications } from "@/db/notifications";
@@ -14,6 +16,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Fraunces, Nunito } from "next/font/google";
 import type { ReactNode } from "react";
+import type { Viewport } from "next";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -49,8 +52,25 @@ export async function generateMetadata({
       description: t("description"),
       path: "/",
     }),
+    manifest: "/manifest.webmanifest",
+    icons: {
+      icon: [
+        { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      ],
+      apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+    },
+    appleWebApp: {
+      capable: true,
+      title: "Soft Boring",
+      statusBarStyle: "default",
+    },
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: "#c47f6e",
+};
 
 type Props = {
   children: ReactNode;
@@ -78,6 +98,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             softPlus={Boolean(user && isSoftPlusPlan(user.plan, user.planStatus))}
             unreadNotifications={unreadNotifications}
           />
+          <MobileBottomNav email={user?.email ?? null} />
           {user && settings ? (
             <OnboardingCard
               reviewCount={reviewCount}
@@ -86,11 +107,12 @@ export default async function LocaleLayout({ children, params }: Props) {
               dismissed={settings.onboardingDismissed}
             />
           ) : null}
-          <main className="mx-auto w-full max-w-3xl flex-1 px-6 pb-16">
+          <main className="mx-auto w-full max-w-3xl flex-1 px-6 pb-28 md:pb-16">
             {children}
           </main>
           <SiteFooter />
         </NextIntlClientProvider>
+        <PwaRegister />
         <GoogleAnalytics />
       </body>
     </html>
