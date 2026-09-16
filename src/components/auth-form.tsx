@@ -89,11 +89,11 @@ export function AuthForm({
 
   const oauthOff = !oauth.google || !oauth.line;
 
+  const oauthBtn =
+    "inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border border-line px-6 py-3";
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="overflow-hidden rounded-[2rem] bg-paper shadow-card"
-    >
+    <div className="overflow-hidden rounded-[2rem] bg-paper shadow-card">
       <div className="flex items-center gap-3 bg-blush/70 px-6 py-4 sm:px-8">
         <SoftMark className="h-8 w-8" />
         <div>
@@ -111,41 +111,39 @@ export function AuthForm({
           {oauth.google ? (
             <a
               href={oauthHref("google")}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border border-line bg-cream px-6 py-3 text-foreground shadow-soft hover:bg-blush/50"
+              className={`${oauthBtn} bg-cream text-foreground shadow-soft hover:bg-blush/50`}
             >
               <GoogleMark />
               {t("continueGoogle")}
             </a>
           ) : (
-            <button
-              type="button"
-              disabled
-              className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-3 rounded-full border border-line bg-cream/70 px-6 py-3 text-muted opacity-70"
+            <span
+              aria-disabled="true"
+              className={`${oauthBtn} cursor-not-allowed bg-cream text-muted opacity-70`}
             >
               <GoogleMark />
               {t("continueGoogle")}
-            </button>
+            </span>
           )}
           {oauth.line ? (
             <a
               href={oauthHref("line")}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border border-line bg-mint/80 px-6 py-3 text-foreground shadow-soft hover:bg-mint"
+              className={`${oauthBtn} bg-mint/80 text-foreground shadow-soft hover:bg-mint`}
             >
               <LineMark />
               {t("continueLine")}
             </a>
           ) : (
-            <button
-              type="button"
-              disabled
-              className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-3 rounded-full border border-line bg-mint/50 px-6 py-3 text-muted opacity-70"
+            <span
+              aria-disabled="true"
+              className={`${oauthBtn} cursor-not-allowed bg-mint/60 text-muted opacity-70`}
             >
               <LineMark />
               {t("continueLine")}
-            </button>
+            </span>
           )}
         </div>
-        {oauthOff ? (
+        {oauthOff && error !== "oauth_disabled" ? (
           <p className="mt-3 text-sm leading-relaxed text-muted">{t("oauthOff")}</p>
         ) : null}
 
@@ -156,6 +154,7 @@ export function AuthForm({
           </p>
         </div>
 
+        <form onSubmit={handleSubmit}>
         <label className="block">
           <span className="text-sm text-muted">{t("email")}</span>
           <input
@@ -225,6 +224,7 @@ export function AuthForm({
             ? t("submitting")
             : t(mode === "login" ? "loginSubmit" : "registerSubmit")}
         </button>
+        </form>
 
         <p className="mt-6 text-sm leading-relaxed text-muted">{t("guestHint")}</p>
 
@@ -262,6 +262,6 @@ export function AuthForm({
           </>
         )}
       </div>
-    </form>
+    </div>
   );
 }
