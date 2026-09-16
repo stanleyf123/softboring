@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sticker?: string }>;
+  searchParams: Promise<{ sticker?: string; shared?: string }>;
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -44,6 +44,7 @@ export default async function WallPage({ params, searchParams }: Props) {
         signedIn={Boolean(user)}
         softPlus={softPlus}
         stickerSuccess={query.sticker === "success"}
+        sharedSuccess={query.shared === "1"}
       />
     </div>
   );

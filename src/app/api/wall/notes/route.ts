@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getReviewForOwner } from "@/db/reviews";
-import { listReviewsForOwner } from "@/db/reviews";
+import { getLatestReviewIdForUser, getReviewForOwner, listReviewsForOwner } from "@/db/reviews";
 import { getWallNoteIdForReview, listVisibleWallNotes, shareWallNote } from "@/db/wall";
 import { isHistoryIndexUnlocked } from "@/lib/history-access";
 import { getReviewAccess } from "@/lib/review-access";
+import { wallSharePayload } from "@/lib/wall-share";
 import { getWallViewer, requireUser } from "@/lib/wall-access";
 import { toTeaserNote } from "@/lib/wall-canvas";
 
@@ -14,11 +14,15 @@ export async function GET() {
   try {
     const viewer = await getWallViewer();
     const notes = listVisibleWallNotes(viewer.userId);
+    const latestOwnedReviewId = viewer.userId
+      ? getLatestReviewIdForUser(viewer.userId)
+      : null;
     if (!viewer.softPlus) {
       return NextResponse.json({
         locked: true,
         softPlus: false,
         signedIn: viewer.signedIn,
+        latestOwnedReviewId: viewer.signedIn ? latestOwnedReviewId : null,
         notes: notes.map(toTeaserNote),
       });
     }
@@ -26,6 +30,7 @@ export async function GET() {
       locked: false,
       softPlus: true,
       signedIn: true,
+      latestOwnedReviewId,
       notes,
     });
   } catch (error) {
@@ -72,11 +77,9 @@ export async function POST(request: Request) {
       reviewId,
       userId: access.owner.userId,
     });
+    const payload = wallSharePayload(note);
 
-    return NextResponse.json(
-      { note, wallNoteId: note.id },
-      { status: existingId ? 200 : 201 },
-    );
+    return NextResponse.json(payload, { status: existingId ? 200 : 201 });
   } catch (error) {
     if (error instanceof Error && error.name === "WallForbiddenError") {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });

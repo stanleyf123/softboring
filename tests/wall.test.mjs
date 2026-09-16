@@ -158,6 +158,180 @@ test("wall tables, sticker seed, praise, hide, and teaser payload", () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
+function toTeaser(note) {
+  return {
+    id: note.id,
+    x: note.x,
+    y: note.y,
+    z: note.z,
+    color: note.color,
+    praiseCount: note.praiseCount,
+  };
+}
+
+function wallNotesPayload({ softPlus, signedIn, notes, latestOwnedReviewId }) {
+  if (!softPlus) {
+    return {
+      locked: true,
+      softPlus: false,
+      signedIn,
+      latestOwnedReviewId: signedIn ? latestOwnedReviewId : null,
+      notes: notes.map(toTeaser),
+    };
+  }
+  return {
+    locked: false,
+    softPlus: true,
+    signedIn: true,
+    latestOwnedReviewId,
+    notes,
+  };
+}
+
+test("share insert creates a visible wall note with wallNoteId, and Soft+ list keeps mine", () => {
+  const dir = mkdtempSync(join(tmpdir(), "softboring-wall-share-"));
+  const sqlitePath = join(dir, "test.sqlite");
+  mkdirSync(dirname(sqlitePath), { recursive: true });
+  const db = new Database(sqlitePath);
+  db.pragma("foreign_keys = ON");
+  migrate(db);
+
+  db.prepare(
+    `INSERT INTO users (id, email, password_hash, created_at, plan)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run("user-plus", "plus@example.com", "hash", "2026-01-01T00:00:00.000Z", "soft_plus");
+  db.prepare(
+    `INSERT INTO users (id, email, password_hash, created_at, plan)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run("user-free", "free@example.com", "hash", "2026-01-01T00:00:00.000Z", "free");
+
+  db.prepare(
+    `INSERT INTO reviews (
+      id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
+    ) VALUES (?, ?, ?, ?, '', '', '', 4, ?, NULL, ?)`,
+  ).run(
+    "rev-latest",
+    "11111111-1111-1111-1111-111111111111",
+    "user-plus",
+    "Tea in the rain",
+    "A quiet week of tea",
+    "2026-01-08T00:00:00.000Z",
+  );
+
+  const empty = db.prepare(`SELECT COUNT(*) AS n FROM wall_notes`).get();
+  assert.equal(empty.n, 0);
+
+  const latest = db
+    .prepare(
+      `SELECT id FROM reviews WHERE user_id = ? ORDER BY datetime(created_at) DESC LIMIT 1`,
+    )
+    .get("user-plus");
+  assert.equal(latest.id, "rev-latest");
+
+  const now = "2026-01-08T01:00:00.000Z";
+  const wallNoteId = "note-share-1";
+  db.prepare(
+    `INSERT INTO wall_notes (
+      id, review_id, user_id, x, y, z, color, hidden, pinned, created_at, updated_at
+    ) VALUES (?, ?, ?, 72, 72, 1, 'peach', 0, 0, ?, ?)`,
+  ).run(wallNoteId, latest.id, "user-plus", now, now);
+
+  const visible = db
+    .prepare(
+      `SELECT n.id, n.user_id, n.hidden, r.summary
+       FROM wall_notes n
+       JOIN reviews r ON r.id = n.review_id
+       WHERE n.hidden = 0 AND n.id = ?`,
+    )
+    .get(wallNoteId);
+  assert.equal(visible.id, wallNoteId);
+  assert.equal(visible.summary, "A quiet week of tea");
+
+  const shareResponse = { note: { id: visible.id, mine: true }, wallNoteId: visible.id };
+  assert.equal(shareResponse.wallNoteId, wallNoteId);
+
+  const fullNote = {
+    id: wallNoteId,
+    x: 72,
+    y: 72,
+    z: 1,
+    color: "peach",
+    praiseCount: 0,
+    mine: true,
+    excerpt: "A quiet week of tea",
+    summary: "A quiet week of tea",
+    userId: "user-plus",
+  };
+  const plusPayload = wallNotesPayload({
+    softPlus: true,
+    signedIn: true,
+    latestOwnedReviewId: latest.id,
+    notes: [fullNote],
+  });
+  assert.equal(plusPayload.locked, false);
+  assert.equal(plusPayload.notes[0].mine, true);
+  assert.equal(plusPayload.notes[0].summary, "A quiet week of tea");
+  assert.equal(plusPayload.latestOwnedReviewId, "rev-latest");
+
+  const freePayload = wallNotesPayload({
+    softPlus: false,
+    signedIn: true,
+    latestOwnedReviewId: latest.id,
+    notes: [fullNote],
+  });
+  assert.equal(freePayload.locked, true);
+  assert.equal("mine" in freePayload.notes[0], false);
+  assert.equal("summary" in freePayload.notes[0], false);
+  assert.equal(freePayload.latestOwnedReviewId, "rev-latest");
+
+  const signedOut = wallNotesPayload({
+    softPlus: false,
+    signedIn: false,
+    latestOwnedReviewId: latest.id,
+    notes: [fullNote],
+  });
+  assert.equal(signedOut.latestOwnedReviewId, null);
+
+  db.close();
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test("empty Soft+ wall offers share-latest path in UI and copy", () => {
+  const wallBoard = readFileSync(join(root, "src/components/wall-board.tsx"), "utf8");
+  const shareToWall = readFileSync(join(root, "src/components/share-to-wall.tsx"), "utf8");
+  const notesRoute = readFileSync(join(root, "src/app/api/wall/notes/route.ts"), "utf8");
+  const reviewForm = readFileSync(join(root, "src/components/review-form.tsx"), "utf8");
+  const en = JSON.parse(readFileSync(join(root, "messages/en.json"), "utf8"));
+  const zh = JSON.parse(readFileSync(join(root, "messages/zh-tw.json"), "utf8"));
+
+  assert.match(wallBoard, /emptyShareCta/);
+  assert.match(wallBoard, /latestOwnedReviewId/);
+  assert.match(wallBoard, /shareLatest/);
+  assert.match(wallBoard, /reviewId: latestOwnedReviewId/);
+  assert.match(shareToWall, /shared:\s*"1"/);
+  assert.match(shareToWall, /variant === "hero"/);
+  assert.match(shareToWall, /shareError_auth_required/);
+  assert.match(reviewForm, /variant="hero"/);
+  assert.match(notesRoute, /latestOwnedReviewId/);
+  assert.match(notesRoute, /wallSharePayload\(note\)/);
+  assert.match(notesRoute, /toTeaserNote/);
+  assert.match(notesRoute, /softPlus: true/);
+
+  for (const messages of [en, zh]) {
+    assert.ok(messages.Wall.emptyShareCta.length > 4);
+    assert.ok(messages.Wall.emptyWriteCta.length > 4);
+    assert.ok(messages.Wall.sharedToast.length > 4);
+    assert.ok(messages.Wall.shareError_auth_required.length > 4);
+    assert.ok(messages.Wall.shareError_review_not_found.length > 4);
+    assert.ok(messages.Wall.shareError_locked.length > 4);
+    assert.ok(messages.Wall.shareError_soft_plus_required.length > 4);
+    assert.ok(messages.Wall.shareError_forbidden.length > 4);
+  }
+  assert.equal(zh.Wall.emptyShareCta, "釘最新一週到牆上");
+  assert.match(zh.Wall.empty, /釘/);
+  assert.match(en.Wall.empty, /pin/i);
+});
+
 test("sticker checkout is payment-mode and grants inventory once", () => {
   const dir = mkdtempSync(join(tmpdir(), "softboring-sticker-order-"));
   const db = new Database(join(dir, "test.sqlite"));
