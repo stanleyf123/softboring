@@ -108,7 +108,7 @@ export function AccountPanel({
         </div>
 
         <div className="px-6 py-8 sm:px-8">
-          <dl className="space-y-6">
+          <dl className="grid gap-6 sm:grid-cols-2">
             <div>
               <dt className="text-sm text-muted">{t("email")}</dt>
               <dd className="mt-1 break-all text-lg">{email}</dd>

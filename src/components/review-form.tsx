@@ -258,25 +258,27 @@ function ReviewFormFields({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8" autoComplete="off">
-      {TEXT_FIELDS.map((field) => (
-        <label key={field} className="block">
-          <span className="block text-base leading-relaxed">
-            {tQuestions(field)}
-          </span>
-          <textarea
-            value={draft[field]}
-            onChange={(event) => update(field, event.target.value)}
-            rows={field === "summary" ? 2 : 3}
-            className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
-          />
-        </label>
-      ))}
+      <div className="grid gap-8 lg:grid-cols-2">
+        {TEXT_FIELDS.map((field) => (
+          <label key={field} className={field === "summary" ? "block lg:col-span-2" : "block"}>
+            <span className="block text-base leading-relaxed">
+              {tQuestions(field)}
+            </span>
+            <textarea
+              value={draft[field]}
+              onChange={(event) => update(field, event.target.value)}
+              rows={field === "summary" ? 2 : 3}
+              className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
+            />
+          </label>
+        ))}
+      </div>
 
       {softPlus && draft.customAnswers.length > 0 ? (
         <fieldset className="rounded-[1.75rem] bg-mint/40 px-5 py-6">
           <legend className="font-display text-xl tracking-tight">{t("customHeading")}</legend>
           <p className="mt-2 text-sm text-muted">{t("customLead")}</p>
-          <div className="mt-4 space-y-5">
+          <div className="mt-4 grid gap-5 lg:grid-cols-2">
             {draft.customAnswers.map((item) => (
               <label key={item.id} className="block">
                 <span className="block text-base leading-relaxed">{item.prompt}</span>

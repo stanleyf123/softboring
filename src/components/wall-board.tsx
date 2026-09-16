@@ -3,6 +3,7 @@
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { Link, useRouter } from "@/i18n/navigation";
+import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { useLocale, useTranslations } from "next-intl";
@@ -430,7 +431,7 @@ export function WallBoard({
 
   if (!ready && !loadError) {
     return (
-      <div className="mx-auto max-w-3xl px-6 pt-8">
+      <div className={`${SITE_SHELL_CLASS} pt-8`}>
         <WallSkeleton label={t("loading")} />
       </div>
     );
@@ -447,7 +448,7 @@ export function WallBoard({
 
   return (
     <div className="pb-10">
-      <div className="mx-auto max-w-3xl px-6 pt-4">
+      <div className={`${SITE_SHELL_CLASS} pt-4`}>
         <p className="font-display italic text-accent">{t("eyebrow")}</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -494,10 +495,10 @@ export function WallBoard({
         ) : null}
       </div>
 
-      <div className="relative mt-8">
+      <div className={`${SITE_SHELL_CLASS} relative mt-8`}>
         <div
           ref={scrollerRef}
-          className="mx-auto overflow-auto rounded-[1.5rem] border border-line/80 bg-paper/40 shadow-card overscroll-contain"
+          className="overflow-auto rounded-[1.5rem] border border-line/80 bg-paper/40 shadow-card overscroll-contain"
           style={{ height: "min(70vh, 44rem)" }}
         >
           <div

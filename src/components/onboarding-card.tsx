@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { SoftMark } from "./soft-doodles";
@@ -74,7 +75,7 @@ export function OnboardingCard({
   }
 
   return (
-    <section className="mx-auto mb-8 w-full max-w-3xl px-6 print:hidden">
+    <section className={`${SITE_SHELL_CLASS} mb-8 print:hidden`}>
       <div className="overflow-hidden rounded-[2rem] bg-paper shadow-card">
         <div className="flex items-start justify-between gap-4 bg-mint/70 px-6 py-5 sm:px-8">
           <div className="flex items-center gap-3">

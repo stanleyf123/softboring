@@ -50,7 +50,7 @@ export async function SampleReviewCard() {
         </div>
       </div>
 
-      <ol className="mt-8 space-y-3">
+      <ol className="mt-8 grid gap-3 lg:grid-cols-2">
         {SAMPLE_ITEMS.map(({ key, Icon, tint }) => (
           <li
             key={key}
