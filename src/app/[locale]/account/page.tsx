@@ -37,7 +37,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
     <div className="pt-6">
       <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
-      <div className="mt-10 max-w-lg">
+      <div className="mt-10 max-w-2xl lg:max-w-none">
         <AccountPanel
           email={user.email}
           createdAt={user.createdAt}

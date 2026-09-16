@@ -25,7 +25,7 @@ export async function LegalPage({
         {sections.map((section) => (
           <section key={section.title} className="rounded-[1.75rem] bg-paper px-6 py-6 shadow-card sm:px-8">
             <h2 className="font-display text-2xl tracking-tight">{section.title}</h2>
-            <p className="mt-3 whitespace-pre-wrap leading-relaxed text-muted">
+            <p className="mt-3 max-w-3xl whitespace-pre-wrap leading-relaxed text-muted">
               {section.body}
             </p>
           </section>

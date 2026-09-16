@@ -29,8 +29,8 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <div className="pt-2">
-      <section className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="max-w-lg">
+      <section className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between lg:gap-16">
+        <div className="max-w-lg lg:max-w-xl">
           <p className="font-display italic text-accent">{t("eyebrow")}</p>
           <ul className="mt-4 flex flex-wrap gap-2">
             <li className="rounded-full bg-peach px-3 py-1 text-sm">
@@ -68,7 +68,7 @@ export default async function HomePage({ params }: Props) {
             </Link>
           </div>
         </div>
-        <div className="mx-auto w-full max-w-[17.5rem] shrink-0 sm:mx-0 sm:max-w-[15.5rem] md:max-w-[17.5rem]">
+        <div className="mx-auto w-full max-w-[17.5rem] shrink-0 sm:mx-0 sm:max-w-[15.5rem] md:max-w-[17.5rem] lg:max-w-[22rem]">
           <HeroDoodle />
         </div>
       </section>
@@ -86,7 +86,7 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="mt-16 grid gap-4 sm:grid-cols-3">
+      <section className="mt-16 grid gap-4 sm:grid-cols-3 lg:gap-6">
         <IdeaCard title={t("ideaOneTitle")} body={t("ideaOneBody")} wash="bg-peach/80" />
         <IdeaCard title={t("ideaTwoTitle")} body={t("ideaTwoBody")} wash="bg-blush/80" />
         <IdeaCard title={t("ideaThreeTitle")} body={t("ideaThreeBody")} wash="bg-mint/80" />

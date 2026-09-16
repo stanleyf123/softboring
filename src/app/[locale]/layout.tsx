@@ -12,6 +12,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { isSoftPlusPlan } from "@/lib/plan";
 import { assertLocale, htmlLang } from "@/lib/locale";
 import { pageMetadata } from "@/lib/seo";
+import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Fraunces, Nunito } from "next/font/google";
@@ -107,7 +108,7 @@ export default async function LocaleLayout({ children, params }: Props) {
               dismissed={settings.onboardingDismissed}
             />
           ) : null}
-          <main className="mx-auto w-full max-w-3xl flex-1 px-6 pb-28 md:pb-16">
+          <main className={`${SITE_SHELL_CLASS} flex-1 pb-28 md:pb-16`}>
             {children}
           </main>
           <SiteFooter />

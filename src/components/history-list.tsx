@@ -142,7 +142,7 @@ export function HistoryList() {
           {t("searchEmpty")}
         </p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="grid gap-4 lg:grid-cols-2">
           {visible.map((review) =>
             review.locked ? (
               <li key={review.id}>

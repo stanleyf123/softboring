@@ -124,9 +124,9 @@ export function HistoryDetail({ id }: { id: string }) {
         {review.summary.trim() || tHistory("untitled")}
       </h1>
 
-      <dl className="mt-10 space-y-8">
+      <dl className="mt-10 grid gap-8 lg:grid-cols-2">
         {DETAIL_FIELDS.map((field) => (
-          <div key={field}>
+          <div key={field} className={field === "summary" ? "lg:col-span-2" : undefined}>
             <dt className="text-sm text-muted">{tQuestions(field)}</dt>
             <dd className="mt-2 whitespace-pre-wrap leading-relaxed">
               {review[field].trim() || "—"}
