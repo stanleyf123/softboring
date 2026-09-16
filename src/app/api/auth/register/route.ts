@@ -8,6 +8,7 @@ import {
 } from "@/lib/auth";
 import { AuthError, parseEmail, parseNewPassword } from "@/lib/auth-input";
 import { hashPassword } from "@/lib/password";
+import { enforceAuthRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,13 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as { email?: unknown; password?: unknown };
+    const limited = enforceAuthRateLimit(
+      request,
+      "register",
+      typeof body.email === "string" ? body.email : null,
+    );
+    if (limited) return limited;
+
     const email = parseEmail(body.email);
     const password = parseNewPassword(body.password);
     const passwordHash = await hashPassword(password);
@@ -35,6 +43,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "email_taken" }, { status: 409 });
     }
     if (error instanceof SyntaxError) {
+      const limited = enforceAuthRateLimit(request, "register");
+      if (limited) return limited;
       return NextResponse.json({ error: "invalid_json" }, { status: 400 });
     }
     console.error("POST /api/auth/register failed", error);

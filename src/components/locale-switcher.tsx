@@ -19,8 +19,8 @@ export function LocaleSwitcher() {
         locale="en"
         className={
           locale === "en"
-            ? "rounded-full bg-peach px-2.5 py-1 text-foreground"
-            : "rounded-full px-2.5 py-1 hover:text-foreground"
+            ? "inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-peach px-2.5 py-1 text-foreground"
+            : "inline-flex min-h-9 min-w-9 items-center justify-center rounded-full px-2.5 py-1 hover:text-foreground"
         }
       >
         {t("en")}
@@ -31,8 +31,8 @@ export function LocaleSwitcher() {
         locale="zh-tw"
         className={
           locale === "zh-tw"
-            ? "rounded-full bg-mint px-2.5 py-1 text-foreground"
-            : "rounded-full px-2.5 py-1 hover:text-foreground"
+            ? "inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-mint px-2.5 py-1 text-foreground"
+            : "inline-flex min-h-9 min-w-9 items-center justify-center rounded-full px-2.5 py-1 hover:text-foreground"
         }
       >
         {t("zhTW")}

@@ -76,7 +76,16 @@ export function isoWeekKey(date: Date) {
   return `${utc.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
 
-function previousIsoWeekKey(key: string) {
+export const STREAK_MILESTONES = [2, 4, 8, 12] as const;
+export type StreakMilestone = (typeof STREAK_MILESTONES)[number];
+
+export function streakMilestone(streak: number): StreakMilestone | null {
+  return (STREAK_MILESTONES as readonly number[]).includes(streak)
+    ? (streak as StreakMilestone)
+    : null;
+}
+
+export function previousIsoWeekKey(key: string) {
   const match = /^(\d{4})-W(\d{2})$/.exec(key);
   if (!match) return key;
   const year = Number(match[1]);

@@ -1,4 +1,5 @@
 import { getDb } from "./client";
+import { isoWeekKey, previousIsoWeekKey } from "@/lib/plus-insights";
 import { displayPlan, type PlanId } from "@/lib/plan";
 import { paymentRevenueSummary, type PaymentRevenueSummary } from "./payments";
 
@@ -76,6 +77,32 @@ export function adminCounts(): AdminCounts {
     db.prepare(`SELECT COUNT(*) AS n FROM wall_notes`).get() as { n: number }
   ).n;
   return { users, reviews, paid, free, wallNotes, payments: paymentRevenueSummary() };
+}
+
+export type AdminSignupWeek = {
+  week: string;
+  label: string;
+  count: number;
+};
+
+export function adminSignupWeeks(now = new Date(), weekCount = 8): AdminSignupWeek[] {
+  const buckets: AdminSignupWeek[] = [];
+  let cursor = isoWeekKey(now);
+  for (let i = 0; i < weekCount; i += 1) {
+    buckets.unshift({ week: cursor, label: cursor.replace(/^\d{4}-/, ""), count: 0 });
+    cursor = previousIsoWeekKey(cursor);
+  }
+  const counts = new Map(buckets.map((bucket) => [bucket.week, bucket]));
+  const rows = getDb()
+    .prepare(`SELECT created_at FROM users`)
+    .all() as Array<{ created_at: string }>;
+  for (const row of rows) {
+    const date = new Date(row.created_at);
+    if (Number.isNaN(date.getTime())) continue;
+    const bucket = counts.get(isoWeekKey(date));
+    if (bucket) bucket.count += 1;
+  }
+  return buckets;
 }
 
 type AdminUserRow = {

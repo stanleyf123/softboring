@@ -74,31 +74,55 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
     setUnread((count) => Math.max(0, count - 1));
   }
 
+  function titleFor(item: Item) {
+    if (item.kind === "wall_reply") return t("wallReply");
+    if (item.kind === "wall_comment") return t("wallComment");
+    return item.title;
+  }
+
   return (
     <div ref={root} className="relative">
       <button
         type="button"
         onClick={toggle}
-        className="relative rounded-full px-2.5 py-1 hover:text-foreground"
+        className="relative grid h-11 w-11 place-items-center rounded-full text-muted hover:bg-peach/70 hover:text-foreground"
         aria-expanded={open}
+        aria-haspopup="dialog"
         aria-label={t("label")}
       >
-        {t("bell")}
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M6.5 9.5a5.5 5.5 0 1 1 11 0c0 4 1.5 5.5 1.5 5.5H5s1.5-1.5 1.5-5.5Z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M10 18.5a2 2 0 0 0 4 0"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
+        </svg>
         {unread > 0 ? (
-          <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent px-1 text-center text-[10px] leading-4 text-paper">
+          <span className="absolute right-1 top-1 min-w-4 rounded-full bg-accent px-1 text-center text-[10px] leading-4 text-paper">
             {unread > 9 ? "9+" : unread}
           </span>
         ) : null}
       </button>
       {open ? (
-        <div className="absolute right-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-[1.5rem] bg-paper p-4 shadow-soft">
+        <div
+          className="absolute right-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-[1.5rem] bg-paper p-4 shadow-soft"
+          role="dialog"
+          aria-label={t("title")}
+        >
           <div className="flex items-center justify-between gap-3">
             <p className="font-display text-lg tracking-tight">{t("title")}</p>
             {unread > 0 ? (
               <button
                 type="button"
                 onClick={markAll}
-                className="text-xs text-muted hover:text-foreground"
+                className="min-h-11 text-xs text-muted hover:text-foreground"
               >
                 {t("markAll")}
               </button>
@@ -122,9 +146,7 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
                       item.readAt ? "bg-cream/70" : "bg-peach/70"
                     }`}
                   >
-                    <p className="font-display">
-                      {item.kind === "wall_comment" ? t("wallComment") : item.title}
-                    </p>
+                    <p className="font-display">{titleFor(item)}</p>
                     {item.body ? (
                       <p className="mt-1 line-clamp-2 text-muted">{item.body}</p>
                     ) : null}

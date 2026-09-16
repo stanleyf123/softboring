@@ -1,8 +1,10 @@
 "use client";
 
 import { ShareToWall } from "@/components/share-to-wall";
+import { StreakCelebration } from "@/components/streak-celebration";
 import { Link } from "@/i18n/navigation";
 import { answersForQuestions, type CustomQuestion } from "@/lib/custom-questions";
+import type { StreakMilestone } from "@/lib/plus-insights";
 import {
   clearDraft,
   createReview,
@@ -23,6 +25,38 @@ const TEXT_FIELDS = [
   "priorities",
   "summary",
 ] as const;
+
+const STREAK_SEEN_KEY = "softboring.streak.celebrated.v1";
+
+function celebratedKey(access: ReviewAccessInfo | null) {
+  if (access?.email) return `user:${access.email}`;
+  return "guest";
+}
+
+function hasCelebrated(ownerKey: string, streak: StreakMilestone) {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = window.localStorage.getItem(STREAK_SEEN_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, number[]>) : {};
+    return (parsed[ownerKey] ?? []).includes(streak);
+  } catch {
+    return false;
+  }
+}
+
+function markCelebrated(ownerKey: string, streak: StreakMilestone) {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = window.localStorage.getItem(STREAK_SEEN_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, number[]>) : {};
+    const next = new Set(parsed[ownerKey] ?? []);
+    next.add(streak);
+    parsed[ownerKey] = [...next];
+    window.localStorage.setItem(STREAK_SEEN_KEY, JSON.stringify(parsed));
+  } catch {
+    // Ignore quota / private mode.
+  }
+}
 
 export function ReviewForm({
   signedIn,
@@ -76,6 +110,7 @@ function ReviewFormFields({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
+  const [milestone, setMilestone] = useState<StreakMilestone | null>(null);
 
   function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K]) {
     setDraft((current) => {
@@ -111,6 +146,13 @@ function ReviewFormFields({
       setAccess(result.access);
       setSavedReviewId(result.review.id);
       setSaved(true);
+      if (
+        result.milestone &&
+        !hasCelebrated(celebratedKey(result.access), result.milestone)
+      ) {
+        markCelebrated(celebratedKey(result.access), result.milestone);
+        setMilestone(result.milestone);
+      }
     } catch {
       setError(true);
     } finally {
@@ -129,6 +171,7 @@ function ReviewFormFields({
     setSavedReviewId(null);
     setError(false);
     setAccess(null);
+    setMilestone(null);
   }
 
   if (saved) {
@@ -142,14 +185,14 @@ function ReviewFormFields({
           <div className="mt-10 flex flex-wrap gap-4 text-sm">
             <Link
               href="/history"
-              className="rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
+              className="inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
             >
               {t("viewHistory")}
             </Link>
             <button
               type="button"
               onClick={handleWriteAnother}
-              className="rounded-full px-5 py-2.5 text-muted hover:text-foreground"
+              className="inline-flex min-h-11 items-center rounded-full px-5 py-2.5 text-muted hover:text-foreground"
             >
               {t("writeAnother")}
             </button>
@@ -191,11 +234,19 @@ function ReviewFormFields({
             <p className="mt-3 max-w-md leading-relaxed text-muted">{t("upgradeNudgeBody")}</p>
             <Link
               href="/pricing"
-              className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+              className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
             >
               {t("upgradeNudgeCta")}
             </Link>
           </div>
+        ) : null}
+
+        {milestone ? (
+          <StreakCelebration
+            streak={milestone}
+            softPlus={Boolean(access?.softPlus)}
+            onClose={() => setMilestone(null)}
+          />
         ) : null}
       </section>
     );
@@ -266,7 +317,7 @@ function ReviewFormFields({
         <button
           type="submit"
           disabled={saving}
-          className="rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
+          className="min-h-11 rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
         >
           {saving ? t("saving") : t("submit")}
         </button>

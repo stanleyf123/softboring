@@ -13,6 +13,7 @@ const ERROR_KEYS = [
   "email_taken",
   "weak_password",
   "invalid_email",
+  "rate_limited",
 ] as const;
 
 type ErrorKey = (typeof ERROR_KEYS)[number];
@@ -54,7 +55,7 @@ export function AuthForm({
       });
       const data = (await response.json().catch(() => ({}))) as { error?: string };
       if (!response.ok) {
-        setError(errorMessageKey(data.error));
+        setError(response.status === 429 ? "rate_limited" : errorMessageKey(data.error));
         return;
       }
       router.push(destination);
@@ -130,14 +131,16 @@ export function AuthForm({
                   ? t("error.weak_password")
                   : error === "invalid_email"
                     ? t("error.invalid_email")
-                    : t("error.generic")}
+                    : error === "rate_limited"
+                      ? t("error.rate_limited")
+                      : t("error.generic")}
           </p>
         ) : null}
 
         <button
           type="submit"
           disabled={submitting}
-          className="mt-8 w-full rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
+          className="mt-8 min-h-11 w-full rounded-full bg-accent px-6 py-3 text-paper shadow-soft disabled:opacity-60"
         >
           {submitting
             ? t("submitting")

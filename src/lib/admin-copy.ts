@@ -30,6 +30,13 @@ export const adminCopy = {
     wallNotes: "牆上便利貼",
     succeededPayments: "成功付款",
     revenue: "收入",
+    signupsTitle: "最近八週註冊",
+    signupsLead: "依建立帳號的週次計算。",
+    signupsLabel: "最近八週每週新增會員人數長條圖",
+    mixTitle: "Soft+ 與 Free",
+    mixLead: "目前有效方案的比例。",
+    mixLabel: (plus: number, free: number) =>
+      `方案比例：Soft+ ${plus} 人，Free ${free} 人`,
     note: "前台導覽不會連到這裡。Stripe Checkout 與發票會透過 webhook 寫入付款紀錄。若尚未設定 Stripe，付款紀錄會是空的。OAuth 與驗證信仍是之後的事。",
   },
   members: {

@@ -40,8 +40,14 @@ export async function PricingView({
             <li>{t("featureHistoryFree")}</li>
             <li className="text-muted">{t("featureHistoryLocked")}</li>
             <li className="text-muted">{t("featureTrendsFree")}</li>
+            <li className="text-muted">{t("featureSearchFree")}</li>
+            <li className="text-muted">{t("featureCustomFree")}</li>
             <li className="text-muted">{t("featureWallFree")}</li>
+            <li className="text-muted">{t("featureStickersFree")}</li>
+            <li className="text-muted">{t("featureExportFree")}</li>
+            <li className="text-muted">{t("featureDigestFree")}</li>
           </ul>
+          <p className="mt-8 text-sm leading-relaxed text-muted">{t("freeToPlus")}</p>
         </article>
 
         <article className="relative overflow-hidden rounded-[2rem] bg-mint/70 px-6 py-8 shadow-card sm:px-8">
@@ -62,13 +68,16 @@ export async function PricingView({
             <li>{t("featureWrite")}</li>
             <li>{t("featureHistoryPlus")}</li>
             <li>{t("featureTrendsPlus")}</li>
-            <li>{t("featureWallPlus")}</li>
-            <li>{t("featureExportPlus")}</li>
             <li>{t("featureSearchPlus")}</li>
             <li>{t("featureCustomPlus")}</li>
+            <li>{t("featureWallPlus")}</li>
+            <li>{t("featureStickersPlus")}</li>
+            <li>{t("featureExportPlus")}</li>
             <li>{t("featureDigestPlus")}</li>
+            <li>{t("featureBadgePlus")}</li>
             <li>{t("featurePortal")}</li>
           </ul>
+          <p className="mt-6 text-sm leading-relaxed">{t("upgradeHint")}</p>
           <div className="mt-8">
             <CheckoutButtons
               configured={prices.configured}

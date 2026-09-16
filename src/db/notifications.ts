@@ -1,6 +1,6 @@
 import { getDb } from "./client";
 
-export type NotificationKind = "wall_comment";
+export type NotificationKind = "wall_comment" | "wall_reply";
 
 export type NotificationItem = {
   id: string;

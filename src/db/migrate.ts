@@ -74,10 +74,20 @@ export function ensureWallNotePinned(db: Database.Database) {
   ensureColumn(db, "wall_notes", "pinned", "INTEGER NOT NULL DEFAULT 0");
 }
 
+export function ensureWallCommentParent(db: Database.Database) {
+  const tables = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wall_comments'`)
+    .get() as { name: string } | undefined;
+  if (!tables) return;
+  ensureColumn(db, "wall_comments", "parent_id", "TEXT");
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_wall_comments_parent ON wall_comments (parent_id)`);
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
   ensureUserBillingColumns(db);
   ensureUserSettingsColumns(db);
   ensureWallNotePinned(db);
+  ensureWallCommentParent(db);
 }
