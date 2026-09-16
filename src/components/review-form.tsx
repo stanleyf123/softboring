@@ -179,13 +179,21 @@ function ReviewFormFields({
     const manyWeeks = (access?.totalCount ?? 0) >= 4;
     return (
       <section className="space-y-6">
+        {signedIn && savedReviewId ? (
+          <ShareToWall reviewId={savedReviewId} initialNoteId={null} variant="hero" />
+        ) : null}
+
         <div className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
           <h2 className="font-display text-3xl tracking-tight">{t("successTitle")}</h2>
           <p className="mt-4 max-w-md text-muted leading-relaxed">{t("successBody")}</p>
           <div className="mt-10 flex flex-wrap gap-4 text-sm">
             <Link
               href="/history"
-              className="inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
+              className={
+                signedIn
+                  ? "inline-flex min-h-11 items-center rounded-full border border-line px-5 py-2.5 text-muted"
+                  : "inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-paper shadow-card"
+              }
             >
               {t("viewHistory")}
             </Link>
@@ -198,10 +206,6 @@ function ReviewFormFields({
             </button>
           </div>
         </div>
-
-        {signedIn && savedReviewId ? (
-          <ShareToWall reviewId={savedReviewId} initialNoteId={null} />
-        ) : null}
 
         {guest ? (
           <div className="rounded-[1.75rem] bg-blush/80 px-6 py-6 shadow-card sm:px-8">

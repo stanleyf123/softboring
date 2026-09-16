@@ -201,6 +201,15 @@ export function countReviewsForUser(userId: string) {
   return row.n;
 }
 
+export function getLatestReviewIdForUser(userId: string): string | null {
+  const row = getDb()
+    .prepare(
+      `SELECT id FROM reviews WHERE user_id = ? ORDER BY datetime(created_at) DESC LIMIT 1`,
+    )
+    .get(userId) as { id: string } | undefined;
+  return row?.id ?? null;
+}
+
 export function monthlyDigestForUser(userId: string, now = new Date()) {
   const reviews = listReviewsForOwner({
     kind: "user",

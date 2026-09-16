@@ -215,8 +215,21 @@ export function shareWallNote(input: {
 
   const created = db
     .prepare(`${NOTE_SELECT} WHERE n.id = ?`)
-    .get(id) as WallNoteRow;
-  return toListItem(created, input.userId);
+    .get(id) as WallNoteRow | undefined;
+  if (!created) {
+    const error = new Error("share_insert_failed");
+    error.name = "WallShareError";
+    throw error;
+  }
+
+  const item = attachStickers([toListItem(created, input.userId)])[0];
+  const visible = listVisibleWallNotes(input.userId).some((note) => note.id === item.id);
+  if (!visible) {
+    const error = new Error("share_not_visible");
+    error.name = "WallShareError";
+    throw error;
+  }
+  return item;
 }
 
 export function deleteWallNoteForUser(id: string, userId: string) {

@@ -1,7 +1,9 @@
 "use client";
 
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
-import { Link } from "@/i18n/navigation";
+import { shareErrorCopy } from "@/components/share-to-wall";
+import { Link, useRouter } from "@/i18n/navigation";
+import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -80,19 +82,27 @@ export function WallBoard({
   signedIn,
   softPlus,
   stickerSuccess = false,
+  sharedSuccess = false,
 }: {
   signedIn: boolean;
   softPlus: boolean;
   stickerSuccess?: boolean;
+  sharedSuccess?: boolean;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
   const tQuestions = useTranslations("Questions");
   const locale = useLocale();
+  const router = useRouter();
   const [notes, setNotes] = useState<Array<TeaserNote | FullNote>>([]);
+  const [latestOwnedReviewId, setLatestOwnedReviewId] = useState<string | null>(null);
   const [locked, setLocked] = useState(!softPlus);
   const [loadError, setLoadError] = useState(false);
   const [ready, setReady] = useState(false);
+  const [sharedToast, setSharedToast] = useState(sharedSuccess);
+  const [shareLatestError, setShareLatestError] = useState<WallShareErrorKey | null>(
+    null,
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<FullNote | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -142,9 +152,11 @@ export function WallBoard({
     const data = await readJson<{
       locked: boolean;
       notes: Array<TeaserNote | FullNote>;
+      latestOwnedReviewId?: string | null;
     }>(await fetch("/api/wall/notes", { cache: "no-store" }));
     setLocked(data.locked);
     setNotes(data.notes);
+    setLatestOwnedReviewId(data.latestOwnedReviewId ?? null);
   }, []);
 
   const loadShop = useCallback(async () => {
@@ -314,6 +326,34 @@ export function WallBoard({
     setDetail(null);
   }
 
+  async function shareLatest() {
+    if (!latestOwnedReviewId || busy) return;
+    setBusy("share-latest");
+    setShareLatestError(null);
+    try {
+      const response = await fetch("/api/wall/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewId: latestOwnedReviewId }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        wallNoteId?: string;
+        error?: string;
+      };
+      if (!response.ok || !data.wallNoteId) {
+        setShareLatestError(parseWallShareError(data.error));
+        return;
+      }
+      setSharedToast(true);
+      router.replace({ pathname: "/wall", query: { shared: "1" } });
+      await loadNotes();
+    } catch {
+      setShareLatestError("generic");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function togglePin(note: FullNote) {
     if (busy) return;
     setBusy("pin");
@@ -421,18 +461,35 @@ export function WallBoard({
             ) : null}
           </div>
           {softPlus ? (
-            <button
-              type="button"
-              onClick={() => setShopOpen((open) => !open)}
-              className="rounded-full bg-mint px-5 py-2.5 text-sm shadow-card"
-            >
-              {t("openShop")}
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              {notes.length === 0 && latestOwnedReviewId ? (
+                <button
+                  type="button"
+                  onClick={shareLatest}
+                  disabled={busy !== null}
+                  className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+                >
+                  {busy === "share-latest" ? t("saving") : t("emptyShareCta")}
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => setShopOpen((open) => !open)}
+                className="rounded-full bg-mint px-5 py-2.5 text-sm shadow-card"
+              >
+                {t("openShop")}
+              </button>
+            </div>
           ) : null}
         </div>
         {stickerSuccess ? (
           <p className="mt-4 rounded-[1.25rem] bg-mint/80 px-4 py-3 text-sm" role="status">
             {t("stickerSuccess")}
+          </p>
+        ) : null}
+        {sharedToast ? (
+          <p className="mt-4 rounded-[1.25rem] bg-peach px-4 py-3 text-sm" role="status">
+            {t("sharedToast")}
           </p>
         ) : null}
       </div>
@@ -456,13 +513,53 @@ export function WallBoard({
           >
             {notes.length === 0 ? (
               <div className="absolute left-8 top-8 max-w-md">
-                <EmptyState
-                  title={t("emptyTitle")}
-                  body={t("empty")}
-                  ctaHref="/history"
-                  ctaLabel={t("emptyCta")}
-                  wash="bg-peach/70"
-                />
+                {softPlus ? (
+                  <section className="rounded-[2rem] bg-peach/70 px-8 py-12 shadow-card">
+                    <h2 className="font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
+                    <p className="mt-3 max-w-md leading-relaxed text-muted">{t("empty")}</p>
+                    {latestOwnedReviewId ? (
+                      <p className="mt-3 text-sm text-muted">{t("emptyShareHint")}</p>
+                    ) : null}
+                    <div className="mt-8 flex flex-wrap gap-3">
+                      {latestOwnedReviewId ? (
+                        <button
+                          type="button"
+                          onClick={shareLatest}
+                          disabled={busy !== null}
+                          className="inline-flex min-h-12 items-center rounded-full bg-accent px-6 py-3 text-sm text-paper shadow-card disabled:opacity-60 sm:text-base"
+                        >
+                          {busy === "share-latest" ? t("saving") : t("emptyShareCta")}
+                        </button>
+                      ) : (
+                        <Link
+                          href="/review"
+                          className="inline-flex min-h-12 items-center rounded-full bg-accent px-6 py-3 text-sm text-paper shadow-card sm:text-base"
+                        >
+                          {t("emptyWriteCta")}
+                        </Link>
+                      )}
+                      <Link
+                        href="/history"
+                        className="inline-flex min-h-12 items-center rounded-full border border-line px-5 py-2.5 text-sm text-muted"
+                      >
+                        {t("emptyCta")}
+                      </Link>
+                    </div>
+                    {shareLatestError ? (
+                      <p className="mt-4 text-sm text-accent" role="alert">
+                        {shareErrorCopy(t, shareLatestError)}
+                      </p>
+                    ) : null}
+                  </section>
+                ) : (
+                  <EmptyState
+                    title={t("emptyTitle")}
+                    body={t("empty")}
+                    ctaHref="/history"
+                    ctaLabel={t("emptyCta")}
+                    wash="bg-peach/70"
+                  />
+                )}
               </div>
             ) : null}
             {notes.map((note) => {
