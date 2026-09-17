@@ -99,11 +99,12 @@ export function AdminMembersTable({ members }: { members: AdminUserListItem[] })
       </div>
 
       <div className="overflow-x-auto rounded-[1.75rem] bg-paper shadow-card">
-        <table className="w-full min-w-[76rem] text-left text-sm">
+        <table className="w-full min-w-[82rem] text-left text-sm">
           <thead className="text-muted">
             <tr className="border-b border-line">
               <th className="px-4 py-3 font-normal">{copy.select}</th>
               <th className="px-5 py-3 font-normal">{copy.email}</th>
+              <th className="px-5 py-3 font-normal">{copy.nickname}</th>
               <th className="px-5 py-3 font-normal">{copy.plan}</th>
               <th className="px-5 py-3 font-normal">{copy.actions}</th>
               <th className="px-5 py-3 font-normal">{copy.status}</th>
@@ -145,6 +146,9 @@ export function AdminMembersTable({ members }: { members: AdminUserListItem[] })
                         {copy.demoBadge}
                       </span>
                     ) : null}
+                  </td>
+                  <td className="px-5 py-3">
+                    {member.nickname ?? copy.noNickname}
                   </td>
                   <td className="px-5 py-3">
                     <span

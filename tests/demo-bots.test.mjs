@@ -7,10 +7,12 @@ import test from "node:test";
 import Database from "better-sqlite3";
 import { DAILY_POOL, SEED_REVIEW_PAIRS } from "../scripts/lib/demo-content.mjs";
 import {
+  DEMO_NICKNAMES,
   DEMO_USER_COUNT,
   addTaipeiDays,
   dailyPosterCount,
   demoEmail,
+  demoNickname,
   ensureDemoColumn,
   isDemoEmail,
   isProtectedEmail,
@@ -132,10 +134,13 @@ test("seed is idempotent and does not touch real users or their wall notes", () 
 
   const demoUsers = db
     .prepare(
-      `SELECT email, plan, plan_status, is_demo FROM users WHERE email LIKE '%@softboring.demo' COLLATE NOCASE ORDER BY email`,
+      `SELECT email, plan, plan_status, is_demo, nickname FROM users WHERE email LIKE '%@softboring.demo' COLLATE NOCASE ORDER BY email`,
     )
     .all();
   assert.equal(demoUsers.length, 10);
+  const nicknames = demoUsers.map((row) => row.nickname);
+  assert.deepEqual(nicknames, DEMO_NICKNAMES);
+  assert.equal(new Set(nicknames).size, 10);
   for (const row of demoUsers) {
     assert.equal(row.plan, "soft_plus");
     assert.equal(row.plan_status, "active");
@@ -159,6 +164,21 @@ test("seed is idempotent and does not touch real users or their wall notes", () 
   assert.equal(realNote.id, "note-stanley");
   const friendNote = db.prepare(`SELECT id FROM wall_notes WHERE id = ?`).get("note-friend");
   assert.equal(friendNote.id, "note-friend");
+
+  db.prepare(`UPDATE users SET nickname = NULL WHERE email = ?`).run("demo03@softboring.demo");
+  db.prepare(`UPDATE users SET nickname = '自己取的' WHERE email = ?`).run(
+    "demo04@softboring.demo",
+  );
+  const third = seedDemoAccounts(db, { now: new Date("2026-09-17T03:00:00.000Z") });
+  assert.equal(third.usersUpdated, 10);
+  const filled = db
+    .prepare(`SELECT nickname FROM users WHERE email = ?`)
+    .get("demo03@softboring.demo");
+  assert.equal(filled.nickname, demoNickname(3));
+  const keptCustom = db
+    .prepare(`SELECT nickname FROM users WHERE email = ?`)
+    .get("demo04@softboring.demo");
+  assert.equal(keptCustom.nickname, "自己取的");
 
   const locales = db
     .prepare(`SELECT DISTINCT locale FROM reviews WHERE id LIKE 'demo-seed-%'`)
@@ -325,10 +345,15 @@ test("ensureDemoColumn upgrades older users tables", () => {
   ensureDemoColumn(db);
   const cols = db.prepare(`PRAGMA table_info(users)`).all().map((col) => col.name);
   assert.ok(cols.includes("is_demo"));
+  assert.ok(cols.includes("nickname"));
   seedDemoAccounts(db, { now: new Date("2026-09-17T00:00:00.000Z") });
   const kept = db.prepare(`SELECT email, is_demo FROM users WHERE id = 'user-old'`).get();
   assert.equal(kept.email, REAL_EMAIL);
   assert.equal(kept.is_demo, 0);
+  const demo01 = db
+    .prepare(`SELECT nickname FROM users WHERE email = ?`)
+    .get("demo01@softboring.demo");
+  assert.equal(demo01.nickname, "小桃");
   db.close();
   rmSync(dir, { recursive: true, force: true });
 });
@@ -355,4 +380,7 @@ test("demo copy pool is zh-TW, unique, and wall layout stays on canvas", () => {
   assert.ok(layout.x >= 24);
   assert.ok(layout.y >= 24);
   assert.match(demoEmail(3), /demo03@softboring\.demo/);
+  assert.equal(DEMO_NICKNAMES.length, 10);
+  assert.equal(demoNickname(1), "小桃");
+  assert.equal(demoNickname(10), "午後");
 });

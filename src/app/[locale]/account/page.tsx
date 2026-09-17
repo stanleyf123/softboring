@@ -51,6 +51,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           emailConfigured={isEmailConfigured()}
           customQuestions={settings.customQuestions}
           digest={monthlyDigestForUser(user.id)}
+          nickname={user.nickname}
         />
       </div>
     </div>

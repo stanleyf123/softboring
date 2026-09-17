@@ -112,6 +112,7 @@ function createOAuthOnlyUser(email: string): PublicUser {
     planStatus: null,
     stripeCustomerId: null,
     stripeSubscriptionId: null,
+    nickname: null,
   };
 }
 

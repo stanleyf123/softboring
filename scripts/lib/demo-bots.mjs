@@ -15,6 +15,20 @@ export const WALL_PIN_Z = 50_000;
 export const WALL_CANVAS = { width: 2800, height: 2000, noteWidth: 216, noteHeight: 236 };
 export const WALL_COLORS = ["peach", "blush", "mint", "cream", "lemon", "sky"];
 
+/** Cute zh-TW wall names for demo01…demo10. Public identity on Soft Wall. */
+export const DEMO_NICKNAMES = [
+  "小桃",
+  "薄荷糖",
+  "雲朵",
+  "暖暖",
+  "慢活",
+  "茶泡飯",
+  "月亮",
+  "軟軟",
+  "散步",
+  "午後",
+];
+
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -36,6 +50,11 @@ export function padDemoIndex(index) {
 /** @param {number} index 1–10 */
 export function demoEmail(index) {
   return `demo${padDemoIndex(index)}@${DEMO_EMAIL_DOMAIN}`;
+}
+
+/** @param {number} index 1–10 */
+export function demoNickname(index) {
+  return DEMO_NICKNAMES[index - 1] ?? `demo${padDemoIndex(index)}`;
 }
 
 export function listDemoEmails() {
@@ -184,6 +203,9 @@ export function ensureDemoColumn(db) {
   if (!cols.includes("is_demo")) {
     db.exec(`ALTER TABLE users ADD COLUMN is_demo INTEGER NOT NULL DEFAULT 0`);
   }
+  if (!cols.includes("nickname")) {
+    db.exec(`ALTER TABLE users ADD COLUMN nickname TEXT`);
+  }
 }
 
 function userColumnSet(db) {
@@ -251,7 +273,7 @@ function upsertDemoUser(db, { index, passwordHash, nowIso }) {
   }
 
   const existing = db
-    .prepare(`SELECT id, email FROM users WHERE email = ? COLLATE NOCASE`)
+    .prepare(`SELECT id, email, nickname FROM users WHERE email = ? COLLATE NOCASE`)
     .get(email);
   const cols = userColumnSet(db);
 
@@ -266,10 +288,13 @@ function upsertDemoUser(db, { index, passwordHash, nowIso }) {
       "password_hash = @password_hash",
     ];
     if (cols.has("plan_updated_at")) assignments.push("plan_updated_at = @plan_updated_at");
+    const nicknameMissing = cols.has("nickname") && !String(existing.nickname ?? "").trim();
+    if (nicknameMissing) assignments.push("nickname = @nickname");
     db.prepare(`UPDATE users SET ${assignments.join(", ")} WHERE id = @id`).run({
       id: existing.id,
       password_hash: passwordHash,
       plan_updated_at: nowIso,
+      nickname: demoNickname(index),
     });
     ensureSettings(db, existing.id);
     return { id: existing.id, created: false, email };
@@ -290,6 +315,10 @@ function upsertDemoUser(db, { index, passwordHash, nowIso }) {
   if (cols.has("plan_updated_at")) {
     insertCols.push("plan_updated_at");
     values.plan_updated_at = nowIso;
+  }
+  if (cols.has("nickname")) {
+    insertCols.push("nickname");
+    values.nickname = demoNickname(index);
   }
   db.prepare(
     `INSERT INTO users (${insertCols.join(", ")}) VALUES (${insertCols.map((name) => `@${name}`).join(", ")})`,
@@ -432,7 +461,7 @@ export function listDemoUserRows(db) {
   ensureDemoColumn(db);
   return db
     .prepare(
-      `SELECT id, email, plan, plan_status, is_demo
+      `SELECT id, email, plan, plan_status, is_demo, nickname
        FROM users
        WHERE email LIKE ? COLLATE NOCASE OR is_demo = 1
        ORDER BY email`,
