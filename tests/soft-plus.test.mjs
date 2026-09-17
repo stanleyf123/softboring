@@ -133,6 +133,8 @@ test("admin members list has direct Soft+ grant and revoke copy", () => {
   assert.match(membersTable, /setRowPlus/);
   assert.match(membersTable, /setRowFree/);
   assert.match(membersTable, /bulkPlus/);
+  assert.match(membersTable, /isDemoEmail/);
+  assert.match(adminCopy, /demoBadge/);
 });
 
 test("schema stores custom questions, custom answers, and pinned notes", () => {
@@ -143,6 +145,7 @@ test("schema stores custom questions, custom answers, and pinned notes", () => {
   assert.ok(columnNames(db, "user_settings").includes("custom_questions"));
   assert.ok(columnNames(db, "reviews").includes("custom_answers"));
   assert.ok(columnNames(db, "wall_notes").includes("pinned"));
+  assert.ok(columnNames(db, "users").includes("is_demo"));
   db.close();
   rmSync(dir, { recursive: true, force: true });
 });

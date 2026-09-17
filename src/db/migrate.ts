@@ -43,6 +43,7 @@ export function ensureUserBillingColumns(db: Database.Database) {
   ensureColumn(db, "users", "stripe_subscription_id", "TEXT");
   ensureColumn(db, "users", "stripe_price_id", "TEXT");
   ensureColumn(db, "users", "plan_updated_at", "TEXT");
+  ensureColumn(db, "users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
   db.exec(
     `CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users (stripe_customer_id)`,
   );
@@ -167,6 +168,14 @@ export function ensureNullablePasswordHash(db: Database.Database) {
   }
 }
 
+export function ensureUserIsDemoColumn(db: Database.Database) {
+  const tables = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'`)
+    .get() as { name: string } | undefined;
+  if (!tables) return;
+  ensureColumn(db, "users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -176,4 +185,6 @@ export function migrateDb(db: Database.Database) {
   ensureWallCommentParent(db);
   ensureOauthAccounts(db);
   ensureNullablePasswordHash(db);
+  // After oauth rebuild (which copies a fixed column list), re-add is_demo.
+  ensureUserIsDemoColumn(db);
 }

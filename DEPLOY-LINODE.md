@@ -315,3 +315,20 @@ sudo systemctl restart softboring.service
 ```
 
 沒有設定 `RESEND_API_KEY` 或 `SMTP_HOST` 時，這個指令會印 `email not configured; no-op.` 並以 0 結束，不會失敗。時區以機器 local `Date#getDay()` 為準，請把 cron 跑在你希望的時區（通常是 Asia/Taipei）。
+
+## 12. Soft Wall Demo 帳號（可選）
+
+十個 Soft+ demo 帳號（`demo01@softboring.demo` … `demo10@softboring.demo`）會先鋪牆上便利貼，再由 cron 每天發幾則繁中短記。詳見 [docs/demo-bots.md](./docs/demo-bots.md)。**不會**改到 `stanleys1225@gmail.com` 或其他真實會員。
+
+```bash
+cd /var/www/softboring
+sudo -u www-data bash -lc 'set -a; source /etc/softboring.env; set +a; cd /var/www/softboring && npm run db:migrate && npm run demo:seed'
+```
+
+```bash
+# /etc/cron.d/softboring-demo-wall
+0 9 * * * www-data bash -lc 'set -a; source /etc/softboring.env; set +a; cd /var/www/softboring && npm run demo:daily'
+```
+
+停用：刪除 cron，再跑 `npm run demo:purge`（只刪 `@softboring.demo`）。
+

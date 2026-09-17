@@ -3,6 +3,7 @@
 import { AdminDeleteButton } from "@/components/admin-delete-button";
 import { adminCopy } from "@/lib/admin-copy";
 import { formatAdminWhen, planLabel } from "@/lib/admin-format";
+import { isDemoEmail } from "@/lib/demo";
 import { PLAN_FREE, PLAN_SOFT_PLUS, type PlanId } from "@/lib/plan";
 import type { AdminUserListItem } from "@/db/admin";
 import Link from "next/link";
@@ -139,6 +140,11 @@ export function AdminMembersTable({ members }: { members: AdminUserListItem[] })
                     >
                       {member.email}
                     </Link>
+                    {isDemoEmail(member.email) ? (
+                      <span className="ml-2 inline-flex rounded-full bg-blush px-2 py-0.5 text-xs text-muted">
+                        {copy.demoBadge}
+                      </span>
+                    ) : null}
                   </td>
                   <td className="px-5 py-3">
                     <span

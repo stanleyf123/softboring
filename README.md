@@ -120,6 +120,7 @@ Checkout is treated as configured only when the first three are non-empty.
 - Optional price IDs: `STRIPE_PRICE_STICKER_PACK` and `STRIPE_PRICE_STICKER_<SLUG>` (star, heart, sprout, tea, moon, cloud, peach, sparkle). If unset, Checkout uses `price_data` from the catalog cents in SQLite.
 - Admin: `/admin/wall` can hide a note (`hidden`). Hidden notes drop off the public board.
 - Commenting notifies the note owner in the signed-in inbox (bell). A reply also notifies the parent comment author. Own comments do not.
+- **Demo Soft+ bots** (optional): ten `@softboring.demo` accounts can seed the wall and post a few zh-TW notes each day. See [docs/demo-bots.md](./docs/demo-bots.md).
 
 After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
 
@@ -262,6 +263,16 @@ Weekly reminder cron (after email is configured):
 ```bash
 npm run reminders:dispatch
 ```
+
+Demo Soft Wall accounts (optional, after migrate):
+
+```bash
+npm run demo:seed    # 10 Soft+ @softboring.demo users + wall notes (idempotent)
+npm run demo:daily   # 3–5 fresh zh-TW notes; safe twice the same Taipei day
+npm run demo:purge   # delete only those demo users
+```
+
+Cron example and password: [docs/demo-bots.md](./docs/demo-bots.md).
 
 ## Stack
 

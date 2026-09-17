@@ -47,6 +47,7 @@ if (userTable) {
   ensureColumn("users", "stripe_subscription_id", "TEXT");
   ensureColumn("users", "stripe_price_id", "TEXT");
   ensureColumn("users", "plan_updated_at", "TEXT");
+  ensureColumn("users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
   db.exec(
     "CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users (stripe_customer_id)",
   );
@@ -144,6 +145,10 @@ if (usersTable) {
       db.pragma("foreign_keys = ON");
     }
   }
+}
+
+if (usersTable) {
+  ensureColumn("users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
 }
 
 db.close();

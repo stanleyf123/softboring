@@ -16,6 +16,7 @@ export type UserRow = {
   stripe_subscription_id: string | null;
   stripe_price_id: string | null;
   plan_updated_at: string | null;
+  is_demo?: number;
 };
 
 export type PublicUser = {
