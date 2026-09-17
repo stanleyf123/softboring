@@ -47,6 +47,9 @@ function migrate(db) {
     if (!cols.includes("is_demo")) {
       db.exec("ALTER TABLE users ADD COLUMN is_demo INTEGER NOT NULL DEFAULT 0");
     }
+    if (!cols.includes("nickname")) {
+      db.exec("ALTER TABLE users ADD COLUMN nickname TEXT");
+    }
   }
 }
 
@@ -192,6 +195,7 @@ test("existing users table gains billing columns via ALTER", () => {
     "stripe_price_id",
     "plan_updated_at",
     "is_demo",
+    "nickname",
   ]) {
     assert.ok(cols.includes(name), `missing ${name}`);
   }

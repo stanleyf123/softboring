@@ -49,7 +49,7 @@ function main() {
     );
     for (const row of rows) {
       console.log(
-        `  ${row.email}  plan=${row.plan} status=${row.plan_status} is_demo=${row.is_demo}`,
+        `  ${row.email}  nickname=${row.nickname ?? "(none)"}  plan=${row.plan} status=${row.plan_status} is_demo=${row.is_demo}`,
       );
     }
     console.log(`demo:seed: shared password is DEMO_PASSWORD (default ${DEFAULT_DEMO_PASSWORD})`);

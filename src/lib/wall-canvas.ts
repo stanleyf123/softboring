@@ -73,6 +73,7 @@ export function toTeaserNote(note: {
   z: number;
   color: string;
   praiseCount: number;
+  ownerNickname?: string | null;
 }) {
   return {
     id: note.id,
@@ -81,5 +82,6 @@ export function toTeaserNote(note: {
     z: note.z,
     color: isWallColor(note.color) ? note.color : "peach",
     praiseCount: note.praiseCount,
+    ownerNickname: note.ownerNickname?.trim() ? note.ownerNickname.trim() : null,
   };
 }

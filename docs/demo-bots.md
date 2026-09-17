@@ -6,6 +6,10 @@ Emails:
 
 `demo01@softboring.demo` … `demo10@softboring.demo`
 
+Public wall nicknames (zh-TW, re-seed fills them in if missing):
+
+`小桃` `薄荷糖` `雲朵` `暖暖` `慢活` `茶泡飯` `月亮` `軟軟` `散步` `午後`
+
 Shared password (override with `DEMO_PASSWORD`):
 
 `softboring-demo-2026`
@@ -30,7 +34,7 @@ npm run db:migrate
 npm run demo:seed
 ```
 
-Idempotent: a second run does not duplicate users, seed reviews, or wall notes. It will refresh Soft+ (`plan=soft_plus`, `plan_status=active`) and the shared password hash.
+Idempotent: a second run does not duplicate users, seed reviews, or wall notes. It will refresh Soft+ (`plan=soft_plus`, `plan_status=active`) and the shared password hash. Missing nicknames are filled in; a nickname that is already set is left alone.
 
 Each demo user gets **two** zh-TW reviews, each shared to Soft Wall with scattered positions and cream/blush/peach/mint (plus lemon/sky) colors.
 

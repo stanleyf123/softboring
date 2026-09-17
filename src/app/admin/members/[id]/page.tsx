@@ -36,6 +36,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
 
   const fields = [
     [copy.email, member.email],
+    [copy.nickname, member.nickname ?? adminCopy.members.noNickname],
     [copy.plan, planLabel(member.plan, member.planStatus)],
     [copy.subscriptionStatus, member.planStatus ?? dash],
     [copy.created, formatAdminWhen(member.createdAt)],

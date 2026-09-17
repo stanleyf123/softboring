@@ -15,6 +15,7 @@ const LAST_ACTIVE_SQL = `(
 export type AdminUserListItem = {
   id: string;
   email: string;
+  nickname: string | null;
   createdAt: string;
   reviewCount: number;
   wallNoteCount: number;
@@ -108,6 +109,7 @@ export function adminSignupWeeks(now = new Date(), weekCount = 8): AdminSignupWe
 type AdminUserRow = {
   id: string;
   email: string;
+  nickname: string | null;
   created_at: string;
   plan: string;
   plan_status: string | null;
@@ -124,6 +126,7 @@ function toListItem(row: AdminUserRow): AdminUserListItem {
   return {
     id: row.id,
     email: row.email,
+    nickname: row.nickname?.trim() ? row.nickname.trim() : null,
     createdAt: row.created_at,
     reviewCount: row.review_count,
     wallNoteCount: row.wall_note_count,
@@ -136,7 +139,7 @@ function toListItem(row: AdminUserRow): AdminUserListItem {
   };
 }
 
-const ADMIN_USER_SELECT = `SELECT u.id, u.email, u.created_at, u.plan, u.plan_status,
+const ADMIN_USER_SELECT = `SELECT u.id, u.email, u.nickname, u.created_at, u.plan, u.plan_status,
               u.stripe_customer_id, u.stripe_subscription_id, u.stripe_price_id, u.plan_updated_at,
               (SELECT COUNT(*) FROM reviews r WHERE r.user_id = u.id) AS review_count,
               (SELECT COUNT(*) FROM wall_notes w WHERE w.user_id = u.id) AS wall_note_count,

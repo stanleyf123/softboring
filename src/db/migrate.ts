@@ -44,6 +44,7 @@ export function ensureUserBillingColumns(db: Database.Database) {
   ensureColumn(db, "users", "stripe_price_id", "TEXT");
   ensureColumn(db, "users", "plan_updated_at", "TEXT");
   ensureColumn(db, "users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "users", "nickname", "TEXT");
   db.exec(
     `CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users (stripe_customer_id)`,
   );
@@ -136,13 +137,16 @@ export function ensureNullablePasswordHash(db: Database.Database) {
           stripe_customer_id TEXT,
           stripe_subscription_id TEXT,
           stripe_price_id TEXT,
-          plan_updated_at TEXT
+          plan_updated_at TEXT,
+          is_demo INTEGER NOT NULL DEFAULT 0,
+          nickname TEXT
         );
       `);
       db.exec(`
         INSERT INTO users_oauth_mig (
           id, email, password_hash, created_at, plan, plan_status,
-          stripe_customer_id, stripe_subscription_id, stripe_price_id, plan_updated_at
+          stripe_customer_id, stripe_subscription_id, stripe_price_id, plan_updated_at,
+          is_demo, nickname
         )
         SELECT
           id, email, password_hash, created_at, ${planExpr},
@@ -150,7 +154,9 @@ export function ensureNullablePasswordHash(db: Database.Database) {
           ${colOr("stripe_customer_id", "NULL")},
           ${colOr("stripe_subscription_id", "NULL")},
           ${colOr("stripe_price_id", "NULL")},
-          ${colOr("plan_updated_at", "NULL")}
+          ${colOr("plan_updated_at", "NULL")},
+          ${names.has("is_demo") ? "COALESCE(is_demo, 0)" : "0"},
+          ${colOr("nickname", "NULL")}
         FROM users
       `);
       db.exec(`DROP TABLE users`);
@@ -176,6 +182,14 @@ export function ensureUserIsDemoColumn(db: Database.Database) {
   ensureColumn(db, "users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
 }
 
+export function ensureUserNicknameColumn(db: Database.Database) {
+  const tables = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'`)
+    .get() as { name: string } | undefined;
+  if (!tables) return;
+  ensureColumn(db, "users", "nickname", "TEXT");
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -185,6 +199,7 @@ export function migrateDb(db: Database.Database) {
   ensureWallCommentParent(db);
   ensureOauthAccounts(db);
   ensureNullablePasswordHash(db);
-  // After oauth rebuild (which copies a fixed column list), re-add is_demo.
+  // After oauth rebuild (which copies a fixed column list), re-add extras.
   ensureUserIsDemoColumn(db);
+  ensureUserNicknameColumn(db);
 }

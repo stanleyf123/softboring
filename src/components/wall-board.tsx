@@ -16,6 +16,7 @@ type TeaserNote = {
   z: number;
   color: string;
   praiseCount: number;
+  ownerNickname?: string | null;
 };
 
 type FullNote = TeaserNote & {
@@ -26,6 +27,7 @@ type FullNote = TeaserNote & {
   createdAt: string;
   pinned?: boolean;
   ownerSoftPlus?: boolean;
+  ownerFallback?: string | null;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
   energy?: string;
   drain?: string;
@@ -61,6 +63,20 @@ const COLOR_CLASS: Record<string, string> = {
 
 function noteClass(color: string) {
   return COLOR_CLASS[color] ?? "bg-peach";
+}
+
+function wallAuthorLabel(
+  note: { ownerNickname?: string | null; ownerFallback?: string | null },
+  visitorLabel: string,
+  allowEmailFallback: boolean,
+) {
+  const nick = note.ownerNickname?.trim();
+  if (nick) return nick;
+  if (allowEmailFallback) {
+    const fallback = note.ownerFallback?.trim();
+    if (fallback) return fallback;
+  }
+  return visitorLabel;
 }
 
 function tiltFor(id: string) {
@@ -565,6 +581,11 @@ export function WallBoard({
             ) : null}
             {notes.map((note) => {
               const full = "excerpt" in note ? (note as FullNote) : null;
+              const author = wallAuthorLabel(
+                note,
+                t("softVisitor"),
+                Boolean(full),
+              );
               return (
                 <button
                   key={note.id}
@@ -600,8 +621,16 @@ export function WallBoard({
                     aria-hidden="true"
                   />
                   <span className="sr-only">{t("dragHandle")}</span>
+                  <span className="flex items-center justify-between gap-2 text-[11px]">
+                    <span className="truncate text-muted">{t("byAuthor", { name: author })}</span>
+                    {full?.pinned ? (
+                      <span className="shrink-0 rounded-full bg-paper/80 px-2 py-0.5 text-muted">
+                        {t("pinned")}
+                      </span>
+                    ) : null}
+                  </span>
                   {locked || !full ? (
-                    <span className="block space-y-2 blur-[3px]">
+                    <span className="mt-2 block space-y-2 blur-[3px]">
                       <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />
                       <span className="block h-3 w-full rounded-full bg-foreground/10" />
                       <span className="block h-3 w-2/3 rounded-full bg-foreground/10" />
@@ -609,18 +638,11 @@ export function WallBoard({
                     </span>
                   ) : (
                     <>
-                      <span className="flex items-center justify-between gap-2 text-[11px]">
-                        {full.ownerSoftPlus ? (
-                          <span className="rounded-full bg-mint/90 px-2 py-0.5">{t("plusBadge")}</span>
-                        ) : (
-                          <span />
-                        )}
-                        {full.pinned ? (
-                          <span className="rounded-full bg-paper/80 px-2 py-0.5 text-muted">
-                            {t("pinned")}
-                          </span>
-                        ) : null}
-                      </span>
+                      {full.ownerSoftPlus ? (
+                        <span className="mt-1 inline-flex rounded-full bg-mint/90 px-2 py-0.5 text-[11px]">
+                          {t("plusBadge")}
+                        </span>
+                      ) : null}
                       <span className="mt-2 line-clamp-5 text-sm leading-relaxed">
                         {full.excerpt || t("untitled")}
                       </span>
@@ -793,6 +815,7 @@ export function WallBoard({
               </button>
             </div>
             <p className="mt-1 text-sm text-muted">
+              {`${t("byAuthor", { name: wallAuthorLabel(detail, t("softVisitor"), true) })} · `}
               {detail.ownerSoftPlus ? `${t("plusBadge")} · ` : ""}
               {detail.feeling ? t("feeling", { value: detail.feeling }) : null}
               {detail.mine ? ` · ${t("yours")}` : ` · ${t("neighbor")}`}

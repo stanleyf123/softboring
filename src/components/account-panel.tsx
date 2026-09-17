@@ -3,9 +3,10 @@
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
+import { NICKNAME_MAX } from "@/lib/nickname";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
 import { useFormatter, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
 import { SoftMark } from "./soft-doodles";
 
@@ -44,6 +45,7 @@ export function AccountPanel({
   emailConfigured,
   customQuestions,
   digest,
+  nickname,
 }: {
   email: string;
   createdAt: string;
@@ -57,6 +59,7 @@ export function AccountPanel({
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
   digest: { year: number; month: number; count: number; avgFeeling: number | null };
+  nickname: string | null;
 }) {
   const t = useTranslations("Account");
   const tPricing = useTranslations("Pricing");
@@ -136,6 +139,8 @@ export function AccountPanel({
               </dd>
             </div>
           </dl>
+
+          <NicknameEditor initialNickname={nickname} />
 
           {softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/50 px-5 py-5">
@@ -298,5 +303,104 @@ export function AccountPanel({
         </div>
       </section>
     </div>
+  );
+}
+
+function nicknameErrorCopy(
+  t: ReturnType<typeof useTranslations<"Account">>,
+  code: string | null,
+) {
+  switch (code) {
+    case "nickname_too_short":
+      return t("nicknameTooShort");
+    case "nickname_too_long":
+      return t("nicknameTooLong");
+    case "invalid_nickname":
+      return t("nicknameInvalid");
+    default:
+      return t("nicknameError");
+  }
+}
+
+function NicknameEditor({ initialNickname }: { initialNickname: string | null }) {
+  const t = useTranslations("Account");
+  const [value, setValue] = useState(initialNickname ?? "");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const response = await fetch("/api/account/nickname", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: value }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        nickname?: string | null;
+        error?: string;
+      };
+      if (!response.ok) {
+        setError(data.error ?? "generic");
+        return;
+      }
+      setValue(data.nickname ?? "");
+      setSaved(true);
+    } catch {
+      setError("generic");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form
+      onSubmit={save}
+      className="mt-8 rounded-[1.5rem] bg-blush/50 px-5 py-5"
+    >
+      <p className="font-display text-lg tracking-tight">{t("nicknameTitle")}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t("nicknameBody")}</p>
+      <label className="mt-4 block text-sm">
+        <span className="text-muted">{t("nicknameLabel")}</span>
+        <input
+          value={value}
+          onChange={(event) => {
+            setValue(event.target.value);
+            setSaved(false);
+            setError(null);
+          }}
+          maxLength={NICKNAME_MAX}
+          placeholder={t("nicknamePlaceholder")}
+          autoComplete="nickname"
+          className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2 text-sm outline-none focus:border-accent"
+        />
+      </label>
+      <p className="mt-2 text-xs text-muted">{t("nicknameHint")}</p>
+      <p className="mt-1 text-xs text-muted">{t("nicknameEmptyHint")}</p>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+        >
+          {saving ? t("nicknameSaving") : t("nicknameSave")}
+        </button>
+        {saved ? (
+          <p className="text-sm text-muted" role="status">
+            {t("nicknameSaved")}
+          </p>
+        ) : null}
+        {error ? (
+          <p className="text-sm text-accent" role="alert">
+            {nicknameErrorCopy(t, error)}
+          </p>
+        ) : null}
+      </div>
+    </form>
   );
 }

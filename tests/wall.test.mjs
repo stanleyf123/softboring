@@ -24,6 +24,7 @@ function toTeaserNote(note) {
     z: note.z,
     color: note.color,
     praiseCount: note.praiseCount,
+    ownerNickname: note.ownerNickname?.trim() ? note.ownerNickname.trim() : null,
   };
 }
 
@@ -137,6 +138,7 @@ test("wall tables, sticker seed, praise, hide, and teaser payload", () => {
     z: 1,
     color: "peach",
     praiseCount: 2,
+    ownerNickname: "小桃",
     energy: "A secret garden walk",
     summary: "A week with tea",
     comments: [{ body: "secret" }],
@@ -145,6 +147,7 @@ test("wall tables, sticker seed, praise, hide, and teaser payload", () => {
   assert.equal("energy" in teaser, false);
   assert.equal("summary" in teaser, false);
   assert.equal("comments" in teaser, false);
+  assert.equal(teaser.ownerNickname, "小桃");
   assert.deepEqual(teaser, {
     id: "note-a",
     x: 80,
@@ -152,6 +155,7 @@ test("wall tables, sticker seed, praise, hide, and teaser payload", () => {
     z: 1,
     color: "peach",
     praiseCount: 2,
+    ownerNickname: "小桃",
   });
 
   db.close();
@@ -166,6 +170,7 @@ function toTeaser(note) {
     z: note.z,
     color: note.color,
     praiseCount: note.praiseCount,
+    ownerNickname: note.ownerNickname ?? null,
   };
 }
 
@@ -261,6 +266,8 @@ test("share insert creates a visible wall note with wallNoteId, and Soft+ list k
     excerpt: "A quiet week of tea",
     summary: "A quiet week of tea",
     userId: "user-plus",
+    ownerNickname: "暖暖",
+    ownerFallback: "plus",
   };
   const plusPayload = wallNotesPayload({
     softPlus: true,
@@ -271,6 +278,7 @@ test("share insert creates a visible wall note with wallNoteId, and Soft+ list k
   assert.equal(plusPayload.locked, false);
   assert.equal(plusPayload.notes[0].mine, true);
   assert.equal(plusPayload.notes[0].summary, "A quiet week of tea");
+  assert.equal(plusPayload.notes[0].ownerNickname, "暖暖");
   assert.equal(plusPayload.latestOwnedReviewId, "rev-latest");
 
   const freePayload = wallNotesPayload({
@@ -282,6 +290,8 @@ test("share insert creates a visible wall note with wallNoteId, and Soft+ list k
   assert.equal(freePayload.locked, true);
   assert.equal("mine" in freePayload.notes[0], false);
   assert.equal("summary" in freePayload.notes[0], false);
+  assert.equal("ownerFallback" in freePayload.notes[0], false);
+  assert.equal(freePayload.notes[0].ownerNickname, "暖暖");
   assert.equal(freePayload.latestOwnedReviewId, "rev-latest");
 
   const signedOut = wallNotesPayload({
@@ -367,6 +377,85 @@ test("sticker checkout is payment-mode and grants inventory once", () => {
     .prepare(`SELECT quantity FROM user_stickers WHERE user_id = ? AND sticker_id = ?`)
     .get("user-b", heart.id);
   assert.equal(qty.quantity, 1);
+
+  db.close();
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test("wall note list join exposes owner nickname for Soft+ and teasers", () => {
+  const dir = mkdtempSync(join(tmpdir(), "softboring-wall-nick-"));
+  const db = new Database(join(dir, "test.sqlite"));
+  db.pragma("foreign_keys = ON");
+  migrate(db);
+
+  assert.ok(columnNames(db, "users").includes("nickname"));
+
+  db.prepare(
+    `INSERT INTO users (id, email, password_hash, created_at, plan, nickname)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+  ).run(
+    "user-nick",
+    "peach@example.com",
+    "hash",
+    "2026-01-01T00:00:00.000Z",
+    "soft_plus",
+    "小桃",
+  );
+  db.prepare(
+    `INSERT INTO reviews (
+      id, guest_id, user_id, energy, drain, less_of, priorities, feeling, summary, locale, created_at
+    ) VALUES (?, ?, ?, ?, '', '', '', 4, ?, NULL, ?)`,
+  ).run(
+    "rev-nick",
+    "11111111-1111-1111-1111-111111111111",
+    "user-nick",
+    "secret energy",
+    "secret summary",
+    "2026-01-02T00:00:00.000Z",
+  );
+  db.prepare(
+    `INSERT INTO wall_notes (
+      id, review_id, user_id, x, y, z, color, hidden, pinned, created_at, updated_at
+    ) VALUES (?, ?, ?, 80, 90, 1, 'peach', 0, 0, ?, ?)`,
+  ).run(
+    "note-nick",
+    "rev-nick",
+    "user-nick",
+    "2026-01-02T00:00:00.000Z",
+    "2026-01-02T00:00:00.000Z",
+  );
+
+  const row = db
+    .prepare(
+      `SELECT n.id, n.hidden, u.nickname AS owner_nickname, u.email AS owner_email, r.summary
+       FROM wall_notes n
+       JOIN reviews r ON r.id = n.review_id
+       LEFT JOIN users u ON u.id = n.user_id
+       WHERE n.hidden = 0 AND n.id = ?`,
+    )
+    .get("note-nick");
+  assert.equal(row.owner_nickname, "小桃");
+  const teaser = toTeaserNote({
+    id: row.id,
+    x: 80,
+    y: 90,
+    z: 1,
+    color: "peach",
+    praiseCount: 0,
+    ownerNickname: row.owner_nickname,
+    summary: row.summary,
+  });
+  assert.equal(teaser.ownerNickname, "小桃");
+  assert.equal("summary" in teaser, false);
+
+  const wallDb = readFileSync(join(root, "src/db/wall.ts"), "utf8");
+  const canvas = readFileSync(join(root, "src/lib/wall-canvas.ts"), "utf8");
+  const board = readFileSync(join(root, "src/components/wall-board.tsx"), "utf8");
+  assert.match(wallDb, /ownerNickname/);
+  assert.match(wallDb, /owner_nickname/);
+  assert.match(canvas, /ownerNickname/);
+  assert.match(board, /ownerNickname/);
+  assert.match(board, /softVisitor/);
 
   db.close();
   rmSync(dir, { recursive: true, force: true });

@@ -48,6 +48,7 @@ if (userTable) {
   ensureColumn("users", "stripe_price_id", "TEXT");
   ensureColumn("users", "plan_updated_at", "TEXT");
   ensureColumn("users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("users", "nickname", "TEXT");
   db.exec(
     "CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users (stripe_customer_id)",
   );
@@ -114,13 +115,16 @@ if (usersTable) {
             stripe_customer_id TEXT,
             stripe_subscription_id TEXT,
             stripe_price_id TEXT,
-            plan_updated_at TEXT
+            plan_updated_at TEXT,
+            is_demo INTEGER NOT NULL DEFAULT 0,
+            nickname TEXT
           );
         `);
         db.exec(`
           INSERT INTO users_oauth_mig (
             id, email, password_hash, created_at, plan, plan_status,
-            stripe_customer_id, stripe_subscription_id, stripe_price_id, plan_updated_at
+            stripe_customer_id, stripe_subscription_id, stripe_price_id, plan_updated_at,
+            is_demo, nickname
           )
           SELECT
             id, email, password_hash, created_at, ${planExpr},
@@ -128,7 +132,9 @@ if (usersTable) {
             ${colOr("stripe_customer_id", "NULL")},
             ${colOr("stripe_subscription_id", "NULL")},
             ${colOr("stripe_price_id", "NULL")},
-            ${colOr("plan_updated_at", "NULL")}
+            ${colOr("plan_updated_at", "NULL")},
+            ${names.has("is_demo") ? "COALESCE(is_demo, 0)" : "0"},
+            ${colOr("nickname", "NULL")}
           FROM users
         `);
         db.exec("DROP TABLE users");
@@ -149,6 +155,7 @@ if (usersTable) {
 
 if (usersTable) {
   ensureColumn("users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("users", "nickname", "TEXT");
 }
 
 db.close();

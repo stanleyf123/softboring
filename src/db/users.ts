@@ -17,6 +17,7 @@ export type UserRow = {
   stripe_price_id: string | null;
   plan_updated_at: string | null;
   is_demo?: number;
+  nickname: string | null;
 };
 
 export type PublicUser = {
@@ -27,6 +28,7 @@ export type PublicUser = {
   planStatus: string | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  nickname: string | null;
 };
 
 type PublicUserRow = Pick<
@@ -38,6 +40,7 @@ type PublicUserRow = Pick<
   | "plan_status"
   | "stripe_customer_id"
   | "stripe_subscription_id"
+  | "nickname"
 >;
 
 export function toPublicUser(row: PublicUserRow): PublicUser {
@@ -49,10 +52,11 @@ export function toPublicUser(row: PublicUserRow): PublicUser {
     planStatus: row.plan_status,
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
+    nickname: row.nickname?.trim() ? row.nickname.trim() : null,
   };
 }
 
-const PUBLIC_USER_COLUMNS = `id, email, created_at, plan, plan_status, stripe_customer_id, stripe_subscription_id`;
+const PUBLIC_USER_COLUMNS = `id, email, created_at, plan, plan_status, stripe_customer_id, stripe_subscription_id, nickname`;
 
 export function createUser(email: string, passwordHash: string): PublicUser {
   const id = crypto.randomUUID();
@@ -88,6 +92,7 @@ export function createUser(email: string, passwordHash: string): PublicUser {
     planStatus: null,
     stripeCustomerId: null,
     stripeSubscriptionId: null,
+    nickname: null,
   };
 }
 
@@ -128,6 +133,12 @@ export function getUserByStripeSubscriptionId(
     .prepare(`SELECT ${PUBLIC_USER_COLUMNS} FROM users WHERE stripe_subscription_id = ?`)
     .get(subscriptionId) as PublicUserRow | undefined;
   return row ? toPublicUser(row) : undefined;
+}
+
+export function updateUserNickname(userId: string, nickname: string | null) {
+  return getDb()
+    .prepare(`UPDATE users SET nickname = ? WHERE id = ?`)
+    .run(nickname, userId).changes;
 }
 
 export type BillingPatch = {

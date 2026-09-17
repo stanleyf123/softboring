@@ -146,6 +146,7 @@ test("schema stores custom questions, custom answers, and pinned notes", () => {
   assert.ok(columnNames(db, "reviews").includes("custom_answers"));
   assert.ok(columnNames(db, "wall_notes").includes("pinned"));
   assert.ok(columnNames(db, "users").includes("is_demo"));
+  assert.ok(columnNames(db, "users").includes("nickname"));
   db.close();
   rmSync(dir, { recursive: true, force: true });
 });
