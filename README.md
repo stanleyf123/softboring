@@ -19,7 +19,7 @@ Email + password on SQLite (bcrypt hashes, httpOnly `softboring_session` cookie)
 | Logged in | `user_id` | That account only |
 | Guest | `guest_id` cookie (`softboring_guest`) | This browser’s unclaimed guest reviews |
 
-On login or register, guest reviews from **this browser cookie** are attached to the account (`user_id`) if they were still guest-owned. After that, log out and those reviews stay with the account — another browser cannot see them.
+On login, guest reviews from **this browser cookie** are attached to the account (`user_id`) if they were still guest-owned. On register (email or first-time Google / LINE), the same claim happens, then the app opens a welcome / thank-you page with next steps (first review, Soft Wall, nickname). After that, log out and those reviews stay with the account — another browser cannot see them.
 
 Pages:
 
@@ -29,6 +29,9 @@ Pages:
 - `/en/reset-password` and `/zh-tw/reset-password`
 - `/en/privacy` and `/zh-tw/privacy`
 - `/en/terms` and `/zh-tw/terms`
+- `/en/thanks` and `/zh-tw/thanks` (short thank-you, also linked from the footer)
+- `/en/welcome` and `/zh-tw/welcome` (after register / first-time OAuth; `noindex`)
+- `/en/thanks/plus` and `/zh-tw/thanks/plus` (Soft+ checkout return; `noindex`)
 - `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade, weekly reminder)
 - `/en/pricing` and `/zh-tw/pricing`
 - `/en/trends` and `/zh-tw/trends` (Soft+)
@@ -41,6 +44,8 @@ Password reset: `POST /api/auth/forgot-password` always creates a hashed token w
 Login, register, forgot-password, and OAuth start/callback are **rate-limited** by IP (and email where it applies) in SQLite (`rate_limits`). Too many tries return HTTP 429 or send you back to login with a calm message. No extra env is required.
 
 The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
+
+SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md).
 
 Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
@@ -95,7 +100,7 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 The handler reads the **raw request body** to verify the signature. Default nginx `proxy_pass` is enough; do not add a body-rewriting filter in front of `/api/stripe/webhook`.
 
-After a successful checkout, the webhook writes `plan`, `plan_status`, `stripe_customer_id`, and `stripe_subscription_id` on the user, and inserts a row in `payments` (subscription or sticker). Later `invoice.paid` events add renewals (deduped by payment intent / checkout session / invoice id when present). Refunds and failed invoices update status. If Stripe env is missing, `/admin/payments` still loads with an empty state.
+After a successful checkout, Stripe returns to `/{locale}/thanks/plus`. The webhook writes `plan`, `plan_status`, `stripe_customer_id`, and `stripe_subscription_id` on the user, and inserts a row in `payments` (subscription or sticker). Later `invoice.paid` events add renewals (deduped by payment intent / checkout session / invoice id when present). Refunds and failed invoices update status. If Stripe env is missing, `/admin/payments` still loads with an empty state, and `/thanks/plus` still exists for the return path.
 
 ### 3. Environment
 
@@ -180,6 +185,8 @@ Full steps, Nginx, systemd, DNS, Certbot, `ADMIN_TOKEN`, Stripe env: **[DEPLOY-L
 Copy `.env.example` to `.env.local`.
 
 - `SITE_URL` — public origin (`http://localhost:3000` locally, `https://softboring.com` in production)
+- `GOOGLE_SITE_VERIFICATION` — optional Search Console HTML-tag token (omitted from metadata when empty)
+- `BING_SITE_VERIFICATION` — optional Bing Webmaster `msvalidate.01` token
 - `SQLITE_PATH` — database file (local `./data/softboring.sqlite`; VPS `/var/www/softboring/data/softboring.sqlite`)
 - `ADMIN_TOKEN` — long random string for `/admin` (generate with `openssl rand -hex 32`; never commit a real value)
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY` — required together to enable checkout

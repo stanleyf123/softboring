@@ -3,6 +3,7 @@ import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { isSoftPlusPlan } from "@/lib/plan";
+import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,18 @@ export const dynamic = "force-dynamic";
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const appLocale = assertLocale(locale);
+  const t = await getTranslations({ locale: appLocale, namespace: "Metadata" });
+  return pageMetadata({
+    locale: appLocale,
+    title: t("reviewTitle"),
+    description: t("reviewDescription"),
+    path: "/review",
+  });
+}
 
 export default async function ReviewPage({ params }: Props) {
   const { locale } = await params;

@@ -16,7 +16,6 @@ import {
   oauthCookieOptions,
   oauthErrorRedirectUrl,
   oauthRedirectUri,
-  oauthSuccessPath,
   parseOAuthLocale,
   readOAuthState,
   OAUTH_STATE_COOKIE,
@@ -24,6 +23,7 @@ import {
 import { exchangeOAuthIdentity } from "@/lib/oauth-providers";
 import { publicAbsoluteUrl } from "@/lib/public-origin";
 import { enforceAuthRateLimit } from "@/lib/rate-limit";
+import { oauthPostAuthPath } from "@/lib/thanks-path";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -85,11 +85,14 @@ export async function GET(request: Request, context: Context) {
       verifier: payload.verifier,
       nonce: payload.nonce,
     });
-    const user = findOrLinkOAuthUser(identity);
+    const { user, created } = findOrLinkOAuthUser(identity);
     const token = issueSession(user.id);
     await claimGuestReviewsForUser(user.id);
 
-    const dest = publicAbsoluteUrl(oauthSuccessPath(locale, payload.returnTo), request.url);
+    const dest = publicAbsoluteUrl(
+      oauthPostAuthPath(locale, payload.returnTo, created),
+      request.url,
+    );
     const response = NextResponse.redirect(dest);
     response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
     clearOAuthCookie(response);

@@ -12,7 +12,11 @@ export async function SiteFooter() {
         <SoftMark className="h-6 w-6" />
         {t("note")}
       </span>
-      <nav className="mt-3 flex flex-wrap gap-3">
+      <p className="mt-3 max-w-md leading-relaxed">{t("thanks")}</p>
+      <nav className="mt-3 flex flex-wrap gap-3" aria-label={t("navLabel")}>
+        <Link href="/thanks" className="hover:text-foreground">
+          {t("thanksLink")}
+        </Link>
         <Link href="/privacy" className="hover:text-foreground">
           {t("privacy")}
         </Link>

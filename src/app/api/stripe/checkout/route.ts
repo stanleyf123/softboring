@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { publicOrigin } from "@/lib/public-origin";
 import { getStripe, getStripeConfig, isStripeConfigured } from "@/lib/stripe";
+import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${origin}/${locale}/account?checkout=success`,
+    success_url: `${origin}/${locale}${PLUS_THANKS_PATH}`,
     cancel_url: `${origin}/${locale}/pricing`,
     client_reference_id: user.id,
     customer: user.stripeCustomerId ?? undefined,
