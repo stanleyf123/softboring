@@ -4,6 +4,7 @@ import { GoogleMark, LineMark } from "@/components/oauth-marks";
 import { Link, useRouter } from "@/i18n/navigation";
 import { oauthStartPath, type OAuthProvider } from "@/lib/oauth-config";
 import { safeAppPath } from "@/lib/public-origin";
+import { registerSuccessPath } from "@/lib/thanks-path";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { SoftMark } from "./soft-doodles";
@@ -53,7 +54,8 @@ export function AuthForm({
   );
 
   const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/register";
-  const destination = safeAppPath(nextPath, "/account");
+  const destination =
+    mode === "register" ? registerSuccessPath(nextPath) : safeAppPath(nextPath, "/account");
 
   function oauthHref(provider: OAuthProvider) {
     const params = new URLSearchParams();

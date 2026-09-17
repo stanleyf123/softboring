@@ -73,6 +73,10 @@ SQLITE_PATH=/var/www/softboring/data/softboring.sqlite
 ADMIN_TOKEN=請改成足夠長的隨機字串
 NODE_ENV=production
 
+# Optional. Google Search Console / Bing Webmaster HTML-tag tokens (see docs/seo.md).
+# GOOGLE_SITE_VERIFICATION=
+# BING_SITE_VERIFICATION=
+
 # Soft+（Stripe Checkout）。三個都填才會打開結帳；留空則方案頁仍可看，按鈕會顯示 payments not configured。
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=

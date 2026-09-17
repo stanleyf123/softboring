@@ -29,7 +29,10 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <div className="pt-2">
-      <section className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between lg:gap-16">
+      <section
+        className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between lg:gap-16"
+        aria-labelledby="home-title"
+      >
         <div className="max-w-lg lg:max-w-xl">
           <p className="font-display italic text-accent">{t("eyebrow")}</p>
           <ul className="mt-4 flex flex-wrap gap-2">
@@ -43,7 +46,10 @@ export default async function HomePage({ params }: Props) {
               {t("chipNotTodo")}
             </li>
           </ul>
-          <h1 className="mt-5 font-display text-4xl leading-tight tracking-tight md:text-5xl">
+          <h1
+            id="home-title"
+            className="mt-5 font-display text-4xl leading-tight tracking-tight md:text-5xl"
+          >
             {t("title")}
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-muted">{t("lead")}</p>
@@ -73,9 +79,12 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="mt-16">
+      <section className="mt-16" aria-labelledby="home-sample">
         <p className="font-display text-sm italic text-muted">{t("sampleKicker")}</p>
-        <h2 className="mt-2 font-display text-2xl tracking-tight sm:text-3xl">
+        <h2
+          id="home-sample"
+          className="mt-2 font-display text-2xl tracking-tight sm:text-3xl"
+        >
           {t("sampleHeading")}
         </h2>
         <p className="mt-3 max-w-lg leading-relaxed text-muted">
@@ -86,14 +95,19 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="mt-16 grid gap-4 sm:grid-cols-3 lg:gap-6">
+      <section className="mt-16 grid gap-4 sm:grid-cols-3 lg:gap-6" aria-label={t("ideasLabel")}>
         <IdeaCard title={t("ideaOneTitle")} body={t("ideaOneBody")} wash="bg-peach/80" />
         <IdeaCard title={t("ideaTwoTitle")} body={t("ideaTwoBody")} wash="bg-blush/80" />
         <IdeaCard title={t("ideaThreeTitle")} body={t("ideaThreeBody")} wash="bg-mint/80" />
       </section>
 
-      <section className="mt-16 rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8">
-        <h2 className="font-display text-2xl tracking-tight">{t("pricingTitle")}</h2>
+      <section
+        className="mt-16 rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8"
+        aria-labelledby="home-pricing"
+      >
+        <h2 id="home-pricing" className="font-display text-2xl tracking-tight">
+          {t("pricingTitle")}
+        </h2>
         <p className="mt-4 leading-relaxed text-muted">{t("pricingFree")}</p>
         <p className="mt-2 leading-relaxed text-muted">{t("pricingPaid")}</p>
         <Link
@@ -104,8 +118,13 @@ export default async function HomePage({ params }: Props) {
         </Link>
       </section>
 
-      <section className="mt-14 rounded-[2rem] bg-blush/70 px-6 py-8 text-center shadow-card sm:px-8">
-        <h2 className="font-display text-2xl tracking-tight">{t("bottomTitle")}</h2>
+      <section
+        className="mt-14 rounded-[1.75rem] bg-blush/70 px-6 py-8 text-center shadow-card sm:px-8"
+        aria-labelledby="home-bottom"
+      >
+        <h2 id="home-bottom" className="font-display text-2xl tracking-tight">
+          {t("bottomTitle")}
+        </h2>
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
           {t("bottomBody")}
         </p>

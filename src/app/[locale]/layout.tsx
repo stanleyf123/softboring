@@ -11,7 +11,8 @@ import { routing } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth";
 import { isSoftPlusPlan } from "@/lib/plan";
 import { assertLocale, htmlLang } from "@/lib/locale";
-import { pageMetadata } from "@/lib/seo";
+import { SiteJsonLd } from "@/components/json-ld";
+import { DEFAULT_SITE_URL, localeOg, SITE_NAME, siteOrigin, verificationMetadata } from "@/lib/seo";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -41,18 +42,26 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const appLocale = assertLocale(locale);
   const t = await getTranslations({
-    locale: assertLocale(locale),
+    locale: appLocale,
     namespace: "Metadata",
   });
+  const origin = siteOrigin();
 
   return {
-    ...pageMetadata({
-      locale: assertLocale(locale),
-      title: t("title"),
-      description: t("description"),
-      path: "/",
-    }),
+    metadataBase: new URL(origin || DEFAULT_SITE_URL),
+    title: t("title"),
+    description: t("description"),
+    ...verificationMetadata(),
+    openGraph: {
+      siteName: SITE_NAME,
+      locale: localeOg(appLocale),
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
     manifest: "/manifest.webmanifest",
     icons: {
       icon: [
@@ -86,6 +95,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   const settings = user ? ensureUserSettings(user.id) : null;
   const unreadNotifications = user ? countUnreadNotifications(user.id) : 0;
   const reviewCount = user ? countReviewsForUser(user.id) : 0;
+  const tNav = await getTranslations("Nav");
 
   return (
     <html
@@ -93,7 +103,14 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={`${nunito.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <SiteJsonLd />
         <NextIntlClientProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-paper focus:px-4 focus:py-2 focus:shadow-card"
+          >
+            {tNav("skipToContent")}
+          </a>
           <SiteHeader
             email={user?.email ?? null}
             softPlus={Boolean(user && isSoftPlusPlan(user.plan, user.planStatus))}
@@ -108,7 +125,10 @@ export default async function LocaleLayout({ children, params }: Props) {
               dismissed={settings.onboardingDismissed}
             />
           ) : null}
-          <main className={`${SITE_SHELL_CLASS} flex-1 pb-28 md:pb-16`}>
+          <main
+            id="main-content"
+            className={`${SITE_SHELL_CLASS} flex-1 pb-28 md:pb-16`}
+          >
             {children}
           </main>
           <SiteFooter />

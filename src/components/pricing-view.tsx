@@ -22,7 +22,10 @@ export async function PricingView({
   return (
     <div className="pt-4">
       <p className="font-display italic text-accent">{t("eyebrow")}</p>
-      <h1 className="mt-3 font-display text-4xl leading-tight tracking-tight md:text-5xl">
+      <h1
+        id="pricing-title"
+        className="mt-3 font-display text-4xl leading-tight tracking-tight md:text-5xl"
+      >
         {t("title")}
       </h1>
       <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>

@@ -125,7 +125,10 @@ function verifiedEmail(identity: OAuthIdentity) {
  * Create or reuse a membership for a verified Google / LINE identity.
  * New users start on the Free plan, same as email signup.
  */
-export function findOrLinkOAuthUser(identity: OAuthIdentity): PublicUser {
+export function findOrLinkOAuthUser(identity: OAuthIdentity): {
+  user: PublicUser;
+  created: boolean;
+} {
   const providerUserId = identity.providerUserId.trim();
   if (!providerUserId) {
     throw new Error("missing_provider_user_id");
@@ -151,7 +154,7 @@ export function findOrLinkOAuthUser(identity: OAuthIdentity): PublicUser {
   if (decision.action === "login") {
     const user = getUserById(decision.userId);
     if (!user) throw new Error("oauth_user_missing");
-    return user;
+    return { user, created: false };
   }
 
   if (decision.action === "conflict") {
@@ -167,7 +170,7 @@ export function findOrLinkOAuthUser(identity: OAuthIdentity): PublicUser {
     });
     const user = getUserById(decision.userId);
     if (!user) throw new Error("oauth_user_missing");
-    return user;
+    return { user, created: false };
   }
 
   const accountEmail = email ?? syntheticOAuthEmail(identity.provider, providerUserId);
@@ -178,5 +181,5 @@ export function findOrLinkOAuthUser(identity: OAuthIdentity): PublicUser {
     userId: created.id,
     email,
   });
-  return created;
+  return { user: created, created: true };
 }

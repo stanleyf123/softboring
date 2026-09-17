@@ -6,6 +6,7 @@ import { isEmailConfigured } from "@/lib/email";
 import { isSoftPlusPlan } from "@/lib/plan";
 import { isStripeConfigured } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
+import { pageMetadata } from "@/lib/seo";
 import { redirect } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -15,6 +16,19 @@ type Props = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ checkout?: string }>;
 };
+
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const appLocale = assertLocale(locale);
+  const t = await getTranslations({ locale: appLocale, namespace: "Metadata" });
+  return pageMetadata({
+    locale: appLocale,
+    title: t("accountTitle"),
+    description: t("accountDescription"),
+    path: "/account",
+    noIndex: true,
+  });
+}
 
 export default async function AccountPage({ params, searchParams }: Props) {
   const { locale } = await params;

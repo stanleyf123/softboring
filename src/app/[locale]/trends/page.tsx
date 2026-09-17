@@ -2,6 +2,7 @@ import { TrendsPanel } from "@/components/trends-panel";
 import { getCurrentUser } from "@/lib/auth";
 import { isSoftPlusPlan } from "@/lib/plan";
 import { assertLocale } from "@/lib/locale";
+import { pageMetadata } from "@/lib/seo";
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -10,6 +11,19 @@ export const dynamic = "force-dynamic";
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const appLocale = assertLocale(locale);
+  const t = await getTranslations({ locale: appLocale, namespace: "Metadata" });
+  return pageMetadata({
+    locale: appLocale,
+    title: t("trendsTitle"),
+    description: t("trendsDescription"),
+    path: "/trends",
+    noIndex: true,
+  });
+}
 
 export default async function TrendsPage({ params }: Props) {
   const { locale } = await params;

@@ -13,7 +13,7 @@ export function AuthPageShell({
   children: ReactNode;
 }) {
   return (
-    <div className="relative max-w-3xl pt-4">
+    <article className="relative max-w-3xl pt-4">
       <div className="mt-2 flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-md">
           <h1 className="font-display text-4xl leading-tight tracking-tight">{title}</h1>
@@ -24,6 +24,6 @@ export function AuthPageShell({
         </div>
       </div>
       <div className="relative mt-10 max-w-md">{children}</div>
-    </div>
+    </article>
   );
 }
