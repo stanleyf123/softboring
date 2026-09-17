@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
   stripe_customer_id TEXT,
   stripe_subscription_id TEXT,
   stripe_price_id TEXT,
-  plan_updated_at TEXT
+  plan_updated_at TEXT,
+  is_demo INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS oauth_accounts (

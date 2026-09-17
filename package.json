@@ -9,6 +9,9 @@
     "lint": "eslint",
     "db:migrate": "node scripts/migrate.mjs",
     "reminders:dispatch": "node scripts/dispatch-reminders.mjs",
+    "demo:seed": "node scripts/demo-seed.mjs",
+    "demo:daily": "node scripts/demo-daily.mjs",
+    "demo:purge": "node scripts/demo-seed.mjs --purge",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {

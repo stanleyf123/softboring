@@ -56,6 +56,7 @@ export const adminCopy = {
     noSubscription: "沒有訂閱編號",
     delete: "刪除",
     deleteConfirm: (email: string) => `要刪除 ${email} 以及其回顧嗎？`,
+    demoBadge: "Demo",
   },
   member: {
     title: "會員",

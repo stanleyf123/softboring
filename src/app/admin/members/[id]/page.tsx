@@ -10,6 +10,7 @@ import {
   formatPaymentAmount,
   planLabel,
 } from "@/lib/admin-format";
+import { isDemoEmail } from "@/lib/demo";
 import { requireAdmin } from "@/lib/admin";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -57,7 +58,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
 
       <article className="mt-6 rounded-[1.75rem] bg-paper px-6 py-8 shadow-card sm:px-8">
         <h2 className="font-display text-2xl tracking-tight">{member.email}</h2>
-        <p className="mt-3">
+        <p className="mt-3 flex flex-wrap gap-2">
           <span
             className={
               member.displayPlan === "soft_plus"
@@ -67,6 +68,11 @@ export default async function AdminMemberDetailPage({ params }: Props) {
           >
             {planLabel(member.plan, member.planStatus)}
           </span>
+          {isDemoEmail(member.email) ? (
+            <span className="inline-flex rounded-full bg-blush px-3 py-1 text-sm">
+              {adminCopy.members.demoBadge}
+            </span>
+          ) : null}
         </p>
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
           {fields.map(([label, value]) => (
