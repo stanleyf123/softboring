@@ -4,6 +4,7 @@ import { OnboardingCard } from "@/components/onboarding-card";
 import { PwaRegister } from "@/components/pwa-register";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getInviteCodeForUser } from "@/db/invites";
 import { countUnreadNotifications } from "@/db/notifications";
 import { countReviewsForUser } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
@@ -95,6 +96,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   const settings = user ? ensureUserSettings(user.id) : null;
   const unreadNotifications = user ? countUnreadNotifications(user.id) : 0;
   const reviewCount = user ? countReviewsForUser(user.id) : 0;
+  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const hasInvite = softPlus && user ? Boolean(getInviteCodeForUser(user.id)) : false;
   const tNav = await getTranslations("Nav");
 
   return (
@@ -113,7 +116,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           </a>
           <SiteHeader
             email={user?.email ?? null}
-            softPlus={Boolean(user && isSoftPlusPlan(user.plan, user.planStatus))}
+            softPlus={softPlus}
             unreadNotifications={unreadNotifications}
           />
           <MobileBottomNav email={user?.email ?? null} />
@@ -123,6 +126,9 @@ export default async function LocaleLayout({ children, params }: Props) {
               historySeen={settings.onboardingHistorySeen}
               wallSeen={settings.onboardingWallSeen}
               dismissed={settings.onboardingDismissed}
+              softPlus={softPlus}
+              hasNickname={Boolean(user.nickname?.trim())}
+              hasInvite={hasInvite}
             />
           ) : null}
           <main

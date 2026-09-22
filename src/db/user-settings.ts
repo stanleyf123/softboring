@@ -4,6 +4,7 @@ import {
   parseCustomQuestionsJson,
   type CustomQuestion,
 } from "@/lib/custom-questions";
+import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export type UserSettings = {
   userId: string;
@@ -14,6 +15,7 @@ export type UserSettings = {
   reminderWeekday: number;
   reminderLastSentAt: string | null;
   customQuestions: CustomQuestion[];
+  preferredWallColor: WallColor | null;
 };
 
 type SettingsRow = {
@@ -25,7 +27,14 @@ type SettingsRow = {
   reminder_weekday: number;
   reminder_last_sent_at: string | null;
   custom_questions: string | null;
+  preferred_wall_color: string | null;
 };
+
+function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return isWallColor(trimmed) ? trimmed : null;
+}
 
 function toSettings(row: SettingsRow): UserSettings {
   return {
@@ -37,6 +46,7 @@ function toSettings(row: SettingsRow): UserSettings {
     reminderWeekday: clampWeekday(row.reminder_weekday),
     reminderLastSentAt: row.reminder_last_sent_at,
     customQuestions: parseCustomQuestionsJson(row.custom_questions),
+    preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
   };
 }
 
@@ -66,10 +76,20 @@ export type SettingsPatch = {
   reminderWeekday?: number;
   reminderLastSentAt?: string | null;
   customQuestions?: CustomQuestion[];
+  preferredWallColor?: WallColor | null;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
   const current = ensureUserSettings(userId);
+  const nextPreferred =
+    patch.preferredWallColor === undefined
+      ? current.preferredWallColor
+      : patch.preferredWallColor === null
+        ? null
+        : isWallColor(patch.preferredWallColor)
+          ? patch.preferredWallColor
+          : current.preferredWallColor;
+
   getDb()
     .prepare(
       `UPDATE user_settings
@@ -79,7 +99,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            reminder_enabled = @reminder_enabled,
            reminder_weekday = @reminder_weekday,
            reminder_last_sent_at = @reminder_last_sent_at,
-           custom_questions = @custom_questions
+           custom_questions = @custom_questions,
+           preferred_wall_color = @preferred_wall_color
        WHERE user_id = @user_id`,
     )
     .run({
@@ -129,6 +150,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           ? current.customQuestions
           : normalizeCustomQuestions(patch.customQuestions),
       ),
+      preferred_wall_color: nextPreferred,
     });
   return ensureUserSettings(userId);
 }

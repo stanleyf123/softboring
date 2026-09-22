@@ -185,6 +185,7 @@ export function getWallNoteIdForReview(reviewId: string): string | null {
 export function shareWallNote(input: {
   reviewId: string;
   userId: string;
+  color?: WallColor | null;
 }): WallNoteListItem {
   const db = getDb();
   const existing = db
@@ -208,6 +209,8 @@ export function shareWallNote(input: {
   const position = notePositionForIndex(countRow.n);
   const now = new Date().toISOString();
   const id = crypto.randomUUID();
+  const color =
+    input.color && isWallColor(input.color) ? input.color : colorForIndex(countRow.n);
 
   db.prepare(
     `INSERT INTO wall_notes (
@@ -222,7 +225,7 @@ export function shareWallNote(input: {
     x: position.x,
     y: position.y,
     z: maxZ.z + 1,
-    color: colorForIndex(countRow.n),
+    color,
     created_at: now,
     updated_at: now,
   });

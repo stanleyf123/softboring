@@ -132,44 +132,52 @@ export function HistoryDetail({ id }: { id: string }) {
   });
 
   return (
-    <article>
-      <Link href="/history" className="text-sm text-muted hover:text-foreground">
-        {t("back")}
-      </Link>
-      <p className="mt-8 text-sm text-muted">{t("savedOn", { date })}</p>
-      <h1 className="mt-3 font-display text-3xl tracking-tight">
-        {review.summary.trim() || tHistory("untitled")}
-      </h1>
+    <article className="soft-week-detail">
+      <div className="print:hidden">
+        <Link href="/history" className="text-sm text-muted hover:text-foreground">
+          {t("back")}
+        </Link>
+        <p className="mt-8 text-sm text-muted">{t("savedOn", { date })}</p>
+        <h1 className="mt-3 font-display text-3xl tracking-tight">
+          {review.summary.trim() || tHistory("untitled")}
+        </h1>
 
-      <dl className="mt-10 grid gap-8 lg:grid-cols-2">
-        {DETAIL_FIELDS.map((field) => (
-          <div key={field} className={field === "summary" ? "lg:col-span-2" : undefined}>
-            <dt className="text-sm text-muted">{tQuestions(field)}</dt>
-            <dd className="mt-2 whitespace-pre-wrap leading-relaxed">
-              {review[field].trim() || "—"}
+        <dl className="mt-10 grid gap-8 lg:grid-cols-2">
+          {DETAIL_FIELDS.map((field) => (
+            <div key={field} className={field === "summary" ? "lg:col-span-2" : undefined}>
+              <dt className="text-sm text-muted">{tQuestions(field)}</dt>
+              <dd className="mt-2 whitespace-pre-wrap leading-relaxed">
+                {review[field].trim() || "—"}
+              </dd>
+            </div>
+          ))}
+          {(review.customAnswers ?? []).map((item) => (
+            <div key={item.id}>
+              <dt className="text-sm text-muted">{item.prompt}</dt>
+              <dd className="mt-2 whitespace-pre-wrap leading-relaxed">
+                {item.answer.trim() || "—"}
+              </dd>
+            </div>
+          ))}
+          <div>
+            <dt className="text-sm text-muted">{tQuestions("feeling")}</dt>
+            <dd className="mt-2">
+              {review.feeling
+                ? tHistory("feeling", { value: review.feeling })
+                : "—"}
             </dd>
           </div>
-        ))}
-        {(review.customAnswers ?? []).map((item) => (
-          <div key={item.id}>
-            <dt className="text-sm text-muted">{item.prompt}</dt>
-            <dd className="mt-2 whitespace-pre-wrap leading-relaxed">
-              {item.answer.trim() || "—"}
-            </dd>
-          </div>
-        ))}
-        <div>
-          <dt className="text-sm text-muted">{tQuestions("feeling")}</dt>
-          <dd className="mt-2">
-            {review.feeling
-              ? tHistory("feeling", { value: review.feeling })
-              : "—"}
-          </dd>
-        </div>
-      </dl>
+        </dl>
+      </div>
       <SoftPostcardFromReview review={review} softPlus={softPlus} />
       {wall?.canShare ? (
-        <ShareToWall reviewId={review.id} initialNoteId={wall.noteId} />
+        <div className="print:hidden">
+          <ShareToWall
+            reviewId={review.id}
+            initialNoteId={wall.noteId}
+            softPlus={softPlus}
+          />
+        </div>
       ) : null}
     </article>
   );

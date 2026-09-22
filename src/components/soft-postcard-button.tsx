@@ -10,6 +10,7 @@ import {
 } from "@/lib/soft-postcard";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import type { Review } from "@/lib/review-types";
+import { SoftWeekPrintPostcard } from "@/components/soft-week-print";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -75,19 +76,32 @@ export function SoftPostcardFromReview({
   }
 
   return (
-    <div className="mt-8 rounded-[1.75rem] bg-cream/80 px-5 py-5 shadow-card sm:px-6">
-      <p className="font-display text-lg tracking-tight">{t("weekTitle")}</p>
-      <p className="mt-2 text-sm leading-relaxed text-muted">{t("weekLead")}</p>
-      <button
-        type="button"
-        onClick={onExport}
-        disabled={busy}
-        className="mt-4 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
-      >
-        {busy ? t("exporting") : t("exportWeek")}
-      </button>
-      {error ? <p className="mt-3 text-sm text-muted">{t("exportError")}</p> : null}
-    </div>
+    <>
+      <div className="mt-8 rounded-[1.75rem] bg-cream/80 px-5 py-5 shadow-card print:hidden sm:px-6">
+        <p className="font-display text-lg tracking-tight">{t("weekTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("weekLead")}</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={onExport}
+            disabled={busy}
+            className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+          >
+            {busy ? t("exporting") : t("exportWeek")}
+          </button>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm shadow-card"
+          >
+            {t("printWeek")}
+          </button>
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-muted">{t("printWeekHint")}</p>
+        {error ? <p className="mt-3 text-sm text-muted">{t("exportError")}</p> : null}
+      </div>
+      <SoftWeekPrintPostcard review={review} />
+    </>
   );
 }
 

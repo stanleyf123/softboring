@@ -212,7 +212,12 @@ function ReviewFormFields({
     return (
       <section className="space-y-6">
         {signedIn && savedReviewId ? (
-          <ShareToWall reviewId={savedReviewId} initialNoteId={null} variant="hero" />
+          <ShareToWall
+            reviewId={savedReviewId}
+            initialNoteId={null}
+            variant="hero"
+            softPlus={softPlus}
+          />
         ) : null}
 
         <div className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
