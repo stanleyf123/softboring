@@ -203,3 +203,16 @@ a {
     animation: none !important;
   }
 }
+
+/* Quiet writing on /review — hide chrome, keep the form. */
+html[data-quiet-writing="1"] header,
+html[data-quiet-writing="1"] footer,
+html[data-quiet-writing="1"] [data-bottom-nav],
+html[data-quiet-writing="1"] [data-onboarding],
+html[data-quiet-writing="1"] .quiet-writing-chrome {
+  display: none !important;
+}
+
+html[data-quiet-writing="1"] main {
+  padding-bottom: 2rem;
+}

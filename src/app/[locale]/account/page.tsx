@@ -1,9 +1,10 @@
 import { AccountPanel } from "@/components/account-panel";
-import { countReviewsForUser, monthlyDigestForUser } from "@/db/reviews";
+import { countReviewsForUser, listReviewsForOwner, monthlyDigestForUser } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { isEmailConfigured } from "@/lib/email";
 import { isSoftPlusPlan } from "@/lib/plan";
+import { pickSoftMemory } from "@/lib/soft-memory";
 import { isStripeConfigured } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
 import { pageMetadata } from "@/lib/seo";
@@ -46,6 +47,10 @@ export default async function AccountPage({ params, searchParams }: Props) {
   const settings = ensureUserSettings(user.id);
   const { checkout } = await searchParams;
   const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
+  const softMemory = pickSoftMemory(
+    listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
+    softPlus,
+  );
 
   return (
     <div className="pt-6">
@@ -57,6 +62,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           createdAt={user.createdAt}
           reviewCount={reviewCount}
           softPlus={softPlus}
+          softMemory={softMemory}
           stripeConfigured={isStripeConfigured()}
           hasStripeCustomer={Boolean(user.stripeCustomerId)}
           checkoutSuccess={checkout === "success"}

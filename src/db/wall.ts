@@ -441,6 +441,7 @@ export type AdminWallNote = {
   summary: string;
   userEmail: string | null;
   praiseCount: number;
+  flagCount: number;
 };
 
 function mapAdminWallNote(row: {
@@ -450,6 +451,7 @@ function mapAdminWallNote(row: {
   summary: string;
   user_email: string | null;
   praise_count: number;
+  flag_count: number;
 }): AdminWallNote {
   return {
     id: row.id,
@@ -458,11 +460,13 @@ function mapAdminWallNote(row: {
     summary: row.summary,
     userEmail: row.user_email,
     praiseCount: row.praise_count,
+    flagCount: row.flag_count,
   };
 }
 
 const ADMIN_WALL_SELECT = `SELECT n.id, n.created_at, n.hidden, r.summary, u.email AS user_email,
-              (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count
+              (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count,
+              (SELECT COUNT(*) FROM wall_note_flags f WHERE f.note_id = n.id) AS flag_count
        FROM wall_notes n
        JOIN reviews r ON r.id = n.review_id
        LEFT JOIN users u ON u.id = n.user_id`;
@@ -471,7 +475,7 @@ export function listAdminWallNotes(limit = 200): AdminWallNote[] {
   const rows = getDb()
     .prepare(
       `${ADMIN_WALL_SELECT}
-       ORDER BY datetime(n.created_at) DESC
+       ORDER BY flag_count DESC, datetime(n.created_at) DESC
        LIMIT ?`,
     )
     .all(limit) as Array<{
@@ -481,6 +485,7 @@ export function listAdminWallNotes(limit = 200): AdminWallNote[] {
     summary: string;
     user_email: string | null;
     praise_count: number;
+    flag_count: number;
   }>;
 
   return rows.map(mapAdminWallNote);
@@ -494,7 +499,7 @@ export function listAdminWallNotesForUser(
     .prepare(
       `${ADMIN_WALL_SELECT}
        WHERE n.user_id = ?
-       ORDER BY datetime(n.created_at) DESC
+       ORDER BY flag_count DESC, datetime(n.created_at) DESC
        LIMIT ?`,
     )
     .all(userId, limit) as Array<{
@@ -504,6 +509,7 @@ export function listAdminWallNotesForUser(
     summary: string;
     user_email: string | null;
     praise_count: number;
+    flag_count: number;
   }>;
 
   return rows.map(mapAdminWallNote);

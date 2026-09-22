@@ -279,3 +279,16 @@ CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_user_created
   ON wall_note_bookmarks (user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_note
   ON wall_note_bookmarks (note_id);
+
+CREATE TABLE IF NOT EXISTS wall_note_flags (
+  id TEXT PRIMARY KEY,
+  note_id TEXT NOT NULL,
+  reporter_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  UNIQUE (note_id, reporter_id),
+  FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE,
+  FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_note_flags_note ON wall_note_flags (note_id);
+CREATE INDEX IF NOT EXISTS idx_wall_note_flags_created ON wall_note_flags (created_at DESC);

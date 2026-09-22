@@ -168,7 +168,7 @@ export function ShareToWall({
         {noteId ? t("sharedTitle") : t("shareTitle")}
       </p>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-        {noteId ? t("sharedBody") : t("shareBody")}
+        {noteId ? t("unshareHint") : t("shareBody")}
       </p>
       {softPlus && !noteId && colorReady ? (
         <div className="mt-5">
@@ -211,7 +211,7 @@ export function ShareToWall({
               type="button"
               onClick={unshare}
               disabled={busy}
-              className="inline-flex min-h-12 items-center rounded-full border border-line px-5 py-2.5 text-sm text-muted disabled:opacity-60"
+              className="inline-flex min-h-12 items-center rounded-full border border-line bg-paper px-5 py-2.5 text-sm text-muted shadow-card hover:text-foreground disabled:opacity-60"
             >
               {busy ? t("saving") : t("unshare")}
             </button>

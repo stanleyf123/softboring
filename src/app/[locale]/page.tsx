@@ -1,9 +1,16 @@
+import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
+import { listReviewsForOwner } from "@/db/reviews";
 import { Link } from "@/i18n/navigation";
+import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
+import { isSoftPlusPlan } from "@/lib/plan";
+import { pickSoftMemory } from "@/lib/soft-memory";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -26,6 +33,12 @@ export default async function HomePage({ params }: Props) {
   setRequestLocale(assertLocale(locale));
 
   const t = await getTranslations("Home");
+  const user = await getCurrentUser();
+  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const memory =
+    user
+      ? pickSoftMemory(listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }), softPlus)
+      : null;
 
   return (
     <div className="pt-2">
@@ -78,6 +91,8 @@ export default async function HomePage({ params }: Props) {
           <HeroDoodle />
         </div>
       </section>
+
+      {memory ? <SoftMemoryCard memory={memory} /> : null}
 
       <section className="mt-16" aria-labelledby="home-sample">
         <p className="font-display text-sm italic text-muted">{t("sampleKicker")}</p>

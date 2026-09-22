@@ -29,19 +29,28 @@ export default async function AdminWallPage() {
                 <th className="px-5 py-3 font-normal">{copy.owner}</th>
                 <th className="px-5 py-3 font-normal">{copy.summary}</th>
                 <th className="px-5 py-3 font-normal">{copy.praise}</th>
+                <th className="px-5 py-3 font-normal">{copy.flags}</th>
                 <th className="px-5 py-3 font-normal">{copy.hidden}</th>
                 <th className="px-5 py-3 font-normal"></th>
               </tr>
             </thead>
             <tbody>
               {notes.map((note) => (
-                <tr key={note.id} className="border-b border-line/70 last:border-0">
+                <tr
+                  key={note.id}
+                  className={`border-b border-line/70 last:border-0 ${
+                    note.flagCount > 0 ? "bg-blush/30" : ""
+                  }`}
+                >
                   <td className="px-5 py-3 whitespace-nowrap text-muted">
                     {formatAdminWhen(note.createdAt)}
                   </td>
                   <td className="px-5 py-3 break-all">{note.userEmail ?? adminCopy.common.dash}</td>
                   <td className="px-5 py-3">{note.summary.trim() || copy.quietWeek}</td>
                   <td className="px-5 py-3">{note.praiseCount}</td>
+                  <td className="px-5 py-3">
+                    {note.flagCount > 0 ? copy.flagged(note.flagCount) : copy.no}
+                  </td>
                   <td className="px-5 py-3">{note.hidden ? copy.yes : copy.no}</td>
                   <td className="px-5 py-3">
                     <AdminHideButton
