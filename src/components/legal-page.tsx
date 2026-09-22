@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 export async function LegalPage({
   namespace,
 }: {
-  namespace: "Privacy" | "Terms";
+  namespace: "Privacy" | "Terms" | "Guidelines";
 }) {
   const t = await getTranslations(namespace);
   const sections = [
@@ -31,6 +31,20 @@ export async function LegalPage({
           </section>
         ))}
       </div>
+      {namespace === "Terms" ? (
+        <p className="mt-8 text-sm text-muted">
+          <Link href="/guidelines" className="text-accent hover:text-foreground">
+            {t("guidelinesLink")}
+          </Link>
+        </p>
+      ) : null}
+      {namespace === "Guidelines" ? (
+        <p className="mt-8 text-sm text-muted">
+          <Link href="/terms" className="text-accent hover:text-foreground">
+            {t("termsLink")}
+          </Link>
+        </p>
+      ) : null}
       <p className="mt-10 text-sm text-muted">
         <Link href="/" className="text-accent hover:text-foreground">
           {t("home")}

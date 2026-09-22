@@ -34,6 +34,7 @@ test("sitemap lists public locale URLs and skips admin", () => {
     "/register",
     "/privacy",
     "/terms",
+    "/guidelines",
     "/thanks",
   ]) {
     assert.ok(seo.includes(`"${path}"`), `missing sitemap path ${path}`);
@@ -78,6 +79,7 @@ test("page metadata has unique titles, hreflang, and SITE_URL canonicals", () =>
     "registerTitle",
     "privacyTitle",
     "termsTitle",
+    "guidelinesTitle",
     "thanksTitle",
   ];
   const enTitles = new Set(keys.map((key) => en.Metadata[key]));

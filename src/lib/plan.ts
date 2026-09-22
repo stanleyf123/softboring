@@ -7,11 +7,19 @@ export type PlanId = typeof PLAN_FREE | typeof PLAN_SOFT_PLUS;
 
 const PLUS_STATUSES = new Set(["active", "trialing", "past_due"]);
 
+export function planExpiryPassed(expiresAt: string | null | undefined): boolean {
+  if (!expiresAt) return false;
+  const ms = Date.parse(expiresAt);
+  return !Number.isNaN(ms) && ms <= Date.now();
+}
+
 export function isSoftPlusPlan(
   plan: string | null | undefined,
   status: string | null | undefined,
+  expiresAt?: string | null | undefined,
 ): boolean {
   if (plan !== PLAN_SOFT_PLUS) return false;
+  if (planExpiryPassed(expiresAt)) return false;
   if (!status) return true;
   return PLUS_STATUSES.has(status);
 }
@@ -30,6 +38,7 @@ export function planFromStripeStatus(status: string | null | undefined): {
 export function displayPlan(
   plan: string | null | undefined,
   status: string | null | undefined,
+  expiresAt?: string | null | undefined,
 ): PlanId {
-  return isSoftPlusPlan(plan, status) ? PLAN_SOFT_PLUS : PLAN_FREE;
+  return isSoftPlusPlan(plan, status, expiresAt) ? PLAN_SOFT_PLUS : PLAN_FREE;
 }

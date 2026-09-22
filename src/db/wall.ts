@@ -36,6 +36,7 @@ export type WallNoteRow = {
   praise_count: number;
   owner_plan: string | null;
   owner_plan_status: string | null;
+  owner_plan_expires_at: string | null;
   owner_nickname: string | null;
   owner_email: string | null;
   owner_is_demo: number;
@@ -96,6 +97,7 @@ const NOTE_SELECT = `
          r.energy, r.drain, r.less_of, r.priorities, r.feeling, r.summary, r.locale,
          r.created_at AS review_created_at,
          u.plan AS owner_plan, u.plan_status AS owner_plan_status,
+         u.plan_expires_at AS owner_plan_expires_at,
          u.nickname AS owner_nickname, u.email AS owner_email,
          COALESCE(u.is_demo, 0) AS owner_is_demo,
          (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count,
@@ -120,7 +122,11 @@ function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem
     feeling: row.feeling,
     summary: row.summary,
     pinned: Boolean(row.pinned),
-    ownerSoftPlus: isSoftPlusPlan(row.owner_plan, row.owner_plan_status),
+    ownerSoftPlus: isSoftPlusPlan(
+      row.owner_plan,
+      row.owner_plan_status,
+      row.owner_plan_expires_at,
+    ),
     ownerNickname: wallOwnerNickname(row.owner_nickname, row.owner_email, {
       allowEmailFallback: false,
     }),

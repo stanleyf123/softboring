@@ -1,6 +1,7 @@
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
+import { HomeSoftStats } from "@/components/soft-stats-strip";
 import { listReviewsForOwner } from "@/db/reviews";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
@@ -91,6 +92,15 @@ export default async function HomePage({ params }: Props) {
           <HeroDoodle />
         </div>
       </section>
+
+      <HomeSoftStats
+        labels={{
+          aria: t("statsAria"),
+          wallWeek: t("statsWallWeek"),
+          languages: t("statsLanguages"),
+          note: t("statsNote"),
+        }}
+      />
 
       {memory ? <SoftMemoryCard memory={memory} /> : null}
 

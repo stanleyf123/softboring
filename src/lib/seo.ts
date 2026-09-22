@@ -16,6 +16,7 @@ export const PUBLIC_SEO_PATHS = [
   "/register",
   "/privacy",
   "/terms",
+  "/guidelines",
   "/thanks",
 ] as const;
 

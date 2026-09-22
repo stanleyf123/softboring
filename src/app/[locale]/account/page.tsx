@@ -46,7 +46,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
   const reviewCount = countReviewsForUser(user.id);
   const settings = ensureUserSettings(user.id);
   const { checkout } = await searchParams;
-  const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
+  const softPlus = isSoftPlusPlan(user.plan, user.planStatus, user.planExpiresAt);
   const softMemory = pickSoftMemory(
     listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
     softPlus,
@@ -62,6 +62,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           createdAt={user.createdAt}
           reviewCount={reviewCount}
           softPlus={softPlus}
+          planExpiresAt={user.planExpiresAt}
           softMemory={softMemory}
           stripeConfigured={isStripeConfigured()}
           hasStripeCustomer={Boolean(user.stripeCustomerId)}
