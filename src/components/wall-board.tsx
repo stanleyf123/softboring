@@ -35,6 +35,7 @@ import {
   type WallDiscoveryFilters,
   type WallSortMode,
 } from "@/lib/wall-filters";
+import { noticeWallRateLimit } from "@/lib/wall-rate-notice";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import {
   SEASONAL_FRAME_STORAGE_KEY,
@@ -166,6 +167,11 @@ function tiltFor(id: string) {
 async function readJson<T>(response: Response): Promise<T> {
   const data = (await response.json().catch(() => ({}))) as T & { error?: string };
   if (!response.ok) {
+    if (noticeWallRateLimit(response.status, data.error)) {
+      const error = new Error("rate_limited");
+      error.name = "rate_limited";
+      throw error;
+    }
     const error = new Error(data.error || "request_failed");
     error.name = data.error || "request_failed";
     throw error;
@@ -794,6 +800,7 @@ export function WallBoard({
         wallNoteId?: string;
         error?: string;
       };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok || !data.wallNoteId) {
         setShareLatestError(parseWallShareError(data.error));
         return;

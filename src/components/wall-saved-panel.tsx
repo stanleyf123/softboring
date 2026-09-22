@@ -13,6 +13,7 @@ import {
 } from "@/components/wall-collections-panel";
 import { Link } from "@/i18n/navigation";
 import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
+import { noticeWallRateLimit } from "@/lib/wall-rate-notice";
 import type { WallCollection } from "@/lib/wall-collections";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -138,8 +139,12 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
         method: "POST",
         keepalive: true,
       });
+      const data = (await response.json().catch(() => ({}))) as {
+        bookmarked?: boolean;
+        error?: string;
+      };
+      if (noticeWallRateLimit(response.status, data.error)) return false;
       if (!response.ok) return false;
-      const data = (await response.json()) as { bookmarked?: boolean };
       return data.bookmarked === false;
     } catch {
       return false;
@@ -187,6 +192,7 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
         collections?: WallCollection[];
         collection?: WallCollection;
       };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok) {
         setNotice(noticeFromError(data.error));
         return;
@@ -214,6 +220,7 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
         error?: string;
         collections?: WallCollection[];
       };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok) {
         setNotice(noticeFromError(data.error));
         return;
@@ -238,6 +245,7 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
         error?: string;
         collections?: WallCollection[];
       };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok) {
         setNotice(noticeFromError(data.error));
         return;

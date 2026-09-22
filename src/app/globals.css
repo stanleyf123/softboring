@@ -1073,6 +1073,36 @@ html[data-quiet-writing="1"] main {
   }
 }
 
+.soft-rate-toast {
+  position: fixed;
+  z-index: 62;
+  left: 50%;
+  bottom: 5.5rem;
+  width: min(22rem, calc(100vw - 2rem));
+  transform: translateX(-50%);
+  border-radius: 1.5rem;
+  border: 1px solid var(--peach);
+  background: var(--cream);
+  padding: 0.95rem 1.1rem;
+  box-shadow: var(--shadow-soft);
+  animation: soft-rate-toast-in 220ms ease;
+}
+
+.soft-rate-toast[data-soft-rate-motion="still"] {
+  animation: none;
+}
+
+@keyframes soft-rate-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 /* Bloom, breathe, shuffle, and the copy toast stay still when motion is reduced. */
 @media (prefers-reduced-motion: reduce) {
   .soft-shortcuts-sheet,
@@ -1084,6 +1114,7 @@ html[data-quiet-writing="1"] main {
   .soft-save-bloom::before,
   .soft-save-bloom-card,
   .soft-copy-toast,
+  .soft-rate-toast,
   .soft-offline-banner,
   [data-breath-circle],
   [data-breath-circle] * {
@@ -1105,6 +1136,7 @@ html[data-quiet-writing="1"] main {
 @media print {
   .soft-undo-toast,
   .soft-copy-toast,
+  .soft-rate-toast,
   .soft-offline-banner {
     display: none;
   }

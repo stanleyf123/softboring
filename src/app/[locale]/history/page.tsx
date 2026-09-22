@@ -1,9 +1,11 @@
 import { CapsuleCalendarHints } from "@/components/capsule-calendar-hints";
 import { HistoryList } from "@/components/history-list";
 import { QuietYearChips } from "@/components/quiet-year-chips";
+import { PastSelfLetterShelf } from "@/components/past-self-letter-shelf";
 import { SoftLetterArchive } from "@/components/soft-letter-archive";
 import { listPublicCapsules } from "@/db/soft-capsules";
 import { listReviewsForOwner } from "@/db/reviews";
+import { listPastSelfLettersForUser } from "@/db/past-self-letters";
 import { listSoftLetters } from "@/db/soft-letters";
 import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
 import { listPauseWeekKeys } from "@/db/week-pauses";
@@ -83,6 +85,22 @@ export default async function HistoryPage({ params }: Props) {
             />
           </div>
         ) : null}
+        <PastSelfLetterShelf
+          signedIn={Boolean(user)}
+          softPlus={softPlus}
+          timeZone={settings?.timezone}
+          letters={
+            user && softPlus
+              ? listPastSelfLettersForUser(user.id).map((letter) => ({
+                  id: letter.id,
+                  reviewId: letter.reviewId,
+                  body: letter.body,
+                  reviewCreatedAt: letter.reviewCreatedAt,
+                  summary: letter.summary,
+                }))
+              : []
+          }
+        />
         {softPlus ? <SoftLetterArchive letters={letters} /> : null}
         <HistoryList />
       </div>

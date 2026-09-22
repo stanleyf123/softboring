@@ -9,8 +9,10 @@ import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { SoftWeekWeather } from "@/components/soft-week-weather";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
+import { PublicNicknameStrip } from "@/components/public-nickname-strip";
 import { PublicWallCounter } from "@/components/public-wall-counter";
 import { HomeSoftStats } from "@/components/soft-stats-strip";
+import { listRecentPublicNicknames } from "@/db/public-nicknames";
 import { publicSoftStats } from "@/db/soft-stats";
 import { listReviewsForOwner } from "@/db/reviews";
 import { getCurrentSoftIntention } from "@/db/soft-intentions";
@@ -57,6 +59,7 @@ export default async function HomePage({ params }: Props) {
   const paused = user && pauseWeekKey ? isWeekPaused(user.id, pauseWeekKey) : false;
   const softPlus = userIsSoftPlus(user);
   const publicStats = publicSoftStats();
+  const publicNicknames = listRecentPublicNicknames();
   const intention = user ? getCurrentSoftIntention(user.id) : null;
   const reviews = user
     ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
@@ -166,6 +169,8 @@ export default async function HomePage({ params }: Props) {
         {user ? <GratitudeJarCard signedIn softPlus={softPlus} /> : null}
         {user ? <SoftCapsuleCard signedIn softPlus={softPlus} /> : null}
       </div>
+
+      <PublicNicknameStrip nicknames={publicNicknames} />
 
       <HomeSoftStats
         labels={{

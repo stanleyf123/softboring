@@ -1,5 +1,6 @@
 "use client";
 
+import { PastSelfLetterCard } from "@/components/past-self-letter-card";
 import { SoftLetterRecall } from "@/components/soft-letter-recall";
 import { SoftTagsEditor } from "@/components/soft-tags-editor";
 import { SoftCopyLink } from "@/components/soft-copy-link";
@@ -33,6 +34,7 @@ export function HistoryDetail({ id }: { id: string }) {
   const [wall, setWall] = useState<{ noteId: string | null; canShare: boolean } | null>(
     null,
   );
+  const [signedIn, setSignedIn] = useState(false);
   const [softPlus, setSoftPlus] = useState(false);
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState(false);
@@ -53,16 +55,18 @@ export function HistoryDetail({ id }: { id: string }) {
             .catch(() => null),
         ]);
         if (cancelled) return;
-        const planSoftPlus = Boolean(
+        const meUser =
           me &&
-            typeof me === "object" &&
-            "user" in me &&
-            me.user &&
-            typeof me.user === "object" &&
-            "softPlus" in me.user &&
-            me.user.softPlus === true,
+          typeof me === "object" &&
+          "user" in me &&
+          me.user &&
+          typeof me.user === "object"
+            ? me.user
+            : null;
+        setSignedIn(Boolean(meUser));
+        setSoftPlus(
+          Boolean(meUser && "softPlus" in meUser && meUser.softPlus === true),
         );
-        setSoftPlus(planSoftPlus);
         if (!next) {
           setReview(null);
           return;
@@ -242,6 +246,9 @@ export function HistoryDetail({ id }: { id: string }) {
         </dl>
       </div>
       <SoftLetterRecall createdAt={review.createdAt} softPlus={softPlus} />
+      <div className="print:hidden">
+        <PastSelfLetterCard reviewId={review.id} signedIn={signedIn} softPlus={softPlus} />
+      </div>
       {!softPlus ? (
         <div className="mt-8 print:hidden">
           <SoftCopyLink kind="postcard" path={postcardSharePath(locale, review.id)} />

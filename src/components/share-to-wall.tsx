@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, useRouter } from "@/i18n/navigation";
+import { noticeWallRateLimit } from "@/lib/wall-rate-notice";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import {
   isPlusNoteColor,
@@ -141,6 +142,7 @@ export function ShareToWall({
         wallNoteId?: string;
         error?: string;
       };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok || !data.wallNoteId) {
         setError(parseWallShareError(data.error));
         return;
@@ -166,6 +168,7 @@ export function ShareToWall({
         method: "DELETE",
       });
       const data = (await response.json().catch(() => ({}))) as { error?: string };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok) {
         setError(parseWallShareError(data.error));
         return;
