@@ -26,7 +26,6 @@ export async function generateMetadata({ params }: Props) {
     title: t("digestTitle"),
     description: t("digestDescription"),
     path: "/digest",
-    noIndex: true,
   });
 }
 

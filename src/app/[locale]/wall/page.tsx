@@ -1,9 +1,11 @@
 import { WallBoard } from "@/components/wall-board";
 import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
+import { listWallSpotlight } from "@/db/wall-spotlight";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
+import { rotatingSpotlightIndex, toPublicSpotlightCard } from "@/lib/wall-spotlight";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +36,10 @@ export default async function WallPage({ params, searchParams }: Props) {
   const user = await getCurrentUser();
   const softPlus = userIsSoftPlus(user);
   const settings = user ? ensureUserSettings(user.id) : null;
+  const guestSpotlight = softPlus
+    ? []
+    : listWallSpotlight(5).map(toPublicSpotlightCard);
+  const guestSpotlightIndex = rotatingSpotlightIndex(guestSpotlight.length, Date.now());
   if (user) {
     updateUserSettings(user.id, { onboardingWallSeen: true });
   }
@@ -49,6 +55,8 @@ export default async function WallPage({ params, searchParams }: Props) {
         initialNoteId={typeof query.note === "string" ? query.note : null}
         initialSeasonalFrame={Boolean(settings?.seasonalFrame)}
         initialWallLargerText={Boolean(settings?.wallLargerText)}
+        guestSpotlight={guestSpotlight}
+        guestSpotlightIndex={guestSpotlightIndex}
       />
     </div>
   );

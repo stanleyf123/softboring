@@ -32,7 +32,6 @@ export async function generateMetadata({ params }: Props) {
     title: t("yearTitle"),
     description: t("yearDescription"),
     path: "/year",
-    noIndex: true,
   });
 }
 

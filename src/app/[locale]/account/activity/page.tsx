@@ -1,7 +1,9 @@
+import { SoftActivityExport } from "@/components/soft-activity-export";
 import { SoftActivityTimeline } from "@/components/soft-activity-timeline";
 import { listOwnSoftActivity } from "@/db/soft-activity";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { Link, redirect } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -37,6 +39,7 @@ export default async function SoftActivityPage({ params }: Props) {
   }
 
   const t = await getTranslations("SoftActivity");
+  const softPlus = userIsSoftPlus(user);
   const items = listOwnSoftActivity(user.id);
 
   return (
@@ -45,6 +48,7 @@ export default async function SoftActivityPage({ params }: Props) {
       <h1 className="mt-2 font-display text-4xl tracking-tight">{t("title")}</h1>
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
       <div className="mt-10 max-w-2xl space-y-6">
+        <SoftActivityExport softPlus={softPlus} />
         <SoftActivityTimeline items={items} />
         <Link
           href="/account"

@@ -31,6 +31,9 @@ Submit these as the public surface (hreflang `en`, `zh-TW`, `ja`, `x-default` �
 | Register | https://softboring.com/en/register | https://softboring.com/zh-tw/register | https://softboring.com/ja/register |
 | Privacy | https://softboring.com/en/privacy | https://softboring.com/zh-tw/privacy | https://softboring.com/ja/privacy |
 | Terms | https://softboring.com/en/terms | https://softboring.com/zh-tw/terms | https://softboring.com/ja/terms |
+| Guidelines | https://softboring.com/en/guidelines | https://softboring.com/zh-tw/guidelines | https://softboring.com/ja/guidelines |
+| Digest | https://softboring.com/en/digest | https://softboring.com/zh-tw/digest | https://softboring.com/ja/digest |
+| Soft year | https://softboring.com/en/year | https://softboring.com/zh-tw/year | https://softboring.com/ja/year |
 | Thanks | https://softboring.com/en/thanks | https://softboring.com/zh-tw/thanks | https://softboring.com/ja/thanks |
 
 Machine-readable:
@@ -41,10 +44,14 @@ Machine-readable:
 
 ## Keep out of the index
 
-`robots.txt` disallows `/admin`, `/api/`, and `/account`. These routes also send `noindex` (or live under `/admin`):
+`robots.txt` allows `/` and disallows `/admin`, `/api/`, and `/account`. Because locales are always prefixed, it also disallows `/en/account`, `/zh-tw/account`, and `/ja/account` (that covers `/account/activity` and `/account/snapshot`). The same list blocks welcome, invites, password reset, `/thanks/plus`, trends, saved wall notes, wall compliments, history export, and week compare. URL paths stay `en` / `zh-tw` / `ja` — never `zh-TW`.
+
+Digest, soft year, and guidelines are public pages (a locked tease is fine for a crawler without a session) and belong in `sitemap.xml`. Do not submit account activity.
+
+These routes also send `noindex` (or live under `/admin`):
 
 - `/admin` and `/api/admin/*`
-- `/en/account`, `/zh-tw/account`, `/ja/account`
+- `/en/account`, `/zh-tw/account`, `/ja/account` — including `/account/activity`
 - `/en/welcome`, `/zh-tw/welcome`, `/ja/welcome` (post-register)
 - `/en/thanks/plus`, `/zh-tw/thanks/plus`, `/ja/thanks/plus` (Soft+ checkout return)
 - `/en/invite/*`, `/zh-tw/invite/*`, `/ja/invite/*` (redirects to register; `noindex`)
