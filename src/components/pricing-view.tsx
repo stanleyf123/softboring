@@ -50,7 +50,9 @@ export async function PricingView({
             <li className="text-muted">{t("featureCollectionExportFree")}</li>
             <li className="text-muted">{t("featureStickersFree")}</li>
             <li className="text-muted">{t("featureExportFree")}</li>
+            <li>{t("featureSoftCount")}</li>
             <li className="text-muted">{t("featureDigestFree")}</li>
+            <li className="text-muted">{t("featureCapsuleFree")}</li>
           </ul>
           <p className="mt-8 text-sm leading-relaxed text-muted">{t("freeToPlus")}</p>
         </article>
@@ -80,7 +82,9 @@ export async function PricingView({
             <li>{t("featureCollectionExportPlus")}</li>
             <li>{t("featureStickersPlus")}</li>
             <li>{t("featureExportPlus")}</li>
+            <li>{t("featureSoftCount")}</li>
             <li>{t("featureDigestPlus")}</li>
+            <li>{t("featureCapsulePlus")}</li>
             <li>{t("featureBadgePlus")}</li>
             <li>{t("featurePortal")}</li>
           </ul>

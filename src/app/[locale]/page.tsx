@@ -1,4 +1,5 @@
 import { GratitudeJarCard } from "@/components/gratitude-jar-card";
+import { SoftCapsuleCard } from "@/components/soft-capsule-card";
 import { IntentionReminderChip } from "@/components/intention-reminder-chip";
 import { MemoryLaneCard } from "@/components/memory-lane-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
@@ -152,6 +153,7 @@ export default async function HomePage({ params }: Props) {
           />
         ) : null}
         {user ? <GratitudeJarCard signedIn softPlus={softPlus} /> : null}
+        {user ? <SoftCapsuleCard signedIn softPlus={softPlus} /> : null}
       </div>
 
       <HomeSoftStats

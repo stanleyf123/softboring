@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  BookmarkUndoToast,
+  useBookmarkUndo,
+} from "@/components/bookmark-undo-toast";
 import { EmptyState, ListSkeleton } from "@/components/empty-state";
 import {
   CollectionMembership,
@@ -8,6 +12,7 @@ import {
   type CollectionNotice,
 } from "@/components/wall-collections-panel";
 import { Link } from "@/i18n/navigation";
+import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
 import type { WallCollection } from "@/lib/wall-collections";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -53,6 +58,7 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
   const [notice, setNotice] = useState<CollectionNotice>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [collectionBusy, setCollectionBusy] = useState(false);
+  const bookmarkUndo = useBookmarkUndo();
 
   useEffect(() => {
     if (!softPlus) return;
@@ -108,27 +114,62 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
     return notes.filter((note) => ids.has(note.id));
   }, [notes, collections, activeCollectionId]);
 
-  async function unsave(id: string) {
-    if (busyId) return;
-    setBusyId(id);
+  function restoreLifted(note: SavedNote, memberOf: string[]) {
+    setNotes((current) => {
+      if (!current) return current;
+      if (current.some((item) => item.id === note.id)) return current;
+      return [note, ...current].sort(
+        (left, right) => Date.parse(right.bookmarkedAt) - Date.parse(left.bookmarkedAt),
+      );
+    });
+    setCollections((current) =>
+      current.map((collection) => {
+        if (!memberOf.includes(collection.id) || collection.noteIds.includes(note.id)) {
+          return collection;
+        }
+        return { ...collection, noteIds: [...collection.noteIds, note.id] };
+      }),
+    );
+  }
+
+  async function commitRemovedBookmark(id: string) {
     try {
       const response = await fetch(`/api/wall/notes/${encodeURIComponent(id)}/bookmark`, {
         method: "POST",
+        keepalive: true,
       });
-      if (!response.ok) return;
-      const data = (await response.json()) as { bookmarked: boolean };
-      if (!data.bookmarked) {
-        setNotes((current) => (current ? current.filter((note) => note.id !== id) : current));
-        setCollections((current) =>
-          current.map((collection) => ({
-            ...collection,
-            noteIds: collection.noteIds.filter((noteId) => noteId !== id),
-          })),
-        );
-      }
-    } finally {
-      setBusyId(null);
+      if (!response.ok) return false;
+      const data = (await response.json()) as { bookmarked?: boolean };
+      return data.bookmarked === false;
+    } catch {
+      return false;
     }
+  }
+
+  function unsave(id: string) {
+    if (bookmarkUndo.matches(id)) return;
+    const note = notes?.find((item) => item.id === id);
+    if (!note) return;
+    const memberOf = collections
+      .filter((collection) => collection.noteIds.includes(id))
+      .map((collection) => collection.id);
+    setNotes((current) => (current ? current.filter((item) => item.id !== id) : current));
+    setCollections((current) =>
+      current.map((collection) => ({
+        ...collection,
+        noteIds: collection.noteIds.filter((noteId) => noteId !== id),
+      })),
+    );
+    bookmarkUndo.begin({
+      noteId: id,
+      label: bookmarkUndoLabel(note.summary?.trim() || note.excerpt, tWall("untitled")),
+      onUndo: () => restoreLifted(note, memberOf),
+      onCommit: () => {
+        void commitRemovedBookmark(id).then((ok) => {
+          if (!ok) restoreLifted(note, memberOf);
+        });
+      },
+    });
   }
 
   async function createCollection(name: string) {
@@ -278,7 +319,7 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
     return <EmptyState title={t("loadErrorTitle")} body={t("loadError")} illustration="saved" />;
   }
 
-  const showSavedEmpty = notes.length === 0;
+  const showSavedEmpty = notes.length === 0 && !bookmarkUndo.toast;
   const showCollectionEmpty = !showSavedEmpty && visibleNotes.length === 0;
 
   return (
@@ -359,10 +400,9 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
                     <button
                       type="button"
                       onClick={() => unsave(note.id)}
-                      disabled={busyId === note.id}
-                      className="rounded-full border border-line px-4 py-2 text-sm text-muted hover:text-foreground disabled:opacity-60"
+                      className="rounded-full border border-line px-4 py-2 text-sm text-muted hover:text-foreground"
                     >
-                      {busyId === note.id ? t("saving") : t("unsave")}
+                      {t("unsave")}
                     </button>
                   </div>
                 </div>
@@ -371,6 +411,13 @@ export function WallSavedPanel({ softPlus }: { softPlus: boolean }) {
           })}
         </ul>
       ) : null}
+      <BookmarkUndoToast
+        open={Boolean(bookmarkUndo.toast)}
+        label={bookmarkUndo.toast?.label ?? ""}
+        durationMs={bookmarkUndo.durationMs}
+        toastKey={bookmarkUndo.toast?.key ?? 0}
+        onUndo={bookmarkUndo.undo}
+      />
     </div>
   );
 }
