@@ -204,10 +204,23 @@ export function reviewsToCsv(reviews: Review[]) {
   return [header.join(","), ...rows].join("\n");
 }
 
+export type MonthlyDigest = {
+  year: number;
+  month: number;
+  count: number;
+  avgFeeling: number | null;
+  streak: number;
+  energyKeywords: KeywordChip[];
+  drainKeywords: KeywordChip[];
+};
+
 export function monthlyDigestFromReviews(
-  reviews: Array<Pick<Review, "createdAt" | "feeling">>,
+  reviews: Array<
+    Pick<Review, "createdAt" | "feeling"> &
+      Partial<Pick<Review, "energy" | "drain">>
+  >,
   now = new Date(),
-) {
+): MonthlyDigest {
   const year = now.getFullYear();
   const month = now.getMonth();
   const inMonth = reviews.filter((review) => {
@@ -227,5 +240,17 @@ export function monthlyDigestFromReviews(
     month: month + 1,
     count: inMonth.length,
     avgFeeling,
+    streak: weeklyStreak(
+      reviews.map((review) => review.createdAt),
+      now,
+    ),
+    energyKeywords: keywordChips(
+      inMonth.map((review) => review.energy ?? "").filter(Boolean),
+      6,
+    ),
+    drainKeywords: keywordChips(
+      inMonth.map((review) => review.drain ?? "").filter(Boolean),
+      6,
+    ),
   };
 }

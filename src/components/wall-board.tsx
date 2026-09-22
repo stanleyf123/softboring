@@ -4,10 +4,17 @@ import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
+import {
+  EMPTY_WALL_FILTERS,
+  filterWallNotes,
+  normalizeFeelingBound,
+  wallFiltersActive,
+  type WallDiscoveryFilters,
+} from "@/lib/wall-filters";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type TeaserNote = {
   id: string;
@@ -133,6 +140,7 @@ export function WallBoard({
   const [stripeConfigured, setStripeConfigured] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [shopError, setShopError] = useState<"not_configured" | "generic" | null>(null);
+  const [filters, setFilters] = useState<WallDiscoveryFilters>(EMPTY_WALL_FILTERS);
   const drag = useRef<{
     id: string;
     dx: number;
@@ -146,6 +154,13 @@ export function WallBoard({
   } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+
+  const visibleNotes = useMemo(() => {
+    if (!softPlus || locked) return notes;
+    return filterWallNotes(notes as FullNote[], filters);
+  }, [notes, filters, softPlus, locked]);
+
+  const filtersOn = softPlus && !locked && wallFiltersActive(filters);
 
   function canvasPoint(event: React.PointerEvent) {
     const canvas = canvasRef.current;
@@ -510,6 +525,82 @@ export function WallBoard({
             {t("sharedToast")}
           </p>
         ) : null}
+        {softPlus && !locked ? (
+          <section className="mt-6 rounded-[1.75rem] bg-paper px-5 py-5 shadow-card sm:px-6">
+            <p className="font-display text-lg tracking-tight">{t("filterTitle")}</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">{t("filterLead")}</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
+              <label className="block sm:col-span-1">
+                <span className="sr-only">{t("filterSearchLabel")}</span>
+                <input
+                  type="search"
+                  value={filters.query}
+                  onChange={(event) =>
+                    setFilters((current) => ({ ...current, query: event.target.value }))
+                  }
+                  placeholder={t("filterSearchPlaceholder")}
+                  className="w-full rounded-full border border-line bg-cream/70 px-4 py-2.5 text-sm outline-none focus:border-accent"
+                />
+              </label>
+              <label className="flex items-center gap-2 text-sm text-muted">
+                <span className="shrink-0">{t("filterFeelingMin")}</span>
+                <select
+                  value={filters.feelingMin ?? ""}
+                  onChange={(event) =>
+                    setFilters((current) => ({
+                      ...current,
+                      feelingMin: normalizeFeelingBound(event.target.value),
+                    }))
+                  }
+                  className="rounded-full border border-line bg-paper px-3 py-2 text-sm text-foreground"
+                >
+                  <option value="">{t("filterFeelingAny")}</option>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <option key={`min-${value}`} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex items-center gap-2 text-sm text-muted">
+                <span className="shrink-0">{t("filterFeelingMax")}</span>
+                <select
+                  value={filters.feelingMax ?? ""}
+                  onChange={(event) =>
+                    setFilters((current) => ({
+                      ...current,
+                      feelingMax: normalizeFeelingBound(event.target.value),
+                    }))
+                  }
+                  className="rounded-full border border-line bg-paper px-3 py-2 text-sm text-foreground"
+                >
+                  <option value="">{t("filterFeelingAny")}</option>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <option key={`max-${value}`} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => setFilters(EMPTY_WALL_FILTERS)}
+                disabled={!filtersOn}
+                className="rounded-full border border-line px-4 py-2 text-sm text-muted disabled:opacity-40"
+              >
+                {t("filterClear")}
+              </button>
+            </div>
+            {filtersOn ? (
+              <p className="mt-3 text-sm text-muted">
+                {t("filterResult", {
+                  shown: visibleNotes.length,
+                  total: notes.length,
+                })}
+              </p>
+            ) : null}
+          </section>
+        ) : null}
       </div>
 
       <div className={`${SITE_SHELL_CLASS} relative mt-8`}>
@@ -580,7 +671,20 @@ export function WallBoard({
                 )}
               </div>
             ) : null}
-            {notes.map((note) => {
+            {notes.length > 0 && visibleNotes.length === 0 ? (
+              <div className="absolute left-8 top-8 max-w-md rounded-[2rem] bg-cream/90 px-8 py-10 shadow-card">
+                <h2 className="font-display text-2xl tracking-tight">{t("filterEmptyTitle")}</h2>
+                <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
+                <button
+                  type="button"
+                  onClick={() => setFilters(EMPTY_WALL_FILTERS)}
+                  className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+                >
+                  {t("filterClear")}
+                </button>
+              </div>
+            ) : null}
+            {visibleNotes.map((note) => {
               const full = "excerpt" in note ? (note as FullNote) : null;
               const author = wallAuthorLabel(
                 note,

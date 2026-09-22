@@ -35,6 +35,7 @@ Pages:
 - `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade, weekly reminder)
 - `/en/pricing` and `/zh-tw/pricing`
 - `/en/trends` and `/zh-tw/trends` (Soft+)
+- `/en/digest` and `/zh-tw/digest` (Soft+ monthly digest, in-app)
 - `/en/wall` and `/zh-tw/wall` (Soft Wall / 軟軟牆)
 
 The same routes exist under `/ja` (日本語), including `/ja/invite/[code]` which redirects into register.
@@ -47,7 +48,7 @@ Login, register, forgot-password, and OAuth start/callback are **rate-limited** 
 
 The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
-SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md).
+SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md).
 
 Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 

@@ -107,6 +107,14 @@ export function TrendsPanel() {
         </div>
         <KeywordRow title={t("energyChips")} chips={energyKeywords} tone="mint" empty={t("chipsEmpty")} />
         <KeywordRow title={t("drainChips")} chips={drainKeywords} tone="blush" empty={t("chipsEmpty")} />
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/digest"
+            className="rounded-full bg-lemon px-5 py-2.5 text-sm shadow-card"
+          >
+            {t("seeDigest")}
+          </Link>
+        </div>
         <ol className="mt-8 space-y-3">
           {points.map((point) => (
             <li key={point.id} className="flex items-center justify-between gap-4 text-sm">
