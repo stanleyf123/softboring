@@ -61,7 +61,7 @@ Google Analytics (`G-MFQ9J6B9DH`) stays on public locale pages only.
 
 ## Share cards
 
-Default OG/Twitter cards come from `src/app/[locale]/opengraph-image.tsx` (cream / blush / peach / mint). After deploy, paste a URL into [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) or [Twitter Card Validator](https://cards-dev.twitter.com/validator) if a card looks stale.
+Default OG/Twitter cards come from `src/app/[locale]/opengraph-image.tsx` (cream / blush / peach / mint). A public wall note shared as `/{locale}/wall?note={id}` uses a cream card of that note’s short excerpt (`/{locale}/og/note/{id}`). The canonical URL stays the Soft Wall page. Hidden notes keep the default wall card. After deploy, paste a URL into [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) or [Twitter Card Validator](https://cards-dev.twitter.com/validator) if a card looks stale.
 
 ## Thank-you paths (not for Search Console)
 

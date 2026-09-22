@@ -1,6 +1,11 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import {
+  GRATITUDE_SHARE_FILENAME,
+  gratitudeShareLine,
+  renderGratitudeSharePng,
+} from "@/lib/gratitude-share-card";
 import { GRATITUDE_MAX } from "@/lib/gratitude-jar";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useTranslations } from "next-intl";
@@ -38,6 +43,8 @@ export function GratitudeJarCard({
   const [drawEmpty, setDrawEmpty] = useState(false);
   const [drawError, setDrawError] = useState(false);
   const [releasing, setReleasing] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shareError, setShareError] = useState(false);
 
   useEffect(() => {
     if (!hydrated || !signedIn || !softPlus) return;
@@ -76,6 +83,9 @@ export function GratitudeJarCard({
           {t("title")}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("guestBody")}</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted" data-gratitude-share="tease">
+          {t("shareTease")}
+        </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
             href={{ pathname: "/login", query: { next: "/" } }}
@@ -102,6 +112,9 @@ export function GratitudeJarCard({
           {t("lockedTitle")}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("lockedBody")}</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted" data-gratitude-share="tease">
+          {t("shareTease")}
+        </p>
         <Link
           href="/pricing"
           className="mt-4 inline-flex min-h-11 items-center rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card"
@@ -188,10 +201,35 @@ export function GratitudeJarCard({
         return;
       }
       setDrawn(data.drawn);
+      setShareError(false);
     } catch {
       setDrawError(true);
     } finally {
       setDrawing(false);
+    }
+  }
+
+  async function saveCard() {
+    const line = gratitudeShareLine(drawn?.body);
+    if (!line) return;
+    setSharing(true);
+    setShareError(false);
+    try {
+      const blob = await renderGratitudeSharePng(line, {
+        brand: t("cardBrand"),
+        kind: t("cardKind"),
+        footer: t("cardFooter"),
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = GRATITUDE_SHARE_FILENAME;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setShareError(true);
+    } finally {
+      setSharing(false);
     }
   }
 
@@ -288,14 +326,31 @@ export function GratitudeJarCard({
         <div className="mt-4 rounded-[1.25rem] bg-paper/80 px-4 py-4" data-gratitude-drawn>
           <p className="text-xs text-muted">{t("drawnLabel")}</p>
           <p className="mt-2 font-display text-base leading-relaxed tracking-tight">“{drawn.body}”</p>
-          <button
-            type="button"
-            onClick={() => void release()}
-            disabled={releasing}
-            className="mt-3 text-sm text-muted underline-offset-2 hover:text-foreground hover:underline disabled:opacity-60"
-          >
-            {releasing ? t("releasing") : t("release")}
-          </button>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => void saveCard()}
+              disabled={sharing || gratitudeShareLine(drawn.body).length === 0}
+              data-gratitude-share="download"
+              className="rounded-full bg-cream px-4 py-2 text-sm shadow-card disabled:opacity-60"
+            >
+              {sharing ? t("shareBusy") : t("shareCta")}
+            </button>
+            <button
+              type="button"
+              onClick={() => void release()}
+              disabled={releasing}
+              className="text-sm text-muted underline-offset-2 hover:text-foreground hover:underline disabled:opacity-60"
+            >
+              {releasing ? t("releasing") : t("release")}
+            </button>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-muted">{t("shareNote")}</p>
+          {shareError ? (
+            <p className="mt-2 text-sm text-muted" role="alert">
+              {t("shareError")}
+            </p>
+          ) : null}
         </div>
       ) : null}
       <p className="mt-4 text-xs leading-relaxed text-muted">{t("privacy")}</p>
