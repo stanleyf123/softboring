@@ -18,6 +18,8 @@ export const PUBLIC_SEO_PATHS = [
   "/terms",
   "/guidelines",
   "/thanks",
+  "/digest",
+  "/year",
 ] as const;
 
 export type PublicSeoPath = (typeof PUBLIC_SEO_PATHS)[number];

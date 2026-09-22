@@ -1,5 +1,8 @@
 import { siteOrigin } from "@/lib/seo";
+import { localePrivateDisallow } from "@/lib/seo-index";
 import type { MetadataRoute } from "next";
+
+const PRIVATE_ROOTS = ["/admin", "/api/", "/account"];
 
 export default function robots(): MetadataRoute.Robots {
   const origin = siteOrigin();
@@ -9,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/api/", "/account"],
+        disallow: localePrivateDisallow(PRIVATE_ROOTS),
       },
     ],
     sitemap: `${origin}/sitemap.xml`,

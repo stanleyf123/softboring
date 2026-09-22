@@ -30,6 +30,52 @@ export type SoftSpotlightPick = {
 const DEFAULT_LIMIT = 5;
 const MIN_PRAISE = 1;
 
+/** How long one public note rests before a guest sees the next. */
+export const GUEST_SPOTLIGHT_INTERVAL_MS = 12_000;
+
+/**
+ * A calm index into a short public list. The same clock shows the same note.
+ * Reduced motion can keep this index still instead of ticking forward.
+ */
+export function rotatingSpotlightIndex(
+  count: number,
+  nowMs: number,
+  intervalMs = GUEST_SPOTLIGHT_INTERVAL_MS,
+) {
+  if (!Number.isFinite(count) || count <= 0) return 0;
+  const size = Math.floor(count);
+  const interval =
+    Number.isFinite(intervalMs) && intervalMs >= 1000
+      ? intervalMs
+      : GUEST_SPOTLIGHT_INTERVAL_MS;
+  const now = Number.isFinite(nowMs) && nowMs > 0 ? nowMs : 0;
+  const step = Math.floor(now / interval);
+  return ((step % size) + size) % size;
+}
+
+export function pickRotatingSpotlight<T>(
+  items: readonly T[],
+  nowMs: number,
+  intervalMs?: number,
+): T | null {
+  if (items.length === 0) return null;
+  return items[rotatingSpotlightIndex(items.length, nowMs, intervalMs)] ?? null;
+}
+
+/** Public card only. Nicknames and excerpts — never an email field. */
+export function toPublicSpotlightCard(pick: SoftSpotlightPick): SoftSpotlightPick {
+  return {
+    noteId: pick.noteId,
+    excerpt: pick.excerpt,
+    praiseCount: pick.praiseCount,
+    pinned: pick.pinned,
+    feeling: pick.feeling,
+    ownerNickname: pick.ownerNickname,
+    ownerFallback: pick.ownerFallback,
+    reason: pick.reason === "pinned" ? "pinned" : "praise",
+  };
+}
+
 /**
  * Gentle weekly spotlight: pinned notes first, then high-praise neighbors.
  * Caps the list so Soft Wall stays calm — not algorithmic spam.

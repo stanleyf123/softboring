@@ -13,7 +13,9 @@ import { QuietWallComposer } from "@/components/quiet-wall-composer";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
 import { WallMoodLegend } from "@/components/wall-mood-legend";
+import { GuestWallSpotlight } from "@/components/guest-wall-spotlight";
 import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
+import type { SoftSpotlightPick } from "@/lib/wall-spotlight";
 import { WallEchoComposer, WallEchoList, type WallEchoItem } from "@/components/wall-echo-panel";
 import { WallQuoteButton } from "@/components/wall-quote-button";
 import { WeekMoodChip } from "@/components/week-mood-picker";
@@ -188,6 +190,8 @@ export function WallBoard({
   initialNoteId = null,
   initialSeasonalFrame = false,
   initialWallLargerText = false,
+  guestSpotlight = [],
+  guestSpotlightIndex = 0,
 }: {
   signedIn: boolean;
   softPlus: boolean;
@@ -196,6 +200,8 @@ export function WallBoard({
   initialNoteId?: string | null;
   initialSeasonalFrame?: boolean;
   initialWallLargerText?: boolean;
+  guestSpotlight?: SoftSpotlightPick[];
+  guestSpotlightIndex?: number;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
@@ -911,6 +917,9 @@ export function WallBoard({
     return (
       <div className={`${SITE_SHELL_CLASS} pt-8`}>
         {kindness}
+        {!softPlus ? (
+          <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
+        ) : null}
         <WallSkeleton label={t("loading")} />
       </div>
     );
@@ -921,6 +930,9 @@ export function WallBoard({
       <div className={`${SITE_SHELL_CLASS} pt-8`}>
         <NeighborPresence />
         {kindness}
+        {!softPlus ? (
+          <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
+        ) : null}
         <section className="mt-6 rounded-[2rem] bg-paper px-8 py-12 shadow-card">
           <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
           <p className="mt-3 max-w-md leading-relaxed text-muted">{t("loadError")}</p>
@@ -1237,6 +1249,9 @@ export function WallBoard({
           </section>
         ) : null}
         {softPlus && !locked ? <WallMoodLegend /> : null}
+        {locked ? (
+          <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
+        ) : null}
       </div>
 
       <div className={`${SITE_SHELL_CLASS} relative mt-8`}>

@@ -156,12 +156,16 @@ test("soft activity is a signed-in read of own reviews, pins, and thanks", () =>
 
   const page = read("src/app/[locale]/account/activity/page.tsx");
   const api = read("src/app/api/account/activity/route.ts");
-  assert.match(page, /listOwnSoftActivity/);
-  assert.doesNotMatch(page, /requireSoftPlus|softPlus/);
+  const timeline = read("src/components/soft-activity-timeline.tsx");
+  assert.match(page, /listOwnSoftActivity\(user\.id\)/);
+  assert.match(page, /SoftActivityExport/);
+  assert.doesNotMatch(page, /if\s*\(\s*softPlus\s*\)/);
   assert.match(api, /getCurrentUser/);
   assert.doesNotMatch(api, /requireSoftPlus/);
+  assert.match(read("src/app/api/account/activity/export/route.ts"), /requireSoftPlus/);
   assert.match(read("src/components/account-panel.tsx"), /\/account\/activity/);
-  assert.match(read("src/components/soft-activity-timeline.tsx"), /emptyTitle/);
+  assert.match(timeline, /emptyTitle/);
+  assert.doesNotMatch(timeline, /softPlus/);
   assert.doesNotMatch(page, /stripe|RESEND|SMTP/i);
 
   for (const locale of ["messages/en.json", "messages/zh-tw.json", "messages/ja.json"]) {
