@@ -1,5 +1,6 @@
 import { AccountPanel } from "@/components/account-panel";
 import { countReviewsForUser, listReviewsForOwner, monthlyDigestForUser } from "@/db/reviews";
+import { countWallNotesForUser } from "@/db/wall";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { isEmailConfigured } from "@/lib/email";
@@ -61,6 +62,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           email={user.email}
           createdAt={user.createdAt}
           reviewCount={reviewCount}
+          wallNoteCount={countWallNotesForUser(user.id)}
           softPlus={softPlus}
           planExpiresAt={user.planExpiresAt}
           softMemory={softMemory}

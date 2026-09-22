@@ -43,6 +43,8 @@ import {
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
 import { nextShuffleSeed, shuffleWallNotes, wallShuffleFeelClass } from "@/lib/wall-shuffle";
+import { filterNotesBySoftSearch } from "@/lib/wall-soft-search";
+import { SOFT_PLUS_RAISED_PIN_LIMIT } from "@/lib/wall-pin-limit";
 import { decorativeMotion } from "@/lib/reduced-motion";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { SoftCopyLink } from "@/components/soft-copy-link";
@@ -260,6 +262,7 @@ export function WallBoard({
   const largerText =
     textOverride !== null ? textOverride : signedIn ? initialWallLargerText : storedLargerText;
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
+  const [guestQuery, setGuestQuery] = useState("");
   const [shuffleSeed, setShuffleSeed] = useState<number | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const drag = useRef<{
@@ -283,11 +286,11 @@ export function WallBoard({
   const visibleNotes = useMemo(() => {
     const ordered =
       !softPlus || locked
-        ? notes
+        ? filterNotesBySoftSearch(notes, guestQuery)
         : withSortStacking(sortWallNotes(filterWallNotes(notes as FullNote[], filters), sort));
     if (shuffleSeed == null) return ordered;
     return withSortStacking(shuffleWallNotes(ordered, shuffleSeed));
-  }, [notes, filters, sort, softPlus, locked, shuffleSeed]);
+  }, [notes, filters, sort, softPlus, locked, shuffleSeed, guestQuery]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
 
@@ -975,6 +978,47 @@ export function WallBoard({
                 <span className="mt-0.5 block text-xs text-muted">{t("largerTextHint")}</span>
               </span>
             </label>
+            {locked && notes.length > 0 ? (
+              <form
+                className="mt-4 max-w-lg rounded-[1.5rem] bg-cream/80 px-4 py-4 shadow-card print:hidden"
+                role="search"
+                aria-label={t("guestSearchLabel")}
+                data-wall-guest-search=""
+                onSubmit={(event) => event.preventDefault()}
+              >
+                <p className="font-display text-lg tracking-tight">{t("guestSearchTitle")}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">{t("guestSearchLead")}</p>
+                <label className="mt-3 block">
+                  <span className="sr-only">{t("guestSearchLabel")}</span>
+                  <input
+                    type="search"
+                    value={guestQuery}
+                    onChange={(event) => setGuestQuery(event.target.value)}
+                    placeholder={t("guestSearchPlaceholder")}
+                    className="w-full rounded-full border border-line bg-paper px-4 py-2.5 text-sm outline-none focus:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  />
+                </label>
+                {guestQuery.trim() ? (
+                  <div className="mt-3 flex flex-wrap items-center gap-3">
+                    <p className="text-sm text-muted" role="status">
+                      {visibleNotes.length === 0
+                        ? t("guestSearchEmpty")
+                        : t("guestSearchResult", {
+                            shown: visibleNotes.length,
+                            total: notes.length,
+                          })}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setGuestQuery("")}
+                      className="rounded-full border border-line px-4 py-2 text-sm text-muted hover:text-foreground"
+                    >
+                      {t("guestSearchClear")}
+                    </button>
+                  </div>
+                ) : null}
+              </form>
+            ) : null}
             {notes.length > 1 ? (
               <div className="mt-4 flex max-w-lg flex-wrap items-center gap-3">
                 <button
@@ -1276,18 +1320,34 @@ export function WallBoard({
             ) : null}
             {notes.length > 0 && visibleNotes.length === 0 ? (
               <div className="absolute left-8 top-8 max-w-md rounded-[2rem] bg-cream/90 px-8 py-10 shadow-card">
-                <h2 className="font-display text-2xl tracking-tight">{t("filterEmptyTitle")}</h2>
-                <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    writeHideDemoPreference(false);
-                    setFilters(EMPTY_WALL_FILTERS);
-                  }}
-                  className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
-                >
-                  {t("filterClear")}
-                </button>
+                {softPlus && !locked ? (
+                  <>
+                    <h2 className="font-display text-2xl tracking-tight">{t("filterEmptyTitle")}</h2>
+                    <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        writeHideDemoPreference(false);
+                        setFilters(EMPTY_WALL_FILTERS);
+                      }}
+                      className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+                    >
+                      {t("filterClear")}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="font-display text-2xl tracking-tight">{t("guestSearchEmptyTitle")}</h2>
+                    <p className="mt-3 leading-relaxed text-muted">{t("guestSearchEmpty")}</p>
+                    <button
+                      type="button"
+                      onClick={() => setGuestQuery("")}
+                      className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+                    >
+                      {t("guestSearchClear")}
+                    </button>
+                  </>
+                )}
               </div>
             ) : null}
             {visibleNotes.map((note) => {
@@ -1851,6 +1911,9 @@ export function WallBoard({
               <div className="mt-6 space-y-3 rounded-[1.5rem] bg-cream/80 px-4 py-4">
                 <p className="font-display text-lg tracking-tight">{t("unshareTitle")}</p>
                 <p className="text-sm leading-relaxed text-muted">{t("unshareHint")}</p>
+                <p className="text-sm leading-relaxed text-muted" data-wall-raised-pin={SOFT_PLUS_RAISED_PIN_LIMIT}>
+                  {t("pinRaisedHint", { count: SOFT_PLUS_RAISED_PIN_LIMIT })}
+                </p>
                 <div className="flex flex-wrap gap-3">
                   <button
                     type="button"

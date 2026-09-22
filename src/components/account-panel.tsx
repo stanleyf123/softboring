@@ -22,6 +22,7 @@ import {
 import { applyNightPreference } from "@/lib/night-mode";
 import { SoftBloomPreference } from "@/components/soft-save-bloom";
 import { SoftCopyLink } from "@/components/soft-copy-link";
+import { softDeskSize } from "@/lib/soft-desk-size";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
@@ -56,6 +57,7 @@ export function AccountPanel({
   email,
   createdAt,
   reviewCount,
+  wallNoteCount,
   softPlus,
   planExpiresAt = null,
   softMemory = null,
@@ -77,6 +79,7 @@ export function AccountPanel({
   email: string;
   createdAt: string;
   reviewCount: number;
+  wallNoteCount: number;
   softPlus: boolean;
   planExpiresAt?: string | null;
   softMemory?: SoftMemory | null;
@@ -123,6 +126,7 @@ export function AccountPanel({
     return [DEFAULT_TIMEZONE, ...withCurrent.filter((item) => item !== DEFAULT_TIMEZONE)];
   }, [zone]);
   const [packQuestions, setPackQuestions] = useState(customQuestions);
+  const deskSize = softDeskSize(reviewCount, wallNoteCount);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
   const identity = oauthIdentityLabel(email);
   const expiresLabel =
@@ -217,6 +221,16 @@ export function AccountPanel({
               ) : null}
             </div>
           </dl>
+
+          <div
+            className="mt-8 rounded-[1.5rem] bg-cream/80 px-5 py-5"
+            data-soft-data-size=""
+          >
+            <p className="font-display text-lg tracking-tight">{t("dataSizeTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              {t("dataSizeBody", { reviews: deskSize.reviews, notes: deskSize.notes })}
+            </p>
+          </div>
 
           <div className="mt-8 rounded-[1.5rem] bg-blush/40 px-5 py-5">
             <p className="font-display text-lg tracking-tight">{t("activityTitle")}</p>
