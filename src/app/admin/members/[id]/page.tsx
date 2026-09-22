@@ -2,6 +2,7 @@ import { AdminDeleteButton } from "@/components/admin-delete-button";
 import { AdminPlanButtons } from "@/components/admin-plan-buttons";
 import { AdminShell } from "@/components/admin-shell";
 import { getAdminMember, listAdminReviewsForUser } from "@/db/admin";
+import { countRedeemedInvites, joinedViaInvite } from "@/db/invites";
 import { listPaymentsForUser } from "@/db/payments";
 import { listAdminWallNotesForUser } from "@/db/wall";
 import { adminCopy, paymentKindLabel, paymentStatusLabel } from "@/lib/admin-copy";
@@ -47,6 +48,8 @@ export default async function AdminMemberDetailPage({ params }: Props) {
     [copy.stripePrice, member.stripePriceId ?? dash],
     [copy.reviews, String(member.reviewCount)],
     [copy.wallNotes, String(member.wallNoteCount)],
+    [copy.invitesSent, String(countRedeemedInvites(member.id))],
+    [copy.joinedViaInvite, joinedViaInvite(member.id) ? copy.yes : copy.no],
   ] as const;
 
   return (

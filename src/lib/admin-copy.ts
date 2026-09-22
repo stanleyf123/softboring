@@ -28,6 +28,7 @@ export const adminCopy = {
     free: "Free",
     reviews: "回顧",
     wallNotes: "牆上便利貼",
+    invites: "已兌換邀請",
     succeededPayments: "成功付款",
     revenue: "收入",
     signupsTitle: "最近八週註冊",
@@ -75,6 +76,8 @@ export const adminCopy = {
     stripePrice: "Stripe 價格",
     reviews: "回顧",
     wallNotes: "牆上便利貼",
+    invitesSent: "邀請成功",
+    joinedViaInvite: "經由邀請加入",
     planHint: "手動改方案是給補償或客服用的，不會向 Stripe 收費，也不會建立訂閱。",
     listHint:
       "在列表上就能給 Soft+：按「設為 Soft+」，確認後立刻生效。不必先點進會員頁。",

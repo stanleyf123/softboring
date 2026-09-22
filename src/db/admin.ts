@@ -57,6 +57,7 @@ export type AdminCounts = {
   paid: number;
   free: number;
   wallNotes: number;
+  invitesRedeemed: number;
   payments: PaymentRevenueSummary;
 };
 
@@ -77,7 +78,18 @@ export function adminCounts(): AdminCounts {
   const wallNotes = (
     db.prepare(`SELECT COUNT(*) AS n FROM wall_notes`).get() as { n: number }
   ).n;
-  return { users, reviews, paid, free, wallNotes, payments: paymentRevenueSummary() };
+  const invitesRedeemed = (
+    db.prepare(`SELECT COUNT(*) AS n FROM invites`).get() as { n: number }
+  ).n;
+  return {
+    users,
+    reviews,
+    paid,
+    free,
+    wallNotes,
+    invitesRedeemed,
+    payments: paymentRevenueSummary(),
+  };
 }
 
 export type AdminSignupWeek = {

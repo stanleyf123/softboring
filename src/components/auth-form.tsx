@@ -4,7 +4,7 @@ import { GoogleMark, LineMark } from "@/components/oauth-marks";
 import { Link, useRouter } from "@/i18n/navigation";
 import { oauthStartPath, type OAuthProvider } from "@/lib/oauth-config";
 import { safeAppPath } from "@/lib/public-origin";
-import { registerSuccessPath } from "@/lib/thanks-path";
+import { registerSuccessPath, withInvitedFlag } from "@/lib/thanks-path";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { SoftMark } from "./soft-doodles";
@@ -32,14 +32,23 @@ function errorMessageKey(code: string | undefined): ErrorKey | "generic" {
   return "generic";
 }
 
+function authQuery(nextPath?: string | null, inviteCode?: string | null) {
+  const query: Record<string, string> = {};
+  if (nextPath) query.next = nextPath;
+  if (inviteCode) query.invite = inviteCode;
+  return Object.keys(query).length > 0 ? query : null;
+}
+
 export function AuthForm({
   mode,
   nextPath,
+  inviteCode = null,
   oauth = { google: false, line: false },
   oauthError = null,
 }: {
   mode: Mode;
   nextPath?: string | null;
+  inviteCode?: string | null;
   oauth?: { google: boolean; line: boolean };
   oauthError?: string | null;
 }) {
@@ -61,6 +70,7 @@ export function AuthForm({
     const params = new URLSearchParams();
     params.set("locale", locale);
     if (nextPath) params.set("next", nextPath);
+    if (inviteCode) params.set("invite", inviteCode);
     return `${oauthStartPath(provider)}?${params.toString()}`;
   }
 
@@ -73,14 +83,23 @@ export function AuthForm({
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+          ...(mode === "register" && inviteCode ? { invite: inviteCode } : {}),
+        }),
       });
-      const data = (await response.json().catch(() => ({}))) as { error?: string };
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        inviteRedeemed?: boolean;
+      };
       if (!response.ok) {
         setError(response.status === 429 ? "rate_limited" : errorMessageKey(data.error));
         return;
       }
-      router.push(destination);
+      const dest =
+        mode === "register" && data.inviteRedeemed ? withInvitedFlag(destination) : destination;
+      router.push(dest);
       router.refresh();
     } catch {
       setError("generic");
@@ -228,13 +247,23 @@ export function AuthForm({
         </button>
         </form>
 
+        {mode === "register" && inviteCode ? (
+          <p className="mt-6 rounded-[1.25rem] bg-mint/70 px-4 py-3 text-sm leading-relaxed">
+            {t("inviteHint")}
+          </p>
+        ) : null}
+
         <p className="mt-6 text-sm leading-relaxed text-muted">{t("guestHint")}</p>
 
         {mode === "login" ? (
           <p className="mt-4 text-sm text-muted">
             {t("toRegister")}{" "}
             <Link
-              href={nextPath ? { pathname: "/register", query: { next: nextPath } } : "/register"}
+              href={
+                authQuery(nextPath, inviteCode)
+                  ? { pathname: "/register", query: authQuery(nextPath, inviteCode)! }
+                  : "/register"
+              }
               className="text-accent hover:text-foreground"
             >
               {t("toRegisterLink")}
@@ -245,7 +274,11 @@ export function AuthForm({
             <p className="mt-4 text-sm text-muted">
               {t("toLogin")}{" "}
               <Link
-                href={nextPath ? { pathname: "/login", query: { next: nextPath } } : "/login"}
+                href={
+                  authQuery(nextPath, inviteCode)
+                    ? { pathname: "/login", query: authQuery(nextPath, inviteCode)! }
+                    : "/login"
+                }
                 className="text-accent hover:text-foreground"
               >
                 {t("toLoginLink")}

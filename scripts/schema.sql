@@ -212,6 +212,25 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_created
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
   ON notifications (user_id, read_at);
 
+CREATE TABLE IF NOT EXISTS invite_codes (
+  code TEXT PRIMARY KEY,
+  inviter_id TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (inviter_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS invites (
+  id TEXT PRIMARY KEY,
+  inviter_id TEXT NOT NULL,
+  invitee_id TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL,
+  redeemed_at TEXT NOT NULL,
+  FOREIGN KEY (inviter_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (invitee_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_invites_inviter ON invites (inviter_id);
+
 CREATE TABLE IF NOT EXISTS rate_limits (
   key TEXT PRIMARY KEY,
   hits INTEGER NOT NULL,

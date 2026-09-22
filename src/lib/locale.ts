@@ -15,3 +15,10 @@ export function htmlLang(locale: AppLocale): string {
   }
   return locale;
 }
+
+/** Stripe Checkout locale. URL segment `zh-tw` must not be sent as-is. */
+export function stripeCheckoutLocale(locale: AppLocale): "en" | "zh-TW" | "ja" {
+  if (locale === "zh-tw") return "zh-TW";
+  if (locale === "ja") return "ja";
+  return "en";
+}

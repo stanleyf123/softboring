@@ -1,5 +1,6 @@
 import { routing, type AppLocale } from "@/i18n/routing";
 import { safeAppPath } from "@/lib/public-origin";
+import { hasLocale } from "next-intl";
 
 export const WELCOME_PATH = "/welcome";
 export const PLUS_THANKS_PATH = "/thanks/plus";
@@ -20,13 +21,24 @@ export function registerSuccessPath(nextPath?: string | null) {
   return withNextQuery(WELCOME_PATH, next);
 }
 
+export function withInvitedFlag(path: string) {
+  const [pathname, search = ""] = path.split("?");
+  const params = new URLSearchParams(search);
+  params.set("invited", "1");
+  const query = params.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
 /** Existing OAuth members keep `returnTo`. First-time OAuth lands on welcome. */
 export function oauthPostAuthPath(
   locale: AppLocale,
   returnTo: string | null | undefined,
   created: boolean,
+  invited = false,
 ) {
-  const safeLocale: AppLocale = locale === "zh-tw" ? "zh-tw" : routing.defaultLocale;
+  const safeLocale: AppLocale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
   if (!created) {
     const dest = safeAppPath(returnTo, "/account");
     if (dest === "/") return `/${safeLocale}`;
@@ -34,8 +46,9 @@ export function oauthPostAuthPath(
   }
 
   const dest = safeAppPath(returnTo, WELCOME_PATH);
-  if (dest === WELCOME_PATH || dest === "/account" || dest === "/") {
-    return `/${safeLocale}${WELCOME_PATH}`;
-  }
-  return `/${safeLocale}${withNextQuery(WELCOME_PATH, dest)}`;
+  const path =
+    dest === WELCOME_PATH || dest === "/account" || dest === "/"
+      ? `/${safeLocale}${WELCOME_PATH}`
+      : `/${safeLocale}${withNextQuery(WELCOME_PATH, dest)}`;
+  return invited ? withInvitedFlag(path) : path;
 }

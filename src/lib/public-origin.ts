@@ -1,3 +1,5 @@
+import { routing } from "@/i18n/routing";
+
 /**
  * Public site origin for absolute redirects.
  *
@@ -38,7 +40,7 @@ export function safeAppPath(value: string | null | undefined, fallback = "/accou
   if (url.origin !== "https://app.local") return fallback;
 
   let pathname = url.pathname;
-  for (const locale of ["en", "zh-tw"] as const) {
+  for (const locale of routing.locales) {
     if (pathname === `/${locale}`) {
       pathname = "/";
       break;

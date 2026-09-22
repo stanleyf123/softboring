@@ -63,6 +63,7 @@
   "LocaleSwitcher": {
     "en": "EN",
     "zhTW": "繁中",
+    "ja": "日",
     "label": "語言"
   },
   "Home": {
@@ -223,6 +224,7 @@
     "toLogin": "已經有帳號？",
     "toLoginLink": "登入",
     "guestHint": "如果這個瀏覽器裡已經用訪客身分寫過，登入時會把那些回顧接到你的帳號。",
+    "inviteHint": "朋友把這扇門留開了。建立桌子時，會輕輕連到對方。",
     "error": {
       "invalid_credentials": "電子郵件或密碼不對。",
       "email_taken": "這個信箱已經有帳號了。試試登入。",
@@ -311,7 +313,21 @@
     "customSave": "儲存題目",
     "customSaved": "已儲存。",
     "customError": "現在沒能存下這些題目。",
-    "export": "匯出回顧"
+    "export": "匯出回顧",
+    "inviteTitle": "邀請一位朋友",
+    "inviteBody": "Soft+ 可以分享一扇小小的門。有人用你的連結新坐下時，牆上的便利貼會多一顆小星星——是謝謝，不是收費。",
+    "inviteLockedTitle": "給朋友的一扇小門",
+    "inviteLockedBody": "Soft+ 可以做出專屬邀請連結。只有新朋友在建立桌子時可以用它。",
+    "inviteLockedCta": "看看 Soft+",
+    "inviteLinkLabel": "你的邀請連結",
+    "inviteCopy": "複製連結",
+    "inviteCopied": "複製好了。輕輕交給對方就好。",
+    "inviteMake": "做出我的邀請連結",
+    "inviteMaking": "正在做…",
+    "inviteError": "剛剛做不出這個連結。",
+    "inviteCount": "{count} 位朋友坐下了",
+    "inviteReward": "軟軟牆上會有一顆小星星。不會多給 Soft+ 天數，只是安靜的謝謝。",
+    "inviteEmpty": "還沒有人用過。沒關係。"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -404,6 +420,7 @@
     "loading": "正在鋪軟木板",
     "dragHint": "用手機時，按住便利貼拖移——拖的時候木板會先停住。",
     "plusBadge": "Soft+",
+    "inviteBadge": "小星星",
     "pin": "釘到最上面",
     "unpin": "取消釘選",
     "pinned": "已釘選",
@@ -559,6 +576,7 @@
     "welcomeTitle": "你的小桌子好了。茶也在煮。",
     "welcomeBody": "門就是這樣開的。下面有幾個柔軟的下一步，想做再做。",
     "welcomeBodyGuest": "有一張小桌子在等你。可以先註冊，或先寫本週回顧。",
+    "invitedNote": "朋友的小星星知道你坐下了。",
     "nextHeading": "幾個柔軟的下一步",
     "stepReviewTitle": "寫第一份回顧",
     "stepReviewBody": "六個小問題。你的會從空白開始。",

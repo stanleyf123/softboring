@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { redeemInviteCode } from "@/db/invites";
 import { createUser } from "@/db/users";
+import { normalizeInviteCode } from "@/lib/invite";
 import {
   claimGuestReviewsForUser,
   issueSession,
@@ -15,7 +17,11 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { email?: unknown; password?: unknown };
+    const body = (await request.json()) as {
+      email?: unknown;
+      password?: unknown;
+      invite?: unknown;
+    };
     const limited = enforceAuthRateLimit(
       request,
       "register",
@@ -27,11 +33,16 @@ export async function POST(request: Request) {
     const password = parseNewPassword(body.password);
     const passwordHash = await hashPassword(password);
     const user = createUser(email, passwordHash);
+    const invite = normalizeInviteCode(body.invite);
+    const inviteRedeemed = invite
+      ? redeemInviteCode({ code: invite, inviteeId: user.id })
+      : false;
     const token = issueSession(user.id);
     await claimGuestReviewsForUser(user.id);
 
     const response = NextResponse.json({
       user: { email: user.email, createdAt: user.createdAt },
+      inviteRedeemed,
     });
     response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
     return response;

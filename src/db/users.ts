@@ -190,6 +190,8 @@ export function deleteUser(id: string) {
     db.prepare(`DELETE FROM oauth_accounts WHERE user_id = ?`).run(id);
     db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(id);
     db.prepare(`DELETE FROM reviews WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM invites WHERE inviter_id = ? OR invitee_id = ?`).run(id, id);
+    db.prepare(`DELETE FROM invite_codes WHERE inviter_id = ?`).run(id);
     return db.prepare(`DELETE FROM users WHERE id = ?`).run(id).changes;
   });
   return run();

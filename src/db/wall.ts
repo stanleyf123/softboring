@@ -37,6 +37,7 @@ export type WallNoteRow = {
   owner_plan_status: string | null;
   owner_nickname: string | null;
   owner_email: string | null;
+  invite_redeemed: number;
 };
 
 export type WallNoteListItem = {
@@ -55,6 +56,7 @@ export type WallNoteListItem = {
   ownerSoftPlus: boolean;
   ownerNickname: string | null;
   ownerFallback: string | null;
+  ownerInviteBadge: boolean;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
 };
 
@@ -92,7 +94,8 @@ const NOTE_SELECT = `
          r.created_at AS review_created_at,
          u.plan AS owner_plan, u.plan_status AS owner_plan_status,
          u.nickname AS owner_nickname, u.email AS owner_email,
-         (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count
+         (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count,
+         (SELECT COUNT(*) FROM invites i WHERE i.inviter_id = n.user_id) AS invite_redeemed
   FROM wall_notes n
   JOIN reviews r ON r.id = n.review_id
   LEFT JOIN users u ON u.id = n.user_id
@@ -118,6 +121,7 @@ function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem
       allowEmailFallback: false,
     }),
     ownerFallback: emailLocalFallback(row.owner_email),
+    ownerInviteBadge: row.invite_redeemed > 0,
     stickers: [],
   };
 }

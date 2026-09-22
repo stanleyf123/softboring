@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { stripeCheckoutLocale } from "@/lib/locale";
 import { publicOrigin } from "@/lib/public-origin";
 import { getStripe, getStripeConfig, isStripeConfigured } from "@/lib/stripe";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
     customer_email: user.stripeCustomerId ? undefined : user.email,
     metadata: { userId: user.id },
     subscription_data: { metadata: { userId: user.id } },
-    locale: (locale === "zh-tw" ? "zh-TW" : "en") as "en" | "zh-TW",
+    locale: stripeCheckoutLocale(locale),
     allow_promotion_codes: true,
   });
 

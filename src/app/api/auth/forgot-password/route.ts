@@ -6,12 +6,13 @@ import { isEmailConfigured, sendEmail } from "@/lib/email";
 import { publicOrigin } from "@/lib/public-origin";
 import { enforceAuthRateLimit } from "@/lib/rate-limit";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { hasLocale } from "next-intl";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function parseLocale(value: unknown): AppLocale {
-  if (value === "en" || value === "zh-tw") {
+  if (typeof value === "string" && hasLocale(routing.locales, value)) {
     return value;
   }
   return routing.defaultLocale;
@@ -22,6 +23,12 @@ function resetCopy(locale: AppLocale, resetUrl: string) {
     return {
       subject: "重設 Soft Boring Weekly 密碼",
       text: `有人（希望是你）申請重設 Soft Boring Weekly 的密碼。\n\n開啟這個連結（一小時內有效）：\n${resetUrl}\n\n若不是你本人，可以忽略這封信。密碼在你完成重設前不會改變。`,
+    };
+  }
+  if (locale === "ja") {
+    return {
+      subject: "Soft Boring Weekly のパスワードをリセット",
+      text: `誰か（あなたであってほしい）が Soft Boring Weekly のパスワード再設定を頼みました。\n\n一時間以内に、このリンクを開いてください：\n${resetUrl}\n\n身に覚えがなければ、このメールは忘れて大丈夫。再設定が終わるまで、パスワードは変わりません。`,
     };
   }
   return {

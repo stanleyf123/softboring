@@ -37,6 +37,8 @@ Pages:
 - `/en/trends` and `/zh-tw/trends` (Soft+)
 - `/en/wall` and `/zh-tw/wall` (Soft Wall / 軟軟牆)
 
+The same routes exist under `/ja` (日本語), including `/ja/invite/[code]` which redirects into register.
+
 The header shows **Pricing**, **Soft Wall**, plus **Log in** or **Account** (and an inbox bell when signed in). It never links to admin. On small screens, member areas (home / review / history / wall / account) use a bottom nav; desktop keeps the top nav.
 
 Password reset: `POST /api/auth/forgot-password` always creates a hashed token when the email exists. If `RESEND_API_KEY` or `SMTP_HOST` is set, it sends the link. If email is not configured, the UI says so (without revealing whether the address has an account beyond that server-level message) and the reset URL is printed only in the server log. `POST /api/auth/reset-password` consumes a valid unused token.
@@ -45,7 +47,7 @@ Login, register, forgot-password, and OAuth start/callback are **rate-limited** 
 
 The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
-SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md).
+SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md).
 
 Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
@@ -150,8 +152,9 @@ Password reset and optional weekly reminder email use `RESEND_API_KEY` or SMTP w
 | --- | --- | --- |
 | English (default) | `en` | `/en` |
 | 繁體中文 | `zh-tw` | `/zh-tw` |
+| 日本語 | `ja` | `/ja` |
 
-Use `/zh-tw` only (not `/zh-TW`).
+Use `/zh-tw` only (not `/zh-TW`). Japanese is `/ja`. See [docs/ja-and-invites.md](./docs/ja-and-invites.md).
 
 ## Run locally
 
@@ -162,7 +165,7 @@ npm run db:migrate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/en` or `/zh-tw`.
+Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/en`, `/zh-tw`, or `/ja`.
 
 `npm run db:migrate` creates tables in `SQLITE_PATH` (default `./data/softboring.sqlite`). The app also applies the same schema on first database use, but run migrate after pull so the file exists before `next start`. After this change, migrate again so `oauth_accounts` exists and `users.password_hash` can be null for OAuth-only members. Older billing columns on `users` (`plan`, `stripe_customer_id`, …) are still added if missing.
 
@@ -232,7 +235,7 @@ Start URLs (the login buttons hit these):
 - `https://softboring.com/api/auth/oauth/google`
 - `https://softboring.com/api/auth/oauth/line`
 
-`next` / `returnTo` query params are honored if they are already a safe in-app path (never `/admin`). After success the app redirects to `/{locale}{path}` (locales are `en` / `zh-tw` only).
+`next` / `returnTo` query params are honored if they are already a safe in-app path (never `/admin`). After success the app redirects to `/{locale}{path}` (locales are `en` / `zh-tw` / `ja`). A first-time Google or LINE account can also redeem `invite` from that start URL.
 
 ### Google Cloud Console
 

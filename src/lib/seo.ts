@@ -30,14 +30,20 @@ export function localizedPath(locale: AppLocale, path: string) {
 }
 
 export function localeOg(locale: AppLocale) {
-  return locale === "zh-tw" ? "zh_TW" : "en_US";
+  if (locale === "zh-tw") return "zh_TW";
+  if (locale === "ja") return "ja_JP";
+  return "en_US";
+}
+
+export function hreflangTag(locale: AppLocale) {
+  if (locale === "zh-tw") return "zh-TW";
+  return locale;
 }
 
 export function hreflangLanguages(origin: string, path: string): Record<string, string> {
   const languages: Record<string, string> = {};
   for (const item of routing.locales) {
-    languages[item === "zh-tw" ? "zh-TW" : item] =
-      `${origin}${localizedPath(item, path)}`;
+    languages[hreflangTag(item)] = `${origin}${localizedPath(item, path)}`;
   }
   languages["x-default"] = `${origin}${localizedPath(routing.defaultLocale, path)}`;
   return languages;
@@ -93,7 +99,9 @@ export function pageMetadata({
       url,
       siteName: SITE_NAME,
       locale: localeOg(locale),
-      alternateLocale: locale === "zh-tw" ? ["en_US"] : ["zh_TW"],
+      alternateLocale: routing.locales
+        .filter((item) => item !== locale)
+        .map((item) => localeOg(item)),
       type: "website",
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
@@ -126,7 +134,7 @@ export function siteJsonLd(origin = siteOrigin()) {
         "@id": `${origin}/#website`,
         name: SITE_NAME,
         url: origin,
-        inLanguage: ["en", "zh-TW"],
+        inLanguage: ["en", "zh-TW", "ja"],
         publisher: { "@id": `${origin}/#organization` },
       },
       {
