@@ -68,6 +68,12 @@ export function ensureUserSettingsColumns(db: Database.Database) {
   ensureColumn(db, "user_settings", "reminder_last_sent_at", "TEXT");
   ensureColumn(db, "user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "user_settings", "preferred_wall_color", "TEXT");
+  ensureColumn(
+    db,
+    "user_settings",
+    "timezone",
+    "TEXT NOT NULL DEFAULT 'Asia/Taipei'",
+  );
 }
 
 export function ensureWallNotePinned(db: Database.Database) {

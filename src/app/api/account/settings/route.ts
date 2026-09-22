@@ -5,6 +5,7 @@ import {
   updateUserSettings,
 } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
+import { isIanaTimeZone } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export const runtime = "nodejs";
@@ -32,6 +33,7 @@ export async function PATCH(request: Request) {
       reminderEnabled?: unknown;
       reminderWeekday?: unknown;
       preferredWallColor?: unknown;
+      timezone?: unknown;
     };
 
     let preferredWallColor: WallColor | null | undefined;
@@ -44,6 +46,14 @@ export async function PATCH(request: Request) {
       preferredWallColor = body.preferredWallColor;
     } else {
       preferredWallColor = undefined;
+    }
+
+    let timezone: string | undefined;
+    if (body.timezone !== undefined) {
+      if (typeof body.timezone !== "string" || !isIanaTimeZone(body.timezone.trim())) {
+        return NextResponse.json({ error: "invalid_timezone" }, { status: 400 });
+      }
+      timezone = body.timezone.trim();
     }
 
     const settings = updateUserSettings(user.id, {
@@ -66,6 +76,7 @@ export async function PATCH(request: Request) {
           ? undefined
           : clampWeekday(body.reminderWeekday),
       preferredWallColor,
+      timezone,
     });
 
     return NextResponse.json({ settings });

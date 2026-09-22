@@ -193,14 +193,22 @@ export function updateUserBilling(userId: string, patch: BillingPatch) {
     }).changes;
 }
 
+/** Takes this member's notes off Soft Wall. Comments and stickers on them follow. */
+export function optOutSoftWallNotes(userId: string) {
+  return getDb().prepare(`DELETE FROM wall_notes WHERE user_id = ?`).run(userId).changes;
+}
+
+/**
+ * Closes the desk. Soft Wall notes are opted out first, then the user row
+ * goes away and SQLite foreign keys cascade the rest (reviews, sessions,
+ * settings, comments they left elsewhere, invites, …). Payment rows and
+ * redeemed gift codes stay, with the user id cleared.
+ */
 export function deleteUser(id: string) {
   const db = getDb();
+  db.pragma("foreign_keys = ON");
   const run = db.transaction(() => {
-    db.prepare(`DELETE FROM oauth_accounts WHERE user_id = ?`).run(id);
-    db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(id);
-    db.prepare(`DELETE FROM reviews WHERE user_id = ?`).run(id);
-    db.prepare(`DELETE FROM invites WHERE inviter_id = ? OR invitee_id = ?`).run(id, id);
-    db.prepare(`DELETE FROM invite_codes WHERE inviter_id = ?`).run(id);
+    optOutSoftWallNotes(id);
     return db.prepare(`DELETE FROM users WHERE id = ?`).run(id).changes;
   });
   return run();

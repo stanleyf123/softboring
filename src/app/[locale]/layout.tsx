@@ -1,6 +1,7 @@
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { OnboardingCard } from "@/components/onboarding-card";
+import { PwaInstallTip } from "@/components/pwa-install-tip";
 import { PwaRegister } from "@/components/pwa-register";
 import { QuietWritingExit, QuietWritingSync } from "@/components/quiet-writing";
 import { SoftShortcutsHelp } from "@/components/soft-shortcuts-help";
@@ -125,6 +126,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             unreadNotifications={unreadNotifications}
           />
           <MobileBottomNav email={user?.email ?? null} />
+          <PwaInstallTip />
           {user && settings ? (
             <OnboardingCard
               reviewCount={reviewCount}

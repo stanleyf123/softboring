@@ -324,7 +324,7 @@
     "reminderEmailOff": "Email is not configured on this server yet, so reminders will no-op until RESEND_API_KEY or SMTP is set.",
     "reminderSaving": "Saving…",
     "digestTitle": "This month",
-    "digestBody": "A quiet tally from the reviews saved this calendar month.",
+    "digestBody": "A quiet tally from the reviews saved this calendar month, in your timezone.",
     "digestOpen": "Open full digest",
     "digest": "Monthly digest",
     "digestCountLabel": "Reviews",
@@ -377,7 +377,24 @@
     "giftErrorMissing": "We could not find that gift code.",
     "giftErrorUsed": "That gift was already used.",
     "giftErrorAlreadyPlus": "You're already on Soft+, so this gift stays unused.",
-    "giftErrorRate": "A little too many tries. Sit with the kettle, then try again."
+    "giftErrorRate": "A little too many tries. Sit with the kettle, then try again.",
+    "timezoneTitle": "Your clock",
+    "timezoneBody": "Weekday reminders and “this month” follow this timezone. The default is Taipei.",
+    "timezoneLabel": "Timezone",
+    "timezoneNote": "The reminder job still wakes on the server’s clock. It then checks whether today is your chosen weekday in this timezone.",
+    "timezoneSaving": "Saving…",
+    "timezoneSaved": "Saved.",
+    "leaveTitle": "Leave softly",
+    "leaveBody": "If this desk has been enough, you can close it. Your reviews go with you, and your notes come down off Soft Wall — neighbors simply won’t see them. A quiet goodbye, not a warning label.",
+    "leaveEmailHint": "This desk’s email is {email}.",
+    "leavePhraseLabel": "Type Soft Boring to confirm",
+    "leavePhrasePlaceholder": "Soft Boring",
+    "leaveEmailLabel": "And the email on this desk",
+    "leaveConfirm": "Delete my account",
+    "leaveWorking": "Closing the desk…",
+    "leaveErrorPhrase": "Type Soft Boring, just like that.",
+    "leaveErrorEmail": "That email doesn’t match this desk.",
+    "leaveError": "Could not close the desk just now."
   },
   "Digest": {
     "eyebrow": "Soft+ · in-app only",
@@ -404,7 +421,8 @@
     "lockedCta": "See Soft+",
     "signedOutBody": "Log in on Soft+ to open this month’s digest.",
     "loginCta": "Log in",
-    "seeYear": "Open soft year"
+    "seeYear": "Open soft year",
+    "timezoneNote": "This month follows {zone}."
   },
   "SeasonalPacks": {
     "title": "Seasonal question packs",
@@ -744,7 +762,7 @@
     "s5Title": "Sharing and processors",
     "s5Body": "Stripe processes payments. If we send email, we use Resend or an SMTP provider you configure. Hosting and backups are on the operator’s server (SQLite on disk). Shared Soft Wall content is visible to Soft+ members you do not personally know; sharing is off by default.",
     "s6Title": "Retention and your choices",
-    "s6Body": "We keep account and review data until you delete the account (or an operator deletes it for you). You can take a note off Soft Wall at any time. You can turn weekly reminders off on the account page. Signed-in Free accounts can download the latest four open reviews as a JSON file from Account — no email required. Soft+ can still export the fuller history. To request deletion, sign in and contact the operator. This policy may be updated; the date above will change."
+    "s6Body": "We keep account and review data until you delete the account from the account page (or an operator deletes it for you). Deleting the account takes your reviews with you and lifts your notes off Soft Wall. You can still take a single note off Soft Wall at any time. You can turn weekly reminders off, and choose a timezone for reminders and this month’s digest, on the account page. Signed-in Free accounts can download the latest four open reviews as a JSON file from Account — no email required. Soft+ can still export the fuller history. This policy may be updated; the date above will change."
   },
   "Terms": {
     "title": "Terms of Use",
@@ -762,7 +780,7 @@
     "s5Title": "Limitation of liability",
     "s5Body": "The service is a writing tool, not medical, legal, or therapeutic advice. To the extent allowed by law, we are not liable for lost reviews, downtime, or indirect damages. Our total liability for a claim is limited to the amount you paid us in the 12 months before the claim, or zero if you are on Free.",
     "s6Title": "Ending the agreement",
-    "s6Body": "You may stop using the service and request account deletion. We may suspend accounts that break these terms or harm the community wall. The privacy policy explains how data is handled after deletion. These terms are governed by the laws applicable to the operator unless a mandatory consumer law says otherwise.",
+    "s6Body": "You may stop using the service and delete the account from the account page. We may suspend accounts that break these terms or harm the community wall. The privacy policy explains how data is handled after deletion. These terms are governed by the laws applicable to the operator unless a mandatory consumer law says otherwise.",
     "guidelinesLink": "Soft Wall guidelines — a quieter etiquette page"
   },
   "Thanks": {
@@ -1032,5 +1050,12 @@
     "s5Body": "If something feels unkind or out of place, Soft+ members can leave a soft flag for operators. We may hide notes that break these guidelines. We prefer a quiet fix over a loud fight.",
     "s6Title": "Soft Boring tone",
     "s6Body": "This is a corkboard, not a feed. Slow is fine. Silence is fine. Come when the kettle's on — leave when you're done."
+  },
+  "Pwa": {
+    "title": "A quieter home screen",
+    "body": "This browser can keep Soft Boring on your home screen, like a small notebook beside the kettle. We’ll only mention it once.",
+    "iosBody": "On iPhone or iPad, open Share, then Add to Home Screen. We’ll only mention it once.",
+    "install": "Add softly",
+    "dismiss": "Not now"
   }
 }

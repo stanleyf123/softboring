@@ -3,6 +3,7 @@
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
+import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftTipsCard } from "@/components/soft-tips-card";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -15,9 +16,10 @@ import {
   daysUntilPlanExpiry,
   planExpiryReminderDue,
 } from "@/lib/plan";
+import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
 import { SoftMark } from "./soft-doodles";
 
@@ -55,6 +57,7 @@ export function AccountPanel({
   checkoutSuccess,
   reminderEnabled,
   reminderWeekday,
+  timezone,
   emailConfigured,
   customQuestions,
   digest,
@@ -71,6 +74,7 @@ export function AccountPanel({
   checkoutSuccess: boolean;
   reminderEnabled: boolean;
   reminderWeekday: number;
+  timezone: string;
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
   digest: MonthlyDigest;
@@ -83,7 +87,18 @@ export function AccountPanel({
   const [loggingOut, setLoggingOut] = useState(false);
   const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
   const [weekday, setWeekday] = useState(reminderWeekday);
+  const [zone, setZone] = useState(timezone || DEFAULT_TIMEZONE);
   const [savingReminder, setSavingReminder] = useState(false);
+  const [savingZone, setSavingZone] = useState(false);
+  const [zoneSaved, setZoneSaved] = useState(false);
+  const timeZones = useMemo(() => {
+    const supported =
+      typeof Intl.supportedValuesOf === "function"
+        ? Intl.supportedValuesOf("timeZone")
+        : [DEFAULT_TIMEZONE, "UTC"];
+    const withCurrent = supported.includes(zone) ? supported : [zone, ...supported];
+    return [DEFAULT_TIMEZONE, ...withCurrent.filter((item) => item !== DEFAULT_TIMEZONE)];
+  }, [zone]);
   const [packQuestions, setPackQuestions] = useState(customQuestions);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
   const identity = oauthIdentityLabel(email);
@@ -281,9 +296,43 @@ export function AccountPanel({
                 ))}
               </select>
             </label>
+            <p className="mt-5 font-display text-base tracking-tight">{t("timezoneTitle")}</p>
+            <label className="mt-3 block text-sm">
+              <span className="text-muted">{t("timezoneLabel")}</span>
+              <select
+                className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2"
+                value={zone}
+                onChange={async (event) => {
+                  const next = event.target.value;
+                  setZone(next);
+                  setZoneSaved(false);
+                  setSavingZone(true);
+                  try {
+                    const response = await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ timezone: next }),
+                    });
+                    if (response.ok) setZoneSaved(true);
+                  } finally {
+                    setSavingZone(false);
+                  }
+                }}
+              >
+                {timeZones.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("timezoneBody")}</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted">{t("timezoneNote")}</p>
             <p className="mt-3 text-xs text-muted">
               {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
               {savingReminder ? ` · ${t("reminderSaving")}` : null}
+              {savingZone ? ` · ${t("timezoneSaving")}` : null}
+              {zoneSaved && !savingZone ? ` · ${t("timezoneSaved")}` : null}
             </p>
           </div>
 
@@ -404,6 +453,7 @@ export function AccountPanel({
               {loggingOut ? t("loggingOut") : t("logout")}
             </button>
           </div>
+          <SoftLeaveCard email={email} />
         </div>
       </section>
     </div>

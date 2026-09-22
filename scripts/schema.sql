@@ -182,6 +182,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
   reminder_last_sent_at TEXT,
   custom_questions TEXT NOT NULL DEFAULT '[]',
   preferred_wall_color TEXT,
+  timezone TEXT NOT NULL DEFAULT 'Asia/Taipei',
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
