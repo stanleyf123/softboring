@@ -17,6 +17,7 @@ type OfflineSnapshot = { phase: OfflineBannerPhase };
 const SERVER_SNAPSHOT: OfflineSnapshot = { phase: "hidden" };
 let snapshot: OfflineSnapshot = SERVER_SNAPSHOT;
 let listening = false;
+let watchId: number | null = null;
 const listeners = new Set<() => void>();
 
 function publish(phase: OfflineBannerPhase) {
@@ -25,12 +26,19 @@ function publish(phase: OfflineBannerPhase) {
   for (const listener of listeners) listener();
 }
 
+/** Re-read navigator.onLine. Some browsers miss the online event after a drop. */
+function syncFromNavigator() {
+  if (typeof navigator === "undefined") return;
+  publish(nextOfflinePhase(snapshot.phase, navigator.onLine));
+}
+
 function ensureListening() {
   if (listening || typeof window === "undefined") return;
   listening = true;
   publish(initialOfflinePhase(navigator.onLine));
-  window.addEventListener("online", () => publish(nextOfflinePhase(snapshot.phase, true)));
-  window.addEventListener("offline", () => publish(nextOfflinePhase(snapshot.phase, false)));
+  window.addEventListener("online", syncFromNavigator);
+  window.addEventListener("offline", syncFromNavigator);
+  if (watchId == null) watchId = window.setInterval(syncFromNavigator, 1500);
 }
 
 function subscribeOffline(onStoreChange: () => void) {
