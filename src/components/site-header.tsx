@@ -32,6 +32,7 @@ export function SiteHeader({
     pathname === authHref || pathname.startsWith(`${authHref}/`);
   const trendsActive = pathname === "/trends" || pathname.startsWith("/trends/");
   const digestActive = pathname === "/digest" || pathname.startsWith("/digest/");
+  const yearActive = pathname === "/year" || pathname.startsWith("/year/");
 
   return (
     <header className={`${SITE_SHELL_CLASS} py-4 md:py-5 print:hidden`}>
@@ -86,6 +87,18 @@ export function SiteHeader({
                 }
               >
                 {t("trends")}
+              </Link>
+            ) : null}
+            {softPlus ? (
+              <Link
+                href="/year"
+                className={
+                  yearActive
+                    ? "rounded-full bg-blush px-2.5 py-1 text-foreground"
+                    : "rounded-full px-2.5 py-1 hover:text-foreground"
+                }
+              >
+                {t("year")}
               </Link>
             ) : null}
             {softPlus ? (

@@ -38,7 +38,11 @@
     "trendsTitle": "趨勢 · Soft Boring Weekly",
     "trendsDescription": "一條小小的感覺線，從 1 到 5。Soft+ 會畫出這幾週的樣子。",
     "digestTitle": "每月摘要 · Soft Boring Weekly",
-    "digestDescription": "這個月的溫柔小結——回顧次數、平均感覺、主題與連續週數。僅 Soft+。"
+    "digestDescription": "這個月的溫柔小結——回顧次數、平均感覺、主題與連續週數。僅 Soft+。",
+    "yearTitle": "柔軟一年 · Soft Boring Weekly",
+    "yearDescription": "一年的每週心情小點，輕柔日曆。Soft+ 可開啟。",
+    "wallActivityTitle": "Soft Wall 溫柔讚美 · Soft Boring Weekly",
+    "wallActivityDescription": "牆上近期貼紙與留言的安靜條帶。僅 Soft+。"
   },
   "Nav": {
     "home": "首頁",
@@ -53,7 +57,8 @@
     "memberNav": "會員頁面",
     "mainNav": "主要導覽",
     "skipToContent": "跳到主要內容",
-    "digest": "摘要"
+    "digest": "摘要",
+    "year": "一年"
   },
   "Footer": {
     "note": "Soft Boring — 每週一次的安靜停頓",
@@ -332,7 +337,10 @@
     "inviteReward": "軟軟牆上會有一顆小星星。不會多給 Soft+ 天數，只是安靜的謝謝。",
     "inviteEmpty": "還沒有人用過。沒關係。",
     "digestOpen": "打開完整摘要",
-    "digest": "每月摘要"
+    "digest": "每月摘要",
+    "yearTitle": "柔軟一年",
+    "yearBody": "一年的心情小點，一眼輕柔。",
+    "yearOpen": "打開柔軟一年"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -406,7 +414,8 @@
     "energyChips": "能量關鍵詞",
     "drainChips": "消耗關鍵詞",
     "chipsEmpty": "詞還不夠。再寫幾週就會出現。",
-    "seeDigest": "打開每月摘要"
+    "seeDigest": "打開每月摘要",
+    "seeYear": "打開柔軟一年"
   },
   "Wall": {
     "eyebrow": "共用的軟木板 · 要自己貼上去",
@@ -640,7 +649,8 @@
     "lockedBody": "溫柔的月度小結——次數、感覺、主題與連續週數——留在 Soft+。",
     "lockedCta": "看 Soft+",
     "signedOutBody": "以 Soft+ 登入，打開這個月的摘要。",
-    "loginCta": "登入"
+    "loginCta": "登入",
+    "seeYear": "打開柔軟一年"
   },
   "SeasonalPacks": {
     "title": "季節題包",
@@ -685,5 +695,75 @@
         "summary": "一句感謝的週結。"
       }
     }
+  },
+  "Year": {
+    "eyebrow": "Soft+ · 僅應用內",
+    "title": "你的柔軟一年",
+    "lead": "把存下的週次排成安靜日曆——可點開的心情小點。",
+    "yearLabel": "{year}",
+    "filledLabel": "已存週次",
+    "filled": "{count}",
+    "feelingLabel": "平均感覺",
+    "feeling": "{value} / 5",
+    "feelingEmpty": "還沒有感覺分數",
+    "calendarHint": "每個小點是一週。點一下可打開那次回顧。",
+    "calendarLabel": "{year} 年的感覺日曆",
+    "weekFilled": "第 {week} 週 · {feeling}",
+    "weekEmpty": "第 {week} 週 · 空白",
+    "feelingShort": "{value} / 5",
+    "feelingUnknown": "尚無感覺",
+    "legend": "{value}",
+    "legendEmpty": "空白",
+    "seeHistory": "查看歷史",
+    "seeTrends": "查看趨勢",
+    "seeDigest": "查看月摘要",
+    "emptyTitle": "這一年還沒有週次",
+    "empty": "先存一次每週回顧，柔和日曆會在這裡等你。",
+    "emptyCta": "寫回顧",
+    "lockedTitle": "柔軟一年在 Soft+",
+    "lockedBody": "一年一覽——心情小點與柔和日曆——屬於 Soft+。",
+    "lockedCta": "看看 Soft+",
+    "signedOutBody": "以 Soft+ 登入後，可開啟你的柔軟一年。",
+    "loginCta": "登入"
+  },
+  "WallActivity": {
+    "eyebrow": "Soft+ · Soft Wall",
+    "title": "溫柔讚美",
+    "lead": "近期貼紙與留言的安靜條帶——不是嘈雜動態。",
+    "pageTitle": "Soft Wall 溫柔讚美",
+    "pageLead": "軟木板上的近期善意，保持輕柔。",
+    "loading": "正在收集幾則溫柔留言…",
+    "loadError": "暫時無法載入讚美。",
+    "empty": "還沒有讚美。Soft Wall 仍在等一張貼紙或一句輕聲。",
+    "seeAll": "看更多",
+    "someone": "有人",
+    "aNote": "一則便條",
+    "aQuietWord": "一句輕聲",
+    "stickerLine": "{who} 在「{excerpt}」留下了 {emoji}",
+    "commentLine": "{who} 在「{excerpt}」寫了「{body}」",
+    "replyLine": "{who} 在「{excerpt}」回覆了「{body}」",
+    "lockedTitle": "溫柔讚美在 Soft+",
+    "lockedBody": "Soft Wall 的善意條帶屬於 Soft+。",
+    "signedOutBody": "以 Soft+ 登入後，可查看 Soft Wall 讚美。",
+    "lockedCta": "看看 Soft+",
+    "loginCta": "登入",
+    "backToWall": "回到 Soft Wall"
+  },
+  "SoftNote": {
+    "title": "週中軟筆記",
+    "lead": "這一週一則短短的私人筆記——在每週回顧之間，只給自己。",
+    "guestBody": "登入後可保存一則週中軟筆記。它保持私密，不會上 Soft Wall。",
+    "loginCta": "登入",
+    "loading": "正在打開本週筆記…",
+    "loadError": "暫時無法載入軟筆記。",
+    "weekLabel": "週次 {week}",
+    "inputLabel": "軟筆記",
+    "placeholder": "週中一句安靜的話…",
+    "counter": "{count} / {max}",
+    "save": "儲存筆記",
+    "saving": "儲存中…",
+    "saved": "已儲存。仍然私密。",
+    "saveError": "暫時無法儲存這則筆記。",
+    "privacy": "僅私人。Soft Wall 看不到這則筆記。"
   }
 }

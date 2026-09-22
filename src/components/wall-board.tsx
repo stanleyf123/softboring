@@ -2,6 +2,7 @@
 
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { shareErrorCopy } from "@/components/share-to-wall";
+import { WallActivityStrip } from "@/components/wall-activity-strip";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import {
@@ -524,6 +525,11 @@ export function WallBoard({
           <p className="mt-4 rounded-[1.25rem] bg-peach px-4 py-3 text-sm" role="status">
             {t("sharedToast")}
           </p>
+        ) : null}
+        {softPlus && !locked ? (
+          <div className="mt-6">
+            <WallActivityStrip softPlus compact />
+          </div>
         ) : null}
         {softPlus && !locked ? (
           <section className="mt-6 rounded-[1.75rem] bg-paper px-5 py-5 shadow-card sm:px-6">

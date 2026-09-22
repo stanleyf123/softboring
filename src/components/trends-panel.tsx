@@ -114,6 +114,12 @@ export function TrendsPanel() {
           >
             {t("seeDigest")}
           </Link>
+          <Link
+            href="/year"
+            className="rounded-full border border-line px-5 py-2.5 text-sm text-muted"
+          >
+            {t("seeYear")}
+          </Link>
         </div>
         <ol className="mt-8 space-y-3">
           {points.map((point) => (
