@@ -1,10 +1,12 @@
 "use client";
 
 import { CalmArchiveSearch } from "@/components/calm-archive-search";
+import { SoftTagFilter } from "@/components/soft-tag-filter";
 import { EmptyState, ListSkeleton } from "@/components/empty-state";
 import { WeekMoodChip } from "@/components/week-mood-picker";
 import { Link } from "@/i18n/navigation";
 import { reviewMatchesQuery } from "@/lib/plus-insights";
+import { reviewHasSoftTag, uniqueSoftTags } from "@/lib/soft-tags";
 import { isWeekMood } from "@/lib/week-mood";
 import {
   ensureLocalReviewsMigrated,
@@ -25,6 +27,7 @@ export function HistoryList() {
   const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
+  const [tag, setTag] = useState<string | null>(null);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -48,16 +51,24 @@ export function HistoryList() {
     };
   }, [hydrated]);
 
+  const tags = useMemo(
+    () => (reviews && access?.softPlus ? uniqueSoftTags(reviews) : []),
+    [reviews, access],
+  );
+
   const visible = useMemo(() => {
     if (!reviews) return [];
-    if (!access?.softPlus || !query.trim()) return reviews;
+    const filtering = Boolean(access?.softPlus && (query.trim() || tag));
+    if (!filtering) return reviews;
     return reviews.filter((review) => {
       if (review.locked) return false;
+      if (tag && !reviewHasSoftTag(review.softTags, tag)) return false;
+      if (!query.trim()) return true;
       const moodLabel =
         review.mood && isWeekMood(review.mood) ? tMood(`name_${review.mood}`) : "";
       return reviewMatchesQuery(review, query, moodLabel);
     });
-  }, [reviews, access, query, tMood]);
+  }, [reviews, access, query, tag, tMood]);
 
   if (!hydrated || (reviews === null && !error)) {
     return <ListSkeleton label={t("loading")} />;
@@ -146,6 +157,24 @@ export function HistoryList() {
         />
       ) : null}
 
+      {access && !access.isGuest ? (
+        <SoftTagFilter
+          softPlus={access.softPlus}
+          isGuest={access.isGuest}
+          tags={tags}
+          active={tag}
+          onActive={setTag}
+        />
+      ) : access?.isGuest ? (
+        <SoftTagFilter
+          softPlus={false}
+          isGuest
+          tags={[]}
+          active={null}
+          onActive={() => undefined}
+        />
+      ) : null}
+
       {access?.softPlus ? (
         <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">
           <p className="font-display text-lg tracking-tight">{t("plusToolsTitle")}</p>
@@ -174,8 +203,8 @@ export function HistoryList() {
 
       {visible.length === 0 ? (
         <EmptyState
-          title={t("archiveEmptyTitle")}
-          body={t("archiveEmptyBody")}
+          title={tag && !query.trim() ? t("tagsNoMatchTitle") : t("archiveEmptyTitle")}
+          body={tag && !query.trim() ? t("tagsNoMatchBody") : t("archiveEmptyBody")}
           wash="bg-blush/50"
           illustration="history"
         />
@@ -210,6 +239,18 @@ export function HistoryList() {
                   {review.mood && isWeekMood(review.mood) ? (
                     <span className="mt-3 inline-flex">
                       <WeekMoodChip mood={review.mood} />
+                    </span>
+                  ) : null}
+                  {access?.softPlus && (review.softTags ?? []).length > 0 ? (
+                    <span className="mt-3 flex flex-wrap gap-1.5">
+                      {(review.softTags ?? []).map((item) => (
+                        <span
+                          key={item.toLocaleLowerCase()}
+                          className="rounded-full bg-mint/70 px-2.5 py-0.5 text-xs"
+                        >
+                          {item}
+                        </span>
+                      ))}
                     </span>
                   ) : null}
                   {review.feeling ? (

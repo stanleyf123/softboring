@@ -1,4 +1,5 @@
 import { GoogleAnalytics } from "@/components/google-analytics";
+import { NightModeSync } from "@/components/night-mode-sync";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { OnboardingCard } from "@/components/onboarding-card";
 import { PwaInstallTip } from "@/components/pwa-install-tip";
@@ -17,8 +18,10 @@ import { userIsSoftPlus } from "@/lib/plan";
 import { assertLocale, htmlLang } from "@/lib/locale";
 import { SiteJsonLd } from "@/components/json-ld";
 import { DEFAULT_SITE_URL, localeOg, SITE_NAME, siteOrigin, verificationMetadata } from "@/lib/seo";
+import { NIGHT_BOOT_SCRIPT, NIGHT_COOKIE, nightSource, readNightCookie } from "@/lib/night-mode";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import { NextIntlClientProvider } from "next-intl";
+import { cookies } from "next/headers";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Fraunces, Nunito } from "next/font/google";
 import type { ReactNode } from "react";
@@ -102,13 +105,20 @@ export default async function LocaleLayout({ children, params }: Props) {
   const softPlus = userIsSoftPlus(user);
   const hasInvite = softPlus && user ? Boolean(getInviteCodeForUser(user.id)) : false;
   const tNav = await getTranslations("Nav");
+  const nightCookie = (await cookies()).get(NIGHT_COOKIE)?.value;
+  const nightOn = settings ? settings.nightMode : readNightCookie(nightCookie);
+  const nightFrom = nightSource({ signedIn: Boolean(settings), cookieValue: nightCookie });
 
   return (
     <html
       lang={htmlLang(locale)}
+      data-night={nightOn ? "on" : undefined}
+      data-night-source={nightFrom}
       className={`${nunito.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <script dangerouslySetInnerHTML={{ __html: NIGHT_BOOT_SCRIPT }} />
+        <NightModeSync night={nightOn} source={nightFrom} />
         <SiteJsonLd />
         <NextIntlClientProvider>
           <QuietWritingSync />

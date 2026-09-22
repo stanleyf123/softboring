@@ -16,6 +16,7 @@ export type Review = ReviewAnswers & {
   id: string;
   createdAt: string;
   locale?: string;
+  softTags?: string[];
 };
 
 export const emptyDraft = (): ReviewAnswers => ({

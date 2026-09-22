@@ -191,6 +191,43 @@ export function getWallNoteIncludingHidden(id: string): WallNoteRow | undefined 
     .get(id) as WallNoteRow | undefined;
 }
 
+export type OwnWallSnippet = {
+  id: string;
+  reviewId: string;
+  createdAt: string;
+  summary: string;
+  energy: string;
+  hidden: boolean;
+};
+
+/** The member's own notes, newest first, including ones taken off the public wall. */
+export function listOwnWallSnippets(userId: string): OwnWallSnippet[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT n.id, n.review_id, n.created_at, n.hidden, r.summary, r.energy
+       FROM wall_notes n
+       JOIN reviews r ON r.id = n.review_id
+       WHERE n.user_id = ?
+       ORDER BY datetime(n.created_at) DESC`,
+    )
+    .all(userId) as Array<{
+    id: string;
+    review_id: string;
+    created_at: string;
+    hidden: number;
+    summary: string;
+    energy: string;
+  }>;
+  return rows.map((row) => ({
+    id: row.id,
+    reviewId: row.review_id,
+    createdAt: row.created_at,
+    summary: row.summary,
+    energy: row.energy,
+    hidden: Boolean(row.hidden),
+  }));
+}
+
 export function getWallNoteIdForReview(reviewId: string): string | null {
   const row = getDb()
     .prepare(`SELECT id FROM wall_notes WHERE review_id = ?`)

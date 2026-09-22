@@ -3,6 +3,7 @@ import { parseCustomAnswersJson } from "@/lib/custom-questions";
 import { listPauseWeekKeys } from "@/db/week-pauses";
 import { monthlyDigestFromReviews } from "@/lib/plus-insights";
 import type { Review, ReviewAnswers } from "@/lib/review-types";
+import { parseStoredSoftTags } from "@/lib/soft-tags";
 import { parseWeekMood, type WeekMood } from "@/lib/week-mood";
 
 type ReviewRow = {
@@ -18,6 +19,7 @@ type ReviewRow = {
   locale: string | null;
   custom_answers: string | null;
   mood: string | null;
+  soft_tags: string | null;
   created_at: string;
 };
 
@@ -43,6 +45,7 @@ function rowToReview(row: ReviewRow): Review {
     createdAt: row.created_at,
     customAnswers: parseCustomAnswersJson(row.custom_answers),
     mood: parseWeekMood(row.mood),
+    softTags: parseStoredSoftTags(row.soft_tags),
     ...(row.locale ? { locale: row.locale } : {}),
   };
 }
@@ -139,6 +142,7 @@ export function createReview(owner: ReviewOwner, input: NewReview): Review {
     createdAt,
     customAnswers: input.customAnswers ?? [],
     mood: userId ? (input.mood ?? null) : null,
+    softTags: [],
     ...(locale ? { locale } : {}),
   };
 }
@@ -153,6 +157,19 @@ export function setReviewMood(
   getDb()
     .prepare(`UPDATE reviews SET mood = ? WHERE id = ? AND user_id = ?`)
     .run(mood, id, userId);
+  return getReviewForOwner(owner, id);
+}
+
+export function setReviewSoftTags(
+  userId: string,
+  id: string,
+  tags: string[],
+): Review | undefined {
+  const owner: ReviewOwner = { kind: "user", userId, guestId: "" };
+  if (!getReviewForOwner(owner, id)) return undefined;
+  getDb()
+    .prepare(`UPDATE reviews SET soft_tags = ? WHERE id = ? AND user_id = ?`)
+    .run(JSON.stringify(tags), id, userId);
   return getReviewForOwner(owner, id);
 }
 

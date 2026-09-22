@@ -28,6 +28,8 @@ export type UserSettings = {
   seasonalFrame: boolean;
   focusMinutes: FocusMinutes;
   focusChime: boolean;
+  nightMode: boolean;
+  memoryLane: boolean;
 };
 
 type SettingsRow = {
@@ -45,6 +47,8 @@ type SettingsRow = {
   seasonal_frame: number;
   focus_minutes: number | null;
   focus_chime: number | null;
+  night_mode: number | null;
+  memory_lane: number | null;
 };
 
 function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
@@ -69,6 +73,8 @@ function toSettings(row: SettingsRow): UserSettings {
     seasonalFrame: Boolean(row.seasonal_frame),
     focusMinutes: storedFocusMinutes(row.focus_minutes),
     focusChime: storedFocusChime(row.focus_chime),
+    nightMode: Boolean(row.night_mode),
+    memoryLane: row.memory_lane == null ? true : Boolean(row.memory_lane),
   };
 }
 
@@ -104,6 +110,8 @@ export type SettingsPatch = {
   seasonalFrame?: boolean;
   focusMinutes?: FocusMinutes;
   focusChime?: boolean;
+  nightMode?: boolean;
+  memoryLane?: boolean;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -130,6 +138,9 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
       : storedFocusMinutes(patch.focusMinutes);
   const nextFocusChime =
     patch.focusChime === undefined ? current.focusChime : patch.focusChime;
+  const nextNightMode = patch.nightMode === undefined ? current.nightMode : patch.nightMode;
+  const nextMemoryLane =
+    patch.memoryLane === undefined ? current.memoryLane : patch.memoryLane;
 
   getDb()
     .prepare(
@@ -146,7 +157,9 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            timezone = @timezone,
            seasonal_frame = @seasonal_frame,
            focus_minutes = @focus_minutes,
-           focus_chime = @focus_chime
+           focus_chime = @focus_chime,
+           night_mode = @night_mode,
+           memory_lane = @memory_lane
        WHERE user_id = @user_id`,
     )
     .run({
@@ -202,6 +215,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
       seasonal_frame: nextSeasonalFrame ? 1 : 0,
       focus_minutes: nextFocusMinutes,
       focus_chime: nextFocusChime ? 1 : 0,
+      night_mode: nextNightMode ? 1 : 0,
+      memory_lane: nextMemoryLane ? 1 : 0,
     });
   return ensureUserSettings(userId);
 }

@@ -16,6 +16,7 @@ import {
   daysUntilPlanExpiry,
   planExpiryReminderDue,
 } from "@/lib/plan";
+import { applyNightPreference } from "@/lib/night-mode";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
@@ -59,6 +60,8 @@ export function AccountPanel({
   reminderWeekday,
   timezone,
   seasonalFrame = false,
+  nightMode = false,
+  memoryLane = true,
   emailConfigured,
   customQuestions,
   digest,
@@ -77,6 +80,8 @@ export function AccountPanel({
   reminderWeekday: number;
   timezone: string;
   seasonalFrame?: boolean;
+  nightMode?: boolean;
+  memoryLane?: boolean;
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
   digest: MonthlyDigest;
@@ -91,9 +96,13 @@ export function AccountPanel({
   const [weekday, setWeekday] = useState(reminderWeekday);
   const [zone, setZone] = useState(timezone || DEFAULT_TIMEZONE);
   const [frameOn, setFrameOn] = useState(seasonalFrame);
+  const [nightOn, setNightOn] = useState(nightMode);
+  const [laneOn, setLaneOn] = useState(memoryLane);
   const [savingReminder, setSavingReminder] = useState(false);
   const [savingZone, setSavingZone] = useState(false);
   const [savingFrame, setSavingFrame] = useState(false);
+  const [savingNight, setSavingNight] = useState(false);
+  const [savingLane, setSavingLane] = useState(false);
   const [zoneSaved, setZoneSaved] = useState(false);
   const timeZones = useMemo(() => {
     const supported =
@@ -392,6 +401,81 @@ export function AccountPanel({
                 {t("seasonalFrameToggle")}
                 {savingFrame ? (
                   <span className="mt-1 block text-xs text-muted">{t("seasonalFrameSaving")}</span>
+                ) : null}
+              </span>
+            </label>
+          </div>
+
+          <div className="mt-8 rounded-[1.5rem] bg-lavender/50 px-5 py-5" data-night-preference>
+            <p className="font-display text-lg tracking-tight">{t("nightTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("nightBody")}</p>
+            <label className="mt-4 flex items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={nightOn}
+                onChange={async (event) => {
+                  const next = event.target.checked;
+                  const previous = nightOn;
+                  setNightOn(next);
+                  applyNightPreference(next);
+                  setSavingNight(true);
+                  try {
+                    const response = await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ nightMode: next }),
+                    });
+                    if (!response.ok) throw new Error("night");
+                  } catch {
+                    setNightOn(previous);
+                    applyNightPreference(previous);
+                  } finally {
+                    setSavingNight(false);
+                  }
+                }}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+              />
+              <span>
+                {t("nightToggle")}
+                {savingNight ? (
+                  <span className="mt-1 block text-xs text-muted">{t("nightSaving")}</span>
+                ) : null}
+              </span>
+            </label>
+          </div>
+
+          <div className="mt-8 rounded-[1.5rem] bg-mint/40 px-5 py-5" data-memory-lane-preference>
+            <p className="font-display text-lg tracking-tight">{t("memoryLaneTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("memoryLaneBody")}</p>
+            <label className="mt-4 flex items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={laneOn}
+                onChange={async (event) => {
+                  const next = event.target.checked;
+                  const previous = laneOn;
+                  setLaneOn(next);
+                  setSavingLane(true);
+                  try {
+                    const response = await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ memoryLane: next }),
+                    });
+                    if (!response.ok) throw new Error("lane");
+                    router.refresh();
+                  } catch {
+                    setLaneOn(previous);
+                  } finally {
+                    setSavingLane(false);
+                  }
+                }}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+              />
+              <span>
+                {t("memoryLaneToggle")}
+                {savingLane ? (
+                  <span className="mt-1 block text-xs text-muted">{t("memoryLaneSaving")}</span>
                 ) : null}
               </span>
             </label>

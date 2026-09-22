@@ -71,6 +71,8 @@ export default async function AccountPage({ params, searchParams }: Props) {
           reminderWeekday={settings.reminderWeekday}
           timezone={settings.timezone}
           seasonalFrame={settings.seasonalFrame}
+          nightMode={settings.nightMode}
+          memoryLane={settings.memoryLane}
           emailConfigured={isEmailConfigured()}
           customQuestions={settings.customQuestions}
           digest={monthlyDigestForUser(user.id, new Date(), settings.timezone)}
