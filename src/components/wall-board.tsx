@@ -3,6 +3,7 @@
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
+import { WallMoodLegend } from "@/components/wall-mood-legend";
 import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
@@ -814,6 +815,7 @@ export function WallBoard({
             ) : null}
           </section>
         ) : null}
+        {softPlus && !locked ? <WallMoodLegend /> : null}
       </div>
 
       <div className={`${SITE_SHELL_CLASS} relative mt-8`}>

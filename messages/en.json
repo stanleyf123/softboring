@@ -70,10 +70,11 @@
     "note": "Soft Boring — a quiet weekly pause",
     "thanks": "Thank you for sitting with us.",
     "thanksLink": "Thanks",
-    "navLabel": "Footer",
+    "navLabel": "Guidelines, privacy, terms, and languages",
     "privacy": "Privacy",
     "terms": "Terms",
-    "guidelines": "Guidelines"
+    "guidelines": "Guidelines",
+    "languages": "Languages"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -181,6 +182,8 @@
     "guestCta": "Create an account",
     "freeBannerTitle": "Latest four are open",
     "freeBanner": "Soft+ keeps every week, and adds a small feeling chart.",
+    "freeDownload": "Download these four (JSON)",
+    "freeDownloadHint": "A small file of the weeks you can already open. Nothing is emailed.",
     "plusToolsTitle": "Soft+ tools",
     "searchLabel": "Search reviews",
     "searchPlaceholder": "Search titles and answers…",
@@ -338,6 +341,9 @@
     "customSaved": "Saved.",
     "customError": "Could not save those questions just now.",
     "export": "Export reviews",
+    "dataDownloadTitle": "Take the latest four with you",
+    "dataDownloadBody": "A small JSON file of the four weeks you can already open. Older weeks stay tucked with Soft+. Nothing is emailed.",
+    "dataDownloadCta": "Download JSON",
     "inviteTitle": "Invite a friend",
     "inviteBody": "Soft+ can share a little door. When someone new sits down through your link, a small star rests on your wall notes — a thank-you, not a charge.",
     "inviteLockedTitle": "A little door for friends",
@@ -466,7 +472,7 @@
     "featureTrendsPlus": "Feeling trends and a gentle weekly streak",
     "featureWallFree": "Soft Wall stays behind a soft curtain",
     "featureStickersFree": "Wall stickers stay with Soft+",
-    "featureExportFree": "CSV and printable PDF export stay with Soft+",
+    "featureExportFree": "CSV and printable pages stay with Soft+. Free can take the latest four weeks as JSON.",
     "featureDigestFree": "Monthly digest stays with Soft+",
     "featureWallPlus": "Soft Wall full access: read, drag, comment, and reply",
     "featureExportPlus": "Export your weeks as CSV or a printable PDF",
@@ -633,7 +639,15 @@
     "reportFeelsOff": "This feels off",
     "reportHint": "A quiet note for Soft Boring — not a public complaint.",
     "reportThanks": "Noted. Thank you for the soft signal.",
-    "guidelinesLink": "Soft Wall guidelines"
+    "guidelinesLink": "Soft Wall guidelines",
+    "paletteTitle": "A little color key",
+    "paletteLead": "People pick a color when they pin a week. It is a mood, like choosing a teacup — not a score.",
+    "palette_peach": "a warm afternoon",
+    "palette_blush": "a little tender",
+    "palette_mint": "freshly watered",
+    "palette_cream": "quiet paper",
+    "palette_lemon": "a bright sip",
+    "palette_sky": "window open"
   },
   "Export": {
     "title": "Printable reviews",
@@ -716,7 +730,7 @@
   },
   "Privacy": {
     "title": "Privacy Policy",
-    "updated": "Last updated: 15 September 2026",
+    "updated": "Last updated: 22 September 2026",
     "lead": "Soft Boring Weekly is a small weekly-review product. This page explains what we collect, why, and how long we keep it.",
     "home": "Back home",
     "s1Title": "Who we are",
@@ -730,7 +744,7 @@
     "s5Title": "Sharing and processors",
     "s5Body": "Stripe processes payments. If we send email, we use Resend or an SMTP provider you configure. Hosting and backups are on the operator’s server (SQLite on disk). Shared Soft Wall content is visible to Soft+ members you do not personally know; sharing is off by default.",
     "s6Title": "Retention and your choices",
-    "s6Body": "We keep account and review data until you delete the account (or an operator deletes it for you). You can take a note off Soft Wall at any time. You can turn weekly reminders off on the account page. To request deletion or a copy of your data, sign in and contact the operator. This policy may be updated; the date above will change."
+    "s6Body": "We keep account and review data until you delete the account (or an operator deletes it for you). You can take a note off Soft Wall at any time. You can turn weekly reminders off on the account page. Signed-in Free accounts can download the latest four open reviews as a JSON file from Account — no email required. Soft+ can still export the fuller history. To request deletion, sign in and contact the operator. This policy may be updated; the date above will change."
   },
   "Terms": {
     "title": "Terms of Use",

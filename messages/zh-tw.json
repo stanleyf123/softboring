@@ -70,10 +70,11 @@
     "note": "Soft Boring — 每週一次的安靜停頓",
     "thanks": "謝謝你願意坐下來。",
     "thanksLink": "感謝",
-    "navLabel": "頁尾",
+    "navLabel": "禮儀、隱私、條款與語言",
     "privacy": "隱私權",
     "terms": "使用條款",
-    "guidelines": "禮儀"
+    "guidelines": "禮儀",
+    "languages": "語言"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -181,6 +182,8 @@
     "guestCta": "建立帳號",
     "freeBannerTitle": "最近四篇是打開的",
     "freeBanner": "Soft+ 會留下每一週，並加上一條小小的感覺圖。",
+    "freeDownload": "下載這四週（JSON）",
+    "freeDownloadHint": "一份小小的檔案，只含你已經能打開的週次。不會寄信。",
     "plusToolsTitle": "Soft+ 工具",
     "searchLabel": "搜尋回顧",
     "searchPlaceholder": "搜尋標題與答案…",
@@ -336,6 +339,9 @@
     "customSaved": "已儲存。",
     "customError": "現在沒能存下這些題目。",
     "export": "匯出回顧",
+    "dataDownloadTitle": "把最近四週帶走",
+    "dataDownloadBody": "一份小小的 JSON，只含你已經能打開的四週。更早的週次仍留在 Soft+。不會寄信。",
+    "dataDownloadCta": "下載 JSON",
     "inviteTitle": "邀請一位朋友",
     "inviteBody": "Soft+ 可以分享一扇小小的門。有人用你的連結新坐下時，牆上的便利貼會多一顆小星星——是謝謝，不是收費。",
     "inviteLockedTitle": "給朋友的一扇小門",
@@ -395,7 +401,7 @@
     "featureTrendsPlus": "感覺趨勢，以及溫柔的連續週數",
     "featureWallFree": "軟軟牆隔著一層柔柔的簾子",
     "featureStickersFree": "牆上貼紙在 Soft+",
-    "featureExportFree": "CSV 與可列印 PDF 匯出在 Soft+",
+    "featureExportFree": "CSV 與可列印頁面在 Soft+。免費可以把最近四週下載成 JSON。",
     "featureDigestFree": "每月摘要在 Soft+",
     "featureWallPlus": "軟軟牆完整使用：讀、拖、留言、回覆",
     "featureExportPlus": "把週次匯出成 CSV 或可列印 PDF",
@@ -562,7 +568,15 @@
     "reportFeelsOff": "這張讀起來有點不對勁",
     "reportHint": "只是輕輕告訴 Soft Boring——不是公開檢舉。",
     "reportThanks": "收到了。謝謝你的輕聲提醒。",
-    "guidelinesLink": "軟軟牆禮儀"
+    "guidelinesLink": "軟軟牆禮儀",
+    "paletteTitle": "小小的顏色說明",
+    "paletteLead": "釘上週次時，大家自己挑一種顏色。像選茶杯，是心情，不是分數。",
+    "palette_peach": "暖暖的午後",
+    "palette_blush": "有一點柔軟",
+    "palette_mint": "剛澆過水",
+    "palette_cream": "安靜的紙",
+    "palette_lemon": "明亮的一口",
+    "palette_sky": "窗開著"
   },
   "Export": {
     "title": "可列印的回顧",
@@ -645,7 +659,7 @@
   },
   "Privacy": {
     "title": "隱私權政策",
-    "updated": "最後更新：2026 年 9 月 15 日",
+    "updated": "最後更新：2026 年 9 月 22 日",
     "lead": "Soft Boring Weekly 是一份小小的每週回顧產品。這頁說明我們收集什麼、為什麼，以及會留多久。",
     "home": "回到首頁",
     "s1Title": "我們是誰",
@@ -659,7 +673,7 @@
     "s5Title": "分享與處理者",
     "s5Body": "付款由 Stripe 處理。若寄信，會使用你設定的 Resend 或 SMTP。託管與備份在維運者的伺服器（磁碟上的 SQLite）。釘上軟軟牆的內容，其他 Soft+ 會員也看得到；預設不公開。",
     "s6Title": "保存期間與你的選擇",
-    "s6Body": "帳號與回顧會保存到你刪除帳號（或維運者代你刪除）。你可以隨時把便利貼從軟軟牆拿下來。可在帳號頁關掉每週提醒。若要刪除或索取資料副本，請登入後聯絡維運者。本政策可能更新；上方日期會一併修改。"
+    "s6Body": "帳號與回顧會保存到你刪除帳號（或維運者代你刪除）。你可以隨時把便利貼從軟軟牆拿下來。可在帳號頁關掉每週提醒。已登入的免費帳號可以在帳號頁自行下載最近四週（你已經能打開的那些）的 JSON，不必寄信。Soft+ 仍可匯出更完整的回顧。若要刪除資料，請登入後聯絡維運者。本政策可能更新；上方日期會一併修改。"
   },
   "Terms": {
     "title": "使用條款",
