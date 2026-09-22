@@ -166,6 +166,14 @@ export function countVisibleWallNotes() {
   return row.n;
 }
 
+/** Notes stored for this member, including ones taken off the public wall. */
+export function countWallNotesForUser(userId: string) {
+  const row = getDb()
+    .prepare(`SELECT COUNT(*) AS n FROM wall_notes WHERE user_id = ?`)
+    .get(userId) as { n: number };
+  return row.n;
+}
+
 export function getWallNote(id: string, viewerId: string | null): WallNoteDetail | undefined {
   const row = getDb()
     .prepare(`${NOTE_SELECT} WHERE n.id = ?`)
@@ -369,6 +377,7 @@ export function pinWallNoteForUser(id: string, userId: string, pinned: boolean) 
   if (!current || current.hidden || current.user_id !== userId) return 0;
 
   const now = new Date().toISOString();
+  // Raised notes stay at one per member (Soft+). A new pin lowers the rest.
   const run = db.transaction(() => {
     if (pinned) {
       db.prepare(

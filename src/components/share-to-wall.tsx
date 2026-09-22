@@ -11,6 +11,11 @@ import {
 } from "@/lib/wall-canvas";
 import { isWeekMood, type WeekMood } from "@/lib/week-mood";
 import { WeekMoodChip } from "@/components/week-mood-picker";
+import {
+  FREE_RAISED_PIN_LIMIT,
+  SOFT_PLUS_RAISED_PIN_LIMIT,
+  shareWindowLimit,
+} from "@/lib/wall-pin-limit";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -192,6 +197,21 @@ export function ShareToWall({
       </p>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
         {noteId ? t("unshareHint") : t("shareBody")}
+      </p>
+      <p
+        className="mt-3 max-w-md text-sm leading-relaxed text-muted"
+        data-wall-pin-limit={softPlus ? "plus" : "free"}
+      >
+        {softPlus
+          ? t("sharePinLimitPlus", {
+              weeks: shareWindowLimit(false) ?? 0,
+              raised: SOFT_PLUS_RAISED_PIN_LIMIT,
+            })
+          : t("sharePinLimitFree", {
+              weeks: shareWindowLimit(false) ?? 0,
+              raised: SOFT_PLUS_RAISED_PIN_LIMIT,
+              freeRaised: FREE_RAISED_PIN_LIMIT,
+            })}
       </p>
       {mood && isWeekMood(mood) ? (
         <div className="mt-4 flex flex-wrap items-center gap-2">
