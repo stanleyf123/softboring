@@ -42,7 +42,9 @@
     "yearTitle": "Soft year · Soft Boring Weekly",
     "yearDescription": "A gentle year-at-a-glance of weekly feeling dots. Soft+ opens the soft calendar.",
     "wallActivityTitle": "Soft Wall compliments · Soft Boring Weekly",
-    "wallActivityDescription": "A quiet strip of recent stickers and comments across Soft Wall. Soft+ only."
+    "wallActivityDescription": "A quiet strip of recent stickers and comments across Soft Wall. Soft+ only.",
+    "historyCompareTitle": "Compare weeks · Soft Boring Weekly",
+    "historyCompareDescription": "Pick two past reviews and see feeling, energy, and drain side by side. Soft+ only."
   },
   "Nav": {
     "home": "Home",
@@ -173,7 +175,8 @@
     "searchPlaceholder": "Search titles and answers…",
     "searchEmpty": "No weeks match that search.",
     "exportCsv": "Download CSV",
-    "exportPrint": "Printable pages"
+    "exportPrint": "Printable pages",
+    "compareWeeks": "Compare weeks"
   },
   "HistoryDetail": {
     "back": "Back to history",
@@ -765,5 +768,71 @@
     "saved": "Saved. Still private.",
     "saveError": "Could not save that note just now.",
     "privacy": "Private only. Soft Wall does not see this note."
+  },
+  "Postcard": {
+    "brand": "Soft Boring Weekly",
+    "kindWeek": "A soft postcard · one week",
+    "kindDigest": "A soft postcard · this month",
+    "weekTitle": "Soft postcard",
+    "weekLead": "Export this week as a cream-and-blush PNG you can keep or share gently.",
+    "digestTitle": "Soft postcard",
+    "digestLead": "Turn this month’s digest into a shareable soft postcard image.",
+    "exportWeek": "Download postcard PNG",
+    "exportDigest": "Download month postcard",
+    "exporting": "Drawing…",
+    "exportError": "Could not draw that postcard just now.",
+    "feeling": "Feeling {value} of 5",
+    "noFeeling": "No feeling number",
+    "energy": "Energy",
+    "drain": "Drain",
+    "summary": "Summary",
+    "count": "{count, plural, one {# review this month} other {# reviews this month}}",
+    "streak": "{count, plural, one {# week streak} other {# week streak}}",
+    "avgFeeling": "Avg feeling {value} / 5",
+    "themes": "Soft themes",
+    "footer": "softboring.com · quiet on purpose"
+  },
+  "HistoryCompare": {
+    "eyebrow": "Soft+ · history",
+    "title": "Compare two weeks",
+    "lead": "A soft side-by-side — feeling, energy, and drain. No scores, just noticing.",
+    "back": "← Back to history",
+    "loading": "Loading your weeks…",
+    "loadErrorTitle": "Could not compare just now",
+    "loadError": "Try again in a moment.",
+    "lockedTitle": "Week compare lives on Soft+",
+    "lockedBody": "Pick two past reviews and see them gently side by side — Soft+ only.",
+    "signedOutBody": "Log in on Soft+ to compare weeks.",
+    "lockedCta": "See Soft+",
+    "loginCta": "Log in",
+    "needTwoTitle": "Need two open weeks",
+    "needTwoBody": "Save at least two weekly reviews, then come back to compare.",
+    "needTwoCta": "Write a review",
+    "pickTitle": "Pick two weeks",
+    "pickLead": "Choose a quieter pair. Same week twice won’t compare.",
+    "leftLabel": "Earlier / left",
+    "rightLabel": "Later / right",
+    "sameWeek": "Pick two different weeks to compare.",
+    "pickHint": "Choose two different weeks above.",
+    "feelingSame": "Feeling stayed the same.",
+    "feelingUp": "Feeling rose by {value}.",
+    "feelingDown": "Feeling eased down by {value}.",
+    "feelingMissing": "One or both weeks have no feeling number yet.",
+    "noFeeling": "No feeling number",
+    "openWeek": "Open this week"
+  },
+  "WallSpotlight": {
+    "title": "This week’s soft picks",
+    "lead": "Pinned notes and a few high-praise neighbors — kept small on purpose.",
+    "loading": "Gathering soft picks…",
+    "loadError": "Could not load soft picks just now.",
+    "empty": "Nothing pinned or praised yet. Soft Wall is still settling.",
+    "reasonPinned": "Pinned",
+    "reasonPraise": "High praise",
+    "someone": "Someone",
+    "aNote": "A quiet week",
+    "byAuthor": "{name}",
+    "praise": "{count} praise",
+    "open": "Open on wall"
   }
 }

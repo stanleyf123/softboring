@@ -133,6 +133,12 @@ export function HistoryList() {
             >
               {t("exportPrint")}
             </Link>
+            <Link
+              href="/history/compare"
+              className="rounded-full border border-line px-4 py-2 text-sm text-muted"
+            >
+              {t("compareWeeks")}
+            </Link>
           </div>
         </section>
       ) : null}

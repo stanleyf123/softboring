@@ -1,7 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
+import { SoftPostcardFromReview } from "@/components/soft-postcard-button";
 import { ShareToWall } from "@/components/share-to-wall";
+import { Link } from "@/i18n/navigation";
 import { ensureLocalReviewsMigrated, fetchReview, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useFormatter, useTranslations } from "next-intl";
@@ -25,6 +26,7 @@ export function HistoryDetail({ id }: { id: string }) {
   const [wall, setWall] = useState<{ noteId: string | null; canShare: boolean } | null>(
     null,
   );
+  const [softPlus, setSoftPlus] = useState(false);
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState(false);
 
@@ -35,8 +37,23 @@ export function HistoryDetail({ id }: { id: string }) {
     (async () => {
       try {
         await ensureLocalReviewsMigrated();
-        const next = await fetchReview(id);
+        const [next, me] = await Promise.all([
+          fetchReview(id),
+          fetch("/api/auth/me", { cache: "no-store" })
+            .then((response) => response.json())
+            .catch(() => null),
+        ]);
         if (cancelled) return;
+        const planSoftPlus = Boolean(
+          me &&
+            typeof me === "object" &&
+            "user" in me &&
+            me.user &&
+            typeof me.user === "object" &&
+            "softPlus" in me.user &&
+            me.user.softPlus === true,
+        );
+        setSoftPlus(planSoftPlus);
         if (!next) {
           setReview(null);
           return;
@@ -150,6 +167,7 @@ export function HistoryDetail({ id }: { id: string }) {
           </dd>
         </div>
       </dl>
+      <SoftPostcardFromReview review={review} softPlus={softPlus} />
       {wall?.canShare ? (
         <ShareToWall reviewId={review.id} initialNoteId={wall.noteId} />
       ) : null}

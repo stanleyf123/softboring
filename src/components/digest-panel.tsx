@@ -1,3 +1,6 @@
+"use client";
+
+import { SoftPostcardFromDigest } from "@/components/soft-postcard-button";
 import { Link } from "@/i18n/navigation";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import { useFormatter, useTranslations } from "next-intl";
@@ -86,6 +89,7 @@ export function DigestPanel({ digest }: { digest: MonthlyDigest }) {
           </Link>
         </div>
       </section>
+      <SoftPostcardFromDigest digest={digest} />
     </div>
   );
 }
