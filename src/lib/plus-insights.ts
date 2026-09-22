@@ -73,13 +73,24 @@ export type KeywordChip = {
   count: number;
 };
 
-export function isoWeekKey(date: Date) {
-  const utc = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const day = utc.getUTCDay() || 7;
-  utc.setUTCDate(utc.getUTCDate() + 4 - day);
+export function isoWeekKeyFromParts(year: number, month: number, day: number) {
+  const utc = new Date(Date.UTC(year, month - 1, day));
+  const weekday = utc.getUTCDay() || 7;
+  utc.setUTCDate(utc.getUTCDate() + 4 - weekday);
   const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1));
   const week = Math.ceil(((utc.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
   return `${utc.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+/** ISO week from the runtime's local calendar date. Existing streak math uses this. */
+export function isoWeekKey(date: Date) {
+  return isoWeekKeyFromParts(date.getFullYear(), date.getMonth() + 1, date.getDate());
+}
+
+/** ISO week for a civil date in the member's timezone. */
+export function isoWeekKeyInTimeZone(date: Date, timeZone?: string | null) {
+  const cal = calendarInTimeZone(date, normalizeTimeZone(timeZone));
+  return isoWeekKeyFromParts(cal.year, cal.month, cal.day);
 }
 
 export const STREAK_MILESTONES = [2, 4, 8, 12] as const;
@@ -100,21 +111,46 @@ export function previousIsoWeekKey(key: string) {
   return `${year - 1}-W52`;
 }
 
-export function weeklyStreak(createdAts: string[], now = new Date()) {
+export type WeeklyStreakOptions = {
+  /** Pause weeks are skipped: they neither add to the streak nor break it. */
+  pausedWeeks?: Iterable<string>;
+  /** When set, review dates are bucketed in this timezone so pause keys match. */
+  timeZone?: string | null;
+};
+
+const WEEK_KEY_PATTERN = /^\d{4}-W\d{2}$/;
+
+export function weeklyStreak(
+  createdAts: string[],
+  now = new Date(),
+  options?: WeeklyStreakOptions,
+) {
+  const keyFor = (date: Date) =>
+    options?.timeZone ? isoWeekKeyInTimeZone(date, options.timeZone) : isoWeekKey(date);
   const weeks = new Set(
     createdAts
       .map((value) => new Date(value))
       .filter((date) => !Number.isNaN(date.getTime()))
-      .map((date) => isoWeekKey(date)),
+      .map((date) => keyFor(date)),
+  );
+  const paused = new Set(
+    [...(options?.pausedWeeks ?? [])].filter(
+      (key) => typeof key === "string" && WEEK_KEY_PATTERN.test(key),
+    ),
   );
   if (weeks.size === 0) return 0;
 
-  let cursor = isoWeekKey(now);
-  if (!weeks.has(cursor)) {
+  let cursor = keyFor(now);
+  if (!weeks.has(cursor) && !paused.has(cursor)) {
     cursor = previousIsoWeekKey(cursor);
   }
   let streak = 0;
-  while (weeks.has(cursor)) {
+  for (let guard = 0; guard < 104; guard += 1) {
+    if (paused.has(cursor)) {
+      cursor = previousIsoWeekKey(cursor);
+      continue;
+    }
+    if (!weeks.has(cursor)) break;
     streak += 1;
     cursor = previousIsoWeekKey(cursor);
   }
@@ -151,7 +187,11 @@ export function keywordChips(texts: string[], limit = 8): KeywordChip[] {
     .map(([word, count]) => ({ word, count }));
 }
 
-export function reviewMatchesQuery(review: Review, query: string) {
+export function reviewMatchesQuery(
+  review: Review,
+  query: string,
+  moodLabel?: string | null,
+) {
   const needle = query.trim().toLowerCase();
   if (!needle) return true;
   const parts = [
@@ -160,6 +200,8 @@ export function reviewMatchesQuery(review: Review, query: string) {
     review.drain,
     review.lessOf,
     review.priorities,
+    review.mood ?? "",
+    moodLabel ?? "",
     ...(review.customAnswers ?? []).flatMap((item) => [item.prompt, item.answer]),
   ];
   return parts.join("\n").toLowerCase().includes(needle);
@@ -228,6 +270,7 @@ export function monthlyDigestFromReviews(
   >,
   now = new Date(),
   timeZone: string = DEFAULT_TIMEZONE,
+  options?: { pausedWeeks?: Iterable<string> },
 ): MonthlyDigest {
   const zone = normalizeTimeZone(timeZone);
   const today = calendarInTimeZone(now, zone);
@@ -253,6 +296,9 @@ export function monthlyDigestFromReviews(
     streak: weeklyStreak(
       reviews.map((review) => review.createdAt),
       now,
+      options?.pausedWeeks && [...options.pausedWeeks].length > 0
+        ? { pausedWeeks: options.pausedWeeks, timeZone: zone }
+        : undefined,
     ),
     energyKeywords: keywordChips(
       inMonth.map((review) => review.energy ?? "").filter(Boolean),

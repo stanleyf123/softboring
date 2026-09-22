@@ -1,4 +1,5 @@
 import { ReviewForm } from "@/components/review-form";
+import { SoftPauseCard } from "@/components/soft-pause-card";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { QuietWritingToggle } from "@/components/quiet-writing";
 import {
@@ -7,6 +8,7 @@ import {
 } from "@/components/soft-intention-card";
 import { SoftNoteCard } from "@/components/soft-note-card";
 import { ensureUserSettings } from "@/db/user-settings";
+import { currentPauseWeekKey, isWeekPaused } from "@/db/week-pauses";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -38,6 +40,8 @@ export default async function ReviewPage({ params }: Props) {
   const t = await getTranslations("Review");
   const user = await getCurrentUser();
   const settings = user ? ensureUserSettings(user.id) : null;
+  const pauseWeekKey = settings ? currentPauseWeekKey(new Date(), settings.timezone) : "";
+  const paused = user && pauseWeekKey ? isWeekPaused(user.id, pauseWeekKey) : false;
   const softPlus = userIsSoftPlus(user);
   const customQuestions = settings && softPlus ? settings.customQuestions : [];
 
@@ -51,6 +55,11 @@ export default async function ReviewPage({ params }: Props) {
         <QuietWritingToggle />
       </div>
       <div className="quiet-writing-chrome mt-8 space-y-4">
+        <SoftPauseCard
+          signedIn={Boolean(user)}
+          initialWeekKey={pauseWeekKey}
+          initialPaused={paused}
+        />
         {settings ? (
           <SoftRhythmCard
             reminderWeekday={settings.reminderWeekday}

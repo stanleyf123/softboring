@@ -7,6 +7,7 @@ import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
 import { WallMoodLegend } from "@/components/wall-mood-legend";
 import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
+import { WallQuoteButton } from "@/components/wall-quote-button";
 import { WeekMoodChip } from "@/components/week-mood-picker";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
@@ -1086,6 +1087,11 @@ export function WallBoard({
                     </>
                   )}
                 </button>
+                {canThank ? null : (
+                  <div className="pointer-events-auto absolute -left-2 top-10 z-20">
+                    <WallQuoteButton noteId={note.id} compact />
+                  </div>
+                )}
                 {canThank ? (
                   <button
                     type="button"
@@ -1285,6 +1291,9 @@ export function WallBoard({
               {detail.pinned ? ` · ${t("pinned")}` : ""}
               {detail.bookmarked ? ` · ${t("saved")}` : ""}
             </p>
+            <div className="mt-4">
+              <WallQuoteButton noteId={detail.id} />
+            </div>
             {!detail.mine ? (
               <div className="mt-4">
                 <button

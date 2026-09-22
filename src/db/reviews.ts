@@ -1,5 +1,6 @@
 import { getDb } from "./client";
 import { parseCustomAnswersJson } from "@/lib/custom-questions";
+import { listPauseWeekKeys } from "@/db/week-pauses";
 import { monthlyDigestFromReviews } from "@/lib/plus-insights";
 import type { Review, ReviewAnswers } from "@/lib/review-types";
 import { parseWeekMood, type WeekMood } from "@/lib/week-mood";
@@ -239,5 +240,11 @@ export function monthlyDigestForUser(
     userId,
     guestId: "",
   });
-  return monthlyDigestFromReviews(reviews, now, timeZone);
+  const pausedWeeks = listPauseWeekKeys(userId);
+  return monthlyDigestFromReviews(
+    reviews,
+    now,
+    timeZone,
+    pausedWeeks.length > 0 ? { pausedWeeks } : undefined,
+  );
 }

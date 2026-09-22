@@ -322,3 +322,13 @@ CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_created
   ON soft_plus_gift_codes (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_redeemed
   ON soft_plus_gift_codes (redeemed_at);
+
+CREATE TABLE IF NOT EXISTS week_pauses (
+  user_id TEXT NOT NULL,
+  week_key TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, week_key),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_week_pauses_user ON week_pauses (user_id);

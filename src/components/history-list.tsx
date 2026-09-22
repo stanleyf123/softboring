@@ -1,8 +1,11 @@
 "use client";
 
+import { CalmArchiveSearch } from "@/components/calm-archive-search";
 import { EmptyState, ListSkeleton } from "@/components/empty-state";
+import { WeekMoodChip } from "@/components/week-mood-picker";
 import { Link } from "@/i18n/navigation";
 import { reviewMatchesQuery } from "@/lib/plus-insights";
+import { isWeekMood } from "@/lib/week-mood";
 import {
   ensureLocalReviewsMigrated,
   fetchReviews,
@@ -15,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export function HistoryList() {
   const t = useTranslations("History");
+  const tMood = useTranslations("WeekMood");
   const format = useFormatter();
   const hydrated = useHydrated();
   const [reviews, setReviews] = useState<HistoryReview[] | null>(null);
@@ -47,8 +51,13 @@ export function HistoryList() {
   const visible = useMemo(() => {
     if (!reviews) return [];
     if (!access?.softPlus || !query.trim()) return reviews;
-    return reviews.filter((review) => !review.locked && reviewMatchesQuery(review, query));
-  }, [reviews, access, query]);
+    return reviews.filter((review) => {
+      if (review.locked) return false;
+      const moodLabel =
+        review.mood && isWeekMood(review.mood) ? tMood(`name_${review.mood}`) : "";
+      return reviewMatchesQuery(review, query, moodLabel);
+    });
+  }, [reviews, access, query, tMood]);
 
   if (!hydrated || (reviews === null && !error)) {
     return <ListSkeleton label={t("loading")} />;
@@ -128,19 +137,18 @@ export function HistoryList() {
         </p>
       ) : null}
 
+      {access ? (
+        <CalmArchiveSearch
+          softPlus={access.softPlus}
+          isGuest={access.isGuest}
+          query={query}
+          onQuery={setQuery}
+        />
+      ) : null}
+
       {access?.softPlus ? (
         <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">
           <p className="font-display text-lg tracking-tight">{t("plusToolsTitle")}</p>
-          <label className="mt-4 block">
-            <span className="sr-only">{t("searchLabel")}</span>
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={t("searchPlaceholder")}
-              className="w-full rounded-full border border-line bg-cream/70 px-4 py-2.5 text-sm outline-none focus:border-accent"
-            />
-          </label>
           <div className="mt-4 flex flex-wrap gap-2">
             <a
               href="/api/reviews/export"
@@ -165,9 +173,12 @@ export function HistoryList() {
       ) : null}
 
       {visible.length === 0 ? (
-        <p className="rounded-[1.5rem] bg-paper px-6 py-8 text-sm text-muted shadow-card">
-          {t("searchEmpty")}
-        </p>
+        <EmptyState
+          title={t("archiveEmptyTitle")}
+          body={t("archiveEmptyBody")}
+          wash="bg-blush/50"
+          illustration="history"
+        />
       ) : (
         <ul className="grid gap-4 lg:grid-cols-2">
           {visible.map((review) =>
@@ -196,6 +207,11 @@ export function HistoryList() {
                   <p className="mt-2 text-base leading-relaxed">
                     {review.summary.trim() || t("untitled")}
                   </p>
+                  {review.mood && isWeekMood(review.mood) ? (
+                    <span className="mt-3 inline-flex">
+                      <WeekMoodChip mood={review.mood} />
+                    </span>
+                  ) : null}
                   {review.feeling ? (
                     <p className="mt-3 text-sm text-muted">
                       {t("feeling", { value: review.feeling })}

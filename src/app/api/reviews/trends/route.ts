@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { listReviewsForOwner } from "@/db/reviews";
 import { getReviewAccess } from "@/lib/review-access";
-import { keywordChips, weeklyStreak } from "@/lib/plus-insights";
+import { keywordChips } from "@/lib/plus-insights";
+import { streakForUser } from "@/lib/review-streak";
 import { requireSoftPlus } from "@/lib/wall-access";
 
 export const runtime = "nodejs";
@@ -27,7 +28,10 @@ export async function GET() {
 
     return NextResponse.json({
       points,
-      streak: weeklyStreak(reviews.map((review) => review.createdAt)),
+      streak: streakForUser(
+        access.user!.id,
+        reviews.map((review) => review.createdAt),
+      ),
       energyKeywords: keywordChips(reviews.map((review) => review.energy)),
       drainKeywords: keywordChips(reviews.map((review) => review.drain)),
     });

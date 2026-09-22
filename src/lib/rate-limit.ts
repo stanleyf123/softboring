@@ -48,6 +48,17 @@ function hitKey(key: string, max: number, windowMs: number, now: number): RateLi
   return { ok: true };
 }
 
+/** Generic windowed counter. Quote cards and other quiet actions share this table. */
+export function consumeKeyedRateLimit(
+  key: string,
+  max: number,
+  windowMs: number,
+): RateLimitResult {
+  const now = Date.now();
+  if (Math.random() < 0.02) pruneOldWindows(now);
+  return hitKey(key, max, windowMs, now);
+}
+
 export function consumeAuthRateLimit(
   action: AuthRateAction,
   ip: string,
