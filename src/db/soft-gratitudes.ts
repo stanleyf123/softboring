@@ -85,6 +85,18 @@ export function pickRandomGratitude(
   return rows[index] ?? null;
 }
 
+/**
+ * Remember that a line was drawn. The slip text stays in the jar;
+ * this row is only a timestamp for the monthly soft report.
+ */
+export function recordGratitudeDraw(userId: string, now = new Date()) {
+  getDb()
+    .prepare(
+      `INSERT INTO soft_gratitude_draws (id, user_id, created_at) VALUES (?, ?, ?)`,
+    )
+    .run(crypto.randomUUID(), userId, now.toISOString());
+}
+
 export function deleteGratitude(userId: string, id: string): boolean {
   const result = getDb()
     .prepare(`DELETE FROM soft_gratitudes WHERE id = ? AND user_id = ?`)

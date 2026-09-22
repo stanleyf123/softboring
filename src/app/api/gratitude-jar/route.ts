@@ -4,9 +4,10 @@ import {
   countGratitudes,
   deleteGratitude,
   GRATITUDE_MAX,
-  pickRandomGratitude,
-  parseGratitudeBody,
-} from "@/db/soft-gratitudes";
+    pickRandomGratitude,
+    parseGratitudeBody,
+    recordGratitudeDraw,
+  } from "@/db/soft-gratitudes";
 import { getCurrentUser } from "@/lib/auth";
 import { userIsSoftPlus } from "@/lib/plan";
 
@@ -29,10 +30,12 @@ export async function GET(request: Request) {
 
     const draw = new URL(request.url).searchParams.get("draw") === "1";
     const count = countGratitudes(user.id);
+    const drawn = draw ? pickRandomGratitude(user.id) : null;
+    if (drawn) recordGratitudeDraw(user.id);
     return NextResponse.json({
       count,
       maxLength: GRATITUDE_MAX,
-      drawn: draw ? pickRandomGratitude(user.id) : null,
+      drawn,
     });
   } catch (error) {
     console.error("GET /api/gratitude-jar failed", error);

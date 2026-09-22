@@ -410,6 +410,31 @@ export function ensureWeekPauses(db: Database.Database) {
   db.exec(`CREATE INDEX IF NOT EXISTS idx_week_pauses_user ON week_pauses (user_id)`);
 }
 
+export function ensureSoftGratitudeDraws(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_gratitude_draws (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_gratitude_draws_user_created
+     ON soft_gratitude_draws (user_id, created_at)`,
+  );
+}
+
+/** Anonymous hour buckets. No user id and no address. */
+export function ensureWallPresenceHours(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS wall_presence_hours (
+      hour_key TEXT PRIMARY KEY,
+      hits INTEGER NOT NULL DEFAULT 0
+    );
+  `);
+}
+
 export function ensureSoftGratitudes(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS soft_gratitudes (
@@ -472,6 +497,8 @@ export function migrateDb(db: Database.Database) {
   ensureWeekPauses(db);
   ensureSoftLetters(db);
   ensureSoftGratitudes(db);
+  ensureSoftGratitudeDraws(db);
+  ensureWallPresenceHours(db);
   ensureSoftPlusGiftCodes(db);
   ensureExpandedStickers(db);
 }
