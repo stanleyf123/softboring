@@ -1,4 +1,5 @@
 import { getDb } from "./client";
+import { isDemoEmail } from "@/lib/demo";
 import { emailLocalFallback, wallOwnerNickname } from "@/lib/nickname";
 import { isSoftPlusPlan } from "@/lib/plan";
 import {
@@ -37,6 +38,7 @@ export type WallNoteRow = {
   owner_plan_status: string | null;
   owner_nickname: string | null;
   owner_email: string | null;
+  owner_is_demo: number;
   invite_redeemed: number;
 };
 
@@ -57,6 +59,7 @@ export type WallNoteListItem = {
   ownerNickname: string | null;
   ownerFallback: string | null;
   ownerInviteBadge: boolean;
+  ownerIsDemo: boolean;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
 };
 
@@ -94,6 +97,7 @@ const NOTE_SELECT = `
          r.created_at AS review_created_at,
          u.plan AS owner_plan, u.plan_status AS owner_plan_status,
          u.nickname AS owner_nickname, u.email AS owner_email,
+         COALESCE(u.is_demo, 0) AS owner_is_demo,
          (SELECT COUNT(*) FROM wall_note_stickers s WHERE s.note_id = n.id) AS praise_count,
          (SELECT COUNT(*) FROM invites i WHERE i.inviter_id = n.user_id) AS invite_redeemed
   FROM wall_notes n
@@ -122,6 +126,7 @@ function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem
     }),
     ownerFallback: emailLocalFallback(row.owner_email),
     ownerInviteBadge: row.invite_redeemed > 0,
+    ownerIsDemo: Boolean(row.owner_is_demo) || isDemoEmail(row.owner_email),
     stickers: [],
   };
 }

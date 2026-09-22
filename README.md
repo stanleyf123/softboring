@@ -132,7 +132,7 @@ Checkout is treated as configured only when the first three are non-empty.
 - Commenting notifies the note owner in the signed-in inbox (bell). A reply also notifies the parent comment author. Own comments do not.
 - **Demo Soft+ bots** (optional): ten `@softboring.demo` accounts can seed the wall and post a few zh-TW notes each day. See [docs/demo-bots.md](./docs/demo-bots.md).
 
-After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
+After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, `preferred_wall_color`, `wall_note_flags`, soft notes / intentions / bookmarks, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
 
 ## Admin
 

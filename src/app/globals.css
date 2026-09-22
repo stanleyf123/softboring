@@ -198,8 +198,56 @@ a {
   }
 }
 
+@keyframes soft-streak-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes soft-streak-card {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes soft-streak-doodle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(2deg);
+  }
+}
+
+.soft-streak-backdrop {
+  animation: soft-streak-backdrop 0.45s ease-out both;
+}
+
+.soft-streak-card {
+  animation: soft-streak-card 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.soft-streak-doodle {
+  animation: soft-streak-doodle 5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-\[soft-empty-float_4s_ease-in-out_infinite\] {
+    animation: none !important;
+  }
+
+  .soft-streak-backdrop,
+  .soft-streak-card,
+  .soft-streak-doodle {
     animation: none !important;
   }
 }

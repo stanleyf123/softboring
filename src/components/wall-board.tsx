@@ -10,7 +10,9 @@ import {
   EMPTY_WALL_FILTERS,
   filterWallNotes,
   normalizeFeelingBound,
+  readHideDemoPreference,
   wallFiltersActive,
+  writeHideDemoPreference,
   type WallDiscoveryFilters,
 } from "@/lib/wall-filters";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
@@ -40,6 +42,7 @@ type FullNote = TeaserNote & {
   ownerSoftPlus?: boolean;
   ownerFallback?: string | null;
   ownerInviteBadge?: boolean;
+  ownerIsDemo?: boolean;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
   energy?: string;
   drain?: string;
@@ -148,7 +151,10 @@ export function WallBoard({
   const [stripeConfigured, setStripeConfigured] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [shopError, setShopError] = useState<"not_configured" | "generic" | null>(null);
-  const [filters, setFilters] = useState<WallDiscoveryFilters>(EMPTY_WALL_FILTERS);
+  const [filters, setFilters] = useState<WallDiscoveryFilters>(() => ({
+    ...EMPTY_WALL_FILTERS,
+    hideDemo: false,
+  }));
   const drag = useRef<{
     id: string;
     dx: number;
@@ -173,6 +179,15 @@ export function WallBoard({
   }, [notes, filters, softPlus, locked]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
+
+  useEffect(() => {
+    if (!softPlus || locked) return;
+    const hideDemo = readHideDemoPreference();
+    if (!hideDemo) return;
+    setFilters((current) =>
+      current.hideDemo === hideDemo ? current : { ...current, hideDemo },
+    );
+  }, [softPlus, locked]);
 
   function canvasPoint(event: React.PointerEvent) {
     const canvas = canvasRef.current;
@@ -735,13 +750,32 @@ export function WallBoard({
               </label>
               <button
                 type="button"
-                onClick={() => setFilters(EMPTY_WALL_FILTERS)}
+                onClick={() => {
+                  writeHideDemoPreference(false);
+                  setFilters(EMPTY_WALL_FILTERS);
+                }}
                 disabled={!filtersOn}
                 className="rounded-full border border-line px-4 py-2 text-sm text-muted disabled:opacity-40"
               >
                 {t("filterClear")}
               </button>
             </div>
+            <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-muted">
+              <input
+                type="checkbox"
+                checked={filters.hideDemo}
+                onChange={(event) => {
+                  const hideDemo = event.target.checked;
+                  writeHideDemoPreference(hideDemo);
+                  setFilters((current) => ({ ...current, hideDemo }));
+                }}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+              />
+              <span>
+                <span className="block text-foreground">{t("filterHideDemo")}</span>
+                <span className="mt-0.5 block text-xs text-muted">{t("filterHideDemoHint")}</span>
+              </span>
+            </label>
             {filtersOn ? (
               <p className="mt-3 text-sm text-muted">
                 {t("filterResult", {
@@ -828,7 +862,10 @@ export function WallBoard({
                 <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
                 <button
                   type="button"
-                  onClick={() => setFilters(EMPTY_WALL_FILTERS)}
+                  onClick={() => {
+                    writeHideDemoPreference(false);
+                    setFilters(EMPTY_WALL_FILTERS);
+                  }}
                   className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
                 >
                   {t("filterClear")}

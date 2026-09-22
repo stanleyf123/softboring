@@ -68,6 +68,7 @@ if (settingsTable) {
   ensureColumn("user_settings", "reminder_weekday", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "reminder_last_sent_at", "TEXT");
   ensureColumn("user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
+  ensureColumn("user_settings", "preferred_wall_color", "TEXT");
 }
 
 const wallTable = db
@@ -75,6 +76,18 @@ const wallTable = db
   .get();
 if (wallTable) {
   ensureColumn("wall_notes", "pinned", "INTEGER NOT NULL DEFAULT 0");
+}
+
+const wallCommentsTable = db
+  .prepare(
+    `SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wall_comments'`,
+  )
+  .get();
+if (wallCommentsTable) {
+  ensureColumn("wall_comments", "parent_id", "TEXT");
+  db.exec(
+    "CREATE INDEX IF NOT EXISTS idx_wall_comments_parent ON wall_comments (parent_id)",
+  );
 }
 
 db.exec(`
@@ -157,6 +170,74 @@ if (usersTable) {
   ensureColumn("users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("users", "nickname", "TEXT");
 }
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_notes (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    week_key TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id, week_key)
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_notes_user_week ON soft_notes (user_id, week_key)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_intentions (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    week_key TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id, week_key)
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_intentions_user_week ON soft_intentions (user_id, week_key)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_bookmarks (
+    user_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, note_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+  );
+`);
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_user_created
+  ON wall_note_bookmarks (user_id, created_at DESC)
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_note ON wall_note_bookmarks (note_id)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_flags (
+    id TEXT PRIMARY KEY,
+    note_id TEXT NOT NULL,
+    reporter_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE (note_id, reporter_id),
+    FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE,
+    FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_flags_note ON wall_note_flags (note_id)",
+);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_flags_created ON wall_note_flags (created_at DESC)",
+);
 
 db.close();
 
