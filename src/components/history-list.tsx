@@ -41,6 +41,7 @@ function CompareHistoryTease({ isGuest }: { isGuest: boolean }) {
 
 export function HistoryList() {
   const t = useTranslations("History");
+  const tPast = useTranslations("PastLetter");
   const tMood = useTranslations("WeekMood");
   const format = useFormatter();
   const hydrated = useHydrated();
@@ -252,7 +253,7 @@ export function HistoryList() {
                 </div>
               </li>
             ) : (
-              <li key={review.id}>
+              <li key={review.id} className="flex flex-col gap-2">
                 <Link
                   href={`/history/${review.id}`}
                   className="block rounded-[1.75rem] bg-paper px-6 py-5 shadow-card"
@@ -287,6 +288,15 @@ export function HistoryList() {
                   ) : null}
                   <span className="mt-4 inline-block text-sm text-accent">{t("open")}</span>
                 </Link>
+                {access?.softPlus ? (
+                  <Link
+                    href={`/history/${review.id}#past-self-letter`}
+                    className="self-start px-2 text-sm text-accent"
+                    data-past-letter-link={review.id}
+                  >
+                    {tPast("historyLink")}
+                  </Link>
+                ) : null}
               </li>
             ),
           )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { ECHO_MAX_CHARS } from "@/lib/soft-echo";
+import { showWallRateToast } from "@/lib/wall-rate-notice";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -55,6 +56,11 @@ export function WallEchoComposer({
         if (busy || tooLong || body.trim().length === 0) return;
         setNotice(null);
         void onSubmit(body).then((result) => {
+          if (result === "rate") {
+            showWallRateToast();
+            setNotice(null);
+            return;
+          }
           setNotice(result === "ok" ? null : result);
         });
       }}
@@ -86,11 +92,6 @@ export function WallEchoComposer({
       {notice === "invalid" ? (
         <p className="mt-2 text-sm text-accent" role="status">
           {t("echoInvalid")}
-        </p>
-      ) : null}
-      {notice === "rate" ? (
-        <p className="mt-2 text-sm text-muted" role="status">
-          {t("echoRate")}
         </p>
       ) : null}
       {notice === "error" ? (

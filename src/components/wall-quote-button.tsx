@@ -1,5 +1,6 @@
 "use client";
 
+import { noticeWallRateLimit } from "@/lib/wall-rate-notice";
 import {
   quoteCardFilename,
   renderWallQuotePng,
@@ -29,7 +30,7 @@ export function WallQuoteButton({
   const t = useTranslations("Wall");
   const tCard = useTranslations("QuoteCard");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<"generic" | "rate" | null>(null);
+  const [error, setError] = useState(false);
 
   const labels: WallQuoteLabels = {
     brand: tCard("brand"),
@@ -43,23 +44,23 @@ export function WallQuoteButton({
     event.stopPropagation();
     event.preventDefault();
     setBusy(true);
-    setError(null);
+    setError(false);
     try {
       const response = await fetch(`/api/wall/notes/${encodeURIComponent(noteId)}/quote`, {
         cache: "no-store",
       });
-      if (response.status === 429) {
-        setError("rate");
-        return;
-      }
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        quote?: Partial<WallQuotePayload>;
+      };
+      if (noticeWallRateLimit(response.status, data.error)) return;
       if (!response.ok) {
-        setError("generic");
+        setError(true);
         return;
       }
-      const data = (await response.json()) as { quote?: Partial<WallQuotePayload> };
       const quote = data.quote;
       if (!quote?.noteId) {
-        setError("generic");
+        setError(true);
         return;
       }
       const payload: WallQuotePayload = {
@@ -71,7 +72,7 @@ export function WallQuoteButton({
       const blob = await renderWallQuotePng(payload, labels);
       downloadBlob(blob, quoteCardFilename(payload.noteId));
     } catch {
-      setError("generic");
+      setError(true);
     } finally {
       setBusy(false);
     }
@@ -94,8 +95,8 @@ export function WallQuoteButton({
         {compact ? "“" : busy ? t("quoteBusy") : t("quoteCta")}
       </button>
       {error ? (
-        <span className={compact ? "sr-only" : "mt-2 text-sm text-muted"} role="alert">
-          {error === "rate" ? t("quoteRate") : t("quoteError")}
+        <span className={compact ? "sr-only" : "mt-2 text-sm text-muted"} role="status">
+          {t("quoteError")}
         </span>
       ) : null}
     </span>

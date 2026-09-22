@@ -397,6 +397,25 @@ export function ensureSoftLetters(db: Database.Database) {
   );
 }
 
+export function ensurePastSelfLetters(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS past_self_letters (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      review_id TEXT NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+      UNIQUE (user_id, review_id)
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_past_self_letters_user ON past_self_letters (user_id, updated_at)`,
+  );
+}
+
 export function ensureStreakProtectTokens(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS streak_protect_tokens (
@@ -554,6 +573,7 @@ export function migrateDb(db: Database.Database) {
   ensureWeekPauses(db);
   ensureStreakProtectTokens(db);
   ensureSoftLetters(db);
+  ensurePastSelfLetters(db);
   ensureSoftGratitudes(db);
   ensureSoftGratitudeDraws(db);
   ensureSoftCapsules(db);
