@@ -289,8 +289,10 @@
     "tagsTeaseCta": "看看 Soft+"
   },
   "NotFound": {
-    "title": "沒有這個頁面。",
-    "home": "回到首頁"
+    "title": "這一頁悄悄走掉了。",
+    "body": "水壺還在。只是這個網址不是我們留著的頁面。",
+    "home": "回到首頁",
+    "wall": "軟軟牆"
   },
   "Auth": {
     "loginTitle": "進來吧，水還沒涼。",
@@ -363,6 +365,13 @@
     "reviewCount": "已儲存 {count} 篇",
     "dataSizeTitle": "柔軟的大小筆記",
     "dataSizeBody": "這張桌子大約留著 {reviews} 篇回顧，以及 {notes} 張軟軟牆便利貼（包含已拿下來的）。只是此刻的大小，不會寄信。",
+    "sessionsTitle": "登入中的桌子",
+    "sessionsCount": "還有 {count} 個安靜的瀏覽器登入著。",
+    "sessionsRecencyToday": "最新的一個是今天來的。",
+    "sessionsRecencyThisWeek": "最新的一個是這週來的。",
+    "sessionsRecencyEarlier": "最新的一個已經在這裡一陣子了。",
+    "sessionsTip": "我們不列出裝置、地點或精確時間。登出只會關掉這個瀏覽器。",
+    "sessionsDevicesTip": "你在這個瀏覽器登入著。其他桌子會自己離開。我們不保留裝置清單。",
     "planLabel": "方案",
     "planFree": "Free",
     "planSoftPlus": "Soft+",
@@ -531,6 +540,7 @@
     "featureWallFree": "軟軟牆隔著一層柔柔的簾子",
     "featureCollectionsFree": "已存便利貼的命名小集，留在 Soft+",
     "featureCollectionExportFree": "小集與已存便利貼編號的 JSON，留在 Soft+",
+    "featureBookmarkExportFree": "已存便利貼編號的 JSON，留在 Soft+",
     "featureStickersFree": "牆上貼紙在 Soft+",
     "featureExportFree": "CSV 與可列印頁面在 Soft+。免費可以把最近四週下載成 JSON。",
     "featureSoftCount": "書寫時可選擇顯示安靜的字數與詞數",
@@ -544,6 +554,7 @@
     "featureWallPlus": "軟軟牆完整使用：讀、拖、留言、回覆",
     "featureCollectionsPlus": "把已存的牆上記事收成有名字的柔軟小集",
     "featureCollectionExportPlus": "把柔軟小集與已存便利貼編號下載成 JSON",
+    "featureBookmarkExportPlus": "下載已存便利貼編號，以及它們屬於哪些小集",
     "featureExportPlus": "把週次匯出成 CSV 或可列印 PDF",
     "featureSearchPlus": "搜尋完整紀錄",
     "featureCustomPlus": "最多三題自訂每週問題，外加季節題包",
@@ -1565,6 +1576,14 @@
     "exportBody": "把有名字的小集，以及你存下的便利貼編號帶走。不寄信，也不含便利貼內文。",
     "exportCta": "下載小集 JSON",
     "exportTeaseBody": "Soft+ 可以把這些小集，連同已存便利貼的編號，下載成一份小小的 JSON。"
+  },
+  "WallBookmarks": {
+    "exportTitle": "已存便利貼的小清單",
+    "exportBody": "下載你收藏的便利貼編號，以及它們放在哪些小集。沒有便利貼內文，也不會寄信。",
+    "exportCta": "下載書籤 JSON",
+    "exportTeaseTitle": "已存便利貼編號留在 Soft+",
+    "exportTeaseBody": "免費可以先看到這個想法。Soft+ 會下載一份 JSON：已存便利貼的編號，以及它們屬於哪些小集。沒有便利貼內文。",
+    "exportTeaseCta": "看看 Soft+"
   },
   "WallSaved": {
     "eyebrow": "Soft+ · 私人",

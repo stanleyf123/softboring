@@ -1,11 +1,13 @@
 import { AccountPanel } from "@/components/account-panel";
 import { countReviewsForUser, listReviewsForOwner, monthlyDigestForUser } from "@/db/reviews";
-import { listRecentThanksForUser } from "@/db/wall-thanks";
-import { countWallNotesForUser } from "@/db/wall";
+import { summarizeOpenSessions } from "@/db/sessions";
 import { ensureUserSettings } from "@/db/user-settings";
+import { countWallNotesForUser } from "@/db/wall";
+import { listRecentThanksForUser } from "@/db/wall-thanks";
 import { getCurrentUser } from "@/lib/auth";
 import { isEmailConfigured } from "@/lib/email";
 import { userIsSoftPlus } from "@/lib/plan";
+import { presentSoftSessions } from "@/lib/soft-sessions";
 import { pickSoftMemory } from "@/lib/soft-memory";
 import { isStripeConfigured } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
@@ -49,6 +51,13 @@ export default async function AccountPage({ params, searchParams }: Props) {
   const settings = ensureUserSettings(user.id);
   const { checkout } = await searchParams;
   const softPlus = userIsSoftPlus(user);
+  const now = new Date();
+  let softSessions = presentSoftSessions(null, now);
+  try {
+    softSessions = presentSoftSessions(summarizeOpenSessions(user.id, now), now);
+  } catch (error) {
+    console.error("account session summary failed", error);
+  }
   const softMemory = pickSoftMemory(
     listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
     softPlus,
@@ -82,6 +91,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           digest={monthlyDigestForUser(user.id, new Date(), settings.timezone)}
           nickname={user.nickname}
           thankedNotes={softPlus ? listRecentThanksForUser(user.id) : []}
+          softSessions={softSessions}
         />
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { WallBookmarksExport } from "@/components/wall-bookmarks-export";
 import { WallCollectionsTease } from "@/components/wall-collections-panel";
 import { WallSavedPanel } from "@/components/wall-saved-panel";
 import { getCurrentUser } from "@/lib/auth";
@@ -41,6 +42,7 @@ export default async function WallSavedPage({ params }: Props) {
       <h1 className="mt-2 font-display text-4xl tracking-tight">{t("title")}</h1>
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
       <div className="mt-10 space-y-6">
+        <WallBookmarksExport softPlus={Boolean(user) && softPlus} />
         {user ? (
           <WallSavedPanel softPlus={softPlus} />
         ) : (

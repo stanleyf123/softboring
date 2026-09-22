@@ -1,3 +1,4 @@
+import type { BookmarkCollectionMembership } from "@/lib/bookmarks-export";
 import { getDb } from "./client";
 import {
   getWallNote,
@@ -36,6 +37,20 @@ export function listBookmarksForExport(userId: string) {
        ORDER BY datetime(created_at) ASC, note_id ASC`,
     )
     .all(userId) as Array<{ noteId: string; bookmarkedAt: string }>;
+}
+
+/** Collection id and name for bookmarked notes only. Note text stays out. */
+export function listBookmarkMembershipsForExport(userId: string): BookmarkCollectionMembership[] {
+  return getDb()
+    .prepare(
+      `SELECT i.note_id AS noteId, c.id AS collectionId, c.name AS name
+       FROM wall_note_collection_items i
+       JOIN wall_note_collections c ON c.id = i.collection_id
+       JOIN wall_note_bookmarks b ON b.user_id = c.user_id AND b.note_id = i.note_id
+       WHERE c.user_id = ?
+       ORDER BY i.note_id ASC, c.name COLLATE NOCASE ASC, c.id ASC`,
+    )
+    .all(userId) as BookmarkCollectionMembership[];
 }
 
 export function isWallNoteBookmarked(userId: string, noteId: string) {
