@@ -1,6 +1,7 @@
 import { SoftMonthView } from "@/components/soft-month-view";
 import { listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
+import { listPauseWeekKeys } from "@/db/week-pauses";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -49,6 +50,7 @@ export default async function SoftMonthSnapshotPage({ params }: Props) {
   const snapshot = buildSoftMonthSnapshot(reviews, {
     timeZone: settings.timezone,
     softPlus,
+    pausedWeeks: listPauseWeekKeys(user.id),
   });
 
   return (

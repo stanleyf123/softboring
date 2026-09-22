@@ -291,6 +291,19 @@ export function ensureWallNoteThanks(db: Database.Database) {
   );
 }
 
+export function ensureWeekPauses(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS week_pauses (
+      user_id TEXT NOT NULL,
+      week_key TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, week_key),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_week_pauses_user ON week_pauses (user_id)`);
+}
+
 export function ensureSoftPlusGiftCodes(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS soft_plus_gift_codes (
@@ -332,5 +345,6 @@ export function migrateDb(db: Database.Database) {
   ensureWallNoteBookmarks(db);
   ensureWallNoteFlags(db);
   ensureWallNoteThanks(db);
+  ensureWeekPauses(db);
   ensureSoftPlusGiftCodes(db);
 }

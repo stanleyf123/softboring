@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
+import { listPauseWeekKeys } from "@/db/week-pauses";
 import { getCurrentUser } from "@/lib/auth";
 import { userIsSoftPlus } from "@/lib/plan";
 import { buildSoftMonthSnapshot } from "@/lib/soft-month";
@@ -20,6 +21,7 @@ export async function GET() {
       {
         timeZone: settings.timezone,
         softPlus: userIsSoftPlus(user),
+        pausedWeeks: listPauseWeekKeys(user.id),
       },
     );
     return NextResponse.json(snapshot, {

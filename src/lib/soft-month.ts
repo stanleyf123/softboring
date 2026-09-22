@@ -67,7 +67,12 @@ function openCard(review: Review): SoftMonthCard {
  */
 export function buildSoftMonthSnapshot(
   reviewsNewestFirst: Review[],
-  options: { now?: Date; timeZone?: string | null; softPlus: boolean },
+  options: {
+    now?: Date;
+    timeZone?: string | null;
+    softPlus: boolean;
+    pausedWeeks?: Iterable<string>;
+  },
 ): SoftMonthSnapshot {
   const timeZone = normalizeTimeZone(options.timeZone);
   const now = options.now ?? new Date();
@@ -87,12 +92,14 @@ export function buildSoftMonthSnapshot(
     unlockedIds.has(review.id) ? openCard(review) : lockedCard(review),
   );
   const visibleCount = reviews.filter((review) => !review.locked).length;
+  const pausedWeeks = [...(options.pausedWeeks ?? [])];
   const digest = monthlyDigestFromReviews(
     options.softPlus
       ? reviewsNewestFirst
       : reviewsNewestFirst.slice(0, FREE_HISTORY_LIMIT),
     now,
     timeZone,
+    pausedWeeks.length > 0 ? { pausedWeeks } : undefined,
   );
 
   return {

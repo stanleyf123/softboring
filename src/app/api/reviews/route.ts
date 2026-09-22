@@ -4,6 +4,7 @@ import { withHistoryAccess } from "@/lib/history-access";
 import { InputError, parseAnswers } from "@/lib/review-input";
 import { accessPayload, getReviewAccess } from "@/lib/review-access";
 import { streakMilestone, weeklyStreak } from "@/lib/plus-insights";
+import { streakForUser } from "@/lib/review-streak";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,7 +40,11 @@ export async function POST(request: Request) {
     const all = listReviewsForOwner(access.owner);
     const visible = withHistoryAccess(all, access.softPlus);
     const lockedCount = visible.filter((item) => item.locked).length;
-    const streak = weeklyStreak(all.map((item) => item.createdAt));
+    const createdAts = all.map((item) => item.createdAt);
+    const streak =
+      access.owner.kind === "user"
+        ? streakForUser(access.owner.userId, createdAts)
+        : weeklyStreak(createdAts);
     return NextResponse.json(
       {
         review,
