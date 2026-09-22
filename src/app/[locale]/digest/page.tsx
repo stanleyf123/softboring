@@ -1,10 +1,17 @@
+import { DigestArchive } from "@/components/digest-archive";
 import { DigestPanel } from "@/components/digest-panel";
 import { SoftReportTease } from "@/components/soft-report-section";
-import { monthlyDigestForUser } from "@/db/reviews";
+import { monthlyDigestForUser, listReviewsForOwner } from "@/db/reviews";
 import { getDb } from "@/db/client";
 import { readMonthlySoftReport } from "@/db/soft-report";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
+import {
+  digestMonthKey,
+  instantForDigestMonth,
+  listPastDigestMonths,
+  parseDigestMonthKey,
+} from "@/lib/digest-archive";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
@@ -15,6 +22,7 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ month?: string }>;
 };
 
 export async function generateMetadata({ params }: Props) {
@@ -29,8 +37,9 @@ export async function generateMetadata({ params }: Props) {
   });
 }
 
-export default async function DigestPage({ params }: Props) {
+export default async function DigestPage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const query = await searchParams;
   const appLocale = assertLocale(locale);
   setRequestLocale(appLocale);
 
@@ -39,18 +48,43 @@ export default async function DigestPage({ params }: Props) {
   const softPlus = userIsSoftPlus(user);
   const settings = user && softPlus ? ensureUserSettings(user.id) : null;
   const now = new Date();
+  const archive =
+    user && softPlus
+      ? listPastDigestMonths(
+          listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
+          now,
+          settings?.timezone,
+        )
+      : [];
+  const requested = parseDigestMonthKey(query.month);
+  const active = requested
+    ? archive.find(
+        (month) => digestMonthKey(month.year, month.month) === digestMonthKey(requested.year, requested.month),
+      )
+    : undefined;
+  const anchor = active
+    ? instantForDigestMonth(active.year, active.month, settings?.timezone)
+    : now;
 
   return (
     <div className="pt-6">
       <p className="font-display italic text-accent">{t("eyebrow")}</p>
       <h1 className="mt-2 font-display text-4xl tracking-tight">{t("title")}</h1>
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
-      <div className="mt-10">
+      <div className="mt-10 space-y-6">
         {user && softPlus ? (
-          <DigestPanel
-            digest={monthlyDigestForUser(user.id, now, settings?.timezone)}
-            report={readMonthlySoftReport(getDb(), user.id, now, settings?.timezone)}
-          />
+          <>
+            <DigestPanel
+              digest={monthlyDigestForUser(user.id, anchor, settings?.timezone)}
+              report={readMonthlySoftReport(getDb(), user.id, anchor, settings?.timezone)}
+              historical={Boolean(active)}
+            />
+            <DigestArchive
+              softPlus
+              months={archive}
+              activeKey={active ? digestMonthKey(active.year, active.month) : null}
+            />
+          </>
         ) : (
           <>
             <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card" data-soft-report="locked">
@@ -75,6 +109,7 @@ export default async function DigestPage({ params }: Props) {
                 ) : null}
               </div>
             </section>
+            <DigestArchive softPlus={false} months={[]} activeKey={null} />
             <SoftReportTease signedIn={Boolean(user)} />
           </>
         )}

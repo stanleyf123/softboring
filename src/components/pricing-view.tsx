@@ -53,6 +53,7 @@ export async function PricingView({
             <li className="text-muted">{t("featureExportFree")}</li>
             <li>{t("featureSoftCount")}</li>
             <li className="text-muted">{t("featureDigestFree")}</li>
+            <li className="text-muted">{t("featureDigestArchiveFree")}</li>
             <li className="text-muted">{t("featureCapsuleFree")}</li>
             <li className="text-muted">{t("featureStreakProtectFree")}</li>
             <li className="text-muted">{t("featureReflectionFree")}</li>
@@ -89,6 +90,7 @@ export async function PricingView({
             <li>{t("featureExportPlus")}</li>
             <li>{t("featureSoftCount")}</li>
             <li>{t("featureDigestPlus")}</li>
+            <li>{t("featureDigestArchivePlus")}</li>
             <li>{t("featureCapsulePlus")}</li>
             <li>{t("featureStreakProtectPlus")}</li>
             <li>{t("featureReflectionPlus")}</li>

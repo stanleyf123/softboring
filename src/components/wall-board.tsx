@@ -49,6 +49,13 @@ import { filterNotesBySoftSearch } from "@/lib/wall-soft-search";
 import { SOFT_PLUS_RAISED_PIN_LIMIT } from "@/lib/wall-pin-limit";
 import { decorativeMotion } from "@/lib/reduced-motion";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
+import {
+  WALL_NOTE_PAGE,
+  wallHasMoreNotes,
+  wallNextShownCount,
+  wallRevealCount,
+  wallShownCount,
+} from "@/lib/wall-load-more";
 import { SoftCopyLink } from "@/components/soft-copy-link";
 import { wallNoteSharePath, withWallNoteQuery } from "@/lib/soft-copy-link";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
@@ -270,6 +277,8 @@ export function WallBoard({
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
   const [guestQuery, setGuestQuery] = useState("");
   const [shuffleSeed, setShuffleSeed] = useState<number | null>(null);
+  const [shownCount, setShownCount] = useState(WALL_NOTE_PAGE);
+  const [arrivedFrom, setArrivedFrom] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
   const drag = useRef<{
     id: string;
@@ -285,6 +294,7 @@ export function WallBoard({
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const openedInitialNote = useRef(false);
+  const revealedInitialNote = useRef(false);
   const noteCloseRef = useRef<HTMLButtonElement>(null);
   const shopCloseRef = useRef<HTMLButtonElement>(null);
   const detailReturnFocusRef = useRef<HTMLElement | null>(null);
@@ -299,6 +309,40 @@ export function WallBoard({
   }, [notes, filters, sort, softPlus, locked, shuffleSeed, guestQuery]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
+  const renderedNotes = visibleNotes.slice(0, wallShownCount(visibleNotes.length, shownCount));
+
+  useEffect(() => {
+    setArrivedFrom(0);
+  }, [filters, sort, guestQuery, shuffleSeed]);
+
+  useEffect(() => {
+    if (!initialNoteId || revealedInitialNote.current) return;
+    const index = visibleNotes.findIndex((note) => note.id === initialNoteId);
+    if (index < 0) return;
+    revealedInitialNote.current = true;
+    const reveal = wallRevealCount(
+      visibleNotes.map((note) => note.id),
+      initialNoteId,
+    );
+    setShownCount((current) => Math.max(current, reveal));
+    setArrivedFrom((current) => Math.max(current, reveal));
+  }, [initialNoteId, visibleNotes]);
+
+  function showMoreNotes() {
+    const current = wallShownCount(visibleNotes.length, shownCount);
+    const next = wallNextShownCount(visibleNotes.length, shownCount);
+    if (next <= current) return;
+    setArrivedFrom(current);
+    setShownCount(next);
+  }
+
+  function revealThrough(index: number) {
+    const need = index + 1;
+    const painted = wallShownCount(visibleNotes.length, shownCount);
+    if (need <= painted) return;
+    setArrivedFrom(need);
+    setShownCount(need);
+  }
 
   useEffect(() => {
     if (!signedIn) return;
@@ -494,6 +538,8 @@ export function WallBoard({
 
   async function openNote(id: string) {
     if (locked) return;
+    const index = visibleNotes.findIndex((note) => note.id === id);
+    if (index >= 0) revealThrough(index);
     detailReturnFocusRef.current =
       (document.activeElement as HTMLElement | null) ?? null;
     setSelectedId(id);
@@ -1365,7 +1411,7 @@ export function WallBoard({
                 )}
               </div>
             ) : null}
-            {visibleNotes.map((note) => {
+            {renderedNotes.map((note, index) => {
               const full = "excerpt" in note ? (note as FullNote) : null;
               const author = wallAuthorLabel(
                 note,
@@ -1382,6 +1428,9 @@ export function WallBoard({
                   key={note.id}
                   className="soft-wall-note absolute w-[216px]"
                   data-note-preview={full && !locked ? "soft" : undefined}
+                  data-wall-load={
+                    !reducedMotion && arrivedFrom > 0 && index >= arrivedFrom ? "fresh" : undefined
+                  }
                   style={{
                     left: note.x,
                     top: note.y,
@@ -1586,6 +1635,30 @@ export function WallBoard({
           </div>
         ) : null}
       </div>
+
+      {visibleNotes.length > WALL_NOTE_PAGE ? (
+        <div
+          className={`${SITE_SHELL_CLASS} mt-4 flex flex-wrap items-center gap-3`}
+          data-wall-load-more=""
+          data-wall-load-motion={decorativeMotion(reducedMotion)}
+        >
+          <p className="text-sm text-muted" role="status">
+            {t("loadMoreStatus", { shown: renderedNotes.length, total: visibleNotes.length })}
+          </p>
+          {wallHasMoreNotes(visibleNotes.length, shownCount) ? (
+            <button
+              type="button"
+              data-wall-load-more-button=""
+              onClick={showMoreNotes}
+              className="inline-flex min-h-11 items-center rounded-full bg-peach px-4 py-2 text-sm text-foreground shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              {t("loadMore")}
+            </button>
+          ) : (
+            <p className="text-sm text-muted">{t("loadMoreDone")}</p>
+          )}
+        </div>
+      ) : null}
 
       {softPlus && shopOpen ? (
         <div

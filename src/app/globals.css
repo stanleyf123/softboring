@@ -869,8 +869,13 @@ html[data-quiet-writing="1"] main {
   }
 }
 
-.soft-wall-settle .soft-wall-note {
+.soft-wall-settle .soft-wall-note,
+.soft-wall-note[data-wall-load="fresh"] {
   animation: soft-wall-settle 520ms ease;
+}
+
+[data-wall-load-motion="still"] .soft-wall-note[data-wall-load="fresh"] {
+  animation: none;
 }
 
 /* Readable notes rest at five lines. Hover or keyboard focus opens two or three more. */
@@ -1006,6 +1011,7 @@ html[data-quiet-writing="1"] main {
   .soft-sound-live,
   .soft-undo-bar,
   .soft-wall-settle .soft-wall-note,
+  .soft-wall-note[data-wall-load="fresh"],
   .soft-save-bloom::before,
   .soft-save-bloom-card,
   .soft-copy-toast,

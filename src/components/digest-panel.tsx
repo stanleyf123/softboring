@@ -11,9 +11,11 @@ import { useFormatter, useTranslations } from "next-intl";
 export function DigestPanel({
   digest,
   report,
+  historical = false,
 }: {
   digest: MonthlyDigest;
   report: MonthlySoftReport;
+  historical?: boolean;
 }) {
   const t = useTranslations("Digest");
   const format = useFormatter();
@@ -25,7 +27,11 @@ export function DigestPanel({
   if (digest.count === 0) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-muted">{t("timezoneNote", { zone: digest.timeZone })}</p>
+        <p className="text-sm text-muted">
+          {historical
+            ? t("archiveTimezoneNote", { zone: digest.timeZone })
+            : t("timezoneNote", { zone: digest.timeZone })}
+        </p>
         <EmptyState
           title={t("emptyTitle")}
           body={t("empty")}
@@ -43,7 +49,11 @@ export function DigestPanel({
     <div className="space-y-5">
       <section className="rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8">
         <p className="text-sm text-muted">{t("monthLabel", { month: monthLabel })}</p>
-        <p className="mt-2 text-xs text-muted">{t("timezoneNote", { zone: digest.timeZone })}</p>
+        <p className="mt-2 text-xs text-muted">
+          {historical
+            ? t("archiveTimezoneNote", { zone: digest.timeZone })
+            : t("timezoneNote", { zone: digest.timeZone })}
+        </p>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <div className="rounded-[1.4rem] bg-peach/60 px-4 py-4">
             <p className="text-sm text-muted">{t("countLabel")}</p>

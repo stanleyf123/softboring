@@ -1,3 +1,4 @@
+import { gaMeasurementId } from "@/lib/analytics-note";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SoftMark } from "@/components/soft-doodles";
 import { Link } from "@/i18n/navigation";
@@ -19,6 +20,9 @@ export async function SiteFooter() {
         <Link href="/thanks" className={`${SOFT_CHROME_FOCUS} rounded-full hover:text-foreground`}>
           {t("thanksLink")}
         </Link>
+      </p>
+      <p className="mt-4 max-w-md text-xs leading-relaxed text-muted" data-analytics-note="">
+        {t("analyticsNote", { id: gaMeasurementId() })}
       </p>
       <nav
         className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2"
