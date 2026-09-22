@@ -126,6 +126,7 @@ test("free account download is the latest four reviews as JSON", () => {
     "id",
     "lessOf",
     "locale",
+    "mood",
     "priorities",
     "summary",
   ]);

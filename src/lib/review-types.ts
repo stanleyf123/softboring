@@ -1,4 +1,5 @@
 import type { CustomAnswer } from "@/lib/custom-questions";
+import type { WeekMood } from "@/lib/week-mood";
 
 export type ReviewAnswers = {
   energy: string;
@@ -8,6 +9,7 @@ export type ReviewAnswers = {
   feeling: number | null;
   summary: string;
   customAnswers: CustomAnswer[];
+  mood?: WeekMood | null;
 };
 
 export type Review = ReviewAnswers & {

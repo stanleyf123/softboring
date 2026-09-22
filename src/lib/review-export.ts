@@ -13,6 +13,7 @@ export type PortableReview = {
   priorities: string;
   summary: string;
   customAnswers: Review["customAnswers"];
+  mood: Review["mood"];
 };
 
 export function toPortableReview(review: Review): PortableReview {
@@ -27,6 +28,7 @@ export function toPortableReview(review: Review): PortableReview {
     priorities: review.priorities,
     summary: review.summary,
     customAnswers: review.customAnswers ?? [],
+    mood: review.mood ?? null,
   };
 }
 

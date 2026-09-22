@@ -3,6 +3,8 @@
 import { Link, useRouter } from "@/i18n/navigation";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import { isWallColor, WALL_COLORS, type WallColor } from "@/lib/wall-canvas";
+import { isWeekMood, type WeekMood } from "@/lib/week-mood";
+import { WeekMoodChip } from "@/components/week-mood-picker";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -42,11 +44,13 @@ export function ShareToWall({
   initialNoteId,
   softPlus = false,
   variant = "card",
+  mood = null,
 }: {
   reviewId: string;
   initialNoteId: string | null;
   softPlus?: boolean;
   variant?: "card" | "hero";
+  mood?: WeekMood | null;
 }) {
   const t = useTranslations("Wall");
   const router = useRouter();
@@ -170,6 +174,11 @@ export function ShareToWall({
       <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
         {noteId ? t("unshareHint") : t("shareBody")}
       </p>
+      {mood && isWeekMood(mood) ? (
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <WeekMoodChip mood={mood} />
+        </div>
+      ) : null}
       {softPlus && !noteId && colorReady ? (
         <div className="mt-5">
           <p className="text-sm text-muted">{t("colorPreferTitle")}</p>

@@ -2,6 +2,7 @@ import { routing } from "@/i18n/routing";
 import { normalizeCustomAnswers } from "@/lib/custom-questions";
 import { isGuestId } from "@/lib/guest";
 import type { Review, ReviewAnswers } from "@/lib/review-types";
+import { isWeekMood, type WeekMood } from "@/lib/week-mood";
 
 const MAX_TEXT = 10_000;
 const MAX_IMPORT = 100;
@@ -25,6 +26,14 @@ function asFeeling(value: unknown) {
   if (value == null || value === "") return null;
   if (typeof value !== "number" || !Number.isInteger(value) || value < 1 || value > 5) {
     throw new InputError("Feeling must be an integer from 1 to 5.");
+  }
+  return value;
+}
+
+function asMood(value: unknown): WeekMood | null {
+  if (value == null || value === "") return null;
+  if (typeof value !== "string" || !isWeekMood(value)) {
+    throw new InputError("Mood must be a soft color.");
   }
   return value;
 }
@@ -53,8 +62,16 @@ export function parseAnswers(body: unknown): ReviewAnswers & { locale?: string }
     feeling: asFeeling(input.feeling),
     summary: asText(input.summary),
     customAnswers: normalizeCustomAnswers(input.customAnswers),
+    mood: asMood(input.mood),
     locale: asLocale(input.locale),
   };
+}
+
+export function parseMoodPatch(body: unknown): WeekMood | null {
+  if (!body || typeof body !== "object" || !("mood" in body)) {
+    throw new InputError("Expected a mood.");
+  }
+  return asMood((body as { mood?: unknown }).mood);
 }
 
 function asIsoDate(value: unknown) {

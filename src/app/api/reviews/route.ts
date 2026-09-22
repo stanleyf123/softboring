@@ -32,6 +32,9 @@ export async function POST(request: Request) {
     if (!access.softPlus) {
       answers.customAnswers = [];
     }
+    if (access.owner.kind !== "user") {
+      answers.mood = null;
+    }
     const review = createReview(access.owner, answers);
     const all = listReviewsForOwner(access.owner);
     const visible = withHistoryAccess(all, access.softPlus);

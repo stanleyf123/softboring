@@ -33,6 +33,7 @@ if (!reviewCols.includes("user_id")) {
   db.exec("ALTER TABLE reviews ADD COLUMN user_id TEXT");
 }
 ensureColumn("reviews", "custom_answers", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("reviews", "mood", "TEXT");
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)",
 );

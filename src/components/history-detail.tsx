@@ -2,9 +2,11 @@
 
 import { SoftPostcardFromReview } from "@/components/soft-postcard-button";
 import { ShareToWall } from "@/components/share-to-wall";
+import { WeekMoodPicker } from "@/components/week-mood-picker";
 import { Link } from "@/i18n/navigation";
 import { ensureLocalReviewsMigrated, fetchReview, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
+import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -29,6 +31,8 @@ export function HistoryDetail({ id }: { id: string }) {
   const [softPlus, setSoftPlus] = useState(false);
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState(false);
+  const [moodStatus, setMoodStatus] = useState<"saved" | "error" | null>(null);
+  const [moodBusy, setMoodBusy] = useState(false);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -130,9 +134,38 @@ export function HistoryDetail({ id }: { id: string }) {
   const date = format.dateTime(new Date(review.createdAt), {
     dateStyle: "long",
   });
+  const mood = review.mood && isWeekMood(review.mood) ? review.mood : null;
+  const tint = mood ? WEEK_MOOD_TINT[mood] : "";
+  const reviewId = review.id;
+
+  async function changeMood(next: WeekMood | null) {
+    if (moodBusy) return;
+    const previous = mood;
+    setReview((current) => (current ? { ...current, mood: next } : current));
+    setMoodBusy(true);
+    setMoodStatus(null);
+    try {
+      const response = await fetch(`/api/reviews/${encodeURIComponent(reviewId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mood: next }),
+      });
+      if (!response.ok) throw new Error("mood");
+      const data = (await response.json()) as { review?: Review };
+      if (data.review) setReview(data.review);
+      setMoodStatus("saved");
+    } catch {
+      setReview((current) => (current ? { ...current, mood: previous } : current));
+      setMoodStatus("error");
+    } finally {
+      setMoodBusy(false);
+    }
+  }
 
   return (
-    <article className="soft-week-detail">
+    <article
+      className={`soft-week-detail ${tint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${tint}` : ""}`}
+    >
       <div className="print:hidden">
         <Link href="/history" className="text-sm text-muted hover:text-foreground">
           {t("back")}
@@ -141,6 +174,16 @@ export function HistoryDetail({ id }: { id: string }) {
         <h1 className="mt-3 font-display text-3xl tracking-tight">
           {review.summary.trim() || tHistory("untitled")}
         </h1>
+        {wall?.canShare ? (
+          <div className="mt-6">
+            <WeekMoodPicker
+              mood={mood}
+              onChange={(next) => void changeMood(next)}
+              disabled={moodBusy}
+              status={moodStatus}
+            />
+          </div>
+        ) : null}
 
         <dl className="mt-10 grid gap-8 lg:grid-cols-2">
           {DETAIL_FIELDS.map((field) => (
@@ -176,6 +219,7 @@ export function HistoryDetail({ id }: { id: string }) {
             reviewId={review.id}
             initialNoteId={wall.noteId}
             softPlus={softPlus}
+            mood={mood}
           />
         </div>
       ) : null}

@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS reviews (
   summary TEXT NOT NULL DEFAULT '',
   locale TEXT,
   custom_answers TEXT NOT NULL DEFAULT '[]',
+  mood TEXT,
   created_at TEXT NOT NULL,
   CHECK (feeling IS NULL OR (feeling >= 1 AND feeling <= 5)),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
