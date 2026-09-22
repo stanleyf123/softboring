@@ -82,6 +82,8 @@ export function ensureUserSettingsColumns(db: Database.Database) {
     "INTEGER NOT NULL DEFAULT 0",
   );
   ensureColumn(db, "user_settings", "seasonal_frame", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "user_settings", "focus_minutes", "INTEGER NOT NULL DEFAULT 25");
+  ensureColumn(db, "user_settings", "focus_chime", "INTEGER NOT NULL DEFAULT 1");
 }
 
 export function ensureWallNotePinned(db: Database.Database) {
@@ -298,6 +300,24 @@ export function ensureWallNoteThanks(db: Database.Database) {
   );
 }
 
+export function ensureWallNoteEchoes(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS wall_note_echoes (
+      user_id TEXT NOT NULL,
+      note_id TEXT NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, note_id),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_wall_note_echoes_note ON wall_note_echoes (note_id, created_at)`,
+  );
+}
+
 export function ensureSoftLetters(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS soft_letters (
@@ -370,6 +390,7 @@ export function migrateDb(db: Database.Database) {
   ensureWallNoteBookmarks(db);
   ensureWallNoteFlags(db);
   ensureWallNoteThanks(db);
+  ensureWallNoteEchoes(db);
   ensureWeekPauses(db);
   ensureSoftLetters(db);
   ensureSoftPlusGiftCodes(db);

@@ -7,6 +7,7 @@ import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
 import { WallMoodLegend } from "@/components/wall-mood-legend";
 import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
+import { WallEchoComposer, WallEchoList, type WallEchoItem } from "@/components/wall-echo-panel";
 import { WallQuoteButton } from "@/components/wall-quote-button";
 import { WeekMoodChip } from "@/components/week-mood-picker";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -60,6 +61,8 @@ type FullNote = TeaserNote & {
   flaggedByMe?: boolean;
   thankCount?: number;
   thankedByMe?: boolean;
+  echoes?: WallEchoItem[];
+  echoedByMe?: boolean;
   ownerSoftPlus?: boolean;
   ownerFallback?: string | null;
   ownerInviteBadge?: boolean;
@@ -530,6 +533,40 @@ export function WallBoard({
     setNotes((list) => list.filter((item) => item.id !== id));
     setSelectedId(null);
     setDetail(null);
+  }
+
+  async function leaveEcho(id: string, body: string) {
+    if (busy || locked || !softPlus) return "error" as const;
+    setBusy(`echo:${id}`);
+    try {
+      const response = await fetch(`/api/wall/notes/${encodeURIComponent(id)}/echo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        echoes?: WallEchoItem[];
+        echoedByMe?: boolean;
+      };
+      if (response.status === 429 || data.error === "rate_limited") return "rate" as const;
+      if (data.error === "invalid_echo") return "invalid" as const;
+      if (!response.ok) return "error" as const;
+      const echoes = Array.isArray(data.echoes) ? data.echoes : [];
+      setNotes((list) =>
+        list.map((item) =>
+          item.id === id ? { ...item, echoes, echoedByMe: true } : item,
+        ),
+      );
+      setDetail((current) =>
+        current && current.id === id ? { ...current, echoes, echoedByMe: true } : current,
+      );
+      return "ok" as const;
+    } catch {
+      return "error" as const;
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function thankNote(id: string) {
@@ -1051,6 +1088,9 @@ export function WallBoard({
               );
               const thankCount = note.thankCount ?? 0;
               const canThank = Boolean(full && !full.mine && softPlus && !locked);
+              const latestEcho = full?.echoes?.length
+                ? full.echoes[full.echoes.length - 1]
+                : null;
               return (
                 <div
                   key={note.id}
@@ -1127,6 +1167,14 @@ export function WallBoard({
                         ✿ {thankCount}
                       </span>
                     ) : null}
+                    {(full?.echoes?.length ?? 0) > 0 ? (
+                      <span
+                        className="shrink-0 rounded-full bg-paper/80 px-2 py-0.5 text-muted"
+                        aria-label={t("echoCount", { count: full?.echoes?.length ?? 0 })}
+                      >
+                        ◌ {full?.echoes?.length}
+                      </span>
+                    ) : null}
                   </span>
                   {full?.mood && isWeekMood(full.mood) ? (
                     <span className="mt-2 inline-flex">
@@ -1150,6 +1198,11 @@ export function WallBoard({
                       <span className="mt-2 line-clamp-5 text-sm leading-relaxed">
                         {full.excerpt || t("untitled")}
                       </span>
+                      {latestEcho ? (
+                        <span className="mt-2 block truncate text-[11px] italic leading-snug text-foreground/80">
+                          {t("echoPreview", { body: latestEcho.body })}
+                        </span>
+                      ) : null}
                       <span className="mt-4 flex items-center justify-between text-xs text-muted">
                         <span>
                           {full.feeling
@@ -1384,6 +1437,22 @@ export function WallBoard({
             <div className="mt-4">
               <WallQuoteButton noteId={detail.id} />
             </div>
+            <section className="mt-6" aria-labelledby="wall-echo-title">
+              <h3 id="wall-echo-title" className="font-display text-xl">
+                {t("echoTitle")}
+              </h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted">{t("echoLead")}</p>
+              <WallEchoList echoes={detail.echoes ?? []} />
+              {!detail.mine && softPlus && !locked ? (
+                <WallEchoComposer
+                  key={`${detail.id}:${detail.echoedByMe ? "mine" : "new"}`}
+                  initialBody={detail.echoes?.find((echo) => echo.mine)?.body ?? ""}
+                  echoedByMe={Boolean(detail.echoedByMe)}
+                  busy={busy !== null}
+                  onSubmit={(body) => leaveEcho(detail.id, body)}
+                />
+              ) : null}
+            </section>
             {!detail.mine ? (
               <div className="mt-4">
                 <button

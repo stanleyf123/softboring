@@ -6,6 +6,11 @@ import {
 } from "@/lib/custom-questions";
 import { nextOnboardingTimezoneSet } from "@/lib/onboarding-progress";
 import { normalizeTimeZone, reminderIsDue } from "@/lib/timezone";
+import {
+  storedFocusChime,
+  storedFocusMinutes,
+  type FocusMinutes,
+} from "@/lib/focus-timer";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export type UserSettings = {
@@ -21,6 +26,8 @@ export type UserSettings = {
   preferredWallColor: WallColor | null;
   timezone: string;
   seasonalFrame: boolean;
+  focusMinutes: FocusMinutes;
+  focusChime: boolean;
 };
 
 type SettingsRow = {
@@ -36,6 +43,8 @@ type SettingsRow = {
   preferred_wall_color: string | null;
   timezone: string | null;
   seasonal_frame: number;
+  focus_minutes: number | null;
+  focus_chime: number | null;
 };
 
 function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
@@ -58,6 +67,8 @@ function toSettings(row: SettingsRow): UserSettings {
     preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
     timezone: normalizeTimeZone(row.timezone),
     seasonalFrame: Boolean(row.seasonal_frame),
+    focusMinutes: storedFocusMinutes(row.focus_minutes),
+    focusChime: storedFocusChime(row.focus_chime),
   };
 }
 
@@ -91,6 +102,8 @@ export type SettingsPatch = {
   preferredWallColor?: WallColor | null;
   timezone?: string;
   seasonalFrame?: boolean;
+  focusMinutes?: FocusMinutes;
+  focusChime?: boolean;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -111,6 +124,12 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
   });
   const nextSeasonalFrame =
     patch.seasonalFrame === undefined ? current.seasonalFrame : patch.seasonalFrame;
+  const nextFocusMinutes =
+    patch.focusMinutes === undefined
+      ? current.focusMinutes
+      : storedFocusMinutes(patch.focusMinutes);
+  const nextFocusChime =
+    patch.focusChime === undefined ? current.focusChime : patch.focusChime;
 
   getDb()
     .prepare(
@@ -125,7 +144,9 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            custom_questions = @custom_questions,
            preferred_wall_color = @preferred_wall_color,
            timezone = @timezone,
-           seasonal_frame = @seasonal_frame
+           seasonal_frame = @seasonal_frame,
+           focus_minutes = @focus_minutes,
+           focus_chime = @focus_chime
        WHERE user_id = @user_id`,
     )
     .run({
@@ -179,6 +200,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
       preferred_wall_color: nextPreferred,
       timezone: nextTimezone,
       seasonal_frame: nextSeasonalFrame ? 1 : 0,
+      focus_minutes: nextFocusMinutes,
+      focus_chime: nextFocusChime ? 1 : 0,
     });
   return ensureUserSettings(userId);
 }

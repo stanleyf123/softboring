@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getLatestReviewIdForUser, getReviewForOwner, listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
+import { withEchoes } from "@/db/wall-echoes";
 import { withBookmarkFlag } from "@/db/wall-bookmarks";
 import { withThanks } from "@/db/wall-thanks";
 import { getWallNoteIdForReview, listVisibleWallNotes, shareWallNote } from "@/db/wall";
@@ -34,7 +35,7 @@ export async function GET() {
       softPlus: true,
       signedIn: true,
       latestOwnedReviewId,
-      notes: withBookmarkFlag(notes, viewer.userId),
+      notes: withEchoes(withBookmarkFlag(notes, viewer.userId), viewer.userId),
     });
   } catch (error) {
     console.error("GET /api/wall/notes failed", error);

@@ -5,6 +5,7 @@ import {
   updateUserSettings,
 } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
+import { isFocusMinutes } from "@/lib/focus-timer";
 import { isIanaTimeZone } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
@@ -36,6 +37,8 @@ export async function PATCH(request: Request) {
       preferredWallColor?: unknown;
       timezone?: unknown;
       seasonalFrame?: unknown;
+      focusMinutes?: unknown;
+      focusChime?: unknown;
     };
 
     let preferredWallColor: WallColor | null | undefined;
@@ -56,6 +59,13 @@ export async function PATCH(request: Request) {
         return NextResponse.json({ error: "invalid_timezone" }, { status: 400 });
       }
       timezone = body.timezone.trim();
+    }
+
+    if (body.focusMinutes !== undefined && !isFocusMinutes(body.focusMinutes)) {
+      return NextResponse.json({ error: "invalid_focus" }, { status: 400 });
+    }
+    if (body.focusChime !== undefined && typeof body.focusChime !== "boolean") {
+      return NextResponse.json({ error: "invalid_focus" }, { status: 400 });
     }
 
     const settings = updateUserSettings(user.id, {
@@ -85,6 +95,8 @@ export async function PATCH(request: Request) {
       timezone,
       seasonalFrame:
         typeof body.seasonalFrame === "boolean" ? body.seasonalFrame : undefined,
+      focusMinutes: isFocusMinutes(body.focusMinutes) ? body.focusMinutes : undefined,
+      focusChime: typeof body.focusChime === "boolean" ? body.focusChime : undefined,
     });
 
     return NextResponse.json({ settings });

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { attachEchoesToDetail } from "@/db/wall-echoes";
 import { attachBookmarkToDetail } from "@/db/wall-bookmarks";
 import { attachFlagToDetail } from "@/db/wall-flags";
 import { attachThanksToDetail } from "@/db/wall-thanks";
@@ -14,8 +15,11 @@ function attachNoteExtras(
   note: NonNullable<ReturnType<typeof getWallNote>>,
   userId: string | null,
 ) {
-  return attachThanksToDetail(
-    attachFlagToDetail(attachBookmarkToDetail(note, userId), userId),
+  return attachEchoesToDetail(
+    attachThanksToDetail(
+      attachFlagToDetail(attachBookmarkToDetail(note, userId), userId),
+      userId,
+    ),
     userId,
   );
 }
