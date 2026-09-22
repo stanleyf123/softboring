@@ -41,9 +41,11 @@ test("ja locale stays a lowercase URL segment beside en and zh-tw", () => {
   assert.match(seo, /hreflangTag/);
 
   const switcher = read("src/components/locale-switcher.tsx");
-  assert.match(switcher, /locale="ja"/);
-  assert.match(switcher, /locale="zh-tw"/);
-  assert.match(switcher, /locale="en"/);
+  assert.match(switcher, /hrefFor\("ja"\)/);
+  assert.match(switcher, /hrefFor\("zh-tw"\)/);
+  assert.match(switcher, /hrefFor\("en"\)/);
+  assert.match(switcher, /rewriteLocalePath/);
+  assert.doesNotMatch(switcher, /zh-TW/);
 
   const messages = ["en", "zh-tw", "ja"].map((locale) =>
     JSON.parse(read(`messages/${locale}.json`)),

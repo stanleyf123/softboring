@@ -82,8 +82,11 @@
   },
   "LocaleSwitcher": {
     "en": "EN",
+    "enName": "English",
     "zhTW": "繁中",
+    "zhName": "繁體中文",
     "ja": "日",
+    "jaName": "日本語",
     "label": "Language"
   },
   "Home": {
@@ -691,6 +694,11 @@
     "seasonalFrameHint": "A quiet border for this season. Free for everyone — purely a look.",
     "largerText": "Larger note text",
     "largerTextHint": "A slightly bigger size for Soft Wall notes. Free, kept on this device — and on your account when you are signed in.",
+    "shuffle": "Soft shuffle",
+    "shuffleAria": "Gently reshuffle the notes you can see",
+    "shuffleHint": "A new order for the notes you can see. This visit only — nothing is saved.",
+    "shuffleReset": "Quiet order",
+    "shuffled": "Shuffled for this visit.",
     "seasonalFrameWithPack": "{season} · borrows “{pack}”",
     "seasonalFrameSeason": "{season} outline",
     "season_spring": "Spring",
@@ -1227,6 +1235,21 @@
     "loadError": "Could not open the shelf just now.",
     "empty": "No capsules yet. One short note is enough.",
     "count": "{count} on the shelf"
+  },
+  "CapsuleHints": {
+    "kicker": "Soft+",
+    "title": "Capsule days",
+    "lead": "A soft mark on the day a note opens. The words stay inside the capsule.",
+    "empty": "No capsules yet. When you seal one, its day will sit here quietly.",
+    "sealed": "Sealed",
+    "opened": "Open",
+    "mixed": "{sealed} sealed · {open} open",
+    "privacy": "Only the day is shown. Sealed words stay hidden, and nothing is emailed.",
+    "accountLink": "Open your capsules",
+    "teaseKicker": "Soft+",
+    "teaseTitle": "Capsule days are a Soft+ quiet mark",
+    "teaseBody": "Soft+ leaves a blush or mint mark on the days a capsule is still sealed or already open.",
+    "teaseCta": "See Soft+"
   },
   "Postcard": {
     "brand": "Soft Boring Weekly",
