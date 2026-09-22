@@ -68,6 +68,8 @@ test("preferred wall color resolves Soft+ preference then palette", () => {
 
   assert.match(schema, /preferred_wall_color/);
   assert.match(migrate, /preferred_wall_color/);
+  assert.match(read("scripts/migrate.mjs"), /preferred_wall_color/);
+  assert.match(read("scripts/migrate.mjs"), /wall_note_flags/);
   assert.match(settings, /preferredWallColor/);
   assert.match(wall, /input\.color/);
   assert.match(api, /preferredWallColor/);

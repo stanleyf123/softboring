@@ -3,6 +3,7 @@ import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { OnboardingCard } from "@/components/onboarding-card";
 import { PwaRegister } from "@/components/pwa-register";
 import { QuietWritingExit, QuietWritingSync } from "@/components/quiet-writing";
+import { SoftShortcutsHelp } from "@/components/soft-shortcuts-help";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getInviteCodeForUser } from "@/db/invites";
@@ -111,6 +112,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <NextIntlClientProvider>
           <QuietWritingSync />
           <QuietWritingExit />
+          <SoftShortcutsHelp />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-paper focus:px-4 focus:py-2 focus:shadow-card"

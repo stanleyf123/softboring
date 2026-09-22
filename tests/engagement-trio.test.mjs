@@ -108,7 +108,9 @@ test("wall filter helpers and Soft+ filter UI stay wired", () => {
   const board = read("src/components/wall-board.tsx");
   assert.match(filtersLib, /wallNoteMatchesFilters/);
   assert.match(filtersLib, /filterWallNotes/);
+  assert.match(filtersLib, /hideDemo/);
   assert.match(board, /filterTitle/);
+  assert.match(board, /filterHideDemo/);
   assert.match(board, /filterWallNotes/);
   assert.match(board, /visibleNotes/);
   assert.match(board, /softPlus && !locked/);

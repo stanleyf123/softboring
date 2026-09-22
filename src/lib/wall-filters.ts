@@ -4,19 +4,43 @@ export type WallFilterNote = {
   summary?: string;
   ownerNickname?: string | null;
   ownerFallback?: string | null;
+  ownerIsDemo?: boolean;
 };
 
 export type WallDiscoveryFilters = {
   query: string;
   feelingMin: number | null;
   feelingMax: number | null;
+  /** Soft+: hide @softboring.demo / is_demo notes so real neighbors feel clearer. */
+  hideDemo: boolean;
 };
 
 export const EMPTY_WALL_FILTERS: WallDiscoveryFilters = {
   query: "",
   feelingMin: null,
   feelingMax: null,
+  hideDemo: false,
 };
+
+export const WALL_HIDE_DEMO_STORAGE_KEY = "softboring.wall.hideDemo.v1";
+
+export function readHideDemoPreference() {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(WALL_HIDE_DEMO_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function writeHideDemoPreference(hide: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(WALL_HIDE_DEMO_STORAGE_KEY, hide ? "1" : "0");
+  } catch {
+    // Ignore quota / private mode.
+  }
+}
 
 export function normalizeFeelingBound(value: unknown): number | null {
   if (value === "" || value == null) return null;
@@ -29,15 +53,18 @@ export function wallFiltersActive(filters: WallDiscoveryFilters) {
   return Boolean(
     filters.query.trim() ||
       filters.feelingMin != null ||
-      filters.feelingMax != null,
+      filters.feelingMax != null ||
+      filters.hideDemo,
   );
 }
 
-/** Soft+ discovery: feeling range and/or nickname / excerpt / summary search. */
+/** Soft+ discovery: feeling range, nickname / excerpt search, optional demo mute. */
 export function wallNoteMatchesFilters(
   note: WallFilterNote,
   filters: WallDiscoveryFilters,
 ) {
+  if (filters.hideDemo && note.ownerIsDemo) return false;
+
   const min = filters.feelingMin;
   const max = filters.feelingMax;
   if (min != null || max != null) {
