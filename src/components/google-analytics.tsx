@@ -1,10 +1,7 @@
 import Script from "next/script";
+import { gaMeasurementId } from "@/lib/analytics-note";
 
-export const DEFAULT_GA_MEASUREMENT_ID = "G-MFQ9J6B9DH";
-
-export function gaMeasurementId() {
-  return process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || DEFAULT_GA_MEASUREMENT_ID;
-}
+export { DEFAULT_GA_MEASUREMENT_ID, gaMeasurementId } from "@/lib/analytics-note";
 
 /**
  * gtag.js for public pages. Loaded after hydration so it does not block render.

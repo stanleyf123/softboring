@@ -57,7 +57,7 @@ These routes also send `noindex` (or live under `/admin`):
 - `/en/invite/*`, `/zh-tw/invite/*`, `/ja/invite/*` (redirects to register; `noindex`)
 - History detail, export, forgot/reset password, trends
 
-Google Analytics (`G-MFQ9J6B9DH`) stays on public locale pages only.
+Google Analytics (`G-MFQ9J6B9DH`) stays on public locale pages only. The footer names that id and does not add a second tracker or a consent cookie.
 
 ## Share cards
 
