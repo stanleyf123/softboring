@@ -4,6 +4,7 @@ import {
   parseCustomQuestionsJson,
   type CustomQuestion,
 } from "@/lib/custom-questions";
+import { nextOnboardingTimezoneSet } from "@/lib/onboarding-progress";
 import { normalizeTimeZone, reminderIsDue } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
@@ -12,12 +13,14 @@ export type UserSettings = {
   onboardingDismissed: boolean;
   onboardingHistorySeen: boolean;
   onboardingWallSeen: boolean;
+  onboardingTimezoneSet: boolean;
   reminderEnabled: boolean;
   reminderWeekday: number;
   reminderLastSentAt: string | null;
   customQuestions: CustomQuestion[];
   preferredWallColor: WallColor | null;
   timezone: string;
+  seasonalFrame: boolean;
 };
 
 type SettingsRow = {
@@ -25,12 +28,14 @@ type SettingsRow = {
   onboarding_dismissed: number;
   onboarding_history_seen: number;
   onboarding_wall_seen: number;
+  onboarding_timezone_set: number;
   reminder_enabled: number;
   reminder_weekday: number;
   reminder_last_sent_at: string | null;
   custom_questions: string | null;
   preferred_wall_color: string | null;
   timezone: string | null;
+  seasonal_frame: number;
 };
 
 function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
@@ -45,12 +50,14 @@ function toSettings(row: SettingsRow): UserSettings {
     onboardingDismissed: Boolean(row.onboarding_dismissed),
     onboardingHistorySeen: Boolean(row.onboarding_history_seen),
     onboardingWallSeen: Boolean(row.onboarding_wall_seen),
+    onboardingTimezoneSet: Boolean(row.onboarding_timezone_set),
     reminderEnabled: Boolean(row.reminder_enabled),
     reminderWeekday: clampWeekday(row.reminder_weekday),
     reminderLastSentAt: row.reminder_last_sent_at,
     customQuestions: parseCustomQuestionsJson(row.custom_questions),
     preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
     timezone: normalizeTimeZone(row.timezone),
+    seasonalFrame: Boolean(row.seasonal_frame),
   };
 }
 
@@ -76,12 +83,14 @@ export type SettingsPatch = {
   onboardingDismissed?: boolean;
   onboardingHistorySeen?: boolean;
   onboardingWallSeen?: boolean;
+  onboardingTimezoneSet?: boolean;
   reminderEnabled?: boolean;
   reminderWeekday?: number;
   reminderLastSentAt?: string | null;
   customQuestions?: CustomQuestion[];
   preferredWallColor?: WallColor | null;
   timezone?: string;
+  seasonalFrame?: boolean;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -96,6 +105,12 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           : current.preferredWallColor;
   const nextTimezone =
     patch.timezone === undefined ? current.timezone : normalizeTimeZone(patch.timezone);
+  const nextTimezoneSet = nextOnboardingTimezoneSet(current.onboardingTimezoneSet, {
+    onboardingTimezoneSet: patch.onboardingTimezoneSet,
+    timezone: patch.timezone,
+  });
+  const nextSeasonalFrame =
+    patch.seasonalFrame === undefined ? current.seasonalFrame : patch.seasonalFrame;
 
   getDb()
     .prepare(
@@ -103,12 +118,14 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
        SET onboarding_dismissed = @onboarding_dismissed,
            onboarding_history_seen = @onboarding_history_seen,
            onboarding_wall_seen = @onboarding_wall_seen,
+           onboarding_timezone_set = @onboarding_timezone_set,
            reminder_enabled = @reminder_enabled,
            reminder_weekday = @reminder_weekday,
            reminder_last_sent_at = @reminder_last_sent_at,
            custom_questions = @custom_questions,
            preferred_wall_color = @preferred_wall_color,
-           timezone = @timezone
+           timezone = @timezone,
+           seasonal_frame = @seasonal_frame
        WHERE user_id = @user_id`,
     )
     .run({
@@ -137,6 +154,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           : patch.onboardingWallSeen
             ? 1
             : 0,
+      onboarding_timezone_set: nextTimezoneSet ? 1 : 0,
       reminder_enabled:
         patch.reminderEnabled === undefined
           ? current.reminderEnabled
@@ -160,6 +178,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
       ),
       preferred_wall_color: nextPreferred,
       timezone: nextTimezone,
+      seasonal_frame: nextSeasonalFrame ? 1 : 0,
     });
   return ensureUserSettings(userId);
 }

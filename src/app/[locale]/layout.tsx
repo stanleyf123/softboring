@@ -136,6 +136,7 @@ export default async function LocaleLayout({ children, params }: Props) {
               softPlus={softPlus}
               hasNickname={Boolean(user.nickname?.trim())}
               hasInvite={hasInvite}
+              timezoneSet={settings.onboardingTimezoneSet}
             />
           ) : null}
           <main

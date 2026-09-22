@@ -1,5 +1,6 @@
 "use client";
 
+import { SoftLetterRecall } from "@/components/soft-letter-recall";
 import { SoftPostcardFromReview } from "@/components/soft-postcard-button";
 import { ShareToWall } from "@/components/share-to-wall";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
@@ -211,6 +212,9 @@ export function HistoryDetail({ id }: { id: string }) {
             </dd>
           </div>
         </dl>
+      </div>
+      <div className="print:hidden">
+        <SoftLetterRecall createdAt={review.createdAt} softPlus={softPlus} />
       </div>
       <SoftPostcardFromReview review={review} softPlus={softPlus} />
       {wall?.canShare ? (

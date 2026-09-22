@@ -1,9 +1,12 @@
 import { YearPanel } from "@/components/year-panel";
 import { listReviewsForOwner } from "@/db/reviews";
+import { listSoftLettersForYear } from "@/db/soft-letters";
+import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
+import { matchLettersToReviews } from "@/lib/soft-letter";
 import { softYearForDate } from "@/lib/soft-year";
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -36,12 +39,19 @@ export default async function YearPage({ params }: Props) {
   const user = await getCurrentUser();
   const softPlus = userIsSoftPlus(user);
 
-  const timeline =
+  const reviews =
     user && softPlus
-      ? softYearForDate(
-          listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
+      ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
+      : [];
+  const timeline = user && softPlus ? softYearForDate(reviews) : null;
+  const letters =
+    user && softPlus && timeline
+      ? matchLettersToReviews(
+          listSoftLettersForYear(user.id, timeline.year),
+          reviews,
+          ensureUserSettings(user.id).timezone,
         )
-      : null;
+      : [];
 
   return (
     <div className="pt-6">
@@ -50,7 +60,7 @@ export default async function YearPage({ params }: Props) {
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
       <div className="mt-10">
         {timeline ? (
-          <YearPanel timeline={timeline} />
+          <YearPanel timeline={timeline} letters={letters} />
         ) : (
           <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
             <h2 className="font-display text-2xl tracking-tight">{t("lockedTitle")}</h2>

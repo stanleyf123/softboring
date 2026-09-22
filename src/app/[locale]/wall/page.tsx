@@ -1,5 +1,5 @@
 import { WallBoard } from "@/components/wall-board";
-import { updateUserSettings } from "@/db/user-settings";
+import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -33,6 +33,7 @@ export default async function WallPage({ params, searchParams }: Props) {
   const t = await getTranslations("Wall");
   const user = await getCurrentUser();
   const softPlus = userIsSoftPlus(user);
+  const settings = user ? ensureUserSettings(user.id) : null;
   if (user) {
     updateUserSettings(user.id, { onboardingWallSeen: true });
   }
@@ -46,6 +47,7 @@ export default async function WallPage({ params, searchParams }: Props) {
         stickerSuccess={query.sticker === "success"}
         sharedSuccess={query.shared === "1"}
         initialNoteId={typeof query.note === "string" ? query.note : null}
+        initialSeasonalFrame={Boolean(settings?.seasonalFrame)}
       />
     </div>
   );

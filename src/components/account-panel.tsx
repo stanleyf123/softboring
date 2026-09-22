@@ -58,6 +58,7 @@ export function AccountPanel({
   reminderEnabled,
   reminderWeekday,
   timezone,
+  seasonalFrame = false,
   emailConfigured,
   customQuestions,
   digest,
@@ -75,6 +76,7 @@ export function AccountPanel({
   reminderEnabled: boolean;
   reminderWeekday: number;
   timezone: string;
+  seasonalFrame?: boolean;
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
   digest: MonthlyDigest;
@@ -88,8 +90,10 @@ export function AccountPanel({
   const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
   const [weekday, setWeekday] = useState(reminderWeekday);
   const [zone, setZone] = useState(timezone || DEFAULT_TIMEZONE);
+  const [frameOn, setFrameOn] = useState(seasonalFrame);
   const [savingReminder, setSavingReminder] = useState(false);
   const [savingZone, setSavingZone] = useState(false);
+  const [savingFrame, setSavingFrame] = useState(false);
   const [zoneSaved, setZoneSaved] = useState(false);
   const timeZones = useMemo(() => {
     const supported =
@@ -296,7 +300,9 @@ export function AccountPanel({
                 ))}
               </select>
             </label>
-            <p className="mt-5 font-display text-base tracking-tight">{t("timezoneTitle")}</p>
+            <p id="member-timezone" className="mt-5 font-display text-base tracking-tight">
+              {t("timezoneTitle")}
+            </p>
             <label className="mt-3 block text-sm">
               <span className="text-muted">{t("timezoneLabel")}</span>
               <select
@@ -328,12 +334,67 @@ export function AccountPanel({
             </label>
             <p className="mt-2 text-sm leading-relaxed text-muted">{t("timezoneBody")}</p>
             <p className="mt-2 text-xs leading-relaxed text-muted">{t("timezoneNote")}</p>
-            <p className="mt-3 text-xs text-muted">
-              {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
-              {savingReminder ? ` · ${t("reminderSaving")}` : null}
-              {savingZone ? ` · ${t("timezoneSaving")}` : null}
-              {zoneSaved && !savingZone ? ` · ${t("timezoneSaved")}` : null}
-            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                disabled={savingZone}
+                onClick={async () => {
+                  setZoneSaved(false);
+                  setSavingZone(true);
+                  try {
+                    const response = await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ timezone: zone }),
+                    });
+                    if (response.ok) setZoneSaved(true);
+                  } finally {
+                    setSavingZone(false);
+                  }
+                }}
+                className="rounded-full bg-paper px-4 py-1.5 text-sm shadow-card disabled:opacity-60"
+              >
+                {t("timezoneConfirm")}
+              </button>
+              <p className="text-xs text-muted">
+                {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
+                {savingReminder ? ` · ${t("reminderSaving")}` : null}
+                {savingZone ? ` · ${t("timezoneSaving")}` : null}
+                {zoneSaved && !savingZone ? ` · ${t("timezoneSaved")}` : null}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-[1.5rem] bg-peach/40 px-5 py-5">
+            <p className="font-display text-lg tracking-tight">{t("seasonalFrameTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("seasonalFrameBody")}</p>
+            <label className="mt-4 flex items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={frameOn}
+                onChange={async (event) => {
+                  const next = event.target.checked;
+                  setFrameOn(next);
+                  setSavingFrame(true);
+                  try {
+                    await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ seasonalFrame: next }),
+                    });
+                  } finally {
+                    setSavingFrame(false);
+                  }
+                }}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+              />
+              <span>
+                {t("seasonalFrameToggle")}
+                {savingFrame ? (
+                  <span className="mt-1 block text-xs text-muted">{t("seasonalFrameSaving")}</span>
+                ) : null}
+              </span>
+            </label>
           </div>
 
           {softPlus ? (

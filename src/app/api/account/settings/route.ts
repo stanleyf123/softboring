@@ -30,10 +30,12 @@ export async function PATCH(request: Request) {
       onboardingDismissed?: unknown;
       onboardingHistorySeen?: unknown;
       onboardingWallSeen?: unknown;
+      onboardingTimezoneSet?: unknown;
       reminderEnabled?: unknown;
       reminderWeekday?: unknown;
       preferredWallColor?: unknown;
       timezone?: unknown;
+      seasonalFrame?: unknown;
     };
 
     let preferredWallColor: WallColor | null | undefined;
@@ -69,6 +71,10 @@ export async function PATCH(request: Request) {
         typeof body.onboardingWallSeen === "boolean"
           ? body.onboardingWallSeen
           : undefined,
+      onboardingTimezoneSet:
+        typeof body.onboardingTimezoneSet === "boolean"
+          ? body.onboardingTimezoneSet
+          : undefined,
       reminderEnabled:
         typeof body.reminderEnabled === "boolean" ? body.reminderEnabled : undefined,
       reminderWeekday:
@@ -77,6 +83,8 @@ export async function PATCH(request: Request) {
           : clampWeekday(body.reminderWeekday),
       preferredWallColor,
       timezone,
+      seasonalFrame:
+        typeof body.seasonalFrame === "boolean" ? body.seasonalFrame : undefined,
     });
 
     return NextResponse.json({ settings });

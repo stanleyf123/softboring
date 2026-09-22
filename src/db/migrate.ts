@@ -75,6 +75,13 @@ export function ensureUserSettingsColumns(db: Database.Database) {
     "timezone",
     "TEXT NOT NULL DEFAULT 'Asia/Taipei'",
   );
+  ensureColumn(
+    db,
+    "user_settings",
+    "onboarding_timezone_set",
+    "INTEGER NOT NULL DEFAULT 0",
+  );
+  ensureColumn(db, "user_settings", "seasonal_frame", "INTEGER NOT NULL DEFAULT 0");
 }
 
 export function ensureWallNotePinned(db: Database.Database) {
@@ -291,6 +298,24 @@ export function ensureWallNoteThanks(db: Database.Database) {
   );
 }
 
+export function ensureSoftLetters(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_letters (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      week_key TEXT NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE (user_id, week_key)
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_letters_user_week ON soft_letters (user_id, week_key)`,
+  );
+}
+
 export function ensureWeekPauses(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS week_pauses (
@@ -346,5 +371,6 @@ export function migrateDb(db: Database.Database) {
   ensureWallNoteFlags(db);
   ensureWallNoteThanks(db);
   ensureWeekPauses(db);
+  ensureSoftLetters(db);
   ensureSoftPlusGiftCodes(db);
 }
