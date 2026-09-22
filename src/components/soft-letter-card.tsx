@@ -137,7 +137,7 @@ export function SoftLetterCard({
 
   return (
     <section
-      className="rounded-[1.75rem] bg-blush/40 px-6 py-6 shadow-card sm:px-8"
+      className="soft-letter-sheet rounded-[1.75rem] bg-blush/40 px-6 py-6 shadow-card sm:px-8"
       data-soft-letter
     >
       <p className="text-sm text-accent">{t("plusKicker")}</p>
@@ -160,7 +160,7 @@ export function SoftLetterCard({
           className="w-full resize-y rounded-[1.25rem] border border-line bg-paper/90 px-4 py-3 text-sm leading-relaxed outline-none focus:border-accent"
         />
       </label>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <p className="text-xs text-muted">
           {t("counter", { count: Array.from(body).length, max: maxLength })}
         </p>

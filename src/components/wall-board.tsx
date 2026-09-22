@@ -2,6 +2,7 @@
 
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { NeighborHighlightsStrip } from "@/components/neighbor-highlights-strip";
+import { WallKindnessStrip } from "@/components/wall-kindness-strip";
 import { QuietWallComposer } from "@/components/quiet-wall-composer";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
@@ -561,6 +562,7 @@ export function WallBoard({
       setDetail((current) =>
         current && current.id === id ? { ...current, echoes, echoedByMe: true } : current,
       );
+      setThanksTick((tick) => tick + 1);
       return "ok" as const;
     } catch {
       return "error" as const;
@@ -757,9 +759,19 @@ export function WallBoard({
     }
   }
 
+  const kindness = (
+    <WallKindnessStrip
+      signedIn={signedIn}
+      softPlus={softPlus && !locked}
+      refreshToken={thanksTick}
+      onOpen={softPlus && !locked ? (id) => void openNote(id) : undefined}
+    />
+  );
+
   if (!ready && !loadError) {
     return (
       <div className={`${SITE_SHELL_CLASS} pt-8`}>
+        {kindness}
         <WallSkeleton label={t("loading")} />
       </div>
     );
@@ -767,10 +779,13 @@ export function WallBoard({
 
   if (loadError) {
     return (
-      <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
-        <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
-        <p className="mt-3 max-w-md leading-relaxed text-muted">{t("loadError")}</p>
-      </section>
+      <div className={`${SITE_SHELL_CLASS} pt-8`}>
+        {kindness}
+        <section className="mt-6 rounded-[2rem] bg-paper px-8 py-12 shadow-card">
+          <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
+          <p className="mt-3 max-w-md leading-relaxed text-muted">{t("loadError")}</p>
+        </section>
+      </div>
     );
   }
 
@@ -861,6 +876,7 @@ export function WallBoard({
             {t("sharedToast")}
           </p>
         ) : null}
+        {kindness}
         {softPlus && !locked ? (
           <div className="mt-6 space-y-4">
             <WallSpotlightStrip softPlus />

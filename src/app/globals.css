@@ -400,3 +400,125 @@ html[data-quiet-writing="1"] main {
     display: none;
   }
 }
+
+/* Cream print sheets for a saved review, the soft month, and letters. */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  html[data-night="on"] {
+    color-scheme: light !important;
+    --background: #fff8f2;
+    --foreground: #4a3c35;
+    --paper: #fff8f2;
+    --muted: #9a7f74;
+    --line: #ead6c8;
+    --accent: #c47f6e;
+    --blush: #f4d4c6;
+    --peach: #f8dcc8;
+    --mint: #d5e6d8;
+    --sage: #7d9b8c;
+    --cream: #fff4e8;
+    --lemon: #f3e3b6;
+    --sky: #d5e4ea;
+    --lavender: #e4d8f2;
+  }
+
+  html,
+  body {
+    background: #fff8f2 !important;
+    background-image: none !important;
+    color: #3f342e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  [data-soft-breath],
+  [data-focus-timer],
+  [data-bottom-nav],
+  [data-onboarding] {
+    display: none !important;
+  }
+
+  .shadow-card,
+  .shadow-soft {
+    box-shadow: none !important;
+  }
+
+  .soft-print-sheet,
+  .soft-month-sheet,
+  .soft-export-sheet,
+  .soft-review-sheet,
+  .soft-week-detail,
+  .soft-letter-sheet {
+    background: #fff8f2 !important;
+    color: #3f342e !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .soft-letter-sheet {
+    border: 2px solid #e8d5c8 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .soft-letter-sheet textarea,
+  .soft-review-sheet textarea,
+  .soft-review-sheet input {
+    background: #fff4e8 !important;
+    color: #3f342e !important;
+    border: 1px solid #ead6c8 !important;
+    box-shadow: none !important;
+  }
+
+  .soft-print-card {
+    background: #fff8f2 !important;
+    color: #3f342e !important;
+    border: 1px solid #ead6c8 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .soft-print-blush {
+    background: #f4d4c6 !important;
+    color: #3f342e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .soft-print-mint {
+    background: #d5e6d8 !important;
+    color: #3f342e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .soft-print-cream {
+    background: #fff4e8 !important;
+    color: #3f342e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .soft-print-peach {
+    background: #f8dcc8 !important;
+    color: #3f342e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .soft-week-print__card,
+  .soft-week-print__panel--mint,
+  .soft-week-print__panel--blush {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

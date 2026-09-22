@@ -54,7 +54,7 @@ export function SoftLetterRecall({
 
   return (
     <section
-      className="mt-10 rounded-[1.75rem] bg-blush/40 px-6 py-6 print:hidden"
+      className="soft-letter-sheet mt-10 rounded-[1.75rem] bg-blush/40 px-6 py-6"
       data-soft-letter-recall
     >
       <p className="text-sm text-accent">{t("plusKicker")}</p>

@@ -166,7 +166,7 @@ export function HistoryDetail({ id }: { id: string }) {
 
   return (
     <article
-      className={`soft-week-detail ${tint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${tint}` : ""}`}
+      className={`soft-week-detail soft-review-sheet ${tint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${tint}` : ""}`}
     >
       <div className="print:hidden">
         <Link href="/history" className="text-sm text-muted hover:text-foreground">
@@ -238,9 +238,7 @@ export function HistoryDetail({ id }: { id: string }) {
           </div>
         </dl>
       </div>
-      <div className="print:hidden">
-        <SoftLetterRecall createdAt={review.createdAt} softPlus={softPlus} />
-      </div>
+      <SoftLetterRecall createdAt={review.createdAt} softPlus={softPlus} />
       <SoftPostcardFromReview review={review} softPlus={softPlus} />
       {wall?.canShare ? (
         <div className="print:hidden">
