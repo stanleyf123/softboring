@@ -240,6 +240,9 @@
     "exportPrint": "可列印的頁面",
     "softMonth": "我的柔軟月份",
     "compareWeeks": "比較兩週",
+    "compareTeaseTitle": "兩週，並排看看",
+    "compareTeaseBody": "Soft+ 把兩週開放的回顧放在奶油色卡片上——心情、能量與消耗。免費仍保留最近四週。不會寄信，也不會開始付款。",
+    "compareTeaseGuest": "登入 Soft+ 後，可以把兩週放上奶油色卡片。免費仍留著最近四週。不會寄信。",
     "tagsTitle": "私人的軟標籤",
     "tagsLead": "每週最多五個安靜的標籤，只留在這張桌子上。",
     "tagsAll": "所有週次",
@@ -1331,7 +1334,18 @@
     "feelingDown": "心情緩緩下降了 {value}。",
     "feelingMissing": "其中一週或兩週還沒有心情數字。",
     "noFeeling": "還沒有心情數字",
-    "openWeek": "打開這一週"
+    "openWeek": "打開這一週",
+    "teaseSketch": "一張奶油色的草圖。你的文字會等到 Soft+ 再並排。",
+    "bridgeTitle": "兩週之間",
+    "bridgeWaiting": "選兩個不同的週次，奶油色卡片就會坐下。",
+    "creamNote": "奶油色卡片。沒有分數，只是看見。",
+    "chipEnergy": "能量",
+    "chipDrain": "消耗",
+    "chipSummary": "一句話",
+    "presenceBoth": "兩週都寫了",
+    "presenceLeft": "只有較早的那週",
+    "presenceRight": "只有較晚的那週",
+    "presenceNeither": "兩週都先留白"
   },
   "WallSpotlight": {
     "title": "本週軟軟精選",
@@ -1645,5 +1659,66 @@
     "error": "剛剛沒能留下這次暫停。",
     "usedError": "這個月的暫停已經用過了。",
     "privacy": "只留在這裡，不寄信。"
+  },
+  "SoftOffline": {
+    "offlineTitle": "現在離線",
+    "offlineBody": "這一頁可以先陪著你。新的儲存會等你回來。不會送出任何東西。",
+    "backTitle": "回來了",
+    "backBody": "歡迎回來。桌子又連上了。",
+    "dismiss": "好"
+  },
+  "SoftTemplates": {
+    "title": "輕輕起頭",
+    "lead": "五個免費的小開頭。只會滑進空白的欄位——你已經寫下的字會留著。",
+    "insert": "用這個開頭",
+    "using": "已放進空白處",
+    "filled": "已經滑進空白的欄位。都可以再改。",
+    "partial": "空白處有了開頭。你已經寫過的欄位留著。",
+    "kept": "這些欄位已經有你的字。沒有被換掉。",
+    "quiet": {
+      "name": "安靜的一週",
+      "blurb": "平凡也可以夠了。",
+      "energy": "一點點能量，出現在很普通的地方。",
+      "drain": "沒有很大聲。只是平常的嗡嗡聲。",
+      "lessOf": "如果可以，少趕一點。",
+      "priorities": "一件小事就夠了。",
+      "summary": "安靜的一週，這樣也好。"
+    },
+    "tender": {
+      "name": "柔軟的一週",
+      "blurb": "有一點脆弱，這裡也歡迎。",
+      "energy": "身邊某人的好意，還留在我身上。",
+      "drain": "我有點脆弱，這是可以的。",
+      "lessOf": "少一點假裝自己全程都很好。",
+      "priorities": "休息，再加上一件溫柔的事。",
+      "summary": "柔軟的一週。我可以對它溫柔一點。"
+    },
+    "small": {
+      "name": "小也夠了",
+      "blurb": "小小的完成，在這裡也算。",
+      "energy": "小小的完成算數：散步、一餐、一則訊息。",
+      "drain": "那張大清單可以先留在這一頁外面。",
+      "lessOf": "少拿這一週去比一個完美的週。",
+      "priorities": "守住一個我本來就喜歡的約定。",
+      "summary": "這一週，小就夠了。"
+    },
+    "restart": {
+      "name": "輕輕重新開始",
+      "blurb": "從更小的地方再出發。",
+      "energy": "我從一個更小的地方再開始。",
+      "drain": "兩週之間的空檔，不必演講。",
+      "lessOf": "少一次補完所有進度。",
+      "priorities": "打開本子。這就可以是開始。",
+      "summary": "輕輕重新開始，不是全新的完美一週。"
+    },
+    "full": {
+      "name": "滿滿的一週",
+      "blurb": "滿，也可以先放下。",
+      "energy": "這一週很滿，其中有些是好的。",
+      "drain": "腦子裡開了太多分頁。",
+      "lessOf": "少在還沒留意時就說好。",
+      "priorities": "做完一件，然後停下來。",
+      "summary": "滿滿的一週。我可以先放下一件。"
+    }
   }
 }

@@ -4,6 +4,7 @@ import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { OnboardingCard } from "@/components/onboarding-card";
 import { PwaInstallTip } from "@/components/pwa-install-tip";
 import { PwaRegister } from "@/components/pwa-register";
+import { SoftOfflineBanner } from "@/components/soft-offline-banner";
 import { QuietWritingExit, QuietWritingSync } from "@/components/quiet-writing";
 import { SoftShortcutsHelp } from "@/components/soft-shortcuts-help";
 import { SiteFooter } from "@/components/site-footer";
@@ -135,6 +136,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             softPlus={softPlus}
             unreadNotifications={unreadNotifications}
           />
+          <SoftOfflineBanner />
           <MobileBottomNav email={user?.email ?? null} />
           <PwaInstallTip />
           {user && settings ? (

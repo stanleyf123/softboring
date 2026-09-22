@@ -18,6 +18,27 @@ import { useHydrated } from "@/lib/use-hydrated";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
+function CompareHistoryTease({ isGuest }: { isGuest: boolean }) {
+  const t = useTranslations("History");
+  return (
+    <section
+      data-compare-history-tease="open"
+      className="rounded-[1.75rem] bg-cream px-6 py-5 shadow-card"
+    >
+      <p className="font-display text-lg tracking-tight">{t("compareTeaseTitle")}</p>
+      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
+        {isGuest ? t("compareTeaseGuest") : t("compareTeaseBody")}
+      </p>
+      <Link
+        href="/history/compare"
+        className="mt-4 inline-flex rounded-full border border-line bg-paper px-4 py-2 text-sm text-muted"
+      >
+        {t("compareWeeks")}
+      </Link>
+    </section>
+  );
+}
+
 export function HistoryList() {
   const t = useTranslations("History");
   const tMood = useTranslations("WeekMood");
@@ -82,15 +103,18 @@ export function HistoryList() {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <EmptyState
-        title={t("emptyTitle")}
-        body={t("emptyBody")}
-        ctaHref="/review"
-        ctaLabel={t("emptyCta")}
-        wash="bg-peach/50"
-        illustration="history"
-        whisper={t("emptyWhisper")}
-      />
+      <div className="space-y-6">
+        {access && !access.softPlus ? <CompareHistoryTease isGuest={access.isGuest} /> : null}
+        <EmptyState
+          title={t("emptyTitle")}
+          body={t("emptyBody")}
+          ctaHref="/review"
+          ctaLabel={t("emptyCta")}
+          wash="bg-peach/50"
+          illustration="history"
+          whisper={t("emptyWhisper")}
+        />
+      </div>
     );
   }
 
@@ -175,6 +199,8 @@ export function HistoryList() {
           onActive={() => undefined}
         />
       ) : null}
+
+      {access && !access.softPlus ? <CompareHistoryTease isGuest={access.isGuest} /> : null}
 
       {access?.softPlus ? (
         <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">

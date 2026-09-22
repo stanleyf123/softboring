@@ -41,3 +41,36 @@ export function excerptForCompare(text: string, max = 280) {
   if (chars.length <= max) return trimmed;
   return `${chars.slice(0, max - 1).join("")}…`;
 }
+
+export type CompareCardWash = "cream" | "blush";
+
+export function compareCardWash(side: "left" | "right"): CompareCardWash {
+  return side === "left" ? "cream" : "blush";
+}
+
+/** Five soft marks. Missing or out-of-range feelings stay blank — never a score. */
+export function feelingMarks(feeling: number | null): Array<"on" | "off"> {
+  const value =
+    typeof feeling === "number" && feeling >= 1 && feeling <= 5 ? Math.round(feeling) : null;
+  return [1, 2, 3, 4, 5].map((step) => (value != null && step <= value ? "on" : "off"));
+}
+
+export type FieldPresence = "both" | "left" | "right" | "neither";
+
+export function fieldPresence(left: string | null | undefined, right: string | null | undefined): FieldPresence {
+  const hasLeft = Boolean(left?.trim());
+  const hasRight = Boolean(right?.trim());
+  if (hasLeft && hasRight) return "both";
+  if (hasLeft) return "left";
+  if (hasRight) return "right";
+  return "neither";
+}
+
+export type CompareBridgeTone = "same" | "up" | "down" | "missing" | "waiting";
+
+export function compareBridge(delta: number | null, ready: boolean): CompareBridgeTone {
+  if (!ready) return "waiting";
+  if (delta == null) return "missing";
+  if (delta === 0) return "same";
+  return delta > 0 ? "up" : "down";
+}

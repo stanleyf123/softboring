@@ -866,6 +866,25 @@ html[data-quiet-writing="1"] main {
   }
 }
 
+.soft-offline-banner {
+  animation: soft-offline-in 220ms ease;
+}
+
+.soft-offline-banner[data-soft-offline-motion="still"] {
+  animation: none;
+}
+
+@keyframes soft-offline-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .soft-copy-toast {
   position: fixed;
   z-index: 60;
@@ -901,6 +920,7 @@ html[data-quiet-writing="1"] main {
   .soft-save-bloom::before,
   .soft-save-bloom-card,
   .soft-copy-toast,
+  .soft-offline-banner,
   [data-breath-circle],
   [data-breath-circle] * {
     animation: none !important;
@@ -910,7 +930,8 @@ html[data-quiet-writing="1"] main {
 
 @media print {
   .soft-undo-toast,
-  .soft-copy-toast {
+  .soft-copy-toast,
+  .soft-offline-banner {
     display: none;
   }
 }
