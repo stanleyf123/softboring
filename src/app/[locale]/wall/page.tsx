@@ -1,10 +1,12 @@
 import { WallBoard } from "@/components/wall-board";
 import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
+import { getPublicWallNoteOg } from "@/db/wall-note-og";
 import { listWallSpotlight } from "@/db/wall-spotlight";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
+import { wallNoteOgPath, wallNoteQueryPath } from "@/lib/wall-note-og";
 import { rotatingSpotlightIndex, toPublicSpotlightCard } from "@/lib/wall-spotlight";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -15,10 +17,26 @@ type Props = {
   searchParams: Promise<{ sticker?: string; shared?: string; note?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({ params, searchParams }: Props) {
   const { locale } = await params;
+  const query = await searchParams;
   const appLocale = assertLocale(locale);
   const t = await getTranslations({ locale: appLocale, namespace: "Metadata" });
+  const noteId = typeof query.note === "string" ? query.note : "";
+  const card = noteId ? getPublicWallNoteOg(noteId) : null;
+  const imagePath = card ? wallNoteOgPath(appLocale, card.noteId) : null;
+  const socialPath = card ? wallNoteQueryPath(card.noteId) : null;
+  if (card && imagePath && socialPath) {
+    const description = card.excerpt || t("wallNoteQuiet");
+    return pageMetadata({
+      locale: appLocale,
+      title: t("wallNoteTitle"),
+      description,
+      path: "/wall",
+      socialPath,
+      image: { url: imagePath, alt: description },
+    });
+  }
   return pageMetadata({
     locale: appLocale,
     title: t("wallTitle"),

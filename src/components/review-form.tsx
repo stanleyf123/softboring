@@ -1,5 +1,6 @@
 "use client";
 
+import { ReviewProgressDots } from "@/components/review-progress-dots";
 import { ShareToWall } from "@/components/share-to-wall";
 import { SoftWordCount } from "@/components/soft-word-count";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
@@ -386,6 +387,23 @@ function ReviewFormFields({
           onCustomApplied={applyPackToCustom}
         />
       ) : null}
+
+      <ReviewProgressDots
+        values={{
+          energy: draft.energy,
+          drain: draft.drain,
+          lessOf: draft.lessOf,
+          priorities: draft.priorities,
+          summary: draft.summary,
+        }}
+        labels={{
+          energy: questionLabel("energy"),
+          drain: questionLabel("drain"),
+          lessOf: questionLabel("lessOf"),
+          priorities: questionLabel("priorities"),
+          summary: questionLabel("summary"),
+        }}
+      />
 
       <div className="grid gap-8 lg:grid-cols-2">
         {TEXT_FIELDS.map((field) => (

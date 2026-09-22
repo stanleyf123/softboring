@@ -72,6 +72,8 @@ export function pageMetadata({
   path,
   requestUrl = `${DEFAULT_SITE_URL}/`,
   noIndex = false,
+  socialPath,
+  image,
 }: {
   locale: AppLocale;
   title: string;
@@ -79,11 +81,18 @@ export function pageMetadata({
   path: string;
   requestUrl?: string;
   noIndex?: boolean;
+  /** Share URL when it should differ from the canonical path. */
+  socialPath?: string;
+  /** Replaces the default locale OG card. Pass a path or absolute URL. */
+  image?: { url: string; alt?: string; width?: number; height?: number };
 }): Metadata {
   const origin = publicOrigin(requestUrl);
   const url = `${origin}${localizedPath(locale, path)}`;
+  const socialUrl = socialPath
+    ? `${origin}${localizedPath(locale, socialPath)}`
+    : url;
   const languages = hreflangLanguages(origin, path);
-  const ogImage = `${origin}${localizedPath(locale, "/opengraph-image")}`;
+  const ogImage = resolvePageImage(origin, locale, title, image);
 
   return {
     metadataBase: new URL(origin),
@@ -99,21 +108,48 @@ export function pageMetadata({
     openGraph: {
       title,
       description,
-      url,
+      url: socialUrl,
       siteName: SITE_NAME,
       locale: localeOg(locale),
       alternateLocale: routing.locales
         .filter((item) => item !== locale)
         .map((item) => localeOg(item)),
       type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: [ogImage.url],
     },
+  };
+}
+
+function resolvePageImage(
+  origin: string,
+  locale: AppLocale,
+  title: string,
+  image?: { url: string; alt?: string; width?: number; height?: number },
+) {
+  if (!image) {
+    return {
+      url: `${origin}${localizedPath(locale, "/opengraph-image")}`,
+      width: 1200,
+      height: 630,
+      alt: title,
+    };
+  }
+  const raw = image.url.trim();
+  const absolute =
+    raw.startsWith("https://") || raw.startsWith("http://")
+      ? raw
+      : `${origin}${raw.startsWith("/") ? raw : localizedPath(locale, raw)}`;
+  return {
+    url: absolute,
+    width: image.width ?? 1200,
+    height: image.height ?? 630,
+    alt: image.alt?.trim() || title,
   };
 }
 

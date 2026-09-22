@@ -491,6 +491,29 @@ html[data-night="on"] .text-paper {
   background: var(--sage);
 }
 
+/* Quiet marks for written weekly prompts. No motion, no score. */
+.soft-progress-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: transparent;
+}
+
+.soft-progress-dot.is-filled {
+  border-color: transparent;
+  background: var(--sage);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soft-progress-dot,
+  .soft-progress-dot.is-filled {
+    transition: none;
+    animation: none;
+  }
+}
+
 @keyframes soft-streak-backdrop {
   from {
     opacity: 0;
