@@ -1,6 +1,7 @@
 "use client";
 
 import { ShareToWall } from "@/components/share-to-wall";
+import { WeekMoodPicker } from "@/components/week-mood-picker";
 import {
   SeasonalPacksPanel,
   packPrompts,
@@ -22,6 +23,7 @@ import {
   type ReviewAnswers,
 } from "@/lib/reviews";
 import type { SeasonalPackId } from "@/lib/seasonal-packs";
+import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
@@ -217,6 +219,7 @@ function ReviewFormFields({
             initialNoteId={null}
             variant="hero"
             softPlus={softPlus}
+            mood={draft.mood && isWeekMood(draft.mood) ? draft.mood : null}
           />
         ) : null}
 
@@ -293,8 +296,15 @@ function ReviewFormFields({
     );
   }
 
+  const moodTint =
+    signedIn && draft.mood && isWeekMood(draft.mood) ? WEEK_MOOD_TINT[draft.mood] : "";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8" autoComplete="off">
+    <form
+      onSubmit={handleSubmit}
+      className={`space-y-8 ${moodTint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${moodTint}` : ""}`}
+      autoComplete="off"
+    >
       {softPlus ? (
         <SeasonalPacksPanel
           mode="review"
@@ -339,6 +349,13 @@ function ReviewFormFields({
             ))}
           </div>
         </fieldset>
+      ) : null}
+
+      {signedIn ? (
+        <WeekMoodPicker
+          mood={draft.mood && isWeekMood(draft.mood) ? draft.mood : null}
+          onChange={(next: WeekMood | null) => update("mood", next)}
+        />
       ) : null}
 
       <fieldset>

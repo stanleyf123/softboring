@@ -1,10 +1,13 @@
 "use client";
 
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
+import { NeighborHighlightsStrip } from "@/components/neighbor-highlights-strip";
+import { QuietWallComposer } from "@/components/quiet-wall-composer";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
 import { WallMoodLegend } from "@/components/wall-mood-legend";
 import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
+import { WeekMoodChip } from "@/components/week-mood-picker";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import {
@@ -23,6 +26,7 @@ import {
 } from "@/lib/wall-filters";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
+import { isWeekMood } from "@/lib/week-mood";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -52,6 +56,7 @@ type FullNote = TeaserNote & {
   ownerFallback?: string | null;
   ownerInviteBadge?: boolean;
   ownerIsDemo?: boolean;
+  mood?: string | null;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
   energy?: string;
   drain?: string;
@@ -149,8 +154,8 @@ export function WallBoard({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<FullNote | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentBody, setCommentBody] = useState("");
   const [replyToId, setReplyToId] = useState<string | null>(null);
+  const [thanksTick, setThanksTick] = useState(0);
   const [shopOpen, setShopOpen] = useState(false);
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [inventory, setInventory] = useState<Record<string, number>>({});
@@ -339,7 +344,6 @@ export function WallBoard({
       setDetail(noteData.note);
       setComments(commentData.comments);
       setReplyToId(null);
-      setCommentBody("");
     } catch {
       setSelectedId(null);
     }
@@ -422,23 +426,24 @@ export function WallBoard({
     }
   }
 
-  async function sendComment(event: React.FormEvent) {
-    event.preventDefault();
-    if (!selectedId || busy) return;
-    const body = commentBody.trim();
-    if (!body) return;
+  async function sendComment(body: string) {
+    if (!selectedId || busy) return false;
+    const trimmed = body.trim();
+    if (!trimmed) return false;
     setBusy("comment");
     try {
       const data = await readJson<{ comment: Comment }>(
         await fetch(`/api/wall/notes/${encodeURIComponent(selectedId)}/comments`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ body, parentId: replyToId }),
+          body: JSON.stringify({ body: trimmed, parentId: replyToId }),
         }),
       );
       setComments((list) => [...list, data.comment]);
-      setCommentBody("");
       setReplyToId(null);
+      return true;
+    } catch {
+      return false;
     } finally {
       setBusy(null);
     }
@@ -481,6 +486,7 @@ export function WallBoard({
           item.id === id ? { ...item, thankCount, thankedByMe: true } : item,
         ),
       );
+      if (data.thanked) setThanksTick((tick) => tick + 1);
       if (data.note) {
         setDetail(data.note);
       } else if (data.thanked) {
@@ -731,6 +737,11 @@ export function WallBoard({
         {softPlus && !locked ? (
           <div className="mt-6 space-y-4">
             <WallSpotlightStrip softPlus />
+            <NeighborHighlightsStrip
+              softPlus
+              refreshToken={thanksTick}
+              onOpen={(id) => void openNote(id)}
+            />
             <WallActivityStrip softPlus compact />
           </div>
         ) : null}
@@ -1026,6 +1037,11 @@ export function WallBoard({
                       </span>
                     ) : null}
                   </span>
+                  {full?.mood && isWeekMood(full.mood) ? (
+                    <span className="mt-2 inline-flex">
+                      <WeekMoodChip mood={full.mood} />
+                    </span>
+                  ) : null}
                   {locked || !full ? (
                     <span className="mt-2 block space-y-2 blur-[3px]">
                       <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />
@@ -1251,6 +1267,11 @@ export function WallBoard({
                 {t("close")}
               </button>
             </div>
+            {detail.mood && isWeekMood(detail.mood) ? (
+              <div className="mt-3">
+                <WeekMoodChip mood={detail.mood} />
+              </div>
+            ) : null}
             <p className="mt-1 text-sm text-muted">
               {`${t("byAuthor", { name: wallAuthorLabel(detail, t("softVisitor"), true) })} · `}
               {detail.ownerSoftPlus ? `${t("plusBadge")} · ` : ""}
@@ -1433,35 +1454,16 @@ export function WallBoard({
                     })}
                 </ul>
               )}
-              <form onSubmit={sendComment} className="mt-4 flex flex-col gap-2">
-                {replyToId ? (
-                  <p className="text-xs text-muted">
-                    {t("replying")}{" "}
-                    <button
-                      type="button"
-                      onClick={() => setReplyToId(null)}
-                      className="text-accent"
-                    >
-                      {t("cancelReply")}
-                    </button>
-                  </p>
-                ) : null}
-                <textarea
-                  value={commentBody}
-                  onChange={(event) => setCommentBody(event.target.value)}
-                  rows={2}
-                  maxLength={500}
-                  placeholder={replyToId ? t("replyPlaceholder") : t("commentPlaceholder")}
-                  className="w-full resize-none rounded-2xl border border-line bg-paper px-4 py-3 outline-none focus:border-accent"
+              {selectedId ? (
+                <QuietWallComposer
+                  key={`${selectedId}:${replyToId ?? "note"}`}
+                  noteId={selectedId}
+                  replyToId={replyToId}
+                  busy={busy !== null}
+                  onCancelReply={() => setReplyToId(null)}
+                  onSubmit={sendComment}
                 />
-                <button
-                  type="submit"
-                  disabled={busy !== null || !commentBody.trim()}
-                  className="inline-flex min-h-11 items-center self-start rounded-full bg-accent px-4 py-2 text-sm text-paper disabled:opacity-60"
-                >
-                  {replyToId ? t("replySubmit") : t("commentSubmit")}
-                </button>
-              </form>
+              ) : null}
             </section>
 
             {detail.mine ? (

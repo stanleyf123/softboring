@@ -15,6 +15,7 @@
   --cream: #fff4e8;
   --lemon: #f3e3b6;
   --sky: #d5e4ea;
+  --lavender: #e4d8f2;
 }
 
 @theme inline {
@@ -31,6 +32,7 @@
   --color-cream: var(--cream);
   --color-lemon: var(--lemon);
   --color-sky: var(--sky);
+  --color-lavender: var(--lavender);
   --shadow-soft: 0 12px 32px rgba(154, 111, 90, 0.12);
   --shadow-card: 0 6px 20px rgba(154, 111, 90, 0.08);
   --font-sans: var(--font-body), "Noto Sans TC", "Noto Sans JP", "PingFang TC",

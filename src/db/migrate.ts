@@ -26,6 +26,7 @@ function ensureColumn(
 export function ensureReviewUserId(db: Database.Database) {
   ensureColumn(db, "reviews", "user_id", "TEXT");
   ensureColumn(db, "reviews", "custom_answers", "TEXT NOT NULL DEFAULT '[]'");
+  ensureColumn(db, "reviews", "mood", "TEXT");
   db.exec(
     `CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)`,
   );

@@ -11,6 +11,7 @@ import {
   WALL_PIN_Z,
   type WallColor,
 } from "@/lib/wall-canvas";
+import { parseWeekMood, type WeekMood } from "@/lib/week-mood";
 import { stickerCountsByNote } from "./stickers";
 
 export type WallNoteRow = {
@@ -32,6 +33,7 @@ export type WallNoteRow = {
   feeling: number | null;
   summary: string;
   locale: string | null;
+  review_mood: string | null;
   review_created_at: string;
   praise_count: number;
   owner_plan: string | null;
@@ -61,6 +63,7 @@ export type WallNoteListItem = {
   ownerFallback: string | null;
   ownerInviteBadge: boolean;
   ownerIsDemo: boolean;
+  mood: WeekMood | null;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
 };
 
@@ -95,6 +98,7 @@ const NOTE_SELECT = `
   SELECT n.id, n.review_id, n.user_id, n.x, n.y, n.z, n.color, n.hidden, n.pinned,
          n.created_at, n.updated_at,
          r.energy, r.drain, r.less_of, r.priorities, r.feeling, r.summary, r.locale,
+         r.mood AS review_mood,
          r.created_at AS review_created_at,
          u.plan AS owner_plan, u.plan_status AS owner_plan_status,
          u.plan_expires_at AS owner_plan_expires_at,
@@ -133,6 +137,7 @@ function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem
     ownerFallback: emailLocalFallback(row.owner_email),
     ownerInviteBadge: row.invite_redeemed > 0,
     ownerIsDemo: Boolean(row.owner_is_demo) || isDemoEmail(row.owner_email),
+    mood: parseWeekMood(row.review_mood),
     stickers: [],
   };
 }
