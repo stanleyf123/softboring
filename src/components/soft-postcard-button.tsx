@@ -10,8 +10,10 @@ import {
 } from "@/lib/soft-postcard";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import type { Review } from "@/lib/review-types";
+import { SoftCopyLink } from "@/components/soft-copy-link";
 import { SoftWeekPrintPostcard } from "@/components/soft-week-print";
-import { useFormatter, useTranslations } from "next-intl";
+import { digestSharePath, postcardSharePath } from "@/lib/soft-copy-link";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -55,6 +57,7 @@ export function SoftPostcardFromReview({
   softPlus: boolean;
 }) {
   const t = useTranslations("Postcard");
+  const locale = useLocale();
   const format = useFormatter();
   const labels = usePostcardLabels();
   const [busy, setBusy] = useState(false);
@@ -98,6 +101,9 @@ export function SoftPostcardFromReview({
           </button>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-muted">{t("printWeekHint")}</p>
+        <div className="mt-4">
+          <SoftCopyLink kind="postcard" path={postcardSharePath(locale, review.id)} />
+        </div>
         {error ? <p className="mt-3 text-sm text-muted">{t("exportError")}</p> : null}
       </div>
       <SoftWeekPrintPostcard review={review} />
@@ -107,6 +113,7 @@ export function SoftPostcardFromReview({
 
 export function SoftPostcardFromDigest({ digest }: { digest: MonthlyDigest }) {
   const t = useTranslations("Postcard");
+  const locale = useLocale();
   const format = useFormatter();
   const labels = usePostcardLabels();
   const [busy, setBusy] = useState(false);
@@ -144,6 +151,9 @@ export function SoftPostcardFromDigest({ digest }: { digest: MonthlyDigest }) {
         {busy ? t("exporting") : t("exportDigest")}
       </button>
       {error ? <p className="mt-3 text-sm text-muted">{t("exportError")}</p> : null}
+      <div className="mt-4">
+        <SoftCopyLink kind="postcard" path={digestSharePath(locale)} />
+      </div>
     </section>
   );
 }

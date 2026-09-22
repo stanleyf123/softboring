@@ -522,6 +522,7 @@
     "featureSoftCount": "書寫時可選擇顯示安靜的字數與詞數",
     "featureDigestFree": "每月摘要與本月軟報告在 Soft+",
     "featureCapsuleFree": "封到未來某天的短箋留在 Soft+",
+    "featureStreakProtectFree": "連續週數快斷時，每月一次的暫停保護留在 Soft+",
     "featureWallPlus": "軟軟牆完整使用：讀、拖、留言、回覆",
     "featureCollectionsPlus": "把已存的牆上記事收成有名字的柔軟小集",
     "featureCollectionExportPlus": "把柔軟小集與已存便利貼編號下載成 JSON",
@@ -530,6 +531,7 @@
     "featureCustomPlus": "最多三題自訂每週問題，外加季節題包",
     "featureDigestPlus": "應用內每月摘要，另含謝謝、回聲、抽出的感恩與休息週",
     "featureCapsulePlus": "把一小段話封到未來的一天，也能看見這週打開了哪些。只在應用裡，不寄信",
+    "featureStreakProtectPlus": "連續週數有風險時，每月可以輕輕暫停一次。只在應用裡，不寄信",
     "featureStickersPlus": "購買並貼上牆上貼紙",
     "featureBadgePlus": "Soft+ 牆上徽章，並可釘選自己的一張便利貼",
     "featurePortal": "可在 Stripe 顧客入口管理或取消",
@@ -1623,5 +1625,25 @@
     "lockedBody": "Soft+ 會在頁面裡留一條這一週的私人摘要：你道過謝的便利貼，和你留下的回聲。免費桌面仍看得到牆的預覽。不會寄信。",
     "lockedCta": "看看 Soft+",
     "listAria": "這一週的善意"
+  },
+  "SoftCopy": {
+    "copy": "複製連結",
+    "copied": "複製好了。",
+    "hintPostcard": "回到這張明信片的安靜連結。",
+    "hintWall": "這張便利貼的安靜連結。",
+    "hintInvite": "可以輕輕交給對方的連結。",
+    "copyError": "剛剛沒能複製。還是可以自己選取。"
+  },
+  "StreakProtect": {
+    "chip": "連續 {count} 週，這一週可以先休息",
+    "use": "改成暫停",
+    "using": "正在休息…",
+    "used": "這個月的暫停已經用過了。",
+    "tease": "Soft+ 可以讓連續 {count} 週先暫停，而不是被這一週打斷。",
+    "teaseCta": "看看 Soft+",
+    "saved": "這一週可以休息。連續還在。",
+    "error": "剛剛沒能留下這次暫停。",
+    "usedError": "這個月的暫停已經用過了。",
+    "privacy": "只留在這裡，不寄信。"
   }
 }

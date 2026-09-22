@@ -21,6 +21,7 @@ import {
 } from "@/lib/plan";
 import { applyNightPreference } from "@/lib/night-mode";
 import { SoftBloomPreference } from "@/components/soft-save-bloom";
+import { SoftCopyLink } from "@/components/soft-copy-link";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
@@ -688,7 +689,6 @@ function InviteCard({ softPlus }: { softPlus: boolean }) {
   const [link, setLink] = useState<string | null>(null);
   const [count, setCount] = useState(0);
   const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [error, setError] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -738,16 +738,6 @@ function InviteCard({ softPlus }: { softPlus: boolean }) {
     }
   }
 
-  async function copyLink() {
-    if (!link) return;
-    try {
-      await navigator.clipboard.writeText(link);
-      setCopied(true);
-    } catch {
-      setCopied(false);
-    }
-  }
-
   if (!ready) {
     return (
       <div className="mt-8 rounded-[1.5rem] bg-mint/30 px-5 py-5">
@@ -789,19 +779,8 @@ function InviteCard({ softPlus }: { softPlus: boolean }) {
               onFocus={(event) => event.currentTarget.select()}
             />
           </label>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={copyLink}
-              className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
-            >
-              {t("inviteCopy")}
-            </button>
-            {copied ? (
-              <p className="text-sm text-muted" role="status">
-                {t("inviteCopied")}
-              </p>
-            ) : null}
+          <div className="mt-3">
+            <SoftCopyLink kind="invite" href={link} />
           </div>
           <p className="mt-3 text-sm text-muted">
             {count > 0 ? t("inviteCount", { count }) : t("inviteEmpty")}

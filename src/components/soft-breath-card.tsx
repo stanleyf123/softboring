@@ -2,6 +2,7 @@
 
 import {
   BREATH_SECONDS,
+  breathDisplayScale,
   breathFrame,
   breathTotalMs,
   DEFAULT_BREATH_PREFERENCE,
@@ -13,25 +14,16 @@ import {
   type BreathPreference,
   type BreathSeconds,
 } from "@/lib/soft-breath";
+import { decorativeMotion } from "@/lib/reduced-motion";
+import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 type RunPhase = "idle" | "running" | "done";
 
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    (onStoreChange) => {
-      const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-      media.addEventListener("change", onStoreChange);
-      return () => media.removeEventListener("change", onStoreChange);
-    },
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => false,
-  );
-}
-
 export function SoftBreathCard() {
   const t = useTranslations("SoftBreath");
+  // prefers-reduced-motion keeps the circle at one size. The clock can still tick.
   const reduced = usePrefersReducedMotion();
   const stored = useSyncExternalStore(
     subscribeBreathPreference,
@@ -90,7 +82,7 @@ export function SoftBreathCard() {
     run === "running" || run === "done"
       ? breathFrame(elapsed, seconds)
       : { phase: "idle" as BreathPhase, scale: 0.72, remainingMs: breathTotalMs(seconds), progress: 0 };
-  const shownScale = reduced ? 0.82 : frame.scale;
+  const shownScale = breathDisplayScale(frame.scale, reduced);
   const phaseLabel =
     frame.phase === "in"
       ? t("in")
@@ -126,6 +118,7 @@ export function SoftBreathCard() {
       data-breath-dismissed="0"
       data-breath-phase={frame.phase}
       data-breath-seconds={seconds}
+      data-breath-motion={decorativeMotion(reduced)}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-xl">

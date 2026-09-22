@@ -19,6 +19,16 @@ export function readSoftBloomEnabled(storage: BloomStorage | null | undefined): 
   }
 }
 
+/** Bloom classes stay off when the device asks for less motion. */
+export function saveBloomClasses(enabled: boolean, reducedMotion: boolean) {
+  const still = !enabled || reducedMotion;
+  return {
+    motion: still ? ("still" as const) : ("bloom" as const),
+    wrap: still ? "" : "soft-save-bloom",
+    card: still ? "" : "soft-save-bloom-card",
+  };
+}
+
 export function writeSoftBloomEnabled(on: boolean, storage: BloomStorage | null | undefined) {
   if (!storage?.setItem) return;
   try {

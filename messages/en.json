@@ -607,6 +607,7 @@
     "featureSoftCount": "A quiet, optional word and character count while you write",
     "featureDigestFree": "Monthly digest and the soft month report stay with Soft+",
     "featureCapsuleFree": "A note sealed until a future day stays with Soft+",
+    "featureStreakProtectFree": "One monthly pause that keeps a streak from breaking stays with Soft+",
     "featureWallPlus": "Soft Wall full access: read, drag, comment, and reply",
     "featureCollectionsPlus": "Group saved wall notes into named soft collections",
     "featureCollectionExportPlus": "Download soft collections and bookmarked note ids as JSON",
@@ -615,6 +616,7 @@
     "featureCustomPlus": "Up to three custom weekly questions, plus seasonal packs",
     "featureDigestPlus": "An in-app monthly digest, plus thanks, echoes, gratitude draws, and pause weeks",
     "featureCapsulePlus": "Seal a short note until a future day, and see what opened this week. In the app — no email",
+    "featureStreakProtectPlus": "One gentle pause a month when a streak is at risk. In the app — no email",
     "featureStickersPlus": "Buy and place wall stickers",
     "featureBadgePlus": "Soft+ wall badge, and pin one of your notes",
     "featurePortal": "Manage or cancel in the Stripe customer portal",
@@ -1623,5 +1625,25 @@
     "lockedBody": "Soft+ keeps a private strip of notes you thanked and echoes you left this week. Free desks still have the wall teaser. Nothing is mailed.",
     "lockedCta": "See Soft+",
     "listAria": "This week's kindness"
+  },
+  "SoftCopy": {
+    "copy": "Copy link",
+    "copied": "Copied.",
+    "hintPostcard": "A quiet link back to this postcard.",
+    "hintWall": "A quiet link to this note.",
+    "hintInvite": "A quiet link to pass along.",
+    "copyError": "Could not copy just now. You can still select it."
+  },
+  "StreakProtect": {
+    "chip": "A streak of {count} could rest this week",
+    "use": "Pause instead",
+    "using": "Resting…",
+    "used": "This month's pause is already kept.",
+    "tease": "Soft+ can pause this week instead of breaking a streak of {count}.",
+    "teaseCta": "See Soft+",
+    "saved": "This week can rest. The streak stays.",
+    "error": "Could not keep that pause just now.",
+    "usedError": "This month's pause is already used.",
+    "privacy": "It stays in the app. No email."
   }
 }
