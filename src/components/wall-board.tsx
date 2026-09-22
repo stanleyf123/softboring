@@ -1366,6 +1366,7 @@ export function WallBoard({
                 <div
                   key={note.id}
                   className="soft-wall-note absolute w-[216px]"
+                  data-note-preview={full && !locked ? "soft" : undefined}
                   style={{
                     left: note.x,
                     top: note.y,

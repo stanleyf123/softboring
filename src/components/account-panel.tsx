@@ -8,6 +8,7 @@ import { SoftOpensInbox } from "@/components/soft-opens-inbox";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
 import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
+import { SoftThanksHistory } from "@/components/soft-thanks-history";
 import { SoftTipsCard } from "@/components/soft-tips-card";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
@@ -23,6 +24,7 @@ import { applyNightPreference } from "@/lib/night-mode";
 import { SoftBloomPreference } from "@/components/soft-save-bloom";
 import { SoftCopyLink } from "@/components/soft-copy-link";
 import { softDeskSize } from "@/lib/soft-desk-size";
+import type { SoftThanksEntry } from "@/lib/soft-thanks-history";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
@@ -75,6 +77,7 @@ export function AccountPanel({
   customQuestions,
   digest,
   nickname,
+  thankedNotes = [],
 }: {
   email: string;
   createdAt: string;
@@ -97,6 +100,7 @@ export function AccountPanel({
   customQuestions: CustomQuestion[];
   digest: MonthlyDigest;
   nickname: string | null;
+  thankedNotes?: SoftThanksEntry[];
 }) {
   const t = useTranslations("Account");
   const tPricing = useTranslations("Pricing");
@@ -231,6 +235,8 @@ export function AccountPanel({
               {t("dataSizeBody", { reviews: deskSize.reviews, notes: deskSize.notes })}
             </p>
           </div>
+
+          <SoftThanksHistory softPlus={softPlus} notes={thankedNotes} />
 
           <div className="mt-8 rounded-[1.5rem] bg-blush/40 px-5 py-5">
             <p className="font-display text-lg tracking-tight">{t("activityTitle")}</p>

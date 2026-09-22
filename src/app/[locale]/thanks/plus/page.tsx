@@ -1,4 +1,6 @@
+import { SoftThanksHistory } from "@/components/soft-thanks-history";
 import { ThanksView } from "@/components/thanks-view";
+import { listRecentThanksForUser } from "@/db/wall-thanks";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -102,6 +104,12 @@ export default async function PlusThanksPage({ params, searchParams }: Props) {
                 cta: t("plusAccountCta"),
               },
             ]
+      }
+      extra={
+        <SoftThanksHistory
+          softPlus={softPlus}
+          notes={softPlus ? listRecentThanksForUser(user.id) : []}
+        />
       }
     />
   );

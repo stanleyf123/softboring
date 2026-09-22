@@ -1733,5 +1733,33 @@
       "priorities": "Finish one thing, then stop.",
       "summary": "A full week. I can set one thing down."
     }
+  },
+  "SoftFaq": {
+    "eyebrow": "A few quiet answers",
+    "title": "Before you decide",
+    "lead": "Short and honest. These answers do not start checkout.",
+    "paymentsQ": "What if Soft+ has no payment keys yet?",
+    "paymentsA": "The pricing page still looks complete, and checkout stays off. Writing the latest four weeks stays free. Soft+ opens only after a real subscription or a gift code — we never pretend a payment went through.",
+    "remindersQ": "Will the weekly reminder email me?",
+    "remindersA": "The weekday you pick is saved. A letter only leaves once this server has email set up (Resend or SMTP). Until then, nothing is sent.",
+    "freeWindowQ": "What stays free?",
+    "freeWindowA": "You can write anytime. The latest four reviews stay open, and you can download those four as JSON. Older weeks, trends, the full Soft Wall, and the monthly digest stay with Soft+.",
+    "thanksQ": "Does a wall thank-you email anyone?",
+    "thanksA": "No. A thank-you stays on the corkboard. Neighbors are not emailed, and it does not become an inbox letter.",
+    "cancelQ": "How do I leave Soft+?",
+    "cancelA": "When payments are on, cancel from the Stripe customer portal on your account page. If payments are not configured, there is no subscription to cancel."
+  },
+  "SoftThanks": {
+    "eyebrow": "A quiet list",
+    "title": "Notes you thanked",
+    "lead": "The latest thank-yous you left on Soft Wall. They stay here — nothing is emailed.",
+    "empty": "You have not thanked a neighbor yet. When you do, the note waits here.",
+    "hidden": "This note was taken down.",
+    "quiet": "A quiet week.",
+    "neighbor": "A neighbor",
+    "open": "See it on the wall",
+    "teaseTitle": "A thank-you list waits on Soft+",
+    "teaseBody": "Soft+ keeps a short list of neighbor notes you thanked. Free sees this invitation, not the notes. Nothing is emailed.",
+    "teaseCta": "See Soft+"
   }
 }

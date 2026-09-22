@@ -1,3 +1,11 @@
+import { wallOwnerNickname } from "@/lib/nickname";
+import {
+  shapeSoftThanksHistory,
+  SOFT_THANKS_HISTORY_LIMIT,
+  thanksHistoryLimit,
+  type SoftThanksEntry,
+} from "@/lib/soft-thanks-history";
+import { noteExcerpt } from "@/lib/wall-canvas";
 import { getDb } from "./client";
 import { getWallNote, type WallNoteDetail } from "./wall";
 
@@ -94,6 +102,52 @@ export function withThanks<T extends { id: string }>(
     thankCount: counts.get(note.id) ?? 0,
     thankedByMe: mine.has(note.id),
   }));
+}
+
+type ThanksHistoryRow = {
+  noteId: string;
+  at: string;
+  hidden: number | boolean;
+  summary: string | null;
+  energy: string | null;
+  nickname: string | null;
+};
+
+/** Recent neighbor notes this member thanked. Call only for Soft+. */
+export function listRecentThanksForUser(
+  userId: string,
+  limit = SOFT_THANKS_HISTORY_LIMIT,
+): SoftThanksEntry[] {
+  const cap = thanksHistoryLimit(limit);
+  const rows = getDb()
+    .prepare(
+      `SELECT
+         t.note_id AS noteId,
+         t.created_at AS at,
+         n.hidden AS hidden,
+         r.summary AS summary,
+         r.energy AS energy,
+         u.nickname AS nickname
+       FROM wall_note_thanks t
+       JOIN wall_notes n ON n.id = t.note_id
+       JOIN reviews r ON r.id = n.review_id
+       LEFT JOIN users u ON u.id = n.user_id
+       WHERE t.user_id = ?
+       ORDER BY t.created_at DESC
+       LIMIT ?`,
+    )
+    .all(userId, cap) as ThanksHistoryRow[];
+
+  return shapeSoftThanksHistory(
+    rows.map((row) => ({
+      noteId: row.noteId,
+      at: row.at,
+      hidden: Boolean(row.hidden),
+      excerpt: noteExcerpt(row.summary ?? "", row.energy ?? ""),
+      nickname: wallOwnerNickname(row.nickname, null, { allowEmailFallback: false }),
+    })),
+    cap,
+  );
 }
 
 export function attachThanksToDetail(note: WallNoteDetail, viewerId: string | null) {
