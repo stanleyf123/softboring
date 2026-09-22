@@ -4,6 +4,7 @@ import { IntentionReminderChip } from "@/components/intention-reminder-chip";
 import { MemoryLaneCard } from "@/components/memory-lane-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftPauseCard } from "@/components/soft-pause-card";
+import { StreakProtectChip } from "@/components/streak-protect-chip";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { SoftWeekWeather } from "@/components/soft-week-weather";
 import { SampleReviewCard } from "@/components/sample-review-card";
@@ -13,6 +14,7 @@ import { listReviewsForOwner } from "@/db/reviews";
 import { getCurrentSoftIntention } from "@/db/soft-intentions";
 import { listOwnWallSnippets } from "@/db/wall";
 import { ensureUserSettings } from "@/db/user-settings";
+import { readStreakProtect } from "@/db/streak-protect";
 import { currentPauseWeekKey, isWeekPaused } from "@/db/week-pauses";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
@@ -140,6 +142,7 @@ export default async function HomePage({ params }: Props) {
           mood={weekMood}
           weekKey={user ? pauseWeekKey : ""}
         />
+        {user ? <StreakProtectChip initial={readStreakProtect(user.id, softPlus)} /> : null}
         <SoftPauseCard
           signedIn={Boolean(user)}
           initialWeekKey={pauseWeekKey}

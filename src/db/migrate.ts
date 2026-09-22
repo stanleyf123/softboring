@@ -397,6 +397,22 @@ export function ensureSoftLetters(db: Database.Database) {
   );
 }
 
+export function ensureStreakProtectTokens(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS streak_protect_tokens (
+      user_id TEXT NOT NULL,
+      month_key TEXT NOT NULL,
+      week_key TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, month_key),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_streak_protect_tokens_user ON streak_protect_tokens (user_id)`,
+  );
+}
+
 export function ensureWeekPauses(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS week_pauses (
@@ -512,6 +528,7 @@ export function migrateDb(db: Database.Database) {
   ensureWallNoteThanks(db);
   ensureWallNoteEchoes(db);
   ensureWeekPauses(db);
+  ensureStreakProtectTokens(db);
   ensureSoftLetters(db);
   ensureSoftGratitudes(db);
   ensureSoftGratitudeDraws(db);

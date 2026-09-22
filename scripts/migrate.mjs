@@ -416,6 +416,20 @@ db.exec(
   "CREATE INDEX IF NOT EXISTS idx_soft_capsules_user_unlock ON soft_capsules (user_id, unlock_at)",
 );
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS streak_protect_tokens (
+    user_id TEXT NOT NULL,
+    month_key TEXT NOT NULL,
+    week_key TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, month_key),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_streak_protect_tokens_user ON streak_protect_tokens (user_id)",
+);
+
 db.close();
 
 console.log(`SQLite ready at ${sqlitePath}`);

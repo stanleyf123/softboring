@@ -434,6 +434,18 @@ CREATE TABLE IF NOT EXISTS soft_gratitude_draws (
 CREATE INDEX IF NOT EXISTS idx_soft_gratitude_draws_user_created
   ON soft_gratitude_draws (user_id, created_at);
 
+CREATE TABLE IF NOT EXISTS streak_protect_tokens (
+  user_id TEXT NOT NULL,
+  month_key TEXT NOT NULL,
+  week_key TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, month_key),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_streak_protect_tokens_user
+  ON streak_protect_tokens (user_id);
+
 CREATE TABLE IF NOT EXISTS wall_presence_hours (
   hour_key TEXT PRIMARY KEY,
   hits INTEGER NOT NULL DEFAULT 0

@@ -17,6 +17,12 @@ function unitRandom(seed: number) {
   };
 }
 
+/** Settle animation only when a shuffle happened and motion is welcome. */
+export function wallShuffleFeelClass(shuffled: boolean, reducedMotion: boolean) {
+  if (!shuffled || reducedMotion) return "relative";
+  return "relative soft-wall-settle";
+}
+
 /** Fisher–Yates with a tiny seeded generator. Does not mutate `notes`. */
 export function shuffleWallNotes<T>(notes: readonly T[], seed: number): T[] {
   const copy = notes.slice();

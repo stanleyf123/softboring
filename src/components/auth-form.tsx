@@ -1,7 +1,9 @@
 "use client";
 
 import { GoogleMark, LineMark } from "@/components/oauth-marks";
+import { SoftCopyLink } from "@/components/soft-copy-link";
 import { Link, useRouter } from "@/i18n/navigation";
+import { inviteSharePath } from "@/lib/soft-copy-link";
 import { oauthStartPath, type OAuthProvider } from "@/lib/oauth-config";
 import { safeAppPath } from "@/lib/public-origin";
 import { registerSuccessPath, withInvitedFlag } from "@/lib/thanks-path";
@@ -248,9 +250,12 @@ export function AuthForm({
         </form>
 
         {mode === "register" && inviteCode ? (
-          <p className="mt-6 rounded-[1.25rem] bg-mint/70 px-4 py-3 text-sm leading-relaxed">
-            {t("inviteHint")}
-          </p>
+          <div className="mt-6 rounded-[1.25rem] bg-mint/70 px-4 py-3 text-sm leading-relaxed">
+            <p>{t("inviteHint")}</p>
+            <div className="mt-3">
+              <SoftCopyLink kind="invite" path={inviteSharePath(locale, inviteCode)} />
+            </div>
+          </div>
         ) : null}
 
         <p className="mt-6 text-sm leading-relaxed text-muted">{t("guestHint")}</p>

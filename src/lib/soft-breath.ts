@@ -26,6 +26,15 @@ export const BREATH_CYCLE_MS = BREATH_IN_MS + BREATH_REST_MS + BREATH_OUT_MS;
 const SCALE_MIN = 0.62;
 const SCALE_MAX = 1;
 
+/** A resting circle when `prefers-reduced-motion` is on. The clock can still change. */
+export const BREATH_STILL_SCALE = 0.82;
+
+export function breathDisplayScale(scale: number, reducedMotion: boolean) {
+  if (reducedMotion) return BREATH_STILL_SCALE;
+  if (!Number.isFinite(scale)) return BREATH_STILL_SCALE;
+  return scale;
+}
+
 let cachedPreferenceRaw: string | null | undefined;
 let cachedPreference: BreathPreference | null = null;
 

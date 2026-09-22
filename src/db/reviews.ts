@@ -238,6 +238,13 @@ export function countReviewsForUser(userId: string) {
   return row.n;
 }
 
+export function listReviewCreatedAts(userId: string): string[] {
+  const rows = getDb()
+    .prepare(`SELECT created_at FROM reviews WHERE user_id = ?`)
+    .all(userId) as { created_at: string }[];
+  return rows.map((row) => row.created_at);
+}
+
 export function getLatestReviewIdForUser(userId: string): string | null {
   const row = getDb()
     .prepare(

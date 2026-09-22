@@ -42,7 +42,11 @@ import {
 } from "@/lib/seasonal-frame";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
-import { nextShuffleSeed, shuffleWallNotes } from "@/lib/wall-shuffle";
+import { nextShuffleSeed, shuffleWallNotes, wallShuffleFeelClass } from "@/lib/wall-shuffle";
+import { decorativeMotion } from "@/lib/reduced-motion";
+import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
+import { SoftCopyLink } from "@/components/soft-copy-link";
+import { wallNoteSharePath, withWallNoteQuery } from "@/lib/soft-copy-link";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
@@ -257,6 +261,7 @@ export function WallBoard({
     textOverride !== null ? textOverride : signedIn ? initialWallLargerText : storedLargerText;
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
   const [shuffleSeed, setShuffleSeed] = useState<number | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
   const drag = useRef<{
     id: string;
     dx: number;
@@ -404,10 +409,17 @@ export function WallBoard({
     setStripeConfigured(data.stripeConfigured);
   }, []);
 
+  function rememberNote(id: string | null) {
+    const next = withWallNoteQuery(window.location.href, id);
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (next !== current) window.history.replaceState(window.history.state, "", next);
+  }
+
   function closeNoteDetail() {
     setSelectedId(null);
     setDetail(null);
     setReplyToId(null);
+    rememberNote(null);
     const returnTo = detailReturnFocusRef.current;
     detailReturnFocusRef.current = null;
     if (returnTo) {
@@ -490,8 +502,10 @@ export function WallBoard({
       setDetail(noteData.note);
       setComments(commentData.comments);
       setReplyToId(null);
+      rememberNote(id);
     } catch {
       setSelectedId(null);
+      rememberNote(null);
     }
   }
 
@@ -1190,7 +1204,8 @@ export function WallBoard({
           <div
             ref={canvasRef}
             data-wall-shuffled={shuffleSeed == null ? "0" : "1"}
-            className={shuffleSeed == null ? "relative" : "relative soft-wall-settle"}
+            data-wall-shuffle-motion={decorativeMotion(reducedMotion)}
+            className={wallShuffleFeelClass(shuffleSeed != null, reducedMotion)}
             style={{
               width: WALL_CANVAS.width,
               height: WALL_CANVAS.height,
@@ -1637,8 +1652,9 @@ export function WallBoard({
               {detail.pinned ? ` · ${t("pinned")}` : ""}
               {detail.bookmarked ? ` · ${t("saved")}` : ""}
             </p>
-            <div className="mt-4">
+            <div className="mt-4 space-y-3">
               <WallQuoteButton noteId={detail.id} />
+              <SoftCopyLink kind="wall-note" path={wallNoteSharePath(locale, detail.id)} />
             </div>
             <section className="mt-6" aria-labelledby="wall-echo-title">
               <h3 id="wall-echo-title" className="font-display text-xl">

@@ -522,6 +522,7 @@
     "featureSoftCount": "書いているあいだ、静かな文字数と語数を出せます",
     "featureDigestFree": "月次ダイジェストと今月のやわらかい報告は Soft+",
     "featureCapsuleFree": "未来の日まで封じるメモは Soft+ にあります",
+    "featureStreakProtectFree": "連続が切れそうなとき、月に一度の休止は Soft+ にあります",
     "featureWallPlus": "ソフトウォールを全部：読む、動かす、コメント、返信",
     "featureCollectionsPlus": "保存した壁の付箋を、名前つきのやわらかい集まりに",
     "featureCollectionExportPlus": "やわらかい集まりと、保存した付箋 ID を JSON でダウンロード",
@@ -530,6 +531,7 @@
     "featureCustomPlus": "カスタム質問は最大3つ。季節パックも",
     "featureDigestPlus": "アプリ内の月次ダイジェスト。ありがとう、エコー、引いた感謝、休んだ週も",
     "featureCapsulePlus": "短いメモを未来の日まで封じ、今週ひらいたものも見られます。アプリの中だけ。メールは送りません",
+    "featureStreakProtectPlus": "連続が危うい週に、月いちどのやさしい休止。アプリの中だけ。メールは送りません",
     "featureStickersPlus": "壁のシールを買って、貼る",
     "featureBadgePlus": "Soft+ の壁バッジと、自分の付箋をひとつピン留め",
     "featurePortal": "Stripe のお客さまポータルで管理や解約",
@@ -1623,5 +1625,25 @@
     "lockedBody": "Soft+ は、今週ありがとうを渡したメモと残したエコーを、ページの中だけに並べます。無料の机には壁の予告が残ります。メールは送りません。",
     "lockedCta": "Soft+ を見る",
     "listAria": "今週のやさしさ"
+  },
+  "SoftCopy": {
+    "copy": "リンクをコピー",
+    "copied": "コピーしたよ。",
+    "hintPostcard": "このポストカードへ戻る、静かなリンク。",
+    "hintWall": "このメモへの、静かなリンク。",
+    "hintInvite": "そっと渡せるリンク。",
+    "copyError": "いまはコピーできませんでした。自分で選ぶこともできます。"
+  },
+  "StreakProtect": {
+    "chip": "{count} 週つづき。今週は休んでもいいよ",
+    "use": "休むにする",
+    "using": "休んでいます…",
+    "used": "今月の休止は、もう使ったよ。",
+    "tease": "Soft+ なら、{count} 週の連続を切らずに今週を休めます。",
+    "teaseCta": "Soft+ を見る",
+    "saved": "今週は休んでいい。連続はそのまま。",
+    "error": "いまは休止を残せませんでした。",
+    "usedError": "今月の休止は、もう使ったよ。",
+    "privacy": "アプリの中だけ。メールは送りません。"
   }
 }

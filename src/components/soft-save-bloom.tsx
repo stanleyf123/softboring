@@ -1,13 +1,16 @@
 "use client";
 
-import { readSoftBloomEnabled, writeSoftBloomEnabled } from "@/lib/soft-bloom";
+import { readSoftBloomEnabled, saveBloomClasses, writeSoftBloomEnabled } from "@/lib/soft-bloom";
 import { useHydrated } from "@/lib/use-hydrated";
+import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { useTranslations } from "next-intl";
 import { useState, type ReactNode } from "react";
 
 export function SoftSaveBloom({ children }: { children: ReactNode }) {
   const t = useTranslations("Review");
+  const reducedMotion = usePrefersReducedMotion();
   const [on, setOn] = useState(() => readSoftBloomEnabled(window.localStorage));
+  const bloom = saveBloomClasses(on, reducedMotion);
 
   function setBloom(next: boolean) {
     writeSoftBloomEnabled(next, window.localStorage);
@@ -15,10 +18,12 @@ export function SoftSaveBloom({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div data-soft-bloom={on ? "on" : "off"}>
-      <div className={on ? "soft-save-bloom" : undefined}>
+    <div data-soft-bloom={on ? "on" : "off"} data-soft-bloom-motion={bloom.motion}>
+      <div className={bloom.wrap === "soft-save-bloom" ? "soft-save-bloom" : undefined}>
         <div
-          className={`rounded-[2rem] bg-paper px-8 py-12 shadow-card ${on ? "soft-save-bloom-card" : ""}`}
+          className={`rounded-[2rem] bg-paper px-8 py-12 shadow-card ${
+            bloom.card === "soft-save-bloom-card" ? "soft-save-bloom-card" : ""
+          }`}
         >
           {children}
         </div>

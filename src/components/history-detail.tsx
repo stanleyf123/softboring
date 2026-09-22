@@ -2,14 +2,16 @@
 
 import { SoftLetterRecall } from "@/components/soft-letter-recall";
 import { SoftTagsEditor } from "@/components/soft-tags-editor";
+import { SoftCopyLink } from "@/components/soft-copy-link";
 import { SoftPostcardFromReview } from "@/components/soft-postcard-button";
+import { postcardSharePath } from "@/lib/soft-copy-link";
 import { ShareToWall } from "@/components/share-to-wall";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
 import { Link } from "@/i18n/navigation";
 import { ensureLocalReviewsMigrated, fetchReview, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const DETAIL_FIELDS = [
@@ -22,6 +24,7 @@ const DETAIL_FIELDS = [
 
 export function HistoryDetail({ id }: { id: string }) {
   const t = useTranslations("HistoryDetail");
+  const locale = useLocale();
   const tQuestions = useTranslations("Questions");
   const tHistory = useTranslations("History");
   const format = useFormatter();
@@ -239,6 +242,11 @@ export function HistoryDetail({ id }: { id: string }) {
         </dl>
       </div>
       <SoftLetterRecall createdAt={review.createdAt} softPlus={softPlus} />
+      {!softPlus ? (
+        <div className="mt-8 print:hidden">
+          <SoftCopyLink kind="postcard" path={postcardSharePath(locale, review.id)} />
+        </div>
+      ) : null}
       <SoftPostcardFromReview review={review} softPlus={softPlus} />
       {wall?.canShare ? (
         <div className="print:hidden">

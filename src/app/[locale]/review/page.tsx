@@ -3,6 +3,7 @@ import { SoftBreathCard } from "@/components/soft-breath-card";
 import { SoftSoundscapeToggle } from "@/components/soft-soundscape-toggle";
 import { SoftFocusTimer } from "@/components/soft-focus-timer";
 import { SoftPauseCard } from "@/components/soft-pause-card";
+import { StreakProtectChip } from "@/components/streak-protect-chip";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { QuietWritingToggle } from "@/components/quiet-writing";
 import {
@@ -12,6 +13,7 @@ import {
 import { SoftLetterCard } from "@/components/soft-letter-card";
 import { SoftNoteCard } from "@/components/soft-note-card";
 import { ensureUserSettings } from "@/db/user-settings";
+import { readStreakProtect } from "@/db/streak-protect";
 import { currentPauseWeekKey, isWeekPaused } from "@/db/week-pauses";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
@@ -59,6 +61,7 @@ export default async function ReviewPage({ params }: Props) {
         <QuietWritingToggle />
       </div>
       <div className="quiet-writing-chrome mt-8 space-y-4">
+        {user ? <StreakProtectChip initial={readStreakProtect(user.id, softPlus)} /> : null}
         <SoftPauseCard
           signedIn={Boolean(user)}
           initialWeekKey={pauseWeekKey}

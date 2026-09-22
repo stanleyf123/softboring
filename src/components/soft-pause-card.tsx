@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { WEEK_PAUSE_CHANGED_EVENT } from "@/lib/pause-week";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type PausePayload = {
   weekKey: string;
@@ -26,6 +26,19 @@ export function SoftPauseCard({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const [resumed, setResumed] = useState(false);
+
+  useEffect(() => {
+    function onPause(event: Event) {
+      const detail = (event as CustomEvent<{ paused?: boolean; weekKey?: string }>).detail;
+      if (!detail || typeof detail.paused !== "boolean") return;
+      setPaused(detail.paused);
+      if (detail.weekKey) setWeekKey(detail.weekKey);
+      setResumed(!detail.paused);
+      setError(false);
+    }
+    window.addEventListener(WEEK_PAUSE_CHANGED_EVENT, onPause);
+    return () => window.removeEventListener(WEEK_PAUSE_CHANGED_EVENT, onPause);
+  }, []);
 
   if (!signedIn) {
     return (
