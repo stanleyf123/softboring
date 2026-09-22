@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { attachBookmarkToDetail } from "@/db/wall-bookmarks";
 import {
   deleteWallNoteForUser,
   getWallNote,
@@ -25,7 +26,7 @@ export async function GET(_request: Request, context: Context) {
     if (!note) {
       return NextResponse.json({ error: "not_found" }, { status: 404 });
     }
-    return NextResponse.json({ note });
+    return NextResponse.json({ note: attachBookmarkToDetail(note, viewer.userId) });
   } catch (error) {
     console.error("GET /api/wall/notes/[id] failed", error);
     return NextResponse.json({ error: "Could not load this note." }, { status: 500 });
@@ -59,7 +60,9 @@ export async function PATCH(request: Request, context: Context) {
         return NextResponse.json({ error: "not_found" }, { status: 404 });
       }
       const note = getWallNote(id, viewer.userId);
-      return NextResponse.json({ note });
+      return NextResponse.json({
+        note: note ? attachBookmarkToDetail(note, viewer.userId) : note,
+      });
     }
 
     const position = parsePosition(body);
@@ -73,7 +76,9 @@ export async function PATCH(request: Request, context: Context) {
     }
 
     const note = getWallNote(id, viewer.userId);
-    return NextResponse.json({ note });
+    return NextResponse.json({
+      note: note ? attachBookmarkToDetail(note, viewer.userId) : note,
+    });
   } catch (error) {
     console.error("PATCH /api/wall/notes/[id] failed", error);
     return NextResponse.json({ error: "Could not move this note." }, { status: 500 });

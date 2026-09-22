@@ -44,7 +44,9 @@
     "wallActivityTitle": "Soft Wall compliments · Soft Boring Weekly",
     "wallActivityDescription": "A quiet strip of recent stickers and comments across Soft Wall. Soft+ only.",
     "historyCompareTitle": "Compare weeks · Soft Boring Weekly",
-    "historyCompareDescription": "Pick two past reviews and see feeling, energy, and drain side by side. Soft+ only."
+    "historyCompareDescription": "Pick two past reviews and see feeling, energy, and drain side by side. Soft+ only.",
+    "wallSavedTitle": "Saved Soft Wall notes · Soft Boring Weekly",
+    "wallSavedDescription": "Soft+ private bookmarks of Soft Wall notes you want to keep close."
   },
   "Nav": {
     "home": "Home",
@@ -343,7 +345,8 @@
     "inviteEmpty": "No one has used it yet. That's all right.",
     "yearTitle": "Soft year",
     "yearBody": "Feeling dots for the year, one quiet glance.",
-    "yearOpen": "Open soft year"
+    "yearOpen": "Open soft year",
+    "savedWall": "Saved Soft Wall"
   },
   "Digest": {
     "eyebrow": "Soft+ · in-app only",
@@ -581,7 +584,11 @@
     "shareError_review_required": "Pick a week to pin first.",
     "shareError_locked": "This week is still tucked away in History. Soft+ opens it so you can pin it.",
     "shareError_soft_plus_required": "Pinning a note for neighbors needs Soft+.",
-    "shareError_forbidden": "This week is already pinned, or you don't have access."
+    "shareError_forbidden": "This week is already pinned, or you don't have access.",
+    "savedLink": "Saved notes",
+    "save": "Save quietly",
+    "unsave": "Unsave",
+    "saved": "Saved"
   },
   "Export": {
     "title": "Printable reviews",
@@ -624,7 +631,13 @@
     "loading": "Checking…",
     "empty": "Nothing waiting. Comments and replies on the wall will land here.",
     "wallComment": "A neighbor left a comment on your note",
-    "wallReply": "A neighbor replied on Soft Wall"
+    "wallReply": "A neighbor replied on Soft Wall",
+    "filterLabel": "Inbox filters",
+    "filterAll": "All",
+    "filterUnread": "Unread",
+    "filterTips": "Soft tips",
+    "tipsLead": "Calm Soft Boring tips — no alerts, just a gentle nudge.",
+    "emptyUnread": "Nothing unread. Soft Wall comments will land here."
   },
   "Streak": {
     "eyebrow": "A quiet little streak",
@@ -861,5 +874,43 @@
     "praise": "{count} praise",
     "open": "Open on wall",
     "listAria": "This week’s soft picks"
+  },
+  "SoftTips": {
+    "title": "A soft tip",
+    "lead": "Small reminders for Soft Boring — no inbox noise.",
+    "next": "Another tip",
+    "counter": "{current} of {total}",
+    "inboxLabel": "Soft tip",
+    "tipPause": "Sit down once. Leave when you are done. That is enough.",
+    "tipOneSentence": "One honest sentence beats a perfect list.",
+    "tipFeeling": "A feeling number is a weather report, not a score.",
+    "tipWallSave": "Soft Wall notes you love can wait privately in Saved.",
+    "tipNoScore": "There is no streak you must protect. Soft Boring waits.",
+    "tipTea": "Brew something warm before you open the form.",
+    "tipSkip": "Skipping a week is allowed. Soft desks forgive.",
+    "tipNeighbor": "Neighbors leave small notes. Reply only if it feels light."
+  },
+  "WallSaved": {
+    "eyebrow": "Soft+ · private",
+    "title": "Saved Soft Wall notes",
+    "lead": "Notes you hearted stay here, quietly — only for you.",
+    "loading": "Gathering saved notes",
+    "emptyTitle": "Nothing saved yet",
+    "empty": "Open Soft Wall and tap the heart on a note you want to keep close.",
+    "emptyCta": "Open Soft Wall",
+    "lockedTitle": "Saved notes need Soft+",
+    "lockedBody": "Soft+ lets you bookmark Soft Wall notes privately.",
+    "lockedCta": "See Soft+",
+    "signedOutTitle": "Log in to see what you saved",
+    "signedOutBody": "Soft+ bookmarks stay on your desk — private, not on the corkboard.",
+    "loginCta": "Log in",
+    "loadErrorTitle": "Saved notes are napping",
+    "loadError": "Could not load your saved notes just now.",
+    "open": "Open on Soft Wall",
+    "unsave": "Remove save",
+    "saving": "One moment…",
+    "savedOn": "Saved {date}",
+    "byAuthor": "By {name}",
+    "backToWall": "Back to Soft Wall"
   }
 }

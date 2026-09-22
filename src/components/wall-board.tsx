@@ -35,6 +35,7 @@ type FullNote = TeaserNote & {
   summary: string;
   createdAt: string;
   pinned?: boolean;
+  bookmarked?: boolean;
   ownerSoftPlus?: boolean;
   ownerFallback?: string | null;
   ownerInviteBadge?: boolean;
@@ -477,6 +478,28 @@ export function WallBoard({
     }
   }
 
+  async function toggleBookmark(note: FullNote) {
+    if (busy) return;
+    setBusy("bookmark");
+    try {
+      const data = await readJson<{ note: FullNote; bookmarked: boolean }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(note.id)}/bookmark`, {
+          method: "POST",
+        }),
+      );
+      setDetail(data.note);
+      setNotes((list) =>
+        list.map((item) =>
+          item.id === data.note.id
+            ? { ...item, bookmarked: data.bookmarked }
+            : item,
+        ),
+      );
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function placeSticker(stickerId: string) {
     if (!selectedId || busy) return;
     if ((inventory[stickerId] ?? 0) < 1) {
@@ -574,6 +597,12 @@ export function WallBoard({
           </div>
           {softPlus ? (
             <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/wall/saved"
+                className="rounded-full border border-line px-5 py-2.5 text-sm text-muted hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                {t("savedLink")}
+              </Link>
               {notes.length === 0 && latestOwnedReviewId ? (
                 <button
                   type="button"
@@ -842,6 +871,15 @@ export function WallBoard({
                         {t("pinned")}
                       </span>
                     ) : null}
+                    {full?.bookmarked ? (
+                      <span
+                        className="shrink-0 text-accent"
+                        title={t("saved")}
+                        aria-label={t("saved")}
+                      >
+                        ♥
+                      </span>
+                    ) : null}
                   </span>
                   {locked || !full ? (
                     <span className="mt-2 block space-y-2 blur-[3px]">
@@ -1062,7 +1100,22 @@ export function WallBoard({
               {detail.mine ? ` · ${t("yours")}` : ` · ${t("neighbor")}`}
               {` · ${t("praise", { count: detail.praiseCount })}`}
               {detail.pinned ? ` · ${t("pinned")}` : ""}
+              {detail.bookmarked ? ` · ${t("saved")}` : ""}
             </p>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => toggleBookmark(detail)}
+                disabled={busy !== null}
+                aria-pressed={Boolean(detail.bookmarked)}
+                className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm shadow-card disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                  detail.bookmarked ? "bg-blush" : "bg-cream"
+                }`}
+              >
+                <span aria-hidden="true">{detail.bookmarked ? "♥" : "♡"}</span>
+                {detail.bookmarked ? t("unsave") : t("save")}
+              </button>
+            </div>
             <dl className="mt-6 space-y-4 text-sm leading-relaxed">
               {(["energy", "drain", "lessOf", "priorities"] as const).map((field) => (
                 <div key={field}>

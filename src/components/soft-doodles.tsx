@@ -276,3 +276,96 @@ export function StampFlower({ className = "h-10 w-10" }: DoodleProps) {
     </svg>
   );
 }
+
+/** Soft empty-state shapes — lightweight SVG, no heavy assets. */
+export function HistoryEmptyDoodle({ className = "h-24 w-24" }: DoodleProps) {
+  return (
+    <svg className={className} viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      <rect x="14" y="18" width="52" height="64" rx="14" fill="#f8dcc8" />
+      <rect x="22" y="26" width="52" height="64" rx="14" fill="#fff8f2" />
+      <path
+        d="M34 44h28M34 54h22M34 64h18"
+        stroke="#c47f6e"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <circle cx="68" cy="28" r="10" fill="#d5e6d8" />
+      <circle cx="68" cy="28" r="5" fill="#f4d4c6" />
+    </svg>
+  );
+}
+
+export function DigestEmptyDoodle({ className = "h-24 w-24" }: DoodleProps) {
+  return (
+    <svg className={className} viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      <ellipse cx="48" cy="72" rx="28" ry="8" fill="#ead6c8" />
+      <rect x="22" y="28" width="52" height="40" rx="16" fill="#fff8f2" />
+      <path d="M22 40l26 16 26-16" stroke="#c47f6e" strokeWidth="2.2" />
+      <circle cx="36" cy="52" r="4" fill="#d5e6d8" />
+      <circle cx="52" cy="56" r="3.2" fill="#f4d4c6" />
+      <path
+        d="M48 18c0-8 6-12 10-10"
+        stroke="#7d9b8c"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function YearEmptyDoodle({ className = "h-24 w-24" }: DoodleProps) {
+  return (
+    <svg className={className} viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      <rect x="16" y="20" width="64" height="56" rx="18" fill="#f4d4c6" />
+      <rect x="24" y="28" width="48" height="40" rx="12" fill="#fff8f2" />
+      {[0, 1, 2, 3]
+        .flatMap((col) =>
+          [0, 1, 2].map((row) => (
+            <circle
+              key={`${col}-${row}`}
+              cx={34 + col * 10}
+              cy={40 + row * 10}
+              r="3.2"
+              fill={row === 1 && col === 2 ? "#c47f6e" : "#d5e6d8"}
+              opacity={row === 2 && col === 0 ? 0.45 : 1}
+            />
+          )),
+        )}
+    </svg>
+  );
+}
+
+export function SavedEmptyDoodle({ className = "h-24 w-24" }: DoodleProps) {
+  return (
+    <svg className={className} viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      <rect x="18" y="22" width="48" height="54" rx="14" fill="#f8dcc8" transform="rotate(-6 42 49)" />
+      <rect x="28" y="20" width="48" height="54" rx="14" fill="#fff8f2" />
+      <path
+        d="M52 38c-6.4-4-10-8-10-11.8C42 23 44.6 21 47.6 21c1.8 0 3 .8 3.6 2 0.6-1.2 1.8-2 3.6-2C57.8 21 60.4 23 60.4 26.2 60.4 30 56.8 34 52 38Z"
+        fill="#c47f6e"
+      />
+      <circle cx="40" cy="54" r="2.4" fill="#d5e6d8" />
+      <circle cx="56" cy="58" r="2" fill="#f4d4c6" />
+    </svg>
+  );
+}
+
+export function SoftShapesEmpty({
+  kind = "default",
+  className = "h-24 w-24",
+}: DoodleProps & {
+  kind?: "default" | "history" | "digest" | "year" | "saved";
+}) {
+  switch (kind) {
+    case "history":
+      return <HistoryEmptyDoodle className={className} />;
+    case "digest":
+      return <DigestEmptyDoodle className={className} />;
+    case "year":
+      return <YearEmptyDoodle className={className} />;
+    case "saved":
+      return <SavedEmptyDoodle className={className} />;
+    default:
+      return <TeacupDoodle className={className} />;
+  }
+}

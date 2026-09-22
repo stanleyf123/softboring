@@ -44,7 +44,9 @@
     "wallActivityTitle": "Soft Wall のやさしい賛辞 · Soft Boring Weekly",
     "wallActivityDescription": "壁の最近のステッカーとコメントの静かな帯。Soft+ のみ。",
     "historyCompareTitle": "週をくらべる · Soft Boring Weekly",
-    "historyCompareDescription": "ふたつのふりかえりを選んで、気持ち・エネルギー・消耗をやさしく並べて見る。Soft+ のみ。"
+    "historyCompareDescription": "ふたつのふりかえりを選んで、気持ち・エネルギー・消耗をやさしく並べて見る。Soft+ のみ。",
+    "wallSavedTitle": "保存した Soft Wall · Soft Boring Weekly",
+    "wallSavedDescription": "Soft+ の非公開ブックマーク。近くに置きたい Soft Wall の付箋。"
   },
   "Nav": {
     "home": "ホーム",
@@ -343,7 +345,8 @@
     "digest": "月次ダイジェスト",
     "yearTitle": "やわらかい一年",
     "yearBody": "一年分の気持ちの点を、そっと一望。",
-    "yearOpen": "やわらかい一年を開く"
+    "yearOpen": "やわらかい一年を開く",
+    "savedWall": "保存した Soft Wall"
   },
   "Pricing": {
     "eyebrow": "書くのは無料 · もっと覚えるのは有料",
@@ -510,7 +513,11 @@
     "filterClear": "クリア",
     "filterResult": "{total} 件中 {shown} 件",
     "filterEmptyTitle": "いまは一致しない",
-    "filterEmpty": "気持ちの幅を広げるか、検索を消してみて。"
+    "filterEmpty": "気持ちの幅を広げるか、検索を消してみて。",
+    "savedLink": "保存した付箋",
+    "save": "そっと保存",
+    "unsave": "保存を外す",
+    "saved": "保存済み"
   },
   "Export": {
     "title": "印刷できるふりかえり",
@@ -553,7 +560,13 @@
     "loading": "見ています…",
     "empty": "待っているものはありません。壁のコメントと返信が、ここに着きます。",
     "wallComment": "となりの人が、あなたの付箋にコメントしました",
-    "wallReply": "となりの人が、ソフトウォールで返信しました"
+    "wallReply": "となりの人が、ソフトウォールで返信しました",
+    "filterLabel": "受信トレイの絞り込み",
+    "filterAll": "すべて",
+    "filterUnread": "未読",
+    "filterTips": "ソフトヒント",
+    "tipsLead": "静かな Soft Boring のヒント。通知ではなく、やさしい一言。",
+    "emptyUnread": "未読はありません。壁のコメントがここに着きます。"
   },
   "Streak": {
     "eyebrow": "静かな、小さな連続記録",
@@ -861,5 +874,43 @@
     "praise": "ほめ {count}",
     "open": "壁で開く",
     "listAria": "今週のやわらかいピック"
+  },
+  "SoftTips": {
+    "title": "やわらかいヒント",
+    "lead": "Soft Boring のための小さなリマインダー。メールは要りません。",
+    "next": "別のヒント",
+    "counter": "{current} / {total}",
+    "inboxLabel": "ソフトヒント",
+    "tipPause": "一度座る。書き終えたら立つ。それで充分。",
+    "tipOneSentence": "正直な一文は、完璧なリストに勝る。",
+    "tipFeeling": "気持ちの数字は天気予報であって、点数ではない。",
+    "tipWallSave": "好きな Soft Wall の付箋は、Saved にそっと残せます。",
+    "tipNoScore": "守らねばならない連続記録はない。Soft Boring は待つ。",
+    "tipTea": "フォームを開く前に、あたたかいものを淹れて。",
+    "tipSkip": "一週飛ばしてもいい。やわらかい机は許す。",
+    "tipNeighbor": "となりの人は小さなメモを残す。軽いときだけ返信を。"
+  },
+  "WallSaved": {
+    "eyebrow": "Soft+ · 非公開",
+    "title": "保存した Soft Wall",
+    "lead": "ハートをつけた付箋が、ここに静かに残ります。あなただけ。",
+    "loading": "保存した付箋をそろえています",
+    "emptyTitle": "まだ保存がありません",
+    "empty": "Soft Wall を開いて、近くに置きたい付箋にハートを。",
+    "emptyCta": "Soft Wall を開く",
+    "lockedTitle": "保存には Soft+ が必要です",
+    "lockedBody": "Soft+ なら Soft Wall の付箋を非公開でブックマークできます。",
+    "lockedCta": "Soft+ を見る",
+    "signedOutTitle": "ログインして保存を見る",
+    "signedOutBody": "Soft+ のブックマークは机の上に。コルクボードには出ません。",
+    "loginCta": "ログイン",
+    "loadErrorTitle": "保存した付箋はおやすみ中",
+    "loadError": "いま保存した付箋を読み込めませんでした。",
+    "open": "Soft Wall で開く",
+    "unsave": "保存を外す",
+    "saving": "少々お待ちを…",
+    "savedOn": "{date} に保存",
+    "byAuthor": "{name}",
+    "backToWall": "Soft Wall に戻る"
   }
 }
