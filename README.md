@@ -29,10 +29,11 @@ Pages:
 - `/en/reset-password` and `/zh-tw/reset-password`
 - `/en/privacy` and `/zh-tw/privacy`
 - `/en/terms` and `/zh-tw/terms`
+- `/en/guidelines` and `/zh-tw/guidelines` (Soft Wall etiquette)
 - `/en/thanks` and `/zh-tw/thanks` (short thank-you, also linked from the footer)
 - `/en/welcome` and `/zh-tw/welcome` (after register / first-time OAuth; `noindex`)
 - `/en/thanks/plus` and `/zh-tw/thanks/plus` (Soft+ checkout return; `noindex`)
-- `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade, weekly reminder)
+- `/en/account` and `/zh-tw/account` (plan badge, review count, upgrade, weekly reminder, timezone, soft leave)
 - `/en/pricing` and `/zh-tw/pricing`
 - `/en/trends` and `/zh-tw/trends` (Soft+)
 - `/en/digest` and `/zh-tw/digest` (Soft+ monthly digest, in-app)
@@ -48,18 +49,18 @@ Password reset: `POST /api/auth/forgot-password` always creates a hashed token w
 
 Login, register, forgot-password, and OAuth start/callback are **rate-limited** by IP (and email where it applies) in SQLite (`rate_limits`). Too many tries return HTTP 429 or send you back to login with a calm message. No extra env is required.
 
-The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
+The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). On a phone, browsers that can install (or iOS Add to Home Screen) may see one calm tip; dismissing it keeps it dismissed. The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
-SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md). Soft year, wall compliments, mid-week notes: [docs/soft-year-activity-notes.md](./docs/soft-year-activity-notes.md). Soft postcard, wall spotlight, week compare: [docs/soft-postcard-spotlight-compare.md](./docs/soft-postcard-spotlight-compare.md). Soft intention, sticker pocket UX, Soft Wall a11y: [docs/soft-intention-wall-a11y.md](./docs/soft-intention-wall-a11y.md). Soft bookmarks, empty-state illustrations, Soft tips inbox: [docs/soft-bookmarks-empty-tips.md](./docs/soft-bookmarks-empty-tips.md). Soft print week, wall color preference, onboarding checklist: [docs/soft-print-wall-color-checklist.md](./docs/soft-print-wall-color-checklist.md). Soft memory resurfacing, quiet writing, Soft Wall flags: [docs/soft-memory-quiet-wall-report.md](./docs/soft-memory-quiet-wall-report.md).
+SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md). Soft year, wall compliments, mid-week notes: [docs/soft-year-activity-notes.md](./docs/soft-year-activity-notes.md). Soft postcard, wall spotlight, week compare: [docs/soft-postcard-spotlight-compare.md](./docs/soft-postcard-spotlight-compare.md). Soft intention, sticker pocket UX, Soft Wall a11y: [docs/soft-intention-wall-a11y.md](./docs/soft-intention-wall-a11y.md). Soft bookmarks, empty-state illustrations, Soft tips inbox: [docs/soft-bookmarks-empty-tips.md](./docs/soft-bookmarks-empty-tips.md). Soft print week, wall color preference, onboarding checklist: [docs/soft-print-wall-color-checklist.md](./docs/soft-print-wall-color-checklist.md). Soft memory resurfacing, quiet writing, Soft Wall flags: [docs/soft-memory-quiet-wall-report.md](./docs/soft-memory-quiet-wall-report.md). Soft streak polish, Soft Wall hide-demo, soft shortcuts: [docs/streak-demo-shortcuts.md](./docs/streak-demo-shortcuts.md). Soft Wall guidelines, Soft+ gift codes, homepage soft-stats: [docs/guidelines-gifts-soft-stats.md](./docs/guidelines-gifts-soft-stats.md). Soft+ gift expiry UX, Soft Wall sort, gift thank-you: [docs/soft-expiry-wall-sort-thanks.md](./docs/soft-expiry-wall-sort-thanks.md). Soft Wall mood palette, free JSON download, footer cluster: [docs/soft-palette-export-footer.md](./docs/soft-palette-export-footer.md). Soft leave, timezone, PWA install tip: [docs/soft-leave-tz-pwa.md](./docs/soft-leave-tz-pwa.md).
 
-Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
+Weekly reminders: on the account page, toggle a weekday and an IANA timezone (default `Asia/Taipei`). Cron later with `npm run reminders:dispatch` still wakes on the VPS clock, then checks that weekday in the member’s timezone (**no-op success** if email env is missing). The same timezone bounds the digest’s “this month.” Signed-in members can delete the account from that page (type `Soft Boring` and their email); reviews and Soft Wall notes leave with them. See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
 ## Plans
 
 | Plan | Write reviews | History | Trends | Soft Wall |
 | --- | --- | --- | --- | --- |
-| **Free** (and guests) | Yes (+ private mid-week soft note and soft weekly intention when signed in) | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked (year / digest teasers) | Locked teaser (no other people's text) |
-| **Soft+** | Yes | Unlimited, search, export CSV/PDF, soft postcard PNG + print-this-week PDF, compare weeks, custom questions, monthly digest, soft year, soft memory resurfacing | Feeling 1–5 over time, plus a gentle weekly streak | Full access: read, drag, comment, one-level replies, stickers, badge, pin, preferred note color, private bookmarks (`/wall/saved`), compliments feed, weekly soft picks, quiet “this feels off” flags |
+| **Free** (and guests) | Yes (+ private mid-week soft note and soft weekly intention when signed in) | Latest **4** reviews stay open; older ones show a Soft+ prompt. Signed-in Free can download those four as JSON | Locked (year / digest teasers) | Locked teaser (no other people's text) |
+| **Soft+** | Yes | Unlimited, search, export CSV/PDF, soft postcard PNG + print-this-week PDF, compare weeks, custom questions, monthly digest, soft year, soft memory resurfacing | Feeling 1–5 over time, plus a gentle weekly streak | Full access: read, drag, comment, one-level replies, stickers, badge, pin, preferred note color, mood palette legend, private bookmarks (`/wall/saved`), compliments feed, weekly soft picks, quiet “this feels off” flags |
 
 Guests can try 1–4 reviews in the browser. After the first save, the app nudges them to register so the paid path is clear. Registering as Free still caps visible history at four; Soft+ is the unlock.
 
@@ -132,7 +133,7 @@ Checkout is treated as configured only when the first three are non-empty.
 - Commenting notifies the note owner in the signed-in inbox (bell). A reply also notifies the parent comment author. Own comments do not.
 - **Demo Soft+ bots** (optional): ten `@softboring.demo` accounts can seed the wall and post a few zh-TW notes each day. See [docs/demo-bots.md](./docs/demo-bots.md).
 
-After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, `preferred_wall_color`, `wall_note_flags`, soft notes / intentions / bookmarks, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
+After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, `preferred_wall_color`, `wall_note_flags`, soft notes / intentions / bookmarks, Soft+ gift codes / `plan_expires_at`, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
 
 ## Admin
 

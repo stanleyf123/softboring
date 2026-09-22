@@ -48,7 +48,9 @@
     "wallSavedTitle": "保存した Soft Wall · Soft Boring Weekly",
     "wallSavedDescription": "Soft+ の非公開ブックマーク。近くに置きたい Soft Wall の付箋。",
     "snapshotTitle": "やわらかい月 · Soft Boring Weekly",
-    "snapshotDescription": "あなたのタイムゾーンで、今月のふりかえりを印刷できるクリームのページに。Free は新しい四つ、Soft+ は月ぜんぶ。"
+    "snapshotDescription": "あなたのタイムゾーンで、今月のふりかえりを印刷できるクリームのページに。Free は新しい四つ、Soft+ は月ぜんぶ。",
+    "guidelinesTitle": "ソフトウォールの案内 · Soft Boring Weekly",
+    "guidelinesDescription": "ソフトウォールのためのやさしいエチケット——やさしく、スパムなし、共有は自分の意思で。"
   },
   "Nav": {
     "home": "ホーム",
@@ -70,9 +72,11 @@
     "note": "Soft Boring — 静かな、週のひと休み",
     "thanks": "座ってくれて、ありがとう。",
     "thanksLink": "ありがとう",
-    "navLabel": "フッター",
+    "navLabel": "案内、プライバシー、規約、言語",
     "privacy": "プライバシー",
-    "terms": "利用規約"
+    "terms": "利用規約",
+    "guidelines": "案内",
+    "languages": "言語"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -120,7 +124,11 @@
     "pricingCta": "Free と Soft+ を見る",
     "bottomTitle": "あなたの週にも、静かな角があっていい。",
     "bottomBody": "準備はいりません。お客として書いても、アカウントをつくれば履歴がついてきます。",
-    "ideasLabel": "Soft Boring の歩き方"
+    "ideasLabel": "Soft Boring の歩き方",
+    "statsAria": "すこし静かな公開の数字",
+    "statsNote": "穏やかな数え方だけ——個人の振り返りも名前も出しません。",
+    "statsWallWeek": "今週みえるソフトウォールのメモ",
+    "statsLanguages": "Soft Boring が話す言語"
   },
   "Questions": {
     "energy": "今週、いちばん元気をもらったものは？",
@@ -176,6 +184,8 @@
     "guestCta": "アカウントをつくる",
     "freeBannerTitle": "新しい四つが開いています",
     "freeBanner": "Soft+ はすべての週を残して、小さな気持ちの図も足します。",
+    "freeDownload": "この四週間をダウンロード（JSON）",
+    "freeDownloadHint": "すでに開ける週だけの、小さなファイル。メールは送りません。",
     "plusToolsTitle": "Soft+ の道具",
     "searchLabel": "ふりかえりを検索",
     "searchPlaceholder": "題と答えを検索…",
@@ -316,11 +326,10 @@
     "reminderEmailOn": "定期の仕事が走ると、リマインダーが送られます。",
     "reminderEmailOff": "このサーバーにはまだメールが設定されていないので、RESEND_API_KEY か SMTP を置くまでリマインダーは何もしません。",
     "reminderSaving": "残しています…",
-    "timezoneLabel": "タイムゾーン",
     "timezoneHint": "今週のリズムと、やわらかい月のために使います。デスクは Asia/Taipei からはじまります。",
     "softMonth": "やわらかい月",
     "digestTitle": "今月",
-    "digestBody": "この暦月に残したふりかえりの、静かな集計。",
+    "digestBody": "あなたのタイムゾーンで、この暦月に残したふりかえりの静かな集計。",
     "digestCountLabel": "ふりかえり",
     "digestCount": "{count}",
     "digestFeelingLabel": "気持ちの平均",
@@ -335,6 +344,9 @@
     "customSaved": "残しました。",
     "customError": "いまはその問いを残せませんでした。",
     "export": "ふりかえりを書き出す",
+    "dataDownloadTitle": "最近の四週間を持って帰る",
+    "dataDownloadBody": "すでに開ける四週間だけの、小さな JSON。それより前は Soft+ にしまってあります。メールは送りません。",
+    "dataDownloadCta": "JSON をダウンロード",
     "inviteTitle": "友だちをそっと誘う",
     "inviteBody": "Soft+ なら、小さな扉を渡せます。そのリンクから新しい人が座ったら、壁の付箋に小さな星がのります。お礼であって、お支払いはありません。",
     "inviteLockedTitle": "友だちのための小さな扉",
@@ -354,7 +366,40 @@
     "yearTitle": "やわらかい一年",
     "yearBody": "一年分の気持ちの点を、そっと一望。",
     "yearOpen": "やわらかい一年を開く",
-    "savedWall": "保存した Soft Wall"
+    "savedWall": "保存した Soft Wall",
+    "planGiftUntil": "ギフト Soft+ は {date} まで",
+    "planGiftExpiringSoon": "やさしいお知らせ：このギフトの Soft+ はだいたいあと {days, plural, other {# 日}}（{date} まで）。急がなくて大丈夫——カレンダーへの、小さなノックです。",
+    "giftTitle": "Soft+ ギフトコードを使う",
+    "giftBody": "一度きりの Soft+ コードをもらったら、ここに貼ってください。無料プランの人向けです——Stripe とは別の道です。",
+    "giftCodeLabel": "ギフトコード",
+    "giftCodePlaceholder": "xxxxxxxxxxxx",
+    "giftRedeem": "Soft+ を受け取る",
+    "giftRedeeming": "受け取り中…",
+    "giftAlreadyPlus": "すでに Soft+ です。使っていないコードは、無料の友だちにどうぞ。",
+    "giftSuccessPermanent": "Soft+ が開きました——このギフトに期限はありません。",
+    "giftSuccessDays": "Soft+ が {days} 日間、開きました。",
+    "giftError": "いまはそのコードを使えませんでした。",
+    "giftErrorMissing": "そのギフトコードは見つかりません。",
+    "giftErrorUsed": "そのギフトはすでに使われています。",
+    "giftErrorAlreadyPlus": "すでに Soft+ なので、このギフトはそのまま残します。",
+    "giftErrorRate": "すこし試しすぎました。お茶を淹れてから、またどうぞ。",
+    "timezoneTitle": "あなたの時計",
+    "timezoneBody": "リマインダーの曜日と、ダイジェストの「今月」は、このタイムゾーンに従います。初期値は台北です。",
+    "timezoneLabel": "タイムゾーン",
+    "timezoneNote": "リマインダーの定期実行は、まだサーバーの時計で起きます。そのあと、あなたのタイムゾーンで今日が希望の曜日かを見ます。",
+    "timezoneSaving": "残しています…",
+    "timezoneSaved": "残しました。",
+    "leaveTitle": "そっと離れる",
+    "leaveBody": "Soft Boring はもう十分、と思ったら、この机をしまえます。ふりかえりは一緒に去り、ソフトウォールのあなたの付箋も下ろします。となりの人には、もう見えません。こわい注意書きではなく、静かな別れです。",
+    "leaveEmailHint": "この机のメールアドレスは {email} です。",
+    "leavePhraseLabel": "Soft Boring と入力して確認",
+    "leavePhrasePlaceholder": "Soft Boring",
+    "leaveEmailLabel": "この机のメールアドレスも入力",
+    "leaveConfirm": "アカウントを削除",
+    "leaveWorking": "机をしまっています…",
+    "leaveErrorPhrase": "Soft Boring とそのまま入力してください。",
+    "leaveErrorEmail": "そのメールアドレスは、この机のものと違います。",
+    "leaveError": "いま机をしまえませんでした。"
   },
   "Pricing": {
     "eyebrow": "書くのは無料 · もっと覚えるのは有料",
@@ -378,7 +423,7 @@
     "featureTrendsPlus": "気持ちの傾向と、やさしい週の連続記録",
     "featureWallFree": "ソフトウォールは、やわらかいカーテンの向こう",
     "featureStickersFree": "壁のシールは Soft+ と",
-    "featureExportFree": "CSV と印刷できる PDF の書き出しは Soft+ と",
+    "featureExportFree": "CSV と印刷できるページは Soft+。無料は最近の四週間を JSON で持ち帰れます。",
     "featureDigestFree": "月のまとめは Soft+ と",
     "featureWallPlus": "ソフトウォールを全部：読む、動かす、コメント、返信",
     "featureExportPlus": "週を CSV か、印刷できる PDF に",
@@ -512,7 +557,11 @@
     "shareError_soft_plus_required": "となりの人に見せる付箋を留めるには、Soft+ が要ります。",
     "shareError_forbidden": "この週はもう留めてあるか、開く権限がありません。",
     "filterTitle": "やさしいメモを探す",
-    "filterLead": "気持ちの幅、ニックネーム／抜粋、またはデモをそっと隠す。無料のチラ見せは鍵のまま。",
+    "filterLead": "気持ちで絞る、ニックネームや抜粋を探す、デモを隠す、または Soft Wall を並べ替える。無料のチラ見せは鍵のまま。",
+    "sortLabel": "Soft Wall の並び",
+    "sortNewest": "新しい順",
+    "sortMostPraised": "賛が多い順",
+    "sortPinnedFirst": "ピン留め優先",
     "filterSearchLabel": "ソフトウォールを検索",
     "filterSearchPlaceholder": "ニックネームや抜粋…",
     "filterFeelingMin": "から",
@@ -544,7 +593,16 @@
     "thankAria": "残してくれて、ありがとう",
     "reportFeelsOff": "少し気になる",
     "reportHint": "Soft Boring へのやさしい合図——公開の通報じゃないよ。",
-    "reportThanks": "受け取ったよ。やさしい合図、ありがとう。"
+    "reportThanks": "受け取ったよ。やさしい合図、ありがとう。",
+    "guidelinesLink": "ソフトウォールの案内",
+    "paletteTitle": "小さな色のしおり",
+    "paletteLead": "週をピンするとき、色は自分で選びます。湯のみを選ぶみたいに、気分であって、点数ではありません。",
+    "palette_peach": "あたたかい午後",
+    "palette_blush": "すこしやわらか",
+    "palette_mint": "水をあげたばかり",
+    "palette_cream": "しずかな紙",
+    "palette_lemon": "明るいひとくち",
+    "palette_sky": "窓があいている"
   },
   "Export": {
     "title": "印刷できるふりかえり",
@@ -627,7 +685,7 @@
   },
   "Privacy": {
     "title": "プライバシーポリシー",
-    "updated": "最終更新：2026年9月15日",
+    "updated": "最終更新：2026年9月22日",
     "lead": "Soft Boring Weekly は、小さな週のふりかえりです。このページは、何を集めて、なぜ、どれだけ置くかを説明します。",
     "home": "ホームにもどる",
     "s1Title": "私たちについて",
@@ -641,7 +699,7 @@
     "s5Title": "共有と処理者",
     "s5Body": "支払いは Stripe が処理します。メールを送るときは Resend か、設定した SMTP を使います。ホスティングとバックアップは運用の人のサーバー（ディスク上の SQLite）です。共有したソフトウォールの内容は、面識のない Soft+ の人にも見えます。共有は、初期ではオフです。",
     "s6Title": "保管と、あなたの選択",
-    "s6Body": "アカウントとふりかえりは、あなたが消すまで（または運用の人が消すまで）置きます。ソフトウォールの付箋は、いつでも下ろせます。週のリマインダーはアカウントのページで消せます。削除やデータの写しは、ログインして運用の人へ。この方針は更新されることがあり、上の日付が変わります。"
+    "s6Body": "アカウントとふりかえりは、アカウントのページで消すまで（または運用の人が消すまで）置きます。消すと、ふりかえりは一緒に去り、ソフトウォールの付箋もそっと下ろします。一枚だけ下ろすことは、今までどおりいつでもできます。週のリマインダーはアカウントのページで消せます。そこではタイムゾーンも選べて、リマインダーの曜日と「今月」があなたの時計に従います。ログインした無料アカウントは、アカウントのページから、すでに開ける最近の四週間を JSON で自分で受け取れます。メールは要りません。Soft+ は、より長いふりかえりを今までどおり書き出せます。この方針は更新されることがあり、上の日付が変わります。"
   },
   "Terms": {
     "title": "利用規約",
@@ -655,11 +713,12 @@
     "s3Title": "Soft+ と支払い",
     "s3Body": "有料プランとシールの購入は Stripe が請求します。税、領収、カードの詳細はそこで扱います。Stripe のお客さまポータルで解約できます。別段の表示がない限り、支払済みの期間の終わりまで使えます。管理画面での手動のプラン変更は、Stripe の請求を作りません。",
     "s4Title": "あなたの内容とソフトウォール",
-    "s4Body": "書いたふりかえりの権利は、あなたのままです。残すことで、私たちに保管し、あなたへ表示する許諾を与えます。週をソフトウォールに留めると、ほかの Soft+ の人がその週を読み、コメントし、シールを置けます。共有は任意で、取り消せます。他の人の私的な情報は載せないでください。",
+    "s4Body": "あなたが書いた振り返りの権利はあなたにあります。保存することで、私たちがあなたのために保管・表示する許可を与えます。週をソフトウォールにピンすると、他の Soft+ メンバーがその週を読み、コメントし、ステッカーを置けるようになります。共有は任意で、取り消せます。他の人の個人情報を載せないでください。ソフトウォールには短い案内（Guidelines）があります——やさしく、スパムなし、共有したい週だけを。",
     "s5Title": "責任の限度",
     "s5Body": "このサービスは書くための道具であり、医療、法律、治療の助言ではありません。法律が許す範囲で、失われたふりかえり、停止、間接の損害について責任を負いません。請求に対する責任の合計は、請求の前12か月に私たちへ支払った額まで、Free の場合はゼロです。",
     "s6Title": "約束の終わり",
-    "s6Body": "利用をやめて、アカウントの削除を頼めます。この規約を破ったり、みんなの壁を傷つけたりするアカウントは停止することがあります。削除のあとのデータの扱いはプライバシーポリシーにあります。この規約は、強行の消費者法が別段を言わない限り、運用者に適用される法に従います。"
+    "s6Body": "利用をやめて、アカウントのページから削除できます。この規約を破ったり、みんなの壁を傷つけたりするアカウントは停止することがあります。削除のあとのデータの扱いはプライバシーポリシーにあります。この規約は、強行の消費者法が別段を言わない限り、運用者に適用される法に従います。",
+    "guidelinesLink": "ソフトウォールの案内——もっと静かなページ"
   },
   "Thanks": {
     "campaignKicker": "小さな一礼",
@@ -694,7 +753,15 @@
     "plusReady": "いまは Soft+ です。古い週と、傾向と、壁はあなたのものです。",
     "plusReviewCta": "今週のふりかえりを書く",
     "plusWallCta": "ソフトウォールを開く",
-    "plusAccountCta": "机にもどる"
+    "plusAccountCta": "机にもどる",
+    "giftKicker": "Soft+ のギフト",
+    "giftTitle": "ありがとう——Soft+ が開きました。",
+    "giftBody": "だれかが、より静かな机を残してくれました。Soft Wall、やさしいダイジェスト、掲示板のニックネームが、ゆっくり待っています。",
+    "giftReadyUntil": "このギフトの Soft+ は {date} まで開いています。",
+    "giftReadyPermanent": "このギフトの Soft+ に終わりはありません。急がなくて大丈夫。",
+    "stepDigestTitle": "今月をのぞく",
+    "stepDigestBody": "保存した週からの静かな要約。メールは要りません。",
+    "giftDigestCta": "ダイジェストを開く"
   },
   "Digest": {
     "eyebrow": "Soft+ · アプリ内のみ",
@@ -721,7 +788,8 @@
     "lockedCta": "Soft+ を見る",
     "signedOutBody": "Soft+ でログインして、今月のダイジェストを開こう。",
     "loginCta": "ログイン",
-    "seeYear": "やわらかい一年を開く"
+    "seeYear": "やわらかい一年を開く",
+    "timezoneNote": "今月は {zone} で数えます。"
   },
   "SeasonalPacks": {
     "title": "季節の質問パック",
@@ -1003,5 +1071,31 @@
     "drainTitle": "消耗のことば",
     "untitled": "静かな一週間",
     "noFeeling": "気持ちの数字はない"
+  },
+  "Guidelines": {
+    "title": "ソフトウォールの案内",
+    "updated": "最終更新：2026年9月22日",
+    "lead": "ソフトウォールのための短い、やさしいエチケット。きつい規則集ではなく、ご近所がやさしくいるための約束です。",
+    "home": "ホームへ",
+    "termsLink": "利用規約も見る",
+    "s1Title": "ソフトウォールはオプトイン",
+    "s1Body": "週の振り返りは、ピンするまで非公開です。共有はやさしい「はい」であり、初期設定ではありません。いつでもメモを壁から外せます。",
+    "s2Title": "やさしく",
+    "s2Body": "コメントとステッカーは小さなほめ言葉であり、議論ではありません。善意を想定してください。侮辱、積み重ねの批判、静かな週を説明する圧力は不要です。",
+    "s3Title": "スパムなし",
+    "s3Body": "ソフトウォールは掲示板ではありません。広告、アフィリエイト連打、同じメモの繰り返し、注目を奪うための投稿はやめましょう。",
+    "s4Title": "共有したいものだけを",
+    "s4Body": "Soft+ の隣人に読まれてもよい週だけをピンしてください。他の人の私的な詳細は省いてください。翌日に生々しすぎると感じたら、ピンを外して大丈夫です。",
+    "s5Title": "必要なときは静かに報告",
+    "s5Body": "やさしくない・場違いに感じたら、Soft+ メンバーは運営向けのソフトなフラグを残せます。この案内に反するメモは非表示にすることがあります。大きな喧嘩より、静かな手当てを好みます。",
+    "s6Title": "Soft Boring の調子",
+    "s6Body": "ここはコルクボードであり、フィードではありません。ゆっくりで大丈夫。沈黙も大丈夫。やかんが沸いたら来て——終わったら帰ってください。"
+  },
+  "Pwa": {
+    "title": "もっと静かなホーム画面",
+    "body": "このブラウザは、Soft Boring をホーム画面に置けます。やかんのそばの小さなノートのように。言うのは一度だけ。",
+    "iosBody": "iPhone または iPad では、共有を開いて「ホーム画面に追加」。言うのは一度だけ。",
+    "install": "そっと追加",
+    "dismiss": "今はいい"
   }
 }

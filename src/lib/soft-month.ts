@@ -1,7 +1,7 @@
 import { monthlyDigestFromReviews } from "@/lib/plus-insights";
 import { FREE_HISTORY_LIMIT } from "@/lib/plan";
 import type { Review } from "@/lib/review-types";
-import { normalizeTimeZone, zonedYearMonth } from "@/lib/timezone";
+import { calendarInTimeZone, normalizeTimeZone, sameCalendarMonth } from "@/lib/timezone";
 
 export type SoftMonthCard = {
   id: string;
@@ -71,12 +71,11 @@ export function buildSoftMonthSnapshot(
 ): SoftMonthSnapshot {
   const timeZone = normalizeTimeZone(options.timeZone);
   const now = options.now ?? new Date();
-  const { year, month } = zonedYearMonth(now, timeZone);
+  const { year, month } = calendarInTimeZone(now, timeZone);
   const inMonth = reviewsNewestFirst.filter((review) => {
     const date = new Date(review.createdAt);
     if (Number.isNaN(date.getTime())) return false;
-    const parts = zonedYearMonth(date, timeZone);
-    return parts.year === year && parts.month === month;
+    return sameCalendarMonth(date, now, timeZone);
   });
   const unlockedIds = new Set(
     (options.softPlus

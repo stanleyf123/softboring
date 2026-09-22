@@ -3,7 +3,7 @@ import { countReviewsForUser } from "@/db/reviews";
 import { countUnreadNotifications } from "@/db/notifications";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { isStripeConfigured } from "@/lib/stripe";
 import { isEmailConfigured } from "@/lib/email";
 
@@ -27,7 +27,7 @@ export async function GET() {
         createdAt: user.createdAt,
         plan: user.plan,
         planStatus: user.planStatus,
-        softPlus: isSoftPlusPlan(user.plan, user.planStatus),
+        softPlus: userIsSoftPlus(user),
         reviewCount: countReviewsForUser(user.id),
         hasStripeCustomer: Boolean(user.stripeCustomerId),
         settings,

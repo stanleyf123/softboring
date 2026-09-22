@@ -3,6 +3,7 @@
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
+import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftTipsCard } from "@/components/soft-tips-card";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -11,9 +12,14 @@ import { NICKNAME_MAX } from "@/lib/nickname";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import type { SoftMemory } from "@/lib/soft-memory";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
-import { TIMEZONE_CHOICES } from "@/lib/timezone";
+import {
+  daysUntilPlanExpiry,
+  planExpiryReminderDue,
+} from "@/lib/plan";
+import { DEFAULT_TIMEZONE } from "@/lib/timezone";
+import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
 import { SoftMark } from "./soft-doodles";
 
@@ -44,6 +50,7 @@ export function AccountPanel({
   createdAt,
   reviewCount,
   softPlus,
+  planExpiresAt = null,
   softMemory = null,
   stripeConfigured,
   hasStripeCustomer,
@@ -60,6 +67,7 @@ export function AccountPanel({
   createdAt: string;
   reviewCount: number;
   softPlus: boolean;
+  planExpiresAt?: string | null;
   softMemory?: SoftMemory | null;
   stripeConfigured: boolean;
   hasStripeCustomer: boolean;
@@ -79,11 +87,29 @@ export function AccountPanel({
   const [loggingOut, setLoggingOut] = useState(false);
   const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
   const [weekday, setWeekday] = useState(reminderWeekday);
-  const [zone, setZone] = useState(timezone);
+  const [zone, setZone] = useState(timezone || DEFAULT_TIMEZONE);
   const [savingReminder, setSavingReminder] = useState(false);
+  const [savingZone, setSavingZone] = useState(false);
+  const [zoneSaved, setZoneSaved] = useState(false);
+  const timeZones = useMemo(() => {
+    const supported =
+      typeof Intl.supportedValuesOf === "function"
+        ? Intl.supportedValuesOf("timeZone")
+        : [DEFAULT_TIMEZONE, "UTC"];
+    const withCurrent = supported.includes(zone) ? supported : [zone, ...supported];
+    return [DEFAULT_TIMEZONE, ...withCurrent.filter((item) => item !== DEFAULT_TIMEZONE)];
+  }, [zone]);
   const [packQuestions, setPackQuestions] = useState(customQuestions);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
   const identity = oauthIdentityLabel(email);
+  const expiresLabel =
+    softPlus && planExpiresAt
+      ? format.dateTime(new Date(planExpiresAt), { dateStyle: "medium" })
+      : null;
+  const daysLeft =
+    softPlus && planExpiresAt ? daysUntilPlanExpiry(planExpiresAt) : null;
+  const showExpiryReminder =
+    softPlus && expiresLabel != null && planExpiryReminderDue(planExpiresAt);
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -150,6 +176,22 @@ export function AccountPanel({
               <dd className="mt-1">
                 {softPlus ? t("planSoftPlusBody") : t("planFreeBody")}
               </dd>
+              {expiresLabel ? (
+                <p className="mt-2 text-sm text-muted">
+                  {t("planGiftUntil", { date: expiresLabel })}
+                </p>
+              ) : null}
+              {showExpiryReminder && daysLeft != null ? (
+                <p
+                  className="mt-3 rounded-[1.1rem] bg-lemon/50 px-4 py-3 text-sm leading-relaxed text-muted"
+                  role="status"
+                >
+                  {t("planGiftExpiringSoon", {
+                    days: daysLeft,
+                    date: expiresLabel,
+                  })}
+                </p>
+              ) : null}
             </div>
           </dl>
 
@@ -158,6 +200,7 @@ export function AccountPanel({
           <SoftIntentionCard signedIn variant="account" />
           <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />
+          <GiftRedeemCard softPlus={softPlus} />
 
           {softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/50 px-5 py-5">
@@ -253,6 +296,7 @@ export function AccountPanel({
                 ))}
               </select>
             </label>
+            <p className="mt-5 font-display text-base tracking-tight">{t("timezoneTitle")}</p>
             <label className="mt-3 block text-sm">
               <span className="text-muted">{t("timezoneLabel")}</span>
               <select
@@ -261,32 +305,34 @@ export function AccountPanel({
                 onChange={async (event) => {
                   const next = event.target.value;
                   setZone(next);
-                  setSavingReminder(true);
+                  setZoneSaved(false);
+                  setSavingZone(true);
                   try {
-                    await fetch("/api/account/settings", {
+                    const response = await fetch("/api/account/settings", {
                       method: "PATCH",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ timezone: next }),
                     });
+                    if (response.ok) setZoneSaved(true);
                   } finally {
-                    setSavingReminder(false);
+                    setSavingZone(false);
                   }
                 }}
               >
-                {((TIMEZONE_CHOICES as readonly string[]).includes(zone)
-                  ? TIMEZONE_CHOICES
-                  : [zone, ...TIMEZONE_CHOICES]
-                ).map((choice) => (
-                  <option key={choice} value={choice}>
-                    {choice}
+                {timeZones.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
                   </option>
                 ))}
               </select>
-              <span className="mt-2 block text-xs text-muted">{t("timezoneHint")}</span>
             </label>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("timezoneBody")}</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted">{t("timezoneNote")}</p>
             <p className="mt-3 text-xs text-muted">
               {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
               {savingReminder ? ` · ${t("reminderSaving")}` : null}
+              {savingZone ? ` · ${t("timezoneSaving")}` : null}
+              {zoneSaved && !savingZone ? ` · ${t("timezoneSaved")}` : null}
             </p>
           </div>
 
@@ -301,6 +347,19 @@ export function AccountPanel({
                 onCustomApplied={setPackQuestions}
               />
             </>
+          ) : null}
+
+          {!softPlus ? (
+            <div className="mt-8 rounded-[1.5rem] bg-cream px-5 py-5">
+              <p className="font-display text-lg tracking-tight">{t("dataDownloadTitle")}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t("dataDownloadBody")}</p>
+              <a
+                href="/api/account/export"
+                className="mt-4 inline-flex rounded-full bg-paper px-5 py-2.5 text-sm shadow-card"
+              >
+                {t("dataDownloadCta")}
+              </a>
+            </div>
           ) : null}
 
           {!softPlus ? (
@@ -400,6 +459,7 @@ export function AccountPanel({
               {loggingOut ? t("loggingOut") : t("logout")}
             </button>
           </div>
+          <SoftLeaveCard email={email} />
         </div>
       </section>
     </div>
@@ -549,6 +609,102 @@ function InviteCard({ softPlus }: { softPlus: boolean }) {
         </div>
       )}
     </div>
+  );
+}
+
+function GiftRedeemCard({ softPlus }: { softPlus: boolean }) {
+  const t = useTranslations("Account");
+  const router = useRouter();
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (softPlus) {
+    return (
+      <div className="mt-8 rounded-[1.5rem] bg-blush/30 px-5 py-5">
+        <p className="font-display text-lg tracking-tight">{t("giftTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("giftAlreadyPlus")}</p>
+      </div>
+    );
+  }
+
+  async function redeem(event: FormEvent) {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/account/gift-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        permanent?: boolean;
+        days?: number | null;
+      };
+      if (!response.ok) {
+        setError(data.error ?? "invalid");
+        return;
+      }
+      setCode("");
+      // Warm Soft+ thank-you with soft next steps (wall, digest, nickname).
+      router.push(`${PLUS_THANKS_PATH}?from=gift`);
+      router.refresh();
+    } catch {
+      setError("invalid");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function errorCopy(codeValue: string | null) {
+    switch (codeValue) {
+      case "already_plus":
+        return t("giftErrorAlreadyPlus");
+      case "already_used":
+        return t("giftErrorUsed");
+      case "not_found":
+        return t("giftErrorMissing");
+      case "rate_limited":
+        return t("giftErrorRate");
+      default:
+        return t("giftError");
+    }
+  }
+
+  return (
+    <form
+      onSubmit={redeem}
+      className="mt-8 rounded-[1.5rem] bg-lemon/40 px-5 py-5"
+    >
+      <p className="font-display text-lg tracking-tight">{t("giftTitle")}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t("giftBody")}</p>
+      <label className="mt-4 block text-sm">
+        <span className="text-muted">{t("giftCodeLabel")}</span>
+        <input
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+          placeholder={t("giftCodePlaceholder")}
+          className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2 font-mono text-sm tracking-wide"
+        />
+      </label>
+      <button
+        type="submit"
+        disabled={busy || code.trim().length < 8}
+        className="mt-4 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+      >
+        {busy ? t("giftRedeeming") : t("giftRedeem")}
+      </button>
+      {error ? (
+        <p className="mt-3 text-sm text-accent" role="alert">
+          {errorCopy(error)}
+        </p>
+      ) : null}
+    </form>
   );
 }
 

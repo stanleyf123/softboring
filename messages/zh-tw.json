@@ -48,7 +48,9 @@
     "wallSavedTitle": "已存的軟軟牆便利貼 · Soft Boring Weekly",
     "wallSavedDescription": "Soft+ 私下收藏的軟軟牆便利貼，安靜地留在你身邊。",
     "snapshotTitle": "我的柔軟月份 · Soft Boring Weekly",
-    "snapshotDescription": "用你的時區，把這個月的回顧鋪成可列印的奶油色頁面。免費打開最近四篇，Soft+ 打開整個月。"
+    "snapshotDescription": "用你的時區，把這個月的回顧鋪成可列印的奶油色頁面。免費打開最近四篇，Soft+ 打開整個月。",
+    "guidelinesTitle": "軟軟牆禮儀 · Soft Boring Weekly",
+    "guidelinesDescription": "軟軟牆的溫柔禮儀——善意、不洗版、只分享你願意分享的一週。"
   },
   "Nav": {
     "home": "首頁",
@@ -70,9 +72,11 @@
     "note": "Soft Boring — 每週一次的安靜停頓",
     "thanks": "謝謝你願意坐下來。",
     "thanksLink": "感謝",
-    "navLabel": "頁尾",
+    "navLabel": "禮儀、隱私、條款與語言",
     "privacy": "隱私權",
-    "terms": "使用條款"
+    "terms": "使用條款",
+    "guidelines": "禮儀",
+    "languages": "語言"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -120,7 +124,11 @@
     "pricingCta": "看 Free 與 Soft+",
     "bottomTitle": "你的一週，也可以有一個安靜的角落。",
     "bottomBody": "不用設定。可以先用訪客身分寫，或註冊帳號，換裝置也能看到紀錄。",
-    "ideasLabel": "Soft Boring 怎麼用"
+    "ideasLabel": "Soft Boring 怎麼用",
+    "statsAria": "幾個安靜的公開數字",
+    "statsNote": "只有溫柔計數——沒有私人回顧，也沒有名字。",
+    "statsWallWeek": "本週可見的軟軟牆便利貼",
+    "statsLanguages": "Soft Boring 支援的語言"
   },
   "Questions": {
     "energy": "這週最給你能量的是什麼？",
@@ -176,6 +184,8 @@
     "guestCta": "建立帳號",
     "freeBannerTitle": "最近四篇是打開的",
     "freeBanner": "Soft+ 會留下每一週，並加上一條小小的感覺圖。",
+    "freeDownload": "下載這四週（JSON）",
+    "freeDownloadHint": "一份小小的檔案，只含你已經能打開的週次。不會寄信。",
     "plusToolsTitle": "Soft+ 工具",
     "searchLabel": "搜尋回顧",
     "searchPlaceholder": "搜尋標題與答案…",
@@ -316,11 +326,10 @@
     "reminderEmailOn": "排程跑起來時就會寄提醒。",
     "reminderEmailOff": "這台伺服器還沒設定信件，所以在填好 RESEND_API_KEY 或 SMTP 之前，提醒會安靜地略過。",
     "reminderSaving": "儲存中…",
-    "timezoneLabel": "時區",
     "timezoneHint": "用來算本週節奏，以及「我的柔軟月份」。書桌一開始是 Asia/Taipei。",
     "softMonth": "我的柔軟月份",
     "digestTitle": "這個月",
-    "digestBody": "從本月存下的回顧，安靜地加總。",
+    "digestBody": "以你的時區，把這個月存下的回顧安靜地加總。",
     "digestCountLabel": "回顧",
     "digestCount": "{count}",
     "digestFeelingLabel": "平均感覺",
@@ -335,6 +344,9 @@
     "customSaved": "已儲存。",
     "customError": "現在沒能存下這些題目。",
     "export": "匯出回顧",
+    "dataDownloadTitle": "把最近四週帶走",
+    "dataDownloadBody": "一份小小的 JSON，只含你已經能打開的四週。更早的週次仍留在 Soft+。不會寄信。",
+    "dataDownloadCta": "下載 JSON",
     "inviteTitle": "邀請一位朋友",
     "inviteBody": "Soft+ 可以分享一扇小小的門。有人用你的連結新坐下時，牆上的便利貼會多一顆小星星——是謝謝，不是收費。",
     "inviteLockedTitle": "給朋友的一扇小門",
@@ -354,7 +366,40 @@
     "yearTitle": "柔軟一年",
     "yearBody": "一年的心情小點，一眼輕柔。",
     "yearOpen": "打開柔軟一年",
-    "savedWall": "已存軟軟牆"
+    "savedWall": "已存軟軟牆",
+    "planGiftUntil": "禮物 Soft+ 至 {date}",
+    "planGiftExpiringSoon": "溫柔提醒：這份禮物 Soft+ 大約還有 {days, plural, other {# 天}}（至 {date}）。不急——只是日曆上的一聲輕敲。",
+    "giftTitle": "兌換 Soft+ 禮物碼",
+    "giftBody": "若有人給你一次性 Soft+ 禮物碼，貼在這裡。僅供免費方案使用——與 Stripe 無關。",
+    "giftCodeLabel": "禮物碼",
+    "giftCodePlaceholder": "xxxxxxxxxxxx",
+    "giftRedeem": "兌換 Soft+",
+    "giftRedeeming": "兌換中…",
+    "giftAlreadyPlus": "你已是 Soft+。未使用的禮物碼可以留給還在免費方案的朋友。",
+    "giftSuccessPermanent": "Soft+ 已開啟——這份禮物沒有到期日。",
+    "giftSuccessDays": "Soft+ 已開啟 {days} 天。",
+    "giftError": "現在無法兌換這個禮物碼。",
+    "giftErrorMissing": "找不到這個禮物碼。",
+    "giftErrorUsed": "這個禮物碼已經用過了。",
+    "giftErrorAlreadyPlus": "你已是 Soft+，所以這組禮物碼保持未使用。",
+    "giftErrorRate": "試得有點勤。泡杯茶，稍後再試。",
+    "timezoneTitle": "你的時鐘",
+    "timezoneBody": "提醒的星期，還有摘要裡的「這個月」，都跟著這個時區。預設是台北。",
+    "timezoneLabel": "時區",
+    "timezoneNote": "提醒的排程仍依伺服器的時鐘醒來，再依你的時區判斷今天是不是你選的星期。",
+    "timezoneSaving": "儲存中…",
+    "timezoneSaved": "存好了。",
+    "leaveTitle": "安靜地離開",
+    "leaveBody": "如果這張桌子已經夠了，可以把它收起來。回顧會一起走，軟軟牆上你的便利貼也會拿下來，鄰居就不會再看到。這是輕輕的道別，不是嚇人的警告。",
+    "leaveEmailHint": "這張桌子的電子郵件是 {email}。",
+    "leavePhraseLabel": "輸入 Soft Boring 確認",
+    "leavePhrasePlaceholder": "Soft Boring",
+    "leaveEmailLabel": "再輸入這張桌子的電子郵件",
+    "leaveConfirm": "刪除帳號",
+    "leaveWorking": "正在收桌子…",
+    "leaveErrorPhrase": "請原樣輸入 Soft Boring。",
+    "leaveErrorEmail": "這個電子郵件和這張桌子不一樣。",
+    "leaveError": "現在沒能收起這張桌子。"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -378,7 +423,7 @@
     "featureTrendsPlus": "感覺趨勢，以及溫柔的連續週數",
     "featureWallFree": "軟軟牆隔著一層柔柔的簾子",
     "featureStickersFree": "牆上貼紙在 Soft+",
-    "featureExportFree": "CSV 與可列印 PDF 匯出在 Soft+",
+    "featureExportFree": "CSV 與可列印頁面在 Soft+。免費可以把最近四週下載成 JSON。",
     "featureDigestFree": "每月摘要在 Soft+",
     "featureWallPlus": "軟軟牆完整使用：讀、拖、留言、回覆",
     "featureExportPlus": "把週次匯出成 CSV 或可列印 PDF",
@@ -512,7 +557,11 @@
     "shareError_soft_plus_required": "把便利貼釘給鄰居看，需要 Soft+。",
     "shareError_forbidden": "這一週已經被釘過，或你沒有權限。",
     "filterTitle": "找一張軟軟的紙條",
-    "filterLead": "依感覺區間篩選、搜尋暱稱與摘錄，或先把示範帳號藏起來。免費預覽仍會鎖住。",
+    "filterLead": "依感覺篩選、搜尋暱稱與摘錄、隱藏示範便利貼，或替軟軟牆排序。免費預覽仍會鎖住。",
+    "sortLabel": "軟軟牆排序",
+    "sortNewest": "最新",
+    "sortMostPraised": "最多讚美",
+    "sortPinnedFirst": "釘選優先",
     "filterSearchLabel": "搜尋軟軟牆",
     "filterSearchPlaceholder": "暱稱或摘錄…",
     "filterFeelingMin": "從",
@@ -544,7 +593,16 @@
     "thankAria": "謝謝你留下這則",
     "reportFeelsOff": "這張讀起來有點不對勁",
     "reportHint": "只是輕輕告訴 Soft Boring——不是公開檢舉。",
-    "reportThanks": "收到了。謝謝你的輕聲提醒。"
+    "reportThanks": "收到了。謝謝你的輕聲提醒。",
+    "guidelinesLink": "軟軟牆禮儀",
+    "paletteTitle": "小小的顏色說明",
+    "paletteLead": "釘上週次時，大家自己挑一種顏色。像選茶杯，是心情，不是分數。",
+    "palette_peach": "暖暖的午後",
+    "palette_blush": "有一點柔軟",
+    "palette_mint": "剛澆過水",
+    "palette_cream": "安靜的紙",
+    "palette_lemon": "明亮的一口",
+    "palette_sky": "窗開著"
   },
   "Export": {
     "title": "可列印的回顧",
@@ -627,7 +685,7 @@
   },
   "Privacy": {
     "title": "隱私權政策",
-    "updated": "最後更新：2026 年 9 月 15 日",
+    "updated": "最後更新：2026 年 9 月 22 日",
     "lead": "Soft Boring Weekly 是一份小小的每週回顧產品。這頁說明我們收集什麼、為什麼，以及會留多久。",
     "home": "回到首頁",
     "s1Title": "我們是誰",
@@ -641,7 +699,7 @@
     "s5Title": "分享與處理者",
     "s5Body": "付款由 Stripe 處理。若寄信，會使用你設定的 Resend 或 SMTP。託管與備份在維運者的伺服器（磁碟上的 SQLite）。釘上軟軟牆的內容，其他 Soft+ 會員也看得到；預設不公開。",
     "s6Title": "保存期間與你的選擇",
-    "s6Body": "帳號與回顧會保存到你刪除帳號（或維運者代你刪除）。你可以隨時把便利貼從軟軟牆拿下來。可在帳號頁關掉每週提醒。若要刪除或索取資料副本，請登入後聯絡維運者。本政策可能更新；上方日期會一併修改。"
+    "s6Body": "帳號與回顧會保存到你在帳號頁刪除帳號（或維運者代你刪除）。刪除時，回顧會一起離開，軟軟牆上的便利貼也會悄悄拿下來。你仍可以隨時只拿下一張便利貼。每週提醒可以在帳號頁關掉，也可以在那裡選時區，讓提醒的星期和「這個月」跟著你的時鐘。已登入的免費帳號可以在帳號頁自行下載最近四週的 JSON，不必寄信。Soft+ 仍可匯出更完整的回顧。本政策可能更新；上方日期會一併修改。"
   },
   "Terms": {
     "title": "使用條款",
@@ -655,11 +713,12 @@
     "s3Title": "Soft+ 與付款",
     "s3Body": "付費方案與貼紙購買由 Stripe 收費。稅額、收據與卡片資料在那邊處理。可在 Stripe 顧客入口取消；除非另有說明，權益會持續到已付期間結束。管理後台手動改方案不會向 Stripe 收費。",
     "s4Title": "你的內容與軟軟牆",
-    "s4Body": "你寫下的回顧，權利仍是你的。儲存即授權我們為你保存與顯示。若把一週釘上軟軟牆，即允許其他 Soft+ 會員閱讀、留言與貼貼紙。分享是自願的，也可以撤回。請勿張貼他人的私人資訊。",
+    "s4Body": "你保有自己撰寫回顧的權利。儲存時，你授權我們為你保存並顯示內容。若你把某一週釘到軟軟牆，即表示同意其他 Soft+ 會員閱讀、留言與貼上貼紙。分享是自選的，也可以撤回。請勿公開他人的私人資訊。軟軟牆另有簡短禮儀頁（Guidelines）——請善意、不洗版，只分享你願意分享的一週。",
     "s5Title": "責任限制",
     "s5Body": "本服務是書寫工具，不是醫療、法律或治療建議。在法律允許範圍內，我們不對遺失的回顧、中斷或間接損害負責。單一請求的總責任，以請求前 12 個月你支付的金額為限；若你使用免費方案，則為零。",
     "s6Title": "結束約定",
-    "s6Body": "你可以停止使用並要求刪除帳號。我們可能暫停違反條款或傷害社群牆的帳號。刪除後的資料處理見隱私權政策。除非有強制的消費者保護法規，本條款適用維運者所在地的法律。"
+    "s6Body": "你可以停止使用，並在帳號頁刪除帳號。我們可能暫停違反條款或傷害社群牆的帳號。刪除後的資料處理見隱私權政策。除非有強制的消費者保護法規，本條款適用維運者所在地的法律。",
+    "guidelinesLink": "軟軟牆禮儀——更安靜的一頁"
   },
   "Thanks": {
     "campaignKicker": "輕輕鞠躬",
@@ -694,7 +753,15 @@
     "plusReady": "你現在是 Soft+。較早的週次、趨勢和牆都是你的。",
     "plusReviewCta": "寫本週回顧",
     "plusWallCta": "打開軟軟牆",
-    "plusAccountCta": "回到你的小桌子"
+    "plusAccountCta": "回到你的小桌子",
+    "giftKicker": "一份 Soft+ 禮物",
+    "giftTitle": "謝謝——Soft+ 已打開。",
+    "giftBody": "有人留給你一張更安靜的桌子。軟軟牆、溫柔的月摘要，以及牆上的小暱稱，都在等你慢慢來。",
+    "giftReadyUntil": "這份禮物 Soft+ 會開到 {date}。",
+    "giftReadyPermanent": "這份禮物 Soft+ 沒有到期日。慢慢來就好。",
+    "stepDigestTitle": "看看這個月",
+    "stepDigestBody": "從你存下的週次抽出一份安靜小結——不必開信箱。",
+    "giftDigestCta": "打開月摘要"
   },
   "Digest": {
     "eyebrow": "Soft+ · 僅在應用內",
@@ -721,7 +788,8 @@
     "lockedCta": "看 Soft+",
     "signedOutBody": "以 Soft+ 登入，打開這個月的摘要。",
     "loginCta": "登入",
-    "seeYear": "打開柔軟一年"
+    "seeYear": "打開柔軟一年",
+    "timezoneNote": "這個月以 {zone} 計算。"
   },
   "SeasonalPacks": {
     "title": "季節題包",
@@ -1003,5 +1071,31 @@
     "drainTitle": "消耗的詞",
     "untitled": "安靜的一週",
     "noFeeling": "沒有感覺分數"
+  },
+  "Guidelines": {
+    "title": "軟軟牆禮儀",
+    "updated": "最後更新：2026 年 9 月 22 日",
+    "lead": "軟軟牆的一小段溫柔禮儀。不是帶刺的規則，只是鄰居如何好好相處。",
+    "home": "回首頁",
+    "termsLink": "也可查看使用條款",
+    "s1Title": "軟軟牆是自願分享",
+    "s1Body": "每週回顧預設是私人的，直到你選擇釘上牆。分享是溫柔的「好」，不是預設。你隨時可以把便利貼從牆上取下。",
+    "s2Title": "善意為先",
+    "s2Body": "留言與貼紙是小小稱讚，不是辯論。請假設對方出於善意。不要羞辱、堆疊批評，或逼人解釋安靜的一週。",
+    "s3Title": "不要洗版",
+    "s3Body": "軟軟牆不是看板。請勿廣告、聯盟行銷洗版、重複貼相同內容，或任何只為搶注意力的貼文。",
+    "s4Title": "只分享你願意分享的",
+    "s4Body": "只釘上你願意讓 Soft+ 鄰居讀到的一週。略過他人的私人細節。若明天覺得太赤裸，把便利貼取下——這完全可以。",
+    "s5Title": "需要時，輕聲回報",
+    "s5Body": "若有內容顯得不友善或不合適，Soft+ 會員可以留下輕聲標記給營運者。我們可能隱藏違反禮儀的便利貼。我們偏好安靜處理，而不是大聲爭吵。",
+    "s6Title": "Soft Boring 的節奏",
+    "s6Body": "這裡是軟木板，不是動態牆。慢一點沒關係。安靜也沒關係。水開了再來——寫完就可以離開。"
+  },
+  "Pwa": {
+    "title": "更安靜的主畫面",
+    "body": "這個瀏覽器可以把 Soft Boring 放在主畫面，像水壺旁邊的小筆記。我們只說這一次。",
+    "iosBody": "在 iPhone 或 iPad 上，打開分享，再選「加入主畫面」。我們只說這一次。",
+    "install": "輕輕加進去",
+    "dismiss": "先不用"
   }
 }

@@ -63,6 +63,7 @@ export type AdminCounts = {
 
 export function adminCounts(): AdminCounts {
   const db = getDb();
+  const now = new Date().toISOString();
   const users = (db.prepare(`SELECT COUNT(*) AS n FROM users`).get() as { n: number }).n;
   const reviews = (db.prepare(`SELECT COUNT(*) AS n FROM reviews`).get() as { n: number }).n;
   const paid = (
@@ -70,9 +71,10 @@ export function adminCounts(): AdminCounts {
       .prepare(
         `SELECT COUNT(*) AS n FROM users
          WHERE plan = 'soft_plus'
-           AND (plan_status IS NULL OR plan_status IN ('active', 'trialing', 'past_due'))`,
+           AND (plan_status IS NULL OR plan_status IN ('active', 'trialing', 'past_due'))
+           AND (plan_expires_at IS NULL OR plan_expires_at > ?)`,
       )
-      .get() as { n: number }
+      .get(now) as { n: number }
   ).n;
   const free = users - paid;
   const wallNotes = (
@@ -125,6 +127,7 @@ type AdminUserRow = {
   created_at: string;
   plan: string;
   plan_status: string | null;
+  plan_expires_at: string | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   stripe_price_id?: string | null;
@@ -147,12 +150,12 @@ function toListItem(row: AdminUserRow): AdminUserListItem {
     planStatus: row.plan_status,
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
-    displayPlan: displayPlan(row.plan, row.plan_status),
+    displayPlan: displayPlan(row.plan, row.plan_status, row.plan_expires_at),
   };
 }
 
 const ADMIN_USER_SELECT = `SELECT u.id, u.email, u.nickname, u.created_at, u.plan, u.plan_status,
-              u.stripe_customer_id, u.stripe_subscription_id, u.stripe_price_id, u.plan_updated_at,
+              u.plan_expires_at, u.stripe_customer_id, u.stripe_subscription_id, u.stripe_price_id, u.plan_updated_at,
               (SELECT COUNT(*) FROM reviews r WHERE r.user_id = u.id) AS review_count,
               (SELECT COUNT(*) FROM wall_notes w WHERE w.user_id = u.id) AS wall_note_count,
               ${LAST_ACTIVE_SQL} AS last_active

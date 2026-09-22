@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   stripe_subscription_id TEXT,
   stripe_price_id TEXT,
   plan_updated_at TEXT,
+  plan_expires_at TEXT,
   is_demo INTEGER NOT NULL DEFAULT 0,
   nickname TEXT
 );
@@ -304,3 +305,19 @@ CREATE TABLE IF NOT EXISTS wall_note_thanks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id);
+
+CREATE TABLE IF NOT EXISTS soft_plus_gift_codes (
+  code TEXT PRIMARY KEY,
+  days INTEGER,
+  permanent INTEGER NOT NULL DEFAULT 0,
+  note TEXT,
+  created_at TEXT NOT NULL,
+  redeemed_at TEXT,
+  redeemed_by TEXT,
+  FOREIGN KEY (redeemed_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_created
+  ON soft_plus_gift_codes (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_redeemed
+  ON soft_plus_gift_codes (redeemed_at);

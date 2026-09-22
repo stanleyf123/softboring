@@ -62,7 +62,7 @@ test("wall note bookmarks are Soft+ private and listed at /wall/saved", () => {
   assert.match(board, /savedLink/);
   assert.match(savedPanel, /\/api\/wall\/bookmarks/);
   assert.match(savedPage, /WallSavedPanel/);
-  assert.match(savedPage, /isSoftPlusPlan/);
+  assert.match(savedPage, /userIsSoftPlus/);
   assert.match(account, /savedWall/);
   assert.match(account, /\/wall\/saved/);
   assert.doesNotMatch(db, /stripe|RESEND|SMTP/i);

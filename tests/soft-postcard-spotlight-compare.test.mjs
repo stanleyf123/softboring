@@ -143,7 +143,7 @@ test("history compare gates Soft+ and compares feeling delta", () => {
   const list = read("src/components/history-list.tsx");
 
   assert.match(page, /HistoryComparePanel/);
-  assert.match(page, /isSoftPlusPlan/);
+  assert.match(page, /userIsSoftPlus/);
   assert.match(page, /path: "\/history\/compare"/);
   assert.match(panel, /feelingDelta/);
   assert.match(panel, /toCompareSide/);

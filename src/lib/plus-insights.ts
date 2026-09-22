@@ -1,5 +1,10 @@
 import type { Review } from "@/lib/review-types";
-import { isValidTimeZone, zonedYearMonth } from "@/lib/timezone";
+import {
+  calendarInTimeZone,
+  DEFAULT_TIMEZONE,
+  normalizeTimeZone,
+  sameCalendarMonth,
+} from "./timezone.ts";
 
 const STOPWORDS = new Set([
   "a",
@@ -208,6 +213,7 @@ export function reviewsToCsv(reviews: Review[]) {
 export type MonthlyDigest = {
   year: number;
   month: number;
+  timeZone: string;
   count: number;
   avgFeeling: number | null;
   streak: number;
@@ -221,20 +227,14 @@ export function monthlyDigestFromReviews(
       Partial<Pick<Review, "energy" | "drain">>
   >,
   now = new Date(),
-  timeZone?: string,
+  timeZone: string = DEFAULT_TIMEZONE,
 ): MonthlyDigest {
-  const zone = timeZone && isValidTimeZone(timeZone) ? timeZone : undefined;
-  const zonedNow = zone ? zonedYearMonth(now, zone) : null;
-  const year = zonedNow ? zonedNow.year : now.getFullYear();
-  const monthIndex = zonedNow ? zonedNow.month - 1 : now.getMonth();
+  const zone = normalizeTimeZone(timeZone);
+  const today = calendarInTimeZone(now, zone);
   const inMonth = reviews.filter((review) => {
     const date = new Date(review.createdAt);
     if (Number.isNaN(date.getTime())) return false;
-    if (!zone) {
-      return date.getFullYear() === year && date.getMonth() === monthIndex;
-    }
-    const parts = zonedYearMonth(date, zone);
-    return parts.year === year && parts.month === monthIndex + 1;
+    return sameCalendarMonth(date, now, zone);
   });
   const feelings = inMonth
     .map((review) => review.feeling)
@@ -245,8 +245,9 @@ export function monthlyDigestFromReviews(
       : Math.round((feelings.reduce((sum, value) => sum + value, 0) / feelings.length) * 10) /
         10;
   return {
-    year,
-    month: monthIndex + 1,
+    year: today.year,
+    month: today.month,
+    timeZone: zone,
     count: inMonth.length,
     avgFeeling,
     streak: weeklyStreak(

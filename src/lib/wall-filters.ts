@@ -15,12 +15,34 @@ export type WallDiscoveryFilters = {
   hideDemo: boolean;
 };
 
+/** Soft+ wall sort — complements filters; corkboard x/y stay put, stacking follows rank. */
+export type WallSortMode = "newest" | "most_praised" | "pinned_first";
+
+export type WallSortNote = {
+  id?: string;
+  createdAt?: string;
+  praiseCount?: number;
+  pinned?: boolean;
+};
+
 export const EMPTY_WALL_FILTERS: WallDiscoveryFilters = {
   query: "",
   feelingMin: null,
   feelingMax: null,
   hideDemo: false,
 };
+
+export const DEFAULT_WALL_SORT: WallSortMode = "newest";
+
+export const WALL_SORT_MODES: WallSortMode[] = [
+  "newest",
+  "most_praised",
+  "pinned_first",
+];
+
+export function isWallSortMode(value: unknown): value is WallSortMode {
+  return value === "newest" || value === "most_praised" || value === "pinned_first";
+}
 
 export const WALL_HIDE_DEMO_STORAGE_KEY = "softboring.wall.hideDemo.v1";
 
@@ -95,4 +117,54 @@ export function filterWallNotes<T extends WallFilterNote>(
 ): T[] {
   if (!wallFiltersActive(filters)) return notes;
   return notes.filter((note) => wallNoteMatchesFilters(note, filters));
+}
+
+function noteCreatedMs(note: WallSortNote) {
+  const ms = Date.parse(note.createdAt ?? "");
+  return Number.isNaN(ms) ? 0 : ms;
+}
+
+function noteIdKey(note: WallSortNote) {
+  return note.id ?? "";
+}
+
+/** Soft+ discovery sort. Does not move corkboard coordinates. */
+export function sortWallNotes<T extends WallSortNote>(
+  notes: T[],
+  sort: WallSortMode,
+): T[] {
+  const copy = [...notes];
+  switch (sort) {
+    case "most_praised":
+      return copy.sort(
+        (a, b) =>
+          (b.praiseCount ?? 0) - (a.praiseCount ?? 0) ||
+          noteCreatedMs(b) - noteCreatedMs(a) ||
+          noteIdKey(a).localeCompare(noteIdKey(b)),
+      );
+    case "pinned_first":
+      return copy.sort(
+        (a, b) =>
+          Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) ||
+          (b.praiseCount ?? 0) - (a.praiseCount ?? 0) ||
+          noteCreatedMs(b) - noteCreatedMs(a) ||
+          noteIdKey(a).localeCompare(noteIdKey(b)),
+      );
+    case "newest":
+    default:
+      return copy.sort(
+        (a, b) =>
+          noteCreatedMs(b) - noteCreatedMs(a) ||
+          noteIdKey(a).localeCompare(noteIdKey(b)),
+      );
+  }
+}
+
+/** Raise sorted Soft+ notes forward so the chosen order reads on the corkboard. */
+export function withSortStacking<T extends { z: number }>(notes: T[]): T[] {
+  const total = notes.length;
+  return notes.map((note, index) => ({
+    ...note,
+    z: Math.max(1, total - index),
+  }));
 }

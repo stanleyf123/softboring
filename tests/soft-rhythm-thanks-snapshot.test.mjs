@@ -11,7 +11,7 @@ register("./alias-hook.mjs", import.meta.url);
 
 const { buildSoftMonthSnapshot } = await import("../src/lib/soft-month.ts");
 const { monthlyDigestFromReviews } = await import("../src/lib/plus-insights.ts");
-const { DEFAULT_TIMEZONE, normalizeTimeZone, zonedYearMonth } = await import(
+const { calendarInTimeZone, DEFAULT_TIMEZONE, normalizeTimeZone } = await import(
   "../src/lib/timezone.ts"
 );
 
@@ -47,8 +47,12 @@ test("account timezone defaults to Asia/Taipei and month follows that zone", () 
   assert.equal(normalizeTimeZone("Asia/Tokyo"), "Asia/Tokyo");
 
   const boundary = new Date("2026-08-31T16:30:00.000Z");
-  assert.deepEqual(zonedYearMonth(boundary, "Asia/Taipei"), { year: 2026, month: 9 });
-  assert.deepEqual(zonedYearMonth(boundary, "UTC"), { year: 2026, month: 8 });
+  const taipeiBoundary = calendarInTimeZone(boundary, "Asia/Taipei");
+  const utcBoundary = calendarInTimeZone(boundary, "UTC");
+  assert.equal(taipeiBoundary.year, 2026);
+  assert.equal(taipeiBoundary.month, 9);
+  assert.equal(utcBoundary.year, 2026);
+  assert.equal(utcBoundary.month, 8);
 
   const now = new Date("2026-09-15T04:00:00.000Z");
   const taipei = buildSoftMonthSnapshot(
@@ -209,7 +213,7 @@ test("rhythm, thanks, and snapshot stay local and localized", () => {
   assert.match(canvas, /thankCount/);
 
   assert.match(snapshotPage, /buildSoftMonthSnapshot/);
-  assert.match(snapshotPage, /isSoftPlusPlan/);
+  assert.match(snapshotPage, /userIsSoftPlus/);
   assert.match(snapshotPage, /path: "\/account\/snapshot"/);
   assert.match(snapshotApi, /soft-month\.json/);
   assert.doesNotMatch(snapshotPage, /stripe|sendMail|resend/i);

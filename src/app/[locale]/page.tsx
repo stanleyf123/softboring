@@ -2,12 +2,13 @@ import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
+import { HomeSoftStats } from "@/components/soft-stats-strip";
 import { listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pickSoftMemory } from "@/lib/soft-memory";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -37,7 +38,7 @@ export default async function HomePage({ params }: Props) {
   const t = await getTranslations("Home");
   const user = await getCurrentUser();
   const settings = user ? ensureUserSettings(user.id) : null;
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
   const memory =
     user
       ? pickSoftMemory(listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }), softPlus)
@@ -104,6 +105,15 @@ export default async function HomePage({ params }: Props) {
           />
         </div>
       ) : null}
+
+      <HomeSoftStats
+        labels={{
+          aria: t("statsAria"),
+          wallWeek: t("statsWallWeek"),
+          languages: t("statsLanguages"),
+          note: t("statsNote"),
+        }}
+      />
 
       {memory ? <SoftMemoryCard memory={memory} /> : null}
 

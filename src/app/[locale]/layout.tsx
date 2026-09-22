@@ -1,6 +1,7 @@
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { OnboardingCard } from "@/components/onboarding-card";
+import { PwaInstallTip } from "@/components/pwa-install-tip";
 import { PwaRegister } from "@/components/pwa-register";
 import { QuietWritingExit, QuietWritingSync } from "@/components/quiet-writing";
 import { SoftShortcutsHelp } from "@/components/soft-shortcuts-help";
@@ -12,7 +13,7 @@ import { countReviewsForUser } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
 import { routing } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { assertLocale, htmlLang } from "@/lib/locale";
 import { SiteJsonLd } from "@/components/json-ld";
 import { DEFAULT_SITE_URL, localeOg, SITE_NAME, siteOrigin, verificationMetadata } from "@/lib/seo";
@@ -98,7 +99,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   const settings = user ? ensureUserSettings(user.id) : null;
   const unreadNotifications = user ? countUnreadNotifications(user.id) : 0;
   const reviewCount = user ? countReviewsForUser(user.id) : 0;
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
   const hasInvite = softPlus && user ? Boolean(getInviteCodeForUser(user.id)) : false;
   const tNav = await getTranslations("Nav");
 
@@ -125,6 +126,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             unreadNotifications={unreadNotifications}
           />
           <MobileBottomNav email={user?.email ?? null} />
+          <PwaInstallTip />
           {user && settings ? (
             <OnboardingCard
               reviewCount={reviewCount}

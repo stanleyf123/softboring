@@ -48,7 +48,9 @@
     "wallSavedTitle": "Saved Soft Wall notes · Soft Boring Weekly",
     "wallSavedDescription": "Soft+ private bookmarks of Soft Wall notes you want to keep close.",
     "snapshotTitle": "My soft month · Soft Boring Weekly",
-    "snapshotDescription": "A printable cream page of this month’s reviews, in your timezone. Free keeps the latest four. Soft+ opens the month."
+    "snapshotDescription": "A printable cream page of this month’s reviews, in your timezone. Free keeps the latest four. Soft+ opens the month.",
+    "guidelinesTitle": "Soft Wall guidelines · Soft Boring Weekly",
+    "guidelinesDescription": "Soft etiquette for Soft Wall — be kind, skip spam, and only share weeks you mean to share."
   },
   "Nav": {
     "home": "Home",
@@ -70,9 +72,11 @@
     "note": "Soft Boring — a quiet weekly pause",
     "thanks": "Thank you for sitting with us.",
     "thanksLink": "Thanks",
-    "navLabel": "Footer",
+    "navLabel": "Guidelines, privacy, terms, and languages",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "guidelines": "Guidelines",
+    "languages": "Languages"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -120,7 +124,11 @@
     "pricingCta": "See Free and Soft+",
     "bottomTitle": "Your week can have a quiet corner too.",
     "bottomBody": "No setup required. Write as a guest, or create an account so history follows you.",
-    "ideasLabel": "How Soft Boring works"
+    "ideasLabel": "How Soft Boring works",
+    "statsAria": "A few soft public numbers",
+    "statsNote": "Quiet counts only — no private reviews, no names.",
+    "statsWallWeek": "Visible Soft Wall notes this week",
+    "statsLanguages": "Languages Soft Boring speaks"
   },
   "Questions": {
     "energy": "What gave you the most energy this week?",
@@ -176,6 +184,8 @@
     "guestCta": "Create an account",
     "freeBannerTitle": "Latest four are open",
     "freeBanner": "Soft+ keeps every week, and adds a small feeling chart.",
+    "freeDownload": "Download these four (JSON)",
+    "freeDownloadHint": "A small file of the weeks you can already open. Nothing is emailed.",
     "plusToolsTitle": "Soft+ tools",
     "searchLabel": "Search reviews",
     "searchPlaceholder": "Search titles and answers…",
@@ -316,11 +326,10 @@
     "reminderEmailOn": "Reminders will send when the cron job runs.",
     "reminderEmailOff": "Email is not configured on this server yet, so reminders will no-op until RESEND_API_KEY or SMTP is set.",
     "reminderSaving": "Saving…",
-    "timezoneLabel": "Timezone",
     "timezoneHint": "Used for this week’s rhythm and your soft month. The desk starts in Asia/Taipei.",
     "softMonth": "My soft month",
     "digestTitle": "This month",
-    "digestBody": "A quiet tally from the reviews saved this calendar month.",
+    "digestBody": "A quiet tally from the reviews saved this calendar month, in your timezone.",
     "digestOpen": "Open full digest",
     "digest": "Monthly digest",
     "digestCountLabel": "Reviews",
@@ -337,6 +346,9 @@
     "customSaved": "Saved.",
     "customError": "Could not save those questions just now.",
     "export": "Export reviews",
+    "dataDownloadTitle": "Take the latest four with you",
+    "dataDownloadBody": "A small JSON file of the four weeks you can already open. Older weeks stay tucked with Soft+. Nothing is emailed.",
+    "dataDownloadCta": "Download JSON",
     "inviteTitle": "Invite a friend",
     "inviteBody": "Soft+ can share a little door. When someone new sits down through your link, a small star rests on your wall notes — a thank-you, not a charge.",
     "inviteLockedTitle": "A little door for friends",
@@ -354,7 +366,40 @@
     "yearTitle": "Soft year",
     "yearBody": "Feeling dots for the year, one quiet glance.",
     "yearOpen": "Open soft year",
-    "savedWall": "Saved Soft Wall"
+    "savedWall": "Saved Soft Wall",
+    "planGiftUntil": "Soft+ gift until {date}",
+    "planGiftExpiringSoon": "A soft reminder: Soft+ from this gift has about {days, plural, one {# day} other {# days}} left (until {date}). No rush — just a quiet calendar note.",
+    "giftTitle": "Redeem a Soft+ gift",
+    "giftBody": "If someone handed you a one-time Soft+ code, paste it here. Free desks only — Soft+ stays quiet about Stripe.",
+    "giftCodeLabel": "Gift code",
+    "giftCodePlaceholder": "xxxxxxxxxxxx",
+    "giftRedeem": "Redeem Soft+",
+    "giftRedeeming": "Redeeming…",
+    "giftAlreadyPlus": "You're already on Soft+. Keep the unused code for a friend on Free.",
+    "giftSuccessPermanent": "Soft+ is yours — no end date on this gift.",
+    "giftSuccessDays": "Soft+ is open for {days} soft days.",
+    "giftError": "That code could not be redeemed just now.",
+    "giftErrorMissing": "We could not find that gift code.",
+    "giftErrorUsed": "That gift was already used.",
+    "giftErrorAlreadyPlus": "You're already on Soft+, so this gift stays unused.",
+    "giftErrorRate": "A little too many tries. Sit with the kettle, then try again.",
+    "timezoneTitle": "Your clock",
+    "timezoneBody": "Weekday reminders and “this month” follow this timezone. The default is Taipei.",
+    "timezoneLabel": "Timezone",
+    "timezoneNote": "The reminder job still wakes on the server’s clock. It then checks whether today is your chosen weekday in this timezone.",
+    "timezoneSaving": "Saving…",
+    "timezoneSaved": "Saved.",
+    "leaveTitle": "Leave softly",
+    "leaveBody": "If this desk has been enough, you can close it. Your reviews go with you, and your notes come down off Soft Wall — neighbors simply won’t see them. A quiet goodbye, not a warning label.",
+    "leaveEmailHint": "This desk’s email is {email}.",
+    "leavePhraseLabel": "Type Soft Boring to confirm",
+    "leavePhrasePlaceholder": "Soft Boring",
+    "leaveEmailLabel": "And the email on this desk",
+    "leaveConfirm": "Delete my account",
+    "leaveWorking": "Closing the desk…",
+    "leaveErrorPhrase": "Type Soft Boring, just like that.",
+    "leaveErrorEmail": "That email doesn’t match this desk.",
+    "leaveError": "Could not close the desk just now."
   },
   "Digest": {
     "eyebrow": "Soft+ · in-app only",
@@ -381,7 +426,8 @@
     "lockedCta": "See Soft+",
     "signedOutBody": "Log in on Soft+ to open this month’s digest.",
     "loginCta": "Log in",
-    "seeYear": "Open soft year"
+    "seeYear": "Open soft year",
+    "timezoneNote": "This month follows {zone}."
   },
   "SeasonalPacks": {
     "title": "Seasonal question packs",
@@ -449,7 +495,7 @@
     "featureTrendsPlus": "Feeling trends and a gentle weekly streak",
     "featureWallFree": "Soft Wall stays behind a soft curtain",
     "featureStickersFree": "Wall stickers stay with Soft+",
-    "featureExportFree": "CSV and printable PDF export stay with Soft+",
+    "featureExportFree": "CSV and printable pages stay with Soft+. Free can take the latest four weeks as JSON.",
     "featureDigestFree": "Monthly digest stays with Soft+",
     "featureWallPlus": "Soft Wall full access: read, drag, comment, and reply",
     "featureExportPlus": "Export your weeks as CSV or a printable PDF",
@@ -520,7 +566,11 @@
     "loading": "Laying out the corkboard",
     "dragHint": "On a phone, press and drag the note — the board will hold still while you move it.",
     "filterTitle": "Find a soft note",
-    "filterLead": "Filter by feeling range, search a nickname or excerpt, or mute demo notes. Free teasers stay locked.",
+    "filterLead": "Filter by feeling, search a nickname or excerpt, mute demo notes, or sort the corkboard. Free teasers stay locked.",
+    "sortLabel": "Sort Soft Wall",
+    "sortNewest": "Newest",
+    "sortMostPraised": "Most praised",
+    "sortPinnedFirst": "Pinned first",
     "filterSearchLabel": "Search Soft Wall",
     "filterSearchPlaceholder": "Nickname or excerpt…",
     "filterFeelingMin": "From",
@@ -615,7 +665,16 @@
     "thankAria": "Thank you for leaving this note",
     "reportFeelsOff": "This feels off",
     "reportHint": "A quiet note for Soft Boring — not a public complaint.",
-    "reportThanks": "Noted. Thank you for the soft signal."
+    "reportThanks": "Noted. Thank you for the soft signal.",
+    "guidelinesLink": "Soft Wall guidelines",
+    "paletteTitle": "A little color key",
+    "paletteLead": "People pick a color when they pin a week. It is a mood, like choosing a teacup — not a score.",
+    "palette_peach": "a warm afternoon",
+    "palette_blush": "a little tender",
+    "palette_mint": "freshly watered",
+    "palette_cream": "quiet paper",
+    "palette_lemon": "a bright sip",
+    "palette_sky": "window open"
   },
   "Export": {
     "title": "Printable reviews",
@@ -698,7 +757,7 @@
   },
   "Privacy": {
     "title": "Privacy Policy",
-    "updated": "Last updated: 15 September 2026",
+    "updated": "Last updated: 22 September 2026",
     "lead": "Soft Boring Weekly is a small weekly-review product. This page explains what we collect, why, and how long we keep it.",
     "home": "Back home",
     "s1Title": "Who we are",
@@ -712,7 +771,7 @@
     "s5Title": "Sharing and processors",
     "s5Body": "Stripe processes payments. If we send email, we use Resend or an SMTP provider you configure. Hosting and backups are on the operator’s server (SQLite on disk). Shared Soft Wall content is visible to Soft+ members you do not personally know; sharing is off by default.",
     "s6Title": "Retention and your choices",
-    "s6Body": "We keep account and review data until you delete the account (or an operator deletes it for you). You can take a note off Soft Wall at any time. You can turn weekly reminders off on the account page. To request deletion or a copy of your data, sign in and contact the operator. This policy may be updated; the date above will change."
+    "s6Body": "We keep account and review data until you delete the account from the account page (or an operator deletes it for you). Deleting the account takes your reviews with you and lifts your notes off Soft Wall. You can still take a single note off Soft Wall at any time. You can turn weekly reminders off, and choose a timezone for reminders and this month’s digest, on the account page. Signed-in Free accounts can download the latest four open reviews as a JSON file from Account — no email required. Soft+ can still export the fuller history. This policy may be updated; the date above will change."
   },
   "Terms": {
     "title": "Terms of Use",
@@ -726,11 +785,12 @@
     "s3Title": "Soft+ and payments",
     "s3Body": "Paid plans and sticker purchases are billed by Stripe. Taxes, receipts, and card details are handled there. You can cancel in the Stripe customer portal; access continues until the end of the paid period unless we say otherwise. Manual plan changes in admin do not create a Stripe charge.",
     "s4Title": "Your content and Soft Wall",
-    "s4Body": "You keep the rights to the reviews you write. By saving them you give us a license to store and display them to you. If you pin a week to Soft Wall, you allow other Soft+ members to read that week, comment, and place stickers. Sharing is optional and can be reversed. Do not post other people’s private information.",
+    "s4Body": "You keep the rights to the reviews you write. By saving them you give us a license to store and display them to you. If you pin a week to Soft Wall, you allow other Soft+ members to read that week, comment, and place stickers. Sharing is optional and can be reversed. Do not post other people’s private information. Soft Wall has a short etiquette page (Guidelines) — be kind, skip spam, and only share weeks you mean to share.",
     "s5Title": "Limitation of liability",
     "s5Body": "The service is a writing tool, not medical, legal, or therapeutic advice. To the extent allowed by law, we are not liable for lost reviews, downtime, or indirect damages. Our total liability for a claim is limited to the amount you paid us in the 12 months before the claim, or zero if you are on Free.",
     "s6Title": "Ending the agreement",
-    "s6Body": "You may stop using the service and request account deletion. We may suspend accounts that break these terms or harm the community wall. The privacy policy explains how data is handled after deletion. These terms are governed by the laws applicable to the operator unless a mandatory consumer law says otherwise."
+    "s6Body": "You may stop using the service and delete the account from the account page. We may suspend accounts that break these terms or harm the community wall. The privacy policy explains how data is handled after deletion. These terms are governed by the laws applicable to the operator unless a mandatory consumer law says otherwise.",
+    "guidelinesLink": "Soft Wall guidelines — a quieter etiquette page"
   },
   "Thanks": {
     "campaignKicker": "A small bow",
@@ -765,7 +825,15 @@
     "plusReady": "You're on Soft+. Older weeks, trends, and the wall are yours.",
     "plusReviewCta": "Write this week's review",
     "plusWallCta": "Open Soft Wall",
-    "plusAccountCta": "Back to your desk"
+    "plusAccountCta": "Back to your desk",
+    "giftKicker": "A Soft+ gift",
+    "giftTitle": "Thank you — Soft+ is open.",
+    "giftBody": "Someone left you a quieter desk. Soft Wall, a gentle digest, and a nickname for the corkboard are waiting whenever you like.",
+    "giftReadyUntil": "Soft+ from this gift stays open until {date}.",
+    "giftReadyPermanent": "Soft+ from this gift has no end date. Take your time.",
+    "stepDigestTitle": "Peek at this month",
+    "stepDigestBody": "A quiet in-app digest of the weeks you saved — no inbox required.",
+    "giftDigestCta": "Open digest"
   },
   "Year": {
     "eyebrow": "Soft+ · in-app only",
@@ -1003,5 +1071,31 @@
     "drainTitle": "Drain words",
     "untitled": "A quiet week",
     "noFeeling": "No feeling number"
+  },
+  "Guidelines": {
+    "title": "Soft Wall guidelines",
+    "updated": "Last updated: 22 September 2026",
+    "lead": "A short, soft etiquette for Soft Wall. Not a rulebook with teeth — just how neighbors stay kind here.",
+    "home": "Back home",
+    "termsLink": "Also see Terms of Use",
+    "s1Title": "Soft Wall is opt-in",
+    "s1Body": "Your weekly review stays private until you choose to pin it. Sharing is a gentle yes, not a default. You can take a note off the wall whenever you like.",
+    "s2Title": "Be kind",
+    "s2Body": "Comments and stickers are little praise, not debate. Assume good intent. No insults, piled-on criticism, or pressure to explain a quiet week.",
+    "s3Title": "No spam",
+    "s3Body": "Soft Wall is not a billboard. Skip ads, affiliate blasts, repeated identical notes, or anything that crowds the corkboard for attention.",
+    "s4Title": "Share only what you mean to share",
+    "s4Body": "Pin a week you are comfortable letting Soft+ neighbors read. Leave out other people’s private details. If a note feels too raw tomorrow, unpin it — that is allowed.",
+    "s5Title": "A quiet report, when needed",
+    "s5Body": "If something feels unkind or out of place, Soft+ members can leave a soft flag for operators. We may hide notes that break these guidelines. We prefer a quiet fix over a loud fight.",
+    "s6Title": "Soft Boring tone",
+    "s6Body": "This is a corkboard, not a feed. Slow is fine. Silence is fine. Come when the kettle's on — leave when you're done."
+  },
+  "Pwa": {
+    "title": "A quieter home screen",
+    "body": "This browser can keep Soft Boring on your home screen, like a small notebook beside the kettle. We’ll only mention it once.",
+    "iosBody": "On iPhone or iPad, open Share, then Add to Home Screen. We’ll only mention it once.",
+    "install": "Add softly",
+    "dismiss": "Not now"
   }
 }

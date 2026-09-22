@@ -47,6 +47,7 @@ if (userTable) {
   ensureColumn("users", "stripe_subscription_id", "TEXT");
   ensureColumn("users", "stripe_price_id", "TEXT");
   ensureColumn("users", "plan_updated_at", "TEXT");
+  ensureColumn("users", "plan_expires_at", "TEXT");
   ensureColumn("users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("users", "nickname", "TEXT");
   db.exec(
@@ -252,6 +253,29 @@ db.exec(`
 `);
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id)",
+);
+
+if (usersTable) {
+  ensureColumn("users", "plan_expires_at", "TEXT");
+}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_plus_gift_codes (
+    code TEXT PRIMARY KEY,
+    days INTEGER,
+    permanent INTEGER NOT NULL DEFAULT 0,
+    note TEXT,
+    created_at TEXT NOT NULL,
+    redeemed_at TEXT,
+    redeemed_by TEXT,
+    FOREIGN KEY (redeemed_by) REFERENCES users(id) ON DELETE SET NULL
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_created ON soft_plus_gift_codes (created_at DESC)",
+);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_redeemed ON soft_plus_gift_codes (redeemed_at)",
 );
 
 db.close();

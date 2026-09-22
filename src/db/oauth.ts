@@ -110,6 +110,7 @@ function createOAuthOnlyUser(email: string): PublicUser {
     createdAt,
     plan: PLAN_FREE,
     planStatus: null,
+    planExpiresAt: null,
     stripeCustomerId: null,
     stripeSubscriptionId: null,
     nickname: null,

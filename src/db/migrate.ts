@@ -43,6 +43,7 @@ export function ensureUserBillingColumns(db: Database.Database) {
   ensureColumn(db, "users", "stripe_subscription_id", "TEXT");
   ensureColumn(db, "users", "stripe_price_id", "TEXT");
   ensureColumn(db, "users", "plan_updated_at", "TEXT");
+  ensureColumn(db, "users", "plan_expires_at", "TEXT");
   ensureColumn(db, "users", "is_demo", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn(db, "users", "nickname", "TEXT");
   db.exec(
@@ -67,7 +68,12 @@ export function ensureUserSettingsColumns(db: Database.Database) {
   ensureColumn(db, "user_settings", "reminder_last_sent_at", "TEXT");
   ensureColumn(db, "user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "user_settings", "preferred_wall_color", "TEXT");
-  ensureColumn(db, "user_settings", "timezone", "TEXT NOT NULL DEFAULT 'Asia/Taipei'");
+  ensureColumn(
+    db,
+    "user_settings",
+    "timezone",
+    "TEXT NOT NULL DEFAULT 'Asia/Taipei'",
+  );
 }
 
 export function ensureWallNotePinned(db: Database.Database) {
@@ -284,6 +290,29 @@ export function ensureWallNoteThanks(db: Database.Database) {
   );
 }
 
+export function ensureSoftPlusGiftCodes(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_plus_gift_codes (
+      code TEXT PRIMARY KEY,
+      days INTEGER,
+      permanent INTEGER NOT NULL DEFAULT 0,
+      note TEXT,
+      created_at TEXT NOT NULL,
+      redeemed_at TEXT,
+      redeemed_by TEXT,
+      FOREIGN KEY (redeemed_by) REFERENCES users(id) ON DELETE SET NULL
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_created
+     ON soft_plus_gift_codes (created_at DESC)`,
+  );
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_plus_gift_codes_redeemed
+     ON soft_plus_gift_codes (redeemed_at)`,
+  );
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -294,6 +323,7 @@ export function migrateDb(db: Database.Database) {
   ensureOauthAccounts(db);
   ensureNullablePasswordHash(db);
   // After oauth rebuild (which copies a fixed column list), re-add extras.
+  ensureUserBillingColumns(db);
   ensureUserIsDemoColumn(db);
   ensureUserNicknameColumn(db);
   ensureSoftNotes(db);
@@ -301,4 +331,5 @@ export function migrateDb(db: Database.Database) {
   ensureWallNoteBookmarks(db);
   ensureWallNoteFlags(db);
   ensureWallNoteThanks(db);
+  ensureSoftPlusGiftCodes(db);
 }

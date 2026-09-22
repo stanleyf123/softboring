@@ -4,7 +4,7 @@ import {
   parseCustomQuestionsJson,
   type CustomQuestion,
 } from "@/lib/custom-questions";
-import { DEFAULT_TIMEZONE, normalizeTimeZone } from "@/lib/timezone";
+import { normalizeTimeZone, reminderIsDue } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export type UserSettings = {
@@ -50,7 +50,7 @@ function toSettings(row: SettingsRow): UserSettings {
     reminderLastSentAt: row.reminder_last_sent_at,
     customQuestions: parseCustomQuestionsJson(row.custom_questions),
     preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
-    timezone: normalizeTimeZone(row.timezone ?? DEFAULT_TIMEZONE),
+    timezone: normalizeTimeZone(row.timezone),
   };
 }
 
@@ -170,22 +170,33 @@ export type DueReminderUser = {
 };
 
 export function listDueReminderUsers(now = new Date()): DueReminderUser[] {
-  const weekday = now.getDay();
-  const startOfToday = new Date(now);
-  startOfToday.setHours(0, 0, 0, 0);
-  const todayIso = startOfToday.toISOString();
-
   const rows = getDb()
     .prepare(
-      `SELECT u.id AS user_id, u.email
+      `SELECT u.id AS user_id, u.email,
+              s.reminder_weekday, s.reminder_last_sent_at, s.timezone
        FROM user_settings s
        JOIN users u ON u.id = s.user_id
-       WHERE s.reminder_enabled = 1
-         AND s.reminder_weekday = ?
-         AND (s.reminder_last_sent_at IS NULL OR datetime(s.reminder_last_sent_at) < datetime(?))`,
+       WHERE s.reminder_enabled = 1`,
     )
-    .all(weekday, todayIso) as Array<{ user_id: string; email: string }>;
-  return rows.map((row) => ({ userId: row.user_id, email: row.email }));
+    .all() as Array<{
+    user_id: string;
+    email: string;
+    reminder_weekday: number;
+    reminder_last_sent_at: string | null;
+    timezone: string | null;
+  }>;
+  return rows
+    .filter((row) =>
+      reminderIsDue(
+        {
+          weekday: clampWeekday(row.reminder_weekday),
+          lastSentAt: row.reminder_last_sent_at,
+          timeZone: row.timezone,
+        },
+        now,
+      ),
+    )
+    .map((row) => ({ userId: row.user_id, email: row.email }));
 }
 
 export function markReminderSent(userId: string, sentAt = new Date().toISOString()) {

@@ -2,7 +2,7 @@ import { YearPanel } from "@/components/year-panel";
 import { listReviewsForOwner } from "@/db/reviews";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { softYearForDate } from "@/lib/soft-year";
 import { Link } from "@/i18n/navigation";
@@ -34,7 +34,7 @@ export default async function YearPage({ params }: Props) {
 
   const t = await getTranslations("Year");
   const user = await getCurrentUser();
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
 
   const timeline =
     user && softPlus

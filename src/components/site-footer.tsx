@@ -1,3 +1,4 @@
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SoftMark } from "@/components/soft-doodles";
 import { Link } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
@@ -13,16 +14,31 @@ export async function SiteFooter() {
         {t("note")}
       </span>
       <p className="mt-3 max-w-md leading-relaxed">{t("thanks")}</p>
-      <nav className="mt-3 flex flex-wrap gap-3" aria-label={t("navLabel")}>
+      <p className="mt-3">
         <Link href="/thanks" className="hover:text-foreground">
           {t("thanksLink")}
         </Link>
+      </p>
+      <nav
+        className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2"
+        aria-label={t("navLabel")}
+      >
+        <Link href="/guidelines" className="hover:text-foreground">
+          {t("guidelines")}
+        </Link>
+        <span aria-hidden="true">·</span>
         <Link href="/privacy" className="hover:text-foreground">
           {t("privacy")}
         </Link>
+        <span aria-hidden="true">·</span>
         <Link href="/terms" className="hover:text-foreground">
           {t("terms")}
         </Link>
+        <span aria-hidden="true">·</span>
+        <span className="inline-flex flex-wrap items-center gap-2">
+          <span>{t("languages")}</span>
+          <LocaleSwitcher variant="footer" />
+        </span>
       </nav>
     </footer>
   );

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { buildSoftMonthSnapshot } from "@/lib/soft-month";
 
 export const runtime = "nodejs";
@@ -19,7 +19,7 @@ export async function GET() {
       listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
       {
         timeZone: settings.timezone,
-        softPlus: isSoftPlusPlan(user.plan, user.planStatus),
+        softPlus: userIsSoftPlus(user),
       },
     );
     return NextResponse.json(snapshot, {

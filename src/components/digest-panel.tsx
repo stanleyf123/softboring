@@ -16,14 +16,17 @@ export function DigestPanel({ digest }: { digest: MonthlyDigest }) {
 
   if (digest.count === 0) {
     return (
-      <EmptyState
-        title={t("emptyTitle")}
-        body={t("empty")}
-        ctaHref="/review"
-        ctaLabel={t("emptyCta")}
-        wash="bg-paper"
-        illustration="digest"
-      />
+      <div className="space-y-4">
+        <p className="text-sm text-muted">{t("timezoneNote", { zone: digest.timeZone })}</p>
+        <EmptyState
+          title={t("emptyTitle")}
+          body={t("empty")}
+          ctaHref="/review"
+          ctaLabel={t("emptyCta")}
+          wash="bg-paper"
+          illustration="digest"
+        />
+      </div>
     );
   }
 
@@ -31,6 +34,7 @@ export function DigestPanel({ digest }: { digest: MonthlyDigest }) {
     <div className="space-y-5">
       <section className="rounded-[2rem] bg-paper px-6 py-8 shadow-card sm:px-8">
         <p className="text-sm text-muted">{t("monthLabel", { month: monthLabel })}</p>
+        <p className="mt-2 text-xs text-muted">{t("timezoneNote", { zone: digest.timeZone })}</p>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <div className="rounded-[1.4rem] bg-peach/60 px-4 py-4">
             <p className="text-sm text-muted">{t("countLabel")}</p>

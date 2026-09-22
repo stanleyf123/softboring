@@ -99,12 +99,21 @@ export function HistoryList() {
         <section className="rounded-[1.75rem] bg-peach/70 px-6 py-5 shadow-card">
           <p className="font-display text-lg tracking-tight">{t("freeBannerTitle")}</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">{t("freeBanner")}</p>
-          <Link
-            href="/pricing"
-            className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card"
-          >
-            {t("lockedCta")}
-          </Link>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{t("freeDownloadHint")}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              href="/api/account/export"
+              className="inline-flex rounded-full bg-paper px-4 py-2 text-sm shadow-card"
+            >
+              {t("freeDownload")}
+            </a>
+            <Link
+              href="/pricing"
+              className="inline-flex rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card"
+            >
+              {t("lockedCta")}
+            </Link>
+          </div>
         </section>
       ) : null}
 

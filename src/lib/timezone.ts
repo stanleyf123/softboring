@@ -1,56 +1,99 @@
 export const DEFAULT_TIMEZONE = "Asia/Taipei";
 
-export const TIMEZONE_CHOICES = [
-  "Asia/Taipei",
-  "Asia/Tokyo",
-  "Asia/Hong_Kong",
-  "Asia/Singapore",
-  "Asia/Seoul",
-  "Asia/Shanghai",
-  "UTC",
-  "Europe/London",
-  "Europe/Paris",
-  "America/New_York",
-  "America/Los_Angeles",
-  "Australia/Sydney",
-] as const;
+const WEEKDAY_INDEX: Record<string, number> = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+};
 
-export type TimezoneChoice = (typeof TIMEZONE_CHOICES)[number];
+const ZONE_PATTERN = /^[A-Za-z0-9_+\/-]{1,64}$/;
 
-export function isTimezoneChoice(value: string): value is TimezoneChoice {
-  return (TIMEZONE_CHOICES as readonly string[]).includes(value);
-}
-
-export function isValidTimeZone(value: string) {
+export function isIanaTimeZone(value: string) {
+  if (!ZONE_PATTERN.test(value)) return false;
   try {
-    Intl.DateTimeFormat("en-US", { timeZone: value });
+    Intl.DateTimeFormat("en-US", { timeZone: value }).format(0);
     return true;
   } catch {
     return false;
   }
 }
 
-export function normalizeTimeZone(value: string | null | undefined) {
-  if (typeof value !== "string") return DEFAULT_TIMEZONE;
-  const trimmed = value.trim();
-  if (!trimmed || !isValidTimeZone(trimmed)) return DEFAULT_TIMEZONE;
-  return trimmed;
+export function normalizeTimeZone(value: unknown) {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (isIanaTimeZone(trimmed)) return trimmed;
+  }
+  return DEFAULT_TIMEZONE;
 }
 
-export function parseTimezoneChoice(value: unknown) {
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  return isTimezoneChoice(trimmed) ? trimmed : undefined;
-}
+export type ZonedCalendar = {
+  year: number;
+  month: number;
+  day: number;
+  weekday: number;
+};
 
-export function zonedYearMonth(date: Date, timeZone: string) {
+export function calendarInTimeZone(date: Date, timeZone: string): ZonedCalendar {
   const zone = normalizeTimeZone(timeZone);
-  const parts = new Intl.DateTimeFormat("en-US", {
+  const bag: Record<string, string> = {};
+  for (const part of new Intl.DateTimeFormat("en-US", {
     timeZone: zone,
     year: "numeric",
-    month: "numeric",
-  }).formatToParts(date);
-  const year = Number(parts.find((part) => part.type === "year")?.value);
-  const month = Number(parts.find((part) => part.type === "month")?.value);
-  return { year, month };
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+  }).formatToParts(date)) {
+    if (part.type !== "literal") bag[part.type] = part.value;
+  }
+  const weekday = WEEKDAY_INDEX[bag.weekday ?? ""];
+  if (weekday === undefined || !bag.year || !bag.month || !bag.day) {
+    throw new Error(`Could not read calendar in ${zone}`);
+  }
+  return {
+    year: Number(bag.year),
+    month: Number(bag.month),
+    day: Number(bag.day),
+    weekday,
+  };
+}
+
+export function sameCalendarDay(a: Date, b: Date, timeZone: string) {
+  const left = calendarInTimeZone(a, timeZone);
+  const right = calendarInTimeZone(b, timeZone);
+  return left.year === right.year && left.month === right.month && left.day === right.day;
+}
+
+export function sameCalendarMonth(a: Date, b: Date, timeZone: string) {
+  const left = calendarInTimeZone(a, timeZone);
+  const right = calendarInTimeZone(b, timeZone);
+  return left.year === right.year && left.month === right.month;
+}
+
+export type ReminderCandidate = {
+  weekday: number;
+  lastSentAt: string | null;
+  timeZone: string | null;
+};
+
+/**
+ * Cron still wakes on the server clock. Due means "this instant is the
+ * chosen weekday in the member's timezone, and we have not already sent
+ * during that timezone's calendar day."
+ */
+export function reminderIsDue(candidate: ReminderCandidate, now = new Date()) {
+  const zone = normalizeTimeZone(candidate.timeZone);
+  const today = calendarInTimeZone(now, zone);
+  const wanted =
+    Number.isInteger(candidate.weekday) && candidate.weekday >= 0 && candidate.weekday <= 6
+      ? candidate.weekday
+      : 0;
+  if (today.weekday !== wanted) return false;
+  if (!candidate.lastSentAt) return true;
+  const sent = new Date(candidate.lastSentAt);
+  if (Number.isNaN(sent.getTime())) return true;
+  return !sameCalendarDay(sent, now, zone);
 }

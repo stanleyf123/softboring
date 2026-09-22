@@ -90,7 +90,7 @@ test("invite codes are readable and signup paths redeem them once", () => {
   assert.match(start, /searchParams\.get\("invite"\)/);
 
   const account = read("src/app/api/account/invite/route.ts");
-  assert.match(account, /isSoftPlusPlan/);
+  assert.match(account, /userIsSoftPlus/);
   assert.match(account, /soft_plus_required/);
 
   const wall = read("src/db/wall.ts");

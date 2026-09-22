@@ -319,7 +319,9 @@ sudo systemctl restart softboring.service
 15 7 * * * www-data bash -lc 'set -a; source /etc/softboring.env; set +a; cd /var/www/softboring && npm run reminders:dispatch'
 ```
 
-沒有設定 `RESEND_API_KEY` 或 `SMTP_HOST` 時，這個指令會印 `email not configured; no-op.` 並以 0 結束，不會失敗。時區以機器 local `Date#getDay()` 為準，請把 cron 跑在你希望的時區（通常是 Asia/Taipei）。
+沒有設定 `RESEND_API_KEY` 或 `SMTP_HOST` 時，這個指令會印 `email not configured; no-op.` 並以 0 結束，不會失敗。
+
+提醒 cron **仍依 VPS 時鐘**跑（上面的 `15 7 * * *` 就是機器的每天 07:15，不會改成每位使用者的午夜）。腳本醒來後，用帳號頁上的 IANA 時區（預設 `Asia/Taipei`，存在 `user_settings.timezone`）判斷「今天」是不是那位使用者選的星期，並且同一天不重複寄。摘要頁的「這個月」也用同一個時區切月，不再用伺服器的本地日曆。部署後先跑 `npm run db:migrate`，舊資料庫才會有 `timezone` 欄位。
 
 ## 12. Soft Wall Demo 帳號（可選）
 

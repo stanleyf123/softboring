@@ -3,7 +3,7 @@ import { listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { buildSoftMonthSnapshot } from "@/lib/soft-month";
 import { redirect } from "@/i18n/navigation";
@@ -40,7 +40,7 @@ export default async function SoftMonthSnapshotPage({ params }: Props) {
   }
 
   const settings = ensureUserSettings(user.id);
-  const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
+  const softPlus = userIsSoftPlus(user);
   const reviews = listReviewsForOwner({
     kind: "user",
     userId: user.id,

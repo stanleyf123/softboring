@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import type { PublicUser } from "@/db/users";
 
 export async function getWallViewer() {
   const user = await getCurrentUser();
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
   return {
     user,
     userId: user?.id ?? null,

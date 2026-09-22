@@ -3,7 +3,7 @@ import { countReviewsForUser, listReviewsForOwner, monthlyDigestForUser } from "
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { isEmailConfigured } from "@/lib/email";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pickSoftMemory } from "@/lib/soft-memory";
 import { isStripeConfigured } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
@@ -46,7 +46,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
   const reviewCount = countReviewsForUser(user.id);
   const settings = ensureUserSettings(user.id);
   const { checkout } = await searchParams;
-  const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
+  const softPlus = userIsSoftPlus(user);
   const softMemory = pickSoftMemory(
     listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }),
     softPlus,
@@ -62,6 +62,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           createdAt={user.createdAt}
           reviewCount={reviewCount}
           softPlus={softPlus}
+          planExpiresAt={user.planExpiresAt}
           softMemory={softMemory}
           stripeConfigured={isStripeConfigured()}
           hasStripeCustomer={Boolean(user.stripeCustomerId)}
@@ -71,7 +72,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           timezone={settings.timezone}
           emailConfigured={isEmailConfigured()}
           customQuestions={settings.customQuestions}
-          digest={monthlyDigestForUser(user.id)}
+          digest={monthlyDigestForUser(user.id, new Date(), settings.timezone)}
           nickname={user.nickname}
         />
       </div>
