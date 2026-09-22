@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   getPastSelfLetterForUser,
+  listPastSelfLettersForUser,
   savePastSelfLetterForUser,
 } from "@/db/past-self-letters";
 import { getReviewForOwner } from "@/db/reviews";
@@ -11,6 +12,7 @@ import {
   parsePastSelfLetterBody,
   PAST_SELF_LETTER_MAX,
   pastSelfWeekKey,
+  presentPastLetterInbox,
 } from "@/lib/past-self-letter";
 import { userIsSoftPlus } from "@/lib/plan";
 
@@ -36,16 +38,22 @@ export async function GET(request: Request) {
     if (!userIsSoftPlus(user)) return plusRequired();
 
     const reviewId = reviewIdFrom(new URL(request.url).searchParams.get("reviewId"));
+    const settings = ensureUserSettings(user.id);
     if (!reviewId) {
-      return NextResponse.json({ error: "review_required" }, { status: 400 });
+      return NextResponse.json({
+        letters: presentPastLetterInbox(
+          listPastSelfLettersForUser(user.id),
+          settings.timezone,
+          new Date(),
+        ),
+        timeZone: settings.timezone,
+      });
     }
 
     const review = getReviewForOwner({ kind: "user", userId: user.id, guestId: "" }, reviewId);
     if (!review) {
       return NextResponse.json({ error: "not_found" }, { status: 404 });
     }
-
-    const settings = ensureUserSettings(user.id);
     return NextResponse.json({
       reviewId,
       weekKey: pastSelfWeekKey(new Date(review.createdAt), settings.timezone),

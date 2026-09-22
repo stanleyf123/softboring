@@ -74,6 +74,12 @@ export function AdminGiftMintForm() {
     >
       <p className="font-display text-xl tracking-tight">{copy.mintTitle}</p>
       <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">{copy.mintLead}</p>
+      <p
+        className="mt-4 max-w-xl rounded-[1.25rem] bg-mint/45 px-4 py-3 text-sm leading-relaxed text-muted"
+        data-admin-gift-mint
+      >
+        {copy.mintGuide}
+      </p>
 
       <fieldset className="mt-5 flex flex-wrap gap-4 text-sm">
         <legend className="sr-only">{copy.modeLabel}</legend>
@@ -152,10 +158,42 @@ export function AdminGiftMintForm() {
   );
 }
 
+export function AdminGiftEmpty() {
+  const copy = adminCopy.gifts;
+  return (
+    <section
+      className="mt-8 rounded-[1.75rem] bg-mint/50 px-6 py-6 shadow-card sm:px-8"
+      data-admin-gift-empty
+      aria-labelledby="admin-gift-empty-title"
+    >
+      <p id="admin-gift-empty-title" className="font-display text-xl tracking-tight">
+        {copy.emptyTitle}
+      </p>
+      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">{copy.empty}</p>
+      <ol className="mt-5 space-y-3">
+        {copy.emptySteps.map((step, index) => (
+          <li key={step} className="flex gap-3 text-sm leading-relaxed">
+            <span
+              className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-paper text-xs text-muted"
+              aria-hidden="true"
+            >
+              {index + 1}
+            </span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-5 rounded-[1.25rem] bg-cream/80 px-4 py-3 text-sm leading-relaxed text-muted">
+        {copy.emptyMintNote}
+      </p>
+    </section>
+  );
+}
+
 export function AdminGiftTable({ codes }: { codes: GiftRow[] }) {
   const copy = adminCopy.gifts;
   if (codes.length === 0) {
-    return <p className="mt-8 text-sm text-muted">{copy.empty}</p>;
+    return <AdminGiftEmpty />;
   }
 
   return (

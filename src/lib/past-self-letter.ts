@@ -29,6 +29,66 @@ export function isPastWeek(
   return reviewRank < nowRank;
 }
 
+export const PAST_LETTER_INBOX_LIMIT = 24;
+
+export type PastLetterInboxSource = {
+  id: string;
+  reviewId: string;
+  body: string;
+  summary?: string | null;
+  reviewCreatedAt: string;
+  updatedAt: string;
+};
+
+export type PastLetterInboxItem = {
+  id: string;
+  reviewId: string;
+  body: string;
+  summary: string;
+  weekKey: string;
+  updatedAt: string;
+  past: boolean;
+};
+
+/** Full short letter for the in-app inbox, capped the same way as a saved letter. */
+export function pastLetterInboxBody(body: string) {
+  return Array.from(body.trim()).slice(0, PAST_SELF_LETTER_MAX).join("").trim();
+}
+
+/**
+ * Newest-first letters already kept on past weeks.
+ * The caller supplies order. Empty bodies stay out. No account fields are copied in.
+ */
+export function presentPastLetterInbox(
+  letters: PastLetterInboxSource[],
+  timeZone: string | null | undefined,
+  now: Date,
+  limit = PAST_LETTER_INBOX_LIMIT,
+): PastLetterInboxItem[] {
+  const cap =
+    Number.isFinite(limit) && limit > 0
+      ? Math.min(100, Math.floor(limit))
+      : PAST_LETTER_INBOX_LIMIT;
+  const items: PastLetterInboxItem[] = [];
+  for (const letter of letters) {
+    if (items.length >= cap) break;
+    const body = pastLetterInboxBody(letter.body);
+    if (!body) continue;
+    const created = new Date(letter.reviewCreatedAt);
+    const weekKey = Number.isNaN(created.getTime()) ? "" : pastSelfWeekKey(created, timeZone);
+    items.push({
+      id: letter.id,
+      reviewId: letter.reviewId,
+      body,
+      summary: (letter.summary ?? "").trim(),
+      weekKey,
+      updatedAt: letter.updatedAt,
+      past: isPastWeek(letter.reviewCreatedAt, now, timeZone),
+    });
+  }
+  return items;
+}
+
 /** Trim and cap by Unicode code points so a CJK letter is not split mid-character. */
 export function parsePastSelfLetterBody(value: unknown): string | null {
   if (typeof value !== "string") return null;

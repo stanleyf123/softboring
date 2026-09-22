@@ -4,6 +4,7 @@ import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { GratitudeJarCard } from "@/components/gratitude-jar-card";
 import { SoftCapsuleCard } from "@/components/soft-capsule-card";
+import { PastLetterInbox } from "@/components/past-letter-inbox";
 import { SoftOpensInbox } from "@/components/soft-opens-inbox";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
 import { SoftLeaveCard } from "@/components/soft-leave-card";
@@ -282,6 +283,7 @@ export function AccountPanel({
           <GratitudeJarCard signedIn softPlus={softPlus} variant="account" />
           <SoftCapsuleCard signedIn softPlus={softPlus} variant="account" />
           <SoftOpensInbox signedIn softPlus={softPlus} />
+          <PastLetterInbox signedIn softPlus={softPlus} />
           <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />
           <GiftRedeemCard softPlus={softPlus} />

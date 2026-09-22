@@ -205,7 +205,17 @@ export const adminCopy = {
     mintedLabel: "剛產生的禮物碼",
     copy: "複製",
     copied: "已複製",
+    mintGuide:
+      "先選天數或永久 Soft+，再按產生。碼只出現在這張卡片上，請自己複製交給會員。不會向 Stripe 收費，也不會寄信。",
+    emptyTitle: "還沒有禮物碼",
     empty: "還沒有禮物碼。產生一組之後，兌換紀錄會出現在這裡。",
+    emptySteps: [
+      "選擇天數，或永久 Soft+。",
+      "按「產生禮物碼」。這一刻不會向 Stripe 收費。",
+      "把碼交給會員，請他們在帳號頁兌換。不會寄出信件。",
+    ],
+    emptyMintNote:
+      "產生之後，這張薄荷色的空位會換成兌換表。尚未兌換與已兌換都會留在後台，方便你對一下。",
     colCode: "禮物碼",
     colKind: "類型",
     colNote: "備註",

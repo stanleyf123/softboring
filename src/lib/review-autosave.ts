@@ -11,6 +11,41 @@ const JUST_MS = 10_000;
 const MOMENT_MS = 120_000;
 const LATER_MS = 60 * 60_000;
 
+const EXCERPT_FIELDS = ["energy", "drain", "lessOf", "priorities", "summary"] as const;
+
+/** A shallow copy so restoring a local draft does not share nested answers with the form. */
+export function copyReviewAnswers(draft: ReviewAnswers): ReviewAnswers {
+  return {
+    ...draft,
+    customAnswers: (draft.customAnswers ?? []).map((item) => ({ ...item })),
+  };
+}
+
+/**
+ * The first written line of a local review draft, clipped by Unicode code points.
+ * A feeling number or mood id alone is not a line of writing.
+ */
+export function reviewDraftExcerpt(
+  draft: Partial<ReviewAnswers> | null | undefined,
+  max = 72,
+): string {
+  if (!draft) return "";
+  const limit = Number.isFinite(max) && max > 0 ? Math.floor(max) : 72;
+  const pieces: string[] = [];
+  for (const field of EXCERPT_FIELDS) {
+    const value = draft[field];
+    if (typeof value === "string" && value.trim()) pieces.push(value.trim());
+  }
+  for (const item of draft.customAnswers ?? []) {
+    if (typeof item?.answer === "string" && item.answer.trim()) pieces.push(item.answer.trim());
+  }
+  const first = pieces[0];
+  if (!first) return "";
+  const chars = Array.from(first);
+  if (chars.length <= limit) return chars.join("");
+  return chars.slice(0, limit).join("");
+}
+
 export function draftHasContent(
   draft: Partial<
     Pick<

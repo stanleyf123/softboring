@@ -20,8 +20,10 @@ import type { StreakMilestone } from "@/lib/plus-insights";
 import {
   autosaveView,
   clearDraftSavedAt,
+  copyReviewAnswers,
   draftHasContent,
   readDraftSavedAt,
+  reviewDraftExcerpt,
   writeDraftSavedAt,
   type AutosavePhase,
 } from "@/lib/review-autosave";
@@ -128,6 +130,9 @@ function ReviewFormFields({
     };
   }, [softPlus, customQuestions]);
   const [draft, setDraft] = useState<ReviewAnswers>(initial);
+  const [offer, setOffer] = useState<ReviewAnswers | null>(() =>
+    draftHasContent(initial) ? copyReviewAnswers(initial) : null,
+  );
   const [autosavePhase, setAutosavePhase] = useState<AutosavePhase>(() =>
     draftHasContent(initial) ? "saved" : "idle",
   );
@@ -191,6 +196,30 @@ function ReviewFormFields({
     }, 420);
   }
 
+  function restoreOffer(now: number) {
+    if (!offer) return;
+    const next = copyReviewAnswers(offer);
+    if (!softPlus) next.customAnswers = [];
+    else if (liveCustomQuestions.length > 0) {
+      next.customAnswers = answersForQuestions(liveCustomQuestions, next.customAnswers ?? []);
+    }
+    setDraft(next);
+    persistDraft(next, now);
+  }
+
+  function discardOffer() {
+    clearDraft();
+    const next = emptyDraft();
+    if (softPlus && liveCustomQuestions.length > 0) {
+      next.customAnswers = answersForQuestions(liveCustomQuestions, []);
+    }
+    stopAutosaveTimer();
+    setDraft(next);
+    setAutosavePhase("idle");
+    setDraftSavedAt(null);
+    setOffer(null);
+  }
+
   function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K], now: number) {
     const next = { ...draft, [key]: value };
     setDraft(next);
@@ -246,6 +275,7 @@ function ReviewFormFields({
     }
     stopAutosaveTimer();
     setDraft(next);
+    setOffer(null);
     setAutosavePhase("idle");
     setDraftSavedAt(null);
     setSaved(false);
@@ -363,6 +393,14 @@ function ReviewFormFields({
       className={`soft-review-sheet space-y-8 ${moodTint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${moodTint}` : ""}`}
       autoComplete="off"
     >
+      {offer ? (
+        <ReviewDraftBanner
+          offer={offer}
+          onRestore={() => restoreOffer(Date.now())}
+          onDiscard={discardOffer}
+        />
+      ) : null}
+
       <SoftTemplates
         values={{
           energy: draft.energy,
@@ -495,6 +533,54 @@ function ReviewFormFields({
         />
       </div>
     </form>
+  );
+}
+
+function ReviewDraftBanner({
+  offer,
+  onRestore,
+  onDiscard,
+}: {
+  offer: ReviewAnswers;
+  onRestore: () => void;
+  onDiscard: () => void;
+}) {
+  const t = useTranslations("Review");
+  const excerpt = reviewDraftExcerpt(offer);
+
+  return (
+    <div
+      className="soft-draft-banner flex flex-col gap-3 px-4 py-4 sm:px-5"
+      role="status"
+      data-review-draft-banner="open"
+    >
+      <div>
+        <p className="font-display text-lg tracking-tight">{t("draftBannerTitle")}</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted">{t("draftBannerBody")}</p>
+        {excerpt ? (
+          <p className="mt-3 text-sm leading-relaxed" data-review-draft-excerpt>
+            <span className="text-muted">{t("draftPreview")}</span>
+            <span className="mt-1 block">{excerpt}</span>
+          </p>
+        ) : null}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={onRestore}
+          className="inline-flex min-h-11 items-center rounded-full bg-paper px-4 py-2 text-sm shadow-card"
+        >
+          {t("draftRestore")}
+        </button>
+        <button
+          type="button"
+          onClick={onDiscard}
+          className="inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm text-muted"
+        >
+          {t("draftDiscard")}
+        </button>
+      </div>
+    </div>
   );
 }
 
