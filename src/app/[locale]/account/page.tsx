@@ -73,6 +73,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           seasonalFrame={settings.seasonalFrame}
           nightMode={settings.nightMode}
           memoryLane={settings.memoryLane}
+          wallLargerText={settings.wallLargerText}
           emailConfigured={isEmailConfigured()}
           customQuestions={settings.customQuestions}
           digest={monthlyDigestForUser(user.id, new Date(), settings.timezone)}

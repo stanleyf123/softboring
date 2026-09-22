@@ -542,3 +542,13 @@ html[data-quiet-writing="1"] main {
     print-color-adjust: exact;
   }
 }
+
+/* Slightly larger Soft Wall note copy. Free preference; default stays text-sm. */
+.wall-larger-text .wall-note-copy {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+#soft-intention {
+  scroll-margin-top: 6rem;
+}

@@ -63,7 +63,7 @@ export function SoftIntentionCard({
   if (!signedIn) {
     if (variant === "account") return null;
     return (
-      <section className={shell}>
+      <section id="soft-intention" className={`${shell} scroll-mt-24`}>
         <p className="font-display text-lg tracking-tight">{t("title")}</p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("guestBody")}</p>
         <Link
@@ -78,7 +78,7 @@ export function SoftIntentionCard({
 
   if (!hydrated || (!loaded && !loadError)) {
     return (
-      <section className={shell}>
+      <section id="soft-intention" className={`${shell} scroll-mt-24`}>
         <p className="font-display text-lg tracking-tight">{t("title")}</p>
         <p className="mt-2 text-sm text-muted">{t("loading")}</p>
       </section>
@@ -87,7 +87,7 @@ export function SoftIntentionCard({
 
   if (loadError) {
     return (
-      <section className={shell}>
+      <section id="soft-intention" className={`${shell} scroll-mt-24`}>
         <p className="font-display text-lg tracking-tight">{t("title")}</p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("loadError")}</p>
       </section>
@@ -120,7 +120,7 @@ export function SoftIntentionCard({
   }
 
   return (
-    <section className={shell}>
+    <section id="soft-intention" className={`${shell} scroll-mt-24`}>
       <p className="font-display text-lg tracking-tight">{t("title")}</p>
       <p className="mt-2 text-sm leading-relaxed text-muted">{t("lead")}</p>
       {weekKey ? (

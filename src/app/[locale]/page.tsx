@@ -1,3 +1,5 @@
+import { GratitudeJarCard } from "@/components/gratitude-jar-card";
+import { IntentionReminderChip } from "@/components/intention-reminder-chip";
 import { MemoryLaneCard } from "@/components/memory-lane-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftPauseCard } from "@/components/soft-pause-card";
@@ -6,6 +8,7 @@ import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
 import { HomeSoftStats } from "@/components/soft-stats-strip";
 import { listReviewsForOwner } from "@/db/reviews";
+import { getCurrentSoftIntention } from "@/db/soft-intentions";
 import { listOwnWallSnippets } from "@/db/wall";
 import { ensureUserSettings } from "@/db/user-settings";
 import { currentPauseWeekKey, isWeekPaused } from "@/db/week-pauses";
@@ -46,6 +49,7 @@ export default async function HomePage({ params }: Props) {
   const pauseWeekKey = settings ? currentPauseWeekKey(new Date(), settings.timezone) : "";
   const paused = user && pauseWeekKey ? isWeekPaused(user.id, pauseWeekKey) : false;
   const softPlus = userIsSoftPlus(user);
+  const intention = user ? getCurrentSoftIntention(user.id) : null;
   const reviews = user
     ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
     : [];
@@ -107,6 +111,11 @@ export default async function HomePage({ params }: Props) {
               {t("ctaWall")}
             </Link>
           </div>
+          {intention ? (
+            <div className="mt-5">
+              <IntentionReminderChip body={intention.body} weekKey={intention.weekKey} />
+            </div>
+          ) : null}
         </div>
         <div className="mx-auto w-full max-w-[17.5rem] shrink-0 sm:mx-0 sm:max-w-[15.5rem] md:max-w-[17.5rem] lg:max-w-[22rem]">
           <HeroDoodle />
@@ -126,6 +135,7 @@ export default async function HomePage({ params }: Props) {
             timezone={settings.timezone}
           />
         ) : null}
+        {user ? <GratitudeJarCard signedIn softPlus={softPlus} /> : null}
       </div>
 
       <HomeSoftStats

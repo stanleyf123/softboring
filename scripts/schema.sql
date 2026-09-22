@@ -197,6 +197,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
   focus_chime INTEGER NOT NULL DEFAULT 1,
   night_mode INTEGER NOT NULL DEFAULT 0,
   memory_lane INTEGER NOT NULL DEFAULT 1,
+  wall_larger_text INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -373,3 +374,14 @@ CREATE TABLE IF NOT EXISTS soft_letters (
 
 CREATE INDEX IF NOT EXISTS idx_soft_letters_user_week
   ON soft_letters (user_id, week_key);
+
+CREATE TABLE IF NOT EXISTS soft_gratitudes (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_soft_gratitudes_user_created
+  ON soft_gratitudes (user_id, created_at);

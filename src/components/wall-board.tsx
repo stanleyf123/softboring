@@ -35,6 +35,7 @@ import {
   type SeasonalPackId,
 } from "@/lib/seasonal-frame";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
+import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
 import { useHydrated } from "@/lib/use-hydrated";
@@ -172,6 +173,7 @@ export function WallBoard({
   sharedSuccess = false,
   initialNoteId = null,
   initialSeasonalFrame = false,
+  initialWallLargerText = false,
 }: {
   signedIn: boolean;
   softPlus: boolean;
@@ -179,6 +181,7 @@ export function WallBoard({
   sharedSuccess?: boolean;
   initialNoteId?: string | null;
   initialSeasonalFrame?: boolean;
+  initialWallLargerText?: boolean;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
@@ -218,6 +221,7 @@ export function WallBoard({
   }));
   const hydrated = useHydrated();
   const [frameOverride, setFrameOverride] = useState<boolean | null>(null);
+  const [textOverride, setTextOverride] = useState<boolean | null>(null);
   const frame = useMemo(() => seasonFrameForDate(), []);
   let storedFrame = false;
   if (hydrated && !signedIn) {
@@ -229,6 +233,16 @@ export function WallBoard({
   }
   const seasonalFrame =
     frameOverride !== null ? frameOverride : signedIn ? initialSeasonalFrame : storedFrame;
+  let storedLargerText = false;
+  if (hydrated && !signedIn) {
+    try {
+      storedLargerText = localStorage.getItem(WALL_LARGER_TEXT_STORAGE_KEY) === "1";
+    } catch {
+      storedLargerText = false;
+    }
+  }
+  const largerText =
+    textOverride !== null ? textOverride : signedIn ? initialWallLargerText : storedLargerText;
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
   const drag = useRef<{
     id: string;
@@ -265,6 +279,15 @@ export function WallBoard({
     }
   }, [signedIn, initialSeasonalFrame]);
 
+  useEffect(() => {
+    if (!signedIn) return;
+    try {
+      localStorage.setItem(WALL_LARGER_TEXT_STORAGE_KEY, initialWallLargerText ? "1" : "0");
+    } catch {
+      // Storage can be blocked; the account flag still holds for members.
+    }
+  }, [signedIn, initialWallLargerText]);
+
   async function toggleSeasonalFrame(next: boolean) {
     setFrameOverride(next);
     try {
@@ -281,6 +304,25 @@ export function WallBoard({
       });
     } catch {
       // Visual toggle already applied; the next visit can retry.
+    }
+  }
+
+  async function toggleWallLargerText(next: boolean) {
+    setTextOverride(next);
+    try {
+      localStorage.setItem(WALL_LARGER_TEXT_STORAGE_KEY, next ? "1" : "0");
+    } catch {
+      // Signed-in desks still keep the preference on the account.
+    }
+    if (!signedIn) return;
+    try {
+      await fetch("/api/account/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wallLargerText: next }),
+      });
+    } catch {
+      // The note size already changed; the next visit can retry.
     }
   }
 
@@ -806,7 +848,7 @@ export function WallBoard({
   }
 
   return (
-    <div className="pb-10">
+    <div className={largerText ? "wall-larger-text pb-10" : "pb-10"} data-wall-larger-text={largerText ? "1" : "0"}>
       <div className={`${SITE_SHELL_CLASS} pt-4`}>
         <p className="font-display italic text-accent">{t("eyebrow")}</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
@@ -838,6 +880,19 @@ export function WallBoard({
                       : t("seasonalFrameSeason", { season: seasonLabel(t, frame.season) })}
                   </span>
                 ) : null}
+              </span>
+            </label>
+            <label className="mt-3 flex max-w-lg cursor-pointer items-start gap-3 text-sm leading-relaxed text-muted">
+              <input
+                type="checkbox"
+                checked={largerText}
+                onChange={(event) => void toggleWallLargerText(event.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+                data-wall-larger-text-toggle
+              />
+              <span>
+                <span className="block text-foreground">{t("largerText")}</span>
+                <span className="mt-0.5 block text-xs text-muted">{t("largerTextHint")}</span>
               </span>
             </label>
             {softPlus ? (
@@ -1241,7 +1296,11 @@ export function WallBoard({
                           {t("plusBadge")}
                         </span>
                       ) : null}
-                      <span className="mt-2 line-clamp-5 text-sm leading-relaxed">
+                      <span
+                        className={`wall-note-copy mt-2 line-clamp-5 leading-relaxed ${
+                          largerText ? "text-[1.0625rem]" : "text-sm"
+                        }`}
+                      >
                         {full.excerpt || t("untitled")}
                       </span>
                       {latestEcho ? (
@@ -1516,7 +1575,11 @@ export function WallBoard({
                 {detail.bookmarked ? t("unsave") : t("save")}
               </button>
             </div>
-            <dl className="mt-6 space-y-4 text-sm leading-relaxed">
+            <dl
+              className={`wall-note-copy mt-6 space-y-4 leading-relaxed ${
+                largerText ? "text-[1.0625rem]" : "text-sm"
+              }`}
+            >
               {(["energy", "drain", "lessOf", "priorities"] as const).map((field) => (
                 <div key={field}>
                   <dt className="text-muted">{tQuestions(field)}</dt>
