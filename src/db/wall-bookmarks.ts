@@ -26,6 +26,18 @@ export function listBookmarkedNoteIds(userId: string): Set<string> {
   return new Set(rows.map((row) => row.noteId));
 }
 
+/** Every saved note id, oldest first. Hidden notes stay in the export; the shelf does not. */
+export function listBookmarksForExport(userId: string) {
+  return getDb()
+    .prepare(
+      `SELECT note_id AS noteId, created_at AS bookmarkedAt
+       FROM wall_note_bookmarks
+       WHERE user_id = ?
+       ORDER BY datetime(created_at) ASC, note_id ASC`,
+    )
+    .all(userId) as Array<{ noteId: string; bookmarkedAt: string }>;
+}
+
 export function isWallNoteBookmarked(userId: string, noteId: string) {
   const row = getDb()
     .prepare(

@@ -121,6 +121,7 @@ test("Soft Wall hide-demo filter and ownerIsDemo stay wired", () => {
 
 test("soft shortcuts help covers wall/review Quiet Escape filters", () => {
   const help = read("src/components/soft-shortcuts-help.tsx");
+  const keys = read("src/lib/soft-shortcuts.ts");
   const layout = read("src/app/[locale]/layout.tsx");
   const en = readJson("messages/en.json");
   const zh = readJson("messages/zh-tw.json");
@@ -128,9 +129,10 @@ test("soft shortcuts help covers wall/review Quiet Escape filters", () => {
 
   assert.match(help, /SoftShortcutsHelp/);
   assert.match(help, /isHelpPath/);
-  assert.match(help, /\/wall/);
-  assert.match(help, /\/review/);
-  assert.match(help, /Escape/);
+  assert.match(help, /data-shortcuts-sheet/);
+  assert.match(keys, /\/wall/);
+  assert.match(keys, /\/review/);
+  assert.match(keys, /Escape/);
   assert.match(help, /quiet/);
   assert.match(help, /filters/);
   assert.match(layout, /SoftShortcutsHelp/);

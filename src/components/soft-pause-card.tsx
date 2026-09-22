@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { WEEK_PAUSE_CHANGED_EVENT } from "@/lib/pause-week";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -63,6 +64,11 @@ export function SoftPauseCard({
       setWeekKey(data.weekKey);
       setPaused(data.paused);
       setResumed(!data.paused);
+      window.dispatchEvent(
+        new CustomEvent(WEEK_PAUSE_CHANGED_EVENT, {
+          detail: { paused: data.paused, weekKey: data.weekKey },
+        }),
+      );
     } catch {
       setError(true);
     } finally {

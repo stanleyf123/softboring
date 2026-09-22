@@ -994,6 +994,7 @@ export function WallBoard({
                 <span className="sr-only">{t("filterSearchLabel")}</span>
                 <input
                   type="search"
+                  data-wall-search=""
                   value={filters.query}
                   onChange={(event) =>
                     setFilters((current) => ({ ...current, query: event.target.value }))

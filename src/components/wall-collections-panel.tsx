@@ -21,6 +21,9 @@ export function WallCollectionsTease() {
       <p className="font-display text-sm italic text-accent">{t("eyebrow")}</p>
       <h2 className="mt-2 font-display text-2xl tracking-tight">{t("teaseTitle")}</h2>
       <p className="mt-3 max-w-md leading-relaxed text-muted">{t("teaseBody")}</p>
+      <p className="mt-2 max-w-md text-sm leading-relaxed text-muted" data-collections-export="tease">
+        {t("exportTeaseBody")}
+      </p>
       <p className="mt-2 text-sm text-muted">{t("privacy")}</p>
       <Link
         href="/pricing"
@@ -238,6 +241,20 @@ export function WallCollectionsPanel({
           )}
         </div>
       ) : null}
+
+      <div
+        className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-4"
+        data-collections-export="download"
+      >
+        <p className="max-w-sm text-sm leading-relaxed text-muted">{t("exportBody")}</p>
+        <a
+          href="/api/wall/collections/export"
+          download="soft-boring-collections.json"
+          className="inline-flex min-h-11 items-center rounded-full bg-paper px-4 py-2 text-sm shadow-card"
+        >
+          {t("exportCta")}
+        </a>
+      </div>
 
       {notice ? (
         <p className="mt-4 text-sm text-accent" role="alert">
