@@ -74,6 +74,8 @@ if (settingsTable) {
   ensureColumn("user_settings", "timezone", "TEXT NOT NULL DEFAULT 'Asia/Taipei'");
   ensureColumn("user_settings", "onboarding_timezone_set", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "seasonal_frame", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "focus_minutes", "INTEGER NOT NULL DEFAULT 25");
+  ensureColumn("user_settings", "focus_chime", "INTEGER NOT NULL DEFAULT 1");
 }
 
 const wallTable = db
@@ -256,6 +258,22 @@ db.exec(`
 `);
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_echoes (
+    user_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, note_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_echoes_note ON wall_note_echoes (note_id, created_at)",
 );
 
 if (usersTable) {

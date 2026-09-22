@@ -1,7 +1,10 @@
+import { QuietYearChips } from "@/components/quiet-year-chips";
 import { YearPanel } from "@/components/year-panel";
 import { listReviewsForOwner } from "@/db/reviews";
 import { listSoftLettersForYear } from "@/db/soft-letters";
 import { ensureUserSettings } from "@/db/user-settings";
+import { listPauseWeekKeys } from "@/db/week-pauses";
+import { buildQuietYearChips } from "@/lib/quiet-chips";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -39,17 +42,26 @@ export default async function YearPage({ params }: Props) {
   const user = await getCurrentUser();
   const softPlus = userIsSoftPlus(user);
 
-  const reviews =
-    user && softPlus
-      ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
-      : [];
+  const reviews = user
+    ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
+    : [];
+  const settings = user ? ensureUserSettings(user.id) : null;
+  const quietChips =
+    user && settings
+      ? buildQuietYearChips({
+          reviews,
+          pauseWeekKeys: listPauseWeekKeys(user.id),
+          softPlus,
+          timeZone: settings.timezone,
+        })
+      : null;
   const timeline = user && softPlus ? softYearForDate(reviews) : null;
   const letters =
-    user && softPlus && timeline
+    user && softPlus && timeline && settings
       ? matchLettersToReviews(
           listSoftLettersForYear(user.id, timeline.year),
           reviews,
-          ensureUserSettings(user.id).timezone,
+          settings.timezone,
         )
       : [];
 
@@ -58,7 +70,15 @@ export default async function YearPage({ params }: Props) {
       <p className="font-display italic text-accent">{t("eyebrow")}</p>
       <h1 className="mt-2 font-display text-4xl tracking-tight">{t("title")}</h1>
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
-      <div className="mt-10">
+      <div className="mt-10 space-y-6">
+        {quietChips ? (
+          <QuietYearChips
+            year={quietChips.year}
+            chips={quietChips.chips}
+            hiddenCount={quietChips.hiddenCount}
+            softPlus={softPlus}
+          />
+        ) : null}
         {timeline ? (
           <YearPanel timeline={timeline} letters={letters} />
         ) : (

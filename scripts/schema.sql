@@ -186,6 +186,8 @@ CREATE TABLE IF NOT EXISTS user_settings (
   timezone TEXT NOT NULL DEFAULT 'Asia/Taipei',
   onboarding_timezone_set INTEGER NOT NULL DEFAULT 0,
   seasonal_frame INTEGER NOT NULL DEFAULT 0,
+  focus_minutes INTEGER NOT NULL DEFAULT 25,
+  focus_chime INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -308,6 +310,20 @@ CREATE TABLE IF NOT EXISTS wall_note_thanks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id);
+
+CREATE TABLE IF NOT EXISTS wall_note_echoes (
+  user_id TEXT NOT NULL,
+  note_id TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, note_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_note_echoes_note
+  ON wall_note_echoes (note_id, created_at);
 
 CREATE TABLE IF NOT EXISTS soft_plus_gift_codes (
   code TEXT PRIMARY KEY,
