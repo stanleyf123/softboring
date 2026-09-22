@@ -1,8 +1,9 @@
 "use client";
 
+import { SoftTipsList } from "@/components/soft-tips-card";
 import { Link } from "@/i18n/navigation";
 import { useFormatter, useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Item = {
   id: string;
@@ -14,12 +15,15 @@ type Item = {
   createdAt: string;
 };
 
+type InboxFilter = "all" | "unread" | "tips";
+
 export function NotificationBell({ unreadCount }: { unreadCount: number }) {
   const t = useTranslations("Notifications");
   const format = useFormatter();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<Item[] | null>(null);
   const [unread, setUnread] = useState(unreadCount);
+  const [filter, setFilter] = useState<InboxFilter>("all");
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,6 +84,18 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
     return item.title;
   }
 
+  const visibleItems = useMemo(() => {
+    if (!items) return null;
+    if (filter === "unread") return items.filter((item) => !item.readAt);
+    return items;
+  }, [items, filter]);
+
+  const filters: Array<{ id: InboxFilter; label: string }> = [
+    { id: "all", label: t("filterAll") },
+    { id: "unread", label: t("filterUnread") },
+    { id: "tips", label: t("filterTips") },
+  ];
+
   return (
     <div ref={root} className="relative">
       <button
@@ -118,7 +134,7 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
         >
           <div className="flex items-center justify-between gap-3">
             <p className="font-display text-lg tracking-tight">{t("title")}</p>
-            {unread > 0 ? (
+            {unread > 0 && filter !== "tips" ? (
               <button
                 type="button"
                 onClick={markAll}
@@ -128,13 +144,42 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
               </button>
             ) : null}
           </div>
-          {!items ? (
+          <div
+            className="mt-3 flex flex-wrap gap-1.5"
+            role="tablist"
+            aria-label={t("filterLabel")}
+          >
+            {filters.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={filter === item.id}
+                onClick={() => setFilter(item.id)}
+                className={
+                  filter === item.id
+                    ? "rounded-full bg-peach px-3 py-1.5 text-xs text-foreground"
+                    : "rounded-full px-3 py-1.5 text-xs text-muted hover:bg-cream/80 hover:text-foreground"
+                }
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {filter === "tips" ? (
+            <div className="mt-3">
+              <p className="text-sm text-muted">{t("tipsLead")}</p>
+              <SoftTipsList limit={4} />
+            </div>
+          ) : !items ? (
             <p className="mt-3 text-sm text-muted">{t("loading")}</p>
-          ) : items.length === 0 ? (
-            <p className="mt-3 text-sm text-muted">{t("empty")}</p>
+          ) : visibleItems && visibleItems.length === 0 ? (
+            <p className="mt-3 text-sm text-muted">
+              {filter === "unread" ? t("emptyUnread") : t("empty")}
+            </p>
           ) : (
             <ul className="mt-3 max-h-80 space-y-2 overflow-auto">
-              {items.map((item) => (
+              {(visibleItems ?? []).map((item) => (
                 <li key={item.id}>
                   <Link
                     href={item.href === "/wall" ? "/wall" : "/account"}

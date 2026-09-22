@@ -68,6 +68,7 @@ export function HistoryList() {
         ctaHref="/review"
         ctaLabel={t("emptyCta")}
         wash="bg-peach/50"
+        illustration="history"
       />
     );
   }

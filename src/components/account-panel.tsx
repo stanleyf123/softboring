@@ -3,6 +3,7 @@
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
+import { SoftTipsCard } from "@/components/soft-tips-card";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
 import { NICKNAME_MAX } from "@/lib/nickname";
@@ -146,6 +147,7 @@ export function AccountPanel({
 
           <NicknameEditor initialNickname={nickname} />
           <SoftIntentionCard signedIn variant="account" />
+          <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />
 
           {softPlus ? (
@@ -303,6 +305,14 @@ export function AccountPanel({
             >
               {t("wall")}
             </Link>
+            {softPlus ? (
+              <Link
+                href="/wall/saved"
+                className="rounded-full bg-cream px-5 py-2.5 text-sm shadow-card"
+              >
+                {t("savedWall")}
+              </Link>
+            ) : null}
             {softPlus ? (
               <Link
                 href="/trends"

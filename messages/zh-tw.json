@@ -44,7 +44,9 @@
     "wallActivityTitle": "Soft Wall 溫柔讚美 · Soft Boring Weekly",
     "wallActivityDescription": "牆上近期貼紙與留言的安靜條帶。僅 Soft+。",
     "historyCompareTitle": "比較兩週 · Soft Boring Weekly",
-    "historyCompareDescription": "選兩份過去的回顧，並排看看心情、能量與消耗。僅 Soft+。"
+    "historyCompareDescription": "選兩份過去的回顧，並排看看心情、能量與消耗。僅 Soft+。",
+    "wallSavedTitle": "已存的軟軟牆便利貼 · Soft Boring Weekly",
+    "wallSavedDescription": "Soft+ 私下收藏的軟軟牆便利貼，安靜地留在你身邊。"
   },
   "Nav": {
     "home": "首頁",
@@ -343,7 +345,8 @@
     "digest": "每月摘要",
     "yearTitle": "柔軟一年",
     "yearBody": "一年的心情小點，一眼輕柔。",
-    "yearOpen": "打開柔軟一年"
+    "yearOpen": "打開柔軟一年",
+    "savedWall": "已存軟軟牆"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -510,7 +513,11 @@
     "filterClear": "清除",
     "filterResult": "顯示 {shown} / {total}",
     "filterEmptyTitle": "目前沒有符合的",
-    "filterEmpty": "試試更寬的感覺區間，或清除搜尋。"
+    "filterEmpty": "試試更寬的感覺區間，或清除搜尋。",
+    "savedLink": "已存便利貼",
+    "save": "悄悄收藏",
+    "unsave": "取消收藏",
+    "saved": "已收藏"
   },
   "Export": {
     "title": "可列印的回顧",
@@ -553,7 +560,13 @@
     "loading": "查看中…",
     "empty": "目前沒有消息。牆上的留言與回覆會出現在這裡。",
     "wallComment": "有鄰居在你的便利貼留了言",
-    "wallReply": "有鄰居在軟軟牆回覆了你"
+    "wallReply": "有鄰居在軟軟牆回覆了你",
+    "filterLabel": "收件匣篩選",
+    "filterAll": "全部",
+    "filterUnread": "未讀",
+    "filterTips": "軟提示",
+    "tipsLead": "安靜的 Soft Boring 提示——沒有警報，只是輕輕一下。",
+    "emptyUnread": "沒有未讀。牆上的留言會出現在這裡。"
   },
   "Streak": {
     "eyebrow": "一段安靜的連續週",
@@ -861,5 +874,43 @@
     "praise": "{count} 則讚美",
     "open": "在牆上打開",
     "listAria": "本週軟軟精選"
+  },
+  "SoftTips": {
+    "title": "一則軟提示",
+    "lead": "給 Soft Boring 的小小提醒——不吵信箱。",
+    "next": "換一則",
+    "counter": "第 {current} / {total} 則",
+    "inboxLabel": "軟提示",
+    "tipPause": "坐下一次。寫完就離開。這樣就夠了。",
+    "tipOneSentence": "一句誠實的話，勝過完美清單。",
+    "tipFeeling": "感覺數字是天氣預報，不是分數。",
+    "tipWallSave": "你喜歡的軟軟牆便利貼，可以私下收進「已存」。",
+    "tipNoScore": "沒有必須守護的連續紀錄。Soft Boring 會等你。",
+    "tipTea": "打開表單前，先泡一杯溫的。",
+    "tipSkip": "跳過一週也可以。軟軟的桌子會原諒。",
+    "tipNeighbor": "鄰居留下小小留言。只有輕鬆時才回覆。"
+  },
+  "WallSaved": {
+    "eyebrow": "Soft+ · 私人",
+    "title": "已存的軟軟牆便利貼",
+    "lead": "你點愛心的便利貼安靜地留在這裡——只有你看得到。",
+    "loading": "正在整理已存便利貼",
+    "emptyTitle": "還沒存任何便利貼",
+    "empty": "打開軟軟牆，在想留下的便利貼上點愛心。",
+    "emptyCta": "打開軟軟牆",
+    "lockedTitle": "已存便利貼需要 Soft+",
+    "lockedBody": "Soft+ 可以私下收藏軟軟牆的便利貼。",
+    "lockedCta": "看看 Soft+",
+    "signedOutTitle": "登入後才能看已存",
+    "signedOutBody": "Soft+ 書籤留在你的小桌子上——私人的，不會公開在牆上。",
+    "loginCta": "登入",
+    "loadErrorTitle": "已存便利貼在小憩",
+    "loadError": "目前無法載入已存便利貼。",
+    "open": "在軟軟牆打開",
+    "unsave": "取消收藏",
+    "saving": "稍等一下…",
+    "savedOn": "收藏於 {date}",
+    "byAuthor": "{name}",
+    "backToWall": "回到軟軟牆"
   }
 }

@@ -264,3 +264,17 @@ CREATE TABLE IF NOT EXISTS soft_intentions (
 
 CREATE INDEX IF NOT EXISTS idx_soft_intentions_user_week
   ON soft_intentions (user_id, week_key);
+
+CREATE TABLE IF NOT EXISTS wall_note_bookmarks (
+  user_id TEXT NOT NULL,
+  note_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, note_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_user_created
+  ON wall_note_bookmarks (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_note
+  ON wall_note_bookmarks (note_id);

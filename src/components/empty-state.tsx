@@ -1,7 +1,9 @@
 "use client";
 
+import { SoftShapesEmpty } from "./soft-doodles";
 import { Link } from "@/i18n/navigation";
-import { SoftMark } from "./soft-doodles";
+
+export type EmptyIllustration = "default" | "history" | "digest" | "year" | "saved";
 
 export function EmptyState({
   title,
@@ -9,17 +11,22 @@ export function EmptyState({
   ctaHref,
   ctaLabel,
   wash = "bg-paper",
+  illustration = "default",
 }: {
   title: string;
   body: string;
-  ctaHref?: "/review" | "/history" | "/wall" | "/pricing";
+  ctaHref?: "/review" | "/history" | "/wall" | "/pricing" | "/wall/saved";
   ctaLabel?: string;
   wash?: string;
+  illustration?: EmptyIllustration;
 }) {
   return (
     <section className={`rounded-[2rem] ${wash} px-8 py-12 shadow-card`}>
-      <SoftMark className="h-12 w-12" />
-      <h2 className="mt-4 font-display text-2xl tracking-tight">{title}</h2>
+      <SoftShapesEmpty
+        kind={illustration}
+        className="h-20 w-20 animate-[soft-empty-float_4s_ease-in-out_infinite] sm:h-24 sm:w-24"
+      />
+      <h2 className="mt-5 font-display text-2xl tracking-tight">{title}</h2>
       <p className="mt-3 max-w-md leading-relaxed text-muted">{body}</p>
       {ctaHref && ctaLabel ? (
         <Link

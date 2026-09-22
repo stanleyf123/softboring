@@ -226,6 +226,26 @@ export function ensureSoftIntentions(db: Database.Database) {
   );
 }
 
+export function ensureWallNoteBookmarks(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS wall_note_bookmarks (
+      user_id TEXT NOT NULL,
+      note_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, note_id),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_user_created
+     ON wall_note_bookmarks (user_id, created_at DESC)`,
+  );
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_wall_note_bookmarks_note ON wall_note_bookmarks (note_id)`,
+  );
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -240,4 +260,5 @@ export function migrateDb(db: Database.Database) {
   ensureUserNicknameColumn(db);
   ensureSoftNotes(db);
   ensureSoftIntentions(db);
+  ensureWallNoteBookmarks(db);
 }
