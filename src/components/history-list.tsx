@@ -176,6 +176,24 @@ export function HistoryList() {
         />
       ) : null}
 
+      {access && !access.softPlus ? (
+        <section
+          data-compare-history-tease="open"
+          className="rounded-[1.75rem] bg-cream px-6 py-5 shadow-card"
+        >
+          <p className="font-display text-lg tracking-tight">{t("compareTeaseTitle")}</p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
+            {access.isGuest ? t("compareTeaseGuest") : t("compareTeaseBody")}
+          </p>
+          <Link
+            href="/history/compare"
+            className="mt-4 inline-flex rounded-full border border-line bg-paper px-4 py-2 text-sm text-muted"
+          >
+            {t("compareWeeks")}
+          </Link>
+        </section>
+      ) : null}
+
       {access?.softPlus ? (
         <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">
           <p className="font-display text-lg tracking-tight">{t("plusToolsTitle")}</p>

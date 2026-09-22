@@ -240,6 +240,9 @@
     "exportPrint": "Printable pages",
     "softMonth": "My soft month",
     "compareWeeks": "Compare weeks",
+    "compareTeaseTitle": "Two weeks, side by side",
+    "compareTeaseBody": "Soft+ lays two open weeks on cream cards — feeling, energy, and drain. Free keeps the latest four. Nothing is emailed, and this does not start a payment.",
+    "compareTeaseGuest": "Log in on Soft+ to lay two weeks on cream cards. Free still holds the latest four. Nothing is emailed.",
     "tagsTitle": "Private soft tags",
     "tagsLead": "Up to five quiet labels on your own weeks. They stay on this desk.",
     "tagsAll": "All weeks",
@@ -1331,7 +1334,18 @@
     "feelingDown": "Feeling eased down by {value}.",
     "feelingMissing": "One or both weeks have no feeling number yet.",
     "noFeeling": "No feeling number",
-    "openWeek": "Open this week"
+    "openWeek": "Open this week",
+    "teaseSketch": "A cream sketch. Your words stay put until Soft+.",
+    "bridgeTitle": "Between the two weeks",
+    "bridgeWaiting": "Pick two different weeks and the cream cards will sit down.",
+    "creamNote": "Cream cards. No score, just noticing.",
+    "chipEnergy": "Energy",
+    "chipDrain": "Drain",
+    "chipSummary": "One sentence",
+    "presenceBoth": "both weeks wrote something",
+    "presenceLeft": "only the earlier week",
+    "presenceRight": "only the later week",
+    "presenceNeither": "both left this quiet"
   },
   "WallSpotlight": {
     "title": "This week’s soft picks",
@@ -1645,5 +1659,66 @@
     "error": "Could not keep that pause just now.",
     "usedError": "This month's pause is already used.",
     "privacy": "It stays in the app. No email."
+  },
+  "SoftOffline": {
+    "offlineTitle": "You're offline",
+    "offlineBody": "This page can stay with you. New saves wait until you're back. Nothing is sent.",
+    "backTitle": "You're back",
+    "backBody": "Welcome home. The desk is online again.",
+    "dismiss": "Okay"
+  },
+  "SoftTemplates": {
+    "title": "A gentle start",
+    "lead": "Five small starters, free. They slip into empty lines only — words you already wrote stay.",
+    "insert": "Use this start",
+    "using": "In the empty lines",
+    "filled": "Slipped into the empty lines. Edit anything.",
+    "partial": "Empty lines took a start. Lines you already wrote stayed.",
+    "kept": "Those lines already have your words. Nothing was replaced.",
+    "quiet": {
+      "name": "A quiet week",
+      "blurb": "Ordinary, and that can be enough.",
+      "energy": "A little energy showed up in the ordinary parts.",
+      "drain": "Nothing loud. Just the usual hum.",
+      "lessOf": "Less rushing, if I can.",
+      "priorities": "One small thing is enough.",
+      "summary": "A quiet week, and that was alright."
+    },
+    "tender": {
+      "name": "A tender week",
+      "blurb": "A little raw, still welcome here.",
+      "energy": "Kindness from someone nearby stayed with me.",
+      "drain": "I felt a bit raw, and that is allowed.",
+      "lessOf": "Less pretending I am fine all the way through.",
+      "priorities": "Rest, and one gentle task.",
+      "summary": "A tender week. I can be soft with it."
+    },
+    "small": {
+      "name": "Small enough",
+      "blurb": "Tiny wins count on this page.",
+      "energy": "Tiny wins counted: a walk, a meal, a message.",
+      "drain": "The big list can wait outside this page.",
+      "lessOf": "Less measuring the week against a perfect one.",
+      "priorities": "Keep one promise I already like.",
+      "summary": "Small was enough this week."
+    },
+    "restart": {
+      "name": "A gentle restart",
+      "blurb": "Starting again from a smaller place.",
+      "energy": "I am starting again from a smaller place.",
+      "drain": "The gap between weeks does not need a speech.",
+      "lessOf": "Less catching up all at once.",
+      "priorities": "Open the notebook. That can be the start.",
+      "summary": "A gentle restart, not a fresh perfect week."
+    },
+    "full": {
+      "name": "A full week",
+      "blurb": "Full can still be set down.",
+      "energy": "The week was full, and some of it was good.",
+      "drain": "Too many open tabs in my head.",
+      "lessOf": "Less saying yes before I notice.",
+      "priorities": "Finish one thing, then stop.",
+      "summary": "A full week. I can set one thing down."
+    }
   }
 }

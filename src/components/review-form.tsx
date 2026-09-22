@@ -8,6 +8,7 @@ import {
   packPrompts,
 } from "@/components/seasonal-packs-panel";
 import { SoftSaveBloom } from "@/components/soft-save-bloom";
+import { SoftTemplates } from "@/components/soft-templates";
 import { StreakCelebration } from "@/components/streak-celebration";
 import { Link } from "@/i18n/navigation";
 import {
@@ -361,6 +362,21 @@ function ReviewFormFields({
       className={`soft-review-sheet space-y-8 ${moodTint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${moodTint}` : ""}`}
       autoComplete="off"
     >
+      <SoftTemplates
+        values={{
+          energy: draft.energy,
+          drain: draft.drain,
+          lessOf: draft.lessOf,
+          priorities: draft.priorities,
+          summary: draft.summary,
+        }}
+        onInsert={(answers, now) => {
+          const next = { ...draft, ...answers };
+          setDraft(next);
+          persistDraft(next, now);
+        }}
+      />
+
       {softPlus ? (
         <SeasonalPacksPanel
           mode="review"

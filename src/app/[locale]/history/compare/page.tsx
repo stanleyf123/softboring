@@ -1,4 +1,4 @@
-import { HistoryComparePanel } from "@/components/history-compare";
+import { CompareUpgradeTease, HistoryComparePanel } from "@/components/history-compare";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -48,28 +48,7 @@ export default async function HistoryComparePage({ params }: Props) {
         {user && softPlus ? (
           <HistoryComparePanel />
         ) : (
-          <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
-            <h2 className="font-display text-2xl tracking-tight">{t("lockedTitle")}</h2>
-            <p className="mt-3 max-w-md leading-relaxed text-muted">
-              {user ? t("lockedBody") : t("signedOutBody")}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/pricing"
-                className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
-              >
-                {t("lockedCta")}
-              </Link>
-              {!user ? (
-                <Link
-                  href={{ pathname: "/login", query: { next: "/history/compare" } }}
-                  className="rounded-full border border-line px-5 py-2.5 text-sm text-muted"
-                >
-                  {t("loginCta")}
-                </Link>
-              ) : null}
-            </div>
-          </section>
+          <CompareUpgradeTease signedIn={Boolean(user)} />
         )}
       </div>
     </div>
