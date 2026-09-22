@@ -799,6 +799,18 @@ html[data-quiet-writing="1"] main {
   animation: soft-wall-settle 520ms ease;
 }
 
+/* Readable notes rest at five lines. Hover or keyboard focus opens two or three more. */
+.soft-wall-note[data-note-preview="soft"]:hover,
+.soft-wall-note[data-note-preview="soft"]:focus-within {
+  z-index: 100000 !important;
+}
+
+.soft-wall-note[data-note-preview="soft"]:hover .wall-note-copy,
+.soft-wall-note[data-note-preview="soft"]:focus-within .wall-note-copy {
+  -webkit-line-clamp: 8 !important;
+  line-clamp: 8 !important;
+}
+
 @keyframes soft-wall-settle {
   from {
     opacity: 0.62;
@@ -925,6 +937,14 @@ html[data-quiet-writing="1"] main {
   [data-breath-circle] * {
     animation: none !important;
     transition: none !important;
+  }
+
+  /* The note preview still opens. It is a reading state, not an animation. */
+  .soft-wall-note[data-note-preview="soft"]:hover .wall-note-copy,
+  .soft-wall-note[data-note-preview="soft"]:focus-within .wall-note-copy {
+    transition: none;
+    -webkit-line-clamp: 8 !important;
+    line-clamp: 8 !important;
   }
 }
 

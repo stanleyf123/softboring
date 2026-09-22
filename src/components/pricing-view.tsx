@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { SoftFaq } from "./soft-faq";
 import { CheckoutButtons, PaymentsNotice } from "./billing-buttons";
 import { EnvelopeDoodle, TeacupDoodle } from "./soft-doodles";
 
@@ -109,6 +110,10 @@ export async function PricingView({
           <PaymentsNotice />
         </div>
       ) : null}
+
+      <div className="mt-12">
+        <SoftFaq />
+      </div>
 
       <p className="mt-10 max-w-lg text-sm leading-relaxed text-muted">{t("trustNote")}</p>
       {!loggedIn ? (

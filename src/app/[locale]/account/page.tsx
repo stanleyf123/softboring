@@ -1,5 +1,6 @@
 import { AccountPanel } from "@/components/account-panel";
 import { countReviewsForUser, listReviewsForOwner, monthlyDigestForUser } from "@/db/reviews";
+import { listRecentThanksForUser } from "@/db/wall-thanks";
 import { countWallNotesForUser } from "@/db/wall";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
@@ -80,6 +81,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           customQuestions={settings.customQuestions}
           digest={monthlyDigestForUser(user.id, new Date(), settings.timezone)}
           nickname={user.nickname}
+          thankedNotes={softPlus ? listRecentThanksForUser(user.id) : []}
         />
       </div>
     </div>
