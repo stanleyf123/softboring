@@ -210,11 +210,15 @@ export function getLatestReviewIdForUser(userId: string): string | null {
   return row?.id ?? null;
 }
 
-export function monthlyDigestForUser(userId: string, now = new Date()) {
+export function monthlyDigestForUser(
+  userId: string,
+  now = new Date(),
+  timeZone?: string,
+) {
   const reviews = listReviewsForOwner({
     kind: "user",
     userId,
     guestId: "",
   });
-  return monthlyDigestFromReviews(reviews, now);
+  return monthlyDigestFromReviews(reviews, now, timeZone);
 }

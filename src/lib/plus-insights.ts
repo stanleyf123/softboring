@@ -1,4 +1,10 @@
 import type { Review } from "@/lib/review-types";
+import {
+  calendarInTimeZone,
+  DEFAULT_TIMEZONE,
+  normalizeTimeZone,
+  sameCalendarMonth,
+} from "./timezone.ts";
 
 const STOPWORDS = new Set([
   "a",
@@ -207,6 +213,7 @@ export function reviewsToCsv(reviews: Review[]) {
 export type MonthlyDigest = {
   year: number;
   month: number;
+  timeZone: string;
   count: number;
   avgFeeling: number | null;
   streak: number;
@@ -220,12 +227,14 @@ export function monthlyDigestFromReviews(
       Partial<Pick<Review, "energy" | "drain">>
   >,
   now = new Date(),
+  timeZone: string = DEFAULT_TIMEZONE,
 ): MonthlyDigest {
-  const year = now.getFullYear();
-  const month = now.getMonth();
+  const zone = normalizeTimeZone(timeZone);
+  const today = calendarInTimeZone(now, zone);
   const inMonth = reviews.filter((review) => {
     const date = new Date(review.createdAt);
-    return date.getFullYear() === year && date.getMonth() === month;
+    if (Number.isNaN(date.getTime())) return false;
+    return sameCalendarMonth(date, now, zone);
   });
   const feelings = inMonth
     .map((review) => review.feeling)
@@ -236,8 +245,9 @@ export function monthlyDigestFromReviews(
       : Math.round((feelings.reduce((sum, value) => sum + value, 0) / feelings.length) * 10) /
         10;
   return {
-    year,
-    month: month + 1,
+    year: today.year,
+    month: today.month,
+    timeZone: zone,
     count: inMonth.length,
     avgFeeling,
     streak: weeklyStreak(

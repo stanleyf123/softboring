@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import { mkdirSync } from "node:fs";
 import { dirname, isAbsolute, resolve } from "node:path";
+import { reminderIsDue } from "../src/lib/timezone.ts";
 
 const fromEnv = process.env.SQLITE_PATH?.trim();
 const configured =
@@ -88,19 +89,29 @@ You can change the weekday or turn this off on your account page.
 }
 
 export function listDueReminderUsers(db, now = new Date()) {
-  const weekday = now.getDay();
-  const startOfToday = new Date(now);
-  startOfToday.setHours(0, 0, 0, 0);
-  return db
+  const rows = db
     .prepare(
-      `SELECT u.id AS user_id, u.email
+      `SELECT u.id AS user_id, u.email,
+              s.reminder_weekday AS weekday,
+              s.reminder_last_sent_at AS last_sent_at,
+              s.timezone AS timezone
        FROM user_settings s
        JOIN users u ON u.id = s.user_id
-       WHERE s.reminder_enabled = 1
-         AND s.reminder_weekday = ?
-         AND (s.reminder_last_sent_at IS NULL OR datetime(s.reminder_last_sent_at) < datetime(?))`,
+       WHERE s.reminder_enabled = 1`,
     )
-    .all(weekday, startOfToday.toISOString());
+    .all();
+  return rows
+    .filter((row) =>
+      reminderIsDue(
+        {
+          weekday: row.weekday,
+          lastSentAt: row.last_sent_at,
+          timeZone: row.timezone,
+        },
+        now,
+      ),
+    )
+    .map((row) => ({ user_id: row.user_id, email: row.email }));
 }
 
 async function main() {

@@ -1,5 +1,6 @@
 import { DigestPanel } from "@/components/digest-panel";
 import { monthlyDigestForUser } from "@/db/reviews";
+import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
@@ -42,7 +43,13 @@ export default async function DigestPage({ params }: Props) {
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
       <div className="mt-10">
         {user && softPlus ? (
-          <DigestPanel digest={monthlyDigestForUser(user.id)} />
+          <DigestPanel
+            digest={monthlyDigestForUser(
+              user.id,
+              new Date(),
+              ensureUserSettings(user.id).timezone,
+            )}
+          />
         ) : (
           <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
             <h2 className="font-display text-2xl tracking-tight">{t("lockedTitle")}</h2>

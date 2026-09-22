@@ -4,6 +4,7 @@ import {
   parseCustomQuestionsJson,
   type CustomQuestion,
 } from "@/lib/custom-questions";
+import { normalizeTimeZone, reminderIsDue } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export type UserSettings = {
@@ -16,6 +17,7 @@ export type UserSettings = {
   reminderLastSentAt: string | null;
   customQuestions: CustomQuestion[];
   preferredWallColor: WallColor | null;
+  timezone: string;
 };
 
 type SettingsRow = {
@@ -28,6 +30,7 @@ type SettingsRow = {
   reminder_last_sent_at: string | null;
   custom_questions: string | null;
   preferred_wall_color: string | null;
+  timezone: string | null;
 };
 
 function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
@@ -47,6 +50,7 @@ function toSettings(row: SettingsRow): UserSettings {
     reminderLastSentAt: row.reminder_last_sent_at,
     customQuestions: parseCustomQuestionsJson(row.custom_questions),
     preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
+    timezone: normalizeTimeZone(row.timezone),
   };
 }
 
@@ -77,6 +81,7 @@ export type SettingsPatch = {
   reminderLastSentAt?: string | null;
   customQuestions?: CustomQuestion[];
   preferredWallColor?: WallColor | null;
+  timezone?: string;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -100,7 +105,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            reminder_weekday = @reminder_weekday,
            reminder_last_sent_at = @reminder_last_sent_at,
            custom_questions = @custom_questions,
-           preferred_wall_color = @preferred_wall_color
+           preferred_wall_color = @preferred_wall_color,
+           timezone = @timezone
        WHERE user_id = @user_id`,
     )
     .run({
@@ -151,6 +157,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           : normalizeCustomQuestions(patch.customQuestions),
       ),
       preferred_wall_color: nextPreferred,
+      timezone:
+        patch.timezone === undefined ? current.timezone : normalizeTimeZone(patch.timezone),
     });
   return ensureUserSettings(userId);
 }
@@ -161,22 +169,33 @@ export type DueReminderUser = {
 };
 
 export function listDueReminderUsers(now = new Date()): DueReminderUser[] {
-  const weekday = now.getDay();
-  const startOfToday = new Date(now);
-  startOfToday.setHours(0, 0, 0, 0);
-  const todayIso = startOfToday.toISOString();
-
   const rows = getDb()
     .prepare(
-      `SELECT u.id AS user_id, u.email
+      `SELECT u.id AS user_id, u.email,
+              s.reminder_weekday, s.reminder_last_sent_at, s.timezone
        FROM user_settings s
        JOIN users u ON u.id = s.user_id
-       WHERE s.reminder_enabled = 1
-         AND s.reminder_weekday = ?
-         AND (s.reminder_last_sent_at IS NULL OR datetime(s.reminder_last_sent_at) < datetime(?))`,
+       WHERE s.reminder_enabled = 1`,
     )
-    .all(weekday, todayIso) as Array<{ user_id: string; email: string }>;
-  return rows.map((row) => ({ userId: row.user_id, email: row.email }));
+    .all() as Array<{
+    user_id: string;
+    email: string;
+    reminder_weekday: number;
+    reminder_last_sent_at: string | null;
+    timezone: string | null;
+  }>;
+  return rows
+    .filter((row) =>
+      reminderIsDue(
+        {
+          weekday: clampWeekday(row.reminder_weekday),
+          lastSentAt: row.reminder_last_sent_at,
+          timeZone: row.timezone,
+        },
+        now,
+      ),
+    )
+    .map((row) => ({ userId: row.user_id, email: row.email }));
 }
 
 export function markReminderSent(userId: string, sentAt = new Date().toISOString()) {

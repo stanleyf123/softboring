@@ -70,6 +70,7 @@ if (settingsTable) {
   ensureColumn("user_settings", "reminder_last_sent_at", "TEXT");
   ensureColumn("user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn("user_settings", "preferred_wall_color", "TEXT");
+  ensureColumn("user_settings", "timezone", "TEXT NOT NULL DEFAULT 'Asia/Taipei'");
 }
 
 const wallTable = db

@@ -324,7 +324,7 @@
     "reminderEmailOff": "這台伺服器還沒設定信件，所以在填好 RESEND_API_KEY 或 SMTP 之前，提醒會安靜地略過。",
     "reminderSaving": "儲存中…",
     "digestTitle": "這個月",
-    "digestBody": "從本月存下的回顧，安靜地加總。",
+    "digestBody": "以你的時區，把這個月存下的回顧安靜地加總。",
     "digestCountLabel": "回顧",
     "digestCount": "{count}",
     "digestFeelingLabel": "平均感覺",
@@ -377,7 +377,24 @@
     "giftErrorMissing": "找不到這個禮物碼。",
     "giftErrorUsed": "這個禮物碼已經用過了。",
     "giftErrorAlreadyPlus": "你已是 Soft+，所以這組禮物碼保持未使用。",
-    "giftErrorRate": "試得有點勤。泡杯茶，稍後再試。"
+    "giftErrorRate": "試得有點勤。泡杯茶，稍後再試。",
+    "timezoneTitle": "你的時鐘",
+    "timezoneBody": "提醒的星期，還有摘要裡的「這個月」，都跟著這個時區。預設是台北。",
+    "timezoneLabel": "時區",
+    "timezoneNote": "提醒的排程仍依伺服器的時鐘醒來，再依你的時區判斷今天是不是你選的星期。",
+    "timezoneSaving": "儲存中…",
+    "timezoneSaved": "存好了。",
+    "leaveTitle": "安靜地離開",
+    "leaveBody": "如果這張桌子已經夠了，可以把它收起來。回顧會一起走，軟軟牆上你的便利貼也會拿下來，鄰居就不會再看到。這是輕輕的道別，不是嚇人的警告。",
+    "leaveEmailHint": "這張桌子的電子郵件是 {email}。",
+    "leavePhraseLabel": "輸入 Soft Boring 確認",
+    "leavePhrasePlaceholder": "Soft Boring",
+    "leaveEmailLabel": "再輸入這張桌子的電子郵件",
+    "leaveConfirm": "刪除帳號",
+    "leaveWorking": "正在收桌子…",
+    "leaveErrorPhrase": "請原樣輸入 Soft Boring。",
+    "leaveErrorEmail": "這個電子郵件和這張桌子不一樣。",
+    "leaveError": "現在沒能收起這張桌子。"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -673,7 +690,7 @@
     "s5Title": "分享與處理者",
     "s5Body": "付款由 Stripe 處理。若寄信，會使用你設定的 Resend 或 SMTP。託管與備份在維運者的伺服器（磁碟上的 SQLite）。釘上軟軟牆的內容，其他 Soft+ 會員也看得到；預設不公開。",
     "s6Title": "保存期間與你的選擇",
-    "s6Body": "帳號與回顧會保存到你刪除帳號（或維運者代你刪除）。你可以隨時把便利貼從軟軟牆拿下來。可在帳號頁關掉每週提醒。已登入的免費帳號可以在帳號頁自行下載最近四週（你已經能打開的那些）的 JSON，不必寄信。Soft+ 仍可匯出更完整的回顧。若要刪除資料，請登入後聯絡維運者。本政策可能更新；上方日期會一併修改。"
+    "s6Body": "帳號與回顧會保存到你在帳號頁刪除帳號（或維運者代你刪除）。刪除時，回顧會一起離開，軟軟牆上的便利貼也會悄悄拿下來。你仍可以隨時只拿下一張便利貼。每週提醒可以在帳號頁關掉，也可以在那裡選時區，讓提醒的星期和「這個月」跟著你的時鐘。已登入的免費帳號可以在帳號頁自行下載最近四週的 JSON，不必寄信。Soft+ 仍可匯出更完整的回顧。本政策可能更新；上方日期會一併修改。"
   },
   "Terms": {
     "title": "使用條款",
@@ -691,7 +708,7 @@
     "s5Title": "責任限制",
     "s5Body": "本服務是書寫工具，不是醫療、法律或治療建議。在法律允許範圍內，我們不對遺失的回顧、中斷或間接損害負責。單一請求的總責任，以請求前 12 個月你支付的金額為限；若你使用免費方案，則為零。",
     "s6Title": "結束約定",
-    "s6Body": "你可以停止使用並要求刪除帳號。我們可能暫停違反條款或傷害社群牆的帳號。刪除後的資料處理見隱私權政策。除非有強制的消費者保護法規，本條款適用維運者所在地的法律。",
+    "s6Body": "你可以停止使用，並在帳號頁刪除帳號。我們可能暫停違反條款或傷害社群牆的帳號。刪除後的資料處理見隱私權政策。除非有強制的消費者保護法規，本條款適用維運者所在地的法律。",
     "guidelinesLink": "軟軟牆禮儀——更安靜的一頁"
   },
   "Thanks": {
@@ -762,7 +779,8 @@
     "lockedCta": "看 Soft+",
     "signedOutBody": "以 Soft+ 登入，打開這個月的摘要。",
     "loginCta": "登入",
-    "seeYear": "打開柔軟一年"
+    "seeYear": "打開柔軟一年",
+    "timezoneNote": "這個月以 {zone} 計算。"
   },
   "SeasonalPacks": {
     "title": "季節題包",
@@ -1032,5 +1050,12 @@
     "s5Body": "若有內容顯得不友善或不合適，Soft+ 會員可以留下輕聲標記給營運者。我們可能隱藏違反禮儀的便利貼。我們偏好安靜處理，而不是大聲爭吵。",
     "s6Title": "Soft Boring 的節奏",
     "s6Body": "這裡是軟木板，不是動態牆。慢一點沒關係。安靜也沒關係。水開了再來——寫完就可以離開。"
+  },
+  "Pwa": {
+    "title": "更安靜的主畫面",
+    "body": "這個瀏覽器可以把 Soft Boring 放在主畫面，像水壺旁邊的小筆記。我們只說這一次。",
+    "iosBody": "在 iPhone 或 iPad 上，打開分享，再選「加入主畫面」。我們只說這一次。",
+    "install": "輕輕加進去",
+    "dismiss": "先不用"
   }
 }
