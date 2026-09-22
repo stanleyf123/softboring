@@ -68,6 +68,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           checkoutSuccess={checkout === "success"}
           reminderEnabled={settings.reminderEnabled}
           reminderWeekday={settings.reminderWeekday}
+          timezone={settings.timezone}
           emailConfigured={isEmailConfigured()}
           customQuestions={settings.customQuestions}
           digest={monthlyDigestForUser(user.id)}

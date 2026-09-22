@@ -4,6 +4,7 @@ import {
   parseCustomQuestionsJson,
   type CustomQuestion,
 } from "@/lib/custom-questions";
+import { DEFAULT_TIMEZONE, normalizeTimeZone } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export type UserSettings = {
@@ -16,6 +17,7 @@ export type UserSettings = {
   reminderLastSentAt: string | null;
   customQuestions: CustomQuestion[];
   preferredWallColor: WallColor | null;
+  timezone: string;
 };
 
 type SettingsRow = {
@@ -28,6 +30,7 @@ type SettingsRow = {
   reminder_last_sent_at: string | null;
   custom_questions: string | null;
   preferred_wall_color: string | null;
+  timezone: string | null;
 };
 
 function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
@@ -47,6 +50,7 @@ function toSettings(row: SettingsRow): UserSettings {
     reminderLastSentAt: row.reminder_last_sent_at,
     customQuestions: parseCustomQuestionsJson(row.custom_questions),
     preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
+    timezone: normalizeTimeZone(row.timezone ?? DEFAULT_TIMEZONE),
   };
 }
 
@@ -77,6 +81,7 @@ export type SettingsPatch = {
   reminderLastSentAt?: string | null;
   customQuestions?: CustomQuestion[];
   preferredWallColor?: WallColor | null;
+  timezone?: string;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -89,6 +94,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
         : isWallColor(patch.preferredWallColor)
           ? patch.preferredWallColor
           : current.preferredWallColor;
+  const nextTimezone =
+    patch.timezone === undefined ? current.timezone : normalizeTimeZone(patch.timezone);
 
   getDb()
     .prepare(
@@ -100,7 +107,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            reminder_weekday = @reminder_weekday,
            reminder_last_sent_at = @reminder_last_sent_at,
            custom_questions = @custom_questions,
-           preferred_wall_color = @preferred_wall_color
+           preferred_wall_color = @preferred_wall_color,
+           timezone = @timezone
        WHERE user_id = @user_id`,
     )
     .run({
@@ -151,6 +159,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           : normalizeCustomQuestions(patch.customQuestions),
       ),
       preferred_wall_color: nextPreferred,
+      timezone: nextTimezone,
     });
   return ensureUserSettings(userId);
 }

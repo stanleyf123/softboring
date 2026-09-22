@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { attachBookmarkToDetail } from "@/db/wall-bookmarks";
 import { attachFlagToDetail } from "@/db/wall-flags";
+import { attachThanksToDetail } from "@/db/wall-thanks";
 import {
   deleteWallNoteForUser,
   getWallNote,
@@ -13,7 +14,10 @@ function attachNoteExtras(
   note: NonNullable<ReturnType<typeof getWallNote>>,
   userId: string | null,
 ) {
-  return attachFlagToDetail(attachBookmarkToDetail(note, userId), userId);
+  return attachThanksToDetail(
+    attachFlagToDetail(attachBookmarkToDetail(note, userId), userId),
+    userId,
+  );
 }
 
 export const runtime = "nodejs";

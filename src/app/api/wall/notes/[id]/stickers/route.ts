@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { placeSticker } from "@/db/stickers";
+import { withViewerNoteState } from "@/db/wall-note-view";
 import { getWallNote } from "@/db/wall";
 import { getWallViewer, requireSoftPlus } from "@/lib/wall-access";
 
@@ -46,7 +47,7 @@ export async function POST(request: Request, context: Context) {
     const updated = getWallNote(id, viewer.userId);
     return NextResponse.json({
       praiseCount: result.praiseCount,
-      note: updated,
+      note: updated ? withViewerNoteState(updated, viewer.userId) : updated,
     });
   } catch (error) {
     console.error("POST /api/wall/notes/[id]/stickers failed", error);

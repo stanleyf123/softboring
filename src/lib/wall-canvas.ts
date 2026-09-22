@@ -74,7 +74,12 @@ export function toTeaserNote(note: {
   color: string;
   praiseCount: number;
   ownerNickname?: string | null;
+  thankCount?: number;
 }) {
+  const thankCount =
+    typeof note.thankCount === "number" && Number.isFinite(note.thankCount)
+      ? Math.max(0, Math.floor(note.thankCount))
+      : 0;
   return {
     id: note.id,
     x: note.x,
@@ -83,5 +88,6 @@ export function toTeaserNote(note: {
     color: isWallColor(note.color) ? note.color : "peach",
     praiseCount: note.praiseCount,
     ownerNickname: note.ownerNickname?.trim() ? note.ownerNickname.trim() : null,
+    thankCount,
   };
 }

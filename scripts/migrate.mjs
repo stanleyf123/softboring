@@ -69,6 +69,7 @@ if (settingsTable) {
   ensureColumn("user_settings", "reminder_last_sent_at", "TEXT");
   ensureColumn("user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn("user_settings", "preferred_wall_color", "TEXT");
+  ensureColumn("user_settings", "timezone", "TEXT NOT NULL DEFAULT 'Asia/Taipei'");
 }
 
 const wallTable = db
@@ -237,6 +238,20 @@ db.exec(
 );
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_wall_note_flags_created ON wall_note_flags (created_at DESC)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_thanks (
+    user_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, note_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id)",
 );
 
 db.close();

@@ -1,4 +1,5 @@
 import { ReviewForm } from "@/components/review-form";
+import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { QuietWritingToggle } from "@/components/quiet-writing";
 import {
   LastIntentionNudge,
@@ -36,8 +37,9 @@ export default async function ReviewPage({ params }: Props) {
 
   const t = await getTranslations("Review");
   const user = await getCurrentUser();
+  const settings = user ? ensureUserSettings(user.id) : null;
   const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
-  const customQuestions = user && softPlus ? ensureUserSettings(user.id).customQuestions : [];
+  const customQuestions = settings && softPlus ? settings.customQuestions : [];
 
   return (
     <div className="pt-6">
@@ -49,6 +51,13 @@ export default async function ReviewPage({ params }: Props) {
         <QuietWritingToggle />
       </div>
       <div className="quiet-writing-chrome mt-8 space-y-4">
+        {settings ? (
+          <SoftRhythmCard
+            reminderWeekday={settings.reminderWeekday}
+            reminderEnabled={settings.reminderEnabled}
+            timezone={settings.timezone}
+          />
+        ) : null}
         <LastIntentionNudge signedIn={Boolean(user)} />
         <SoftIntentionCard signedIn={Boolean(user)} />
         <SoftNoteCard signedIn={Boolean(user)} />

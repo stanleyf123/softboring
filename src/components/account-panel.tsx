@@ -11,6 +11,7 @@ import { NICKNAME_MAX } from "@/lib/nickname";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import type { SoftMemory } from "@/lib/soft-memory";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
+import { TIMEZONE_CHOICES } from "@/lib/timezone";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useState, type FormEvent } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
@@ -49,6 +50,7 @@ export function AccountPanel({
   checkoutSuccess,
   reminderEnabled,
   reminderWeekday,
+  timezone,
   emailConfigured,
   customQuestions,
   digest,
@@ -64,6 +66,7 @@ export function AccountPanel({
   checkoutSuccess: boolean;
   reminderEnabled: boolean;
   reminderWeekday: number;
+  timezone: string;
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
   digest: MonthlyDigest;
@@ -76,6 +79,7 @@ export function AccountPanel({
   const [loggingOut, setLoggingOut] = useState(false);
   const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
   const [weekday, setWeekday] = useState(reminderWeekday);
+  const [zone, setZone] = useState(timezone);
   const [savingReminder, setSavingReminder] = useState(false);
   const [packQuestions, setPackQuestions] = useState(customQuestions);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
@@ -249,6 +253,37 @@ export function AccountPanel({
                 ))}
               </select>
             </label>
+            <label className="mt-3 block text-sm">
+              <span className="text-muted">{t("timezoneLabel")}</span>
+              <select
+                className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2"
+                value={zone}
+                onChange={async (event) => {
+                  const next = event.target.value;
+                  setZone(next);
+                  setSavingReminder(true);
+                  try {
+                    await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ timezone: next }),
+                    });
+                  } finally {
+                    setSavingReminder(false);
+                  }
+                }}
+              >
+                {((TIMEZONE_CHOICES as readonly string[]).includes(zone)
+                  ? TIMEZONE_CHOICES
+                  : [zone, ...TIMEZONE_CHOICES]
+                ).map((choice) => (
+                  <option key={choice} value={choice}>
+                    {choice}
+                  </option>
+                ))}
+              </select>
+              <span className="mt-2 block text-xs text-muted">{t("timezoneHint")}</span>
+            </label>
             <p className="mt-3 text-xs text-muted">
               {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
               {savingReminder ? ` · ${t("reminderSaving")}` : null}
@@ -341,6 +376,12 @@ export function AccountPanel({
                 {t("digest")}
               </Link>
             ) : null}
+            <Link
+              href="/account/snapshot"
+              className="rounded-full bg-cream px-5 py-2.5 text-sm shadow-card"
+            >
+              {t("softMonth")}
+            </Link>
             {softPlus ? (
               <Link
                 href="/history/export"

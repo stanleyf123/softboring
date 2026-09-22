@@ -67,6 +67,7 @@ export function ensureUserSettingsColumns(db: Database.Database) {
   ensureColumn(db, "user_settings", "reminder_last_sent_at", "TEXT");
   ensureColumn(db, "user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "user_settings", "preferred_wall_color", "TEXT");
+  ensureColumn(db, "user_settings", "timezone", "TEXT NOT NULL DEFAULT 'Asia/Taipei'");
 }
 
 export function ensureWallNotePinned(db: Database.Database) {
@@ -267,6 +268,22 @@ export function ensureWallNoteFlags(db: Database.Database) {
   );
 }
 
+export function ensureWallNoteThanks(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS wall_note_thanks (
+      user_id TEXT NOT NULL,
+      note_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, note_id),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id)`,
+  );
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -283,4 +300,5 @@ export function migrateDb(db: Database.Database) {
   ensureSoftIntentions(db);
   ensureWallNoteBookmarks(db);
   ensureWallNoteFlags(db);
+  ensureWallNoteThanks(db);
 }

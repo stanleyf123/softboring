@@ -5,6 +5,7 @@ import {
   updateUserSettings,
 } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
+import { parseTimezoneChoice } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export const runtime = "nodejs";
@@ -32,6 +33,7 @@ export async function PATCH(request: Request) {
       reminderEnabled?: unknown;
       reminderWeekday?: unknown;
       preferredWallColor?: unknown;
+      timezone?: unknown;
     };
 
     let preferredWallColor: WallColor | null | undefined;
@@ -66,6 +68,7 @@ export async function PATCH(request: Request) {
           ? undefined
           : clampWeekday(body.reminderWeekday),
       preferredWallColor,
+      timezone: parseTimezoneChoice(body.timezone),
     });
 
     return NextResponse.json({ settings });

@@ -181,6 +181,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
   reminder_last_sent_at TEXT,
   custom_questions TEXT NOT NULL DEFAULT '[]',
   preferred_wall_color TEXT,
+  timezone TEXT NOT NULL DEFAULT 'Asia/Taipei',
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -292,3 +293,14 @@ CREATE TABLE IF NOT EXISTS wall_note_flags (
 
 CREATE INDEX IF NOT EXISTS idx_wall_note_flags_note ON wall_note_flags (note_id);
 CREATE INDEX IF NOT EXISTS idx_wall_note_flags_created ON wall_note_flags (created_at DESC);
+
+CREATE TABLE IF NOT EXISTS wall_note_thanks (
+  user_id TEXT NOT NULL,
+  note_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, note_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id);

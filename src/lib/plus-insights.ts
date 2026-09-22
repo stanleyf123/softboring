@@ -1,4 +1,5 @@
 import type { Review } from "@/lib/review-types";
+import { isValidTimeZone, zonedYearMonth } from "@/lib/timezone";
 
 const STOPWORDS = new Set([
   "a",
@@ -220,12 +221,20 @@ export function monthlyDigestFromReviews(
       Partial<Pick<Review, "energy" | "drain">>
   >,
   now = new Date(),
+  timeZone?: string,
 ): MonthlyDigest {
-  const year = now.getFullYear();
-  const month = now.getMonth();
+  const zone = timeZone && isValidTimeZone(timeZone) ? timeZone : undefined;
+  const zonedNow = zone ? zonedYearMonth(now, zone) : null;
+  const year = zonedNow ? zonedNow.year : now.getFullYear();
+  const monthIndex = zonedNow ? zonedNow.month - 1 : now.getMonth();
   const inMonth = reviews.filter((review) => {
     const date = new Date(review.createdAt);
-    return date.getFullYear() === year && date.getMonth() === month;
+    if (Number.isNaN(date.getTime())) return false;
+    if (!zone) {
+      return date.getFullYear() === year && date.getMonth() === monthIndex;
+    }
+    const parts = zonedYearMonth(date, zone);
+    return parts.year === year && parts.month === monthIndex + 1;
   });
   const feelings = inMonth
     .map((review) => review.feeling)
@@ -237,7 +246,7 @@ export function monthlyDigestFromReviews(
         10;
   return {
     year,
-    month: month + 1,
+    month: monthIndex + 1,
     count: inMonth.length,
     avgFeeling,
     streak: weeklyStreak(

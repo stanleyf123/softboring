@@ -46,7 +46,9 @@
     "historyCompareTitle": "週をくらべる · Soft Boring Weekly",
     "historyCompareDescription": "ふたつのふりかえりを選んで、気持ち・エネルギー・消耗をやさしく並べて見る。Soft+ のみ。",
     "wallSavedTitle": "保存した Soft Wall · Soft Boring Weekly",
-    "wallSavedDescription": "Soft+ の非公開ブックマーク。近くに置きたい Soft Wall の付箋。"
+    "wallSavedDescription": "Soft+ の非公開ブックマーク。近くに置きたい Soft Wall の付箋。",
+    "snapshotTitle": "やわらかい月 · Soft Boring Weekly",
+    "snapshotDescription": "あなたのタイムゾーンで、今月のふりかえりを印刷できるクリームのページに。Free は新しい四つ、Soft+ は月ぜんぶ。"
   },
   "Nav": {
     "home": "ホーム",
@@ -180,6 +182,7 @@
     "searchEmpty": "その検索に合う週はありません。",
     "exportCsv": "CSV をダウンロード",
     "exportPrint": "印刷できるページ",
+    "softMonth": "やわらかい月",
     "compareWeeks": "週をくらべる"
   },
   "HistoryDetail": {
@@ -313,6 +316,9 @@
     "reminderEmailOn": "定期の仕事が走ると、リマインダーが送られます。",
     "reminderEmailOff": "このサーバーにはまだメールが設定されていないので、RESEND_API_KEY か SMTP を置くまでリマインダーは何もしません。",
     "reminderSaving": "残しています…",
+    "timezoneLabel": "タイムゾーン",
+    "timezoneHint": "今週のリズムと、やわらかい月のために使います。デスクは Asia/Taipei からはじまります。",
+    "softMonth": "やわらかい月",
     "digestTitle": "今月",
     "digestBody": "この暦月に残したふりかえりの、静かな集計。",
     "digestCountLabel": "ふりかえり",
@@ -532,6 +538,10 @@
     "color_sky": "スカイ",
     "unshareTitle": "Soft Wall のあなたの付箋",
     "unshareHint": "いつでも下ろせるよ。下ろすと、その週はまた履歴だけの静かな場所に戻る。",
+    "thankCta": "残してくれて、ありがとう",
+    "thankDone": "ありがとうを残した",
+    "thankCount": "そっとしたありがとう {count}",
+    "thankAria": "残してくれて、ありがとう",
     "reportFeelsOff": "少し気になる",
     "reportHint": "Soft Boring へのやさしい合図——公開の通報じゃないよ。",
     "reportThanks": "受け取ったよ。やさしい合図、ありがとう。"
@@ -962,5 +972,36 @@
     "savedOn": "{date} に保存",
     "byAuthor": "{name}",
     "backToWall": "Soft Wall に戻る"
+  },
+  "SoftRhythm": {
+    "eyebrow": "静かな曜日",
+    "title": "今週のやわらかいリズム",
+    "weekdayLabel": "ふりかえりの曜日",
+    "timezoneLabel": "タイムゾーン",
+    "nudgeOn": "ふりかえりの曜日は{weekday}、{timezone} です。急がなくていい。週は、座るまで待っています。",
+    "nudgeOff": "デスクには {weekday}（{timezone}）が残っています。アカウント設定で、毎週のやわらかいリズムにしておけます。このカードはメールを出しません。",
+    "settingsCta": "アカウント設定"
+  },
+  "SoftMonth": {
+    "eyebrow": "印刷できる · 今月",
+    "title": "やわらかい月",
+    "lead": "あなたのタイムゾーンで、今月残した週をクリームのページに。印刷しても、そばに JSON を置いても。",
+    "back": "← 机に戻る",
+    "print": "印刷 / PDF に保存",
+    "json": "JSON をダウンロード",
+    "timezoneNote": "この月は {timezone} に沿います。",
+    "countLabel": "今月のふりかえり",
+    "feelingLabel": "気持ちの平均",
+    "streakLabel": "週の連続",
+    "lockedNote": "今月は、まだ {count} 週が Soft+ と一緒に静かに残っています。",
+    "freeHint": "Free は、新しい四つのふりかえりの言葉だけ開きます。Soft+ は月ぜんぶを開きます。",
+    "empty": "今月は、まだ何も残していません。それでいいです。",
+    "lockedCard": "この週は、まだしまってある",
+    "lockedCardBody": "Soft+ が言葉を開きます。日付はここに残します。",
+    "seePlus": "Soft+ を見る",
+    "energyTitle": "元気のことば",
+    "drainTitle": "消耗のことば",
+    "untitled": "静かな一週間",
+    "noFeeling": "気持ちの数字はない"
   }
 }
