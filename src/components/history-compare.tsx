@@ -109,9 +109,10 @@ export function HistoryComparePanel() {
         setReviews(next.reviews);
         setAccess(next.access);
         const open = next.reviews.filter((review) => !review.locked);
-        if (open[0]) setLeftId(open[0].id);
-        if (open[1]) setRightId(open[1].id);
-        else if (open[0]) setRightId(open[0].id);
+        // Reviews are newest-first: put the older week on the left.
+        if (open[1]) setLeftId(open[1].id);
+        else if (open[0]) setLeftId(open[0].id);
+        if (open[0]) setRightId(open[0].id);
       } catch {
         if (!cancelled) setError(true);
       }
