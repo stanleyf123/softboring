@@ -1,16 +1,20 @@
 import { POSTCARD_COLORS, truncateForPostcard } from "@/lib/soft-postcard";
-import { isWallColor, type WallColor } from "@/lib/wall-canvas";
+import { displayNoteColor, type NoteColor } from "@/lib/wall-canvas";
 
 export const QUOTE_CARD_WIDTH = 840;
 export const QUOTE_CARD_HEIGHT = 1050;
 
-export const QUOTE_WASH: Record<WallColor, string> = {
+export const QUOTE_WASH: Record<NoteColor, string> = {
   peach: "#f8dcc8",
   blush: "#f4d4c6",
   mint: "#d5e6d8",
   cream: "#fff4e8",
   lemon: "#f3e3b6",
   sky: "#d5e4ea",
+  lilac: "#eadcf6",
+  rose: "#f6d0da",
+  fern: "#c9e0d2",
+  apricot: "#f6d2b8",
 };
 
 export type WallQuoteLabels = {
@@ -25,7 +29,7 @@ export type WallQuotePayload = {
   noteId: string;
   quote: string;
   author: string | null;
-  color: WallColor;
+  color: NoteColor;
 };
 
 const QUOTE_FONT =
@@ -41,9 +45,8 @@ export function wallQuoteText(summary: string, energy: string, maxChars = 160) {
   return "";
 }
 
-export function wallQuoteColor(value: string | null | undefined): WallColor {
-  if (typeof value === "string" && isWallColor(value)) return value;
-  return "peach";
+export function wallQuoteColor(value: string | null | undefined): NoteColor {
+  return displayNoteColor(value);
 }
 
 export function quoteCardFilename(noteId: string) {

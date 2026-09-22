@@ -16,6 +16,10 @@
   --lemon: #f3e3b6;
   --sky: #d5e4ea;
   --lavender: #e4d8f2;
+  --lilac: #eadcf6;
+  --rose: #f6d0da;
+  --fern: #c9e0d2;
+  --apricot: #f6d2b8;
 }
 
 @theme inline {
@@ -33,6 +37,10 @@
   --color-lemon: var(--lemon);
   --color-sky: var(--sky);
   --color-lavender: var(--lavender);
+  --color-lilac: var(--lilac);
+  --color-rose: var(--rose);
+  --color-fern: var(--fern);
+  --color-apricot: var(--apricot);
   --shadow-soft: 0 12px 32px rgba(154, 111, 90, 0.12);
   --shadow-card: 0 6px 20px rgba(154, 111, 90, 0.08);
   --font-sans: var(--font-body), "Noto Sans TC", "Noto Sans JP", "PingFang TC",
@@ -85,6 +93,10 @@ html[data-night="on"] {
   --lemon: #6d5d42;
   --sky: #3e4e55;
   --lavender: #51485f;
+  --lilac: #554862;
+  --rose: #684650;
+  --fern: #3a5346;
+  --apricot: #6b5142;
 }
 
 html[data-night="on"] body {
@@ -115,6 +127,10 @@ html[data-night="on"] .text-paper {
     --lemon: #f3e3b6;
     --sky: #d5e4ea;
     --lavender: #e4d8f2;
+    --lilac: #eadcf6;
+    --rose: #f6d0da;
+    --fern: #c9e0d2;
+    --apricot: #f6d2b8;
   }
 
   html[data-night="on"] .text-paper {
@@ -425,6 +441,10 @@ html[data-quiet-writing="1"] main {
     --lemon: #f3e3b6;
     --sky: #d5e4ea;
     --lavender: #e4d8f2;
+    --lilac: #eadcf6;
+    --rose: #f6d0da;
+    --fern: #c9e0d2;
+    --apricot: #f6d2b8;
   }
 
   html,

@@ -49,6 +49,8 @@
     "wallSavedDescription": "Soft+ の非公開ブックマーク。近くに置きたい Soft Wall の付箋。",
     "snapshotTitle": "やわらかい月 · Soft Boring Weekly",
     "snapshotDescription": "あなたのタイムゾーンで、今月のふりかえりを印刷できるクリームのページに。Free は新しい四つ、Soft+ は月ぜんぶ。",
+    "activityTitle": "やわらかな足跡 · Soft Boring Weekly",
+    "activityDescription": "保存した週、ピンした付箋、残したありがとうが静かに並びます。ログインしていれば無料です。メールは送りません。",
     "guidelinesTitle": "ソフトウォールの案内 · Soft Boring Weekly",
     "guidelinesDescription": "ソフトウォールのためのやさしいエチケット——やさしく、スパムなし、共有は自分の意思で。"
   },
@@ -362,6 +364,9 @@
     "reminderSaving": "残しています…",
     "timezoneHint": "今週のリズムと、やわらかい月のために使います。デスクは Asia/Taipei からはじまります。",
     "softMonth": "やわらかい月",
+    "activityTitle": "やわらかな足跡",
+    "activityBody": "ログインしていれば無料です。保存した週、ピンした付箋、残したありがとうが並びます。メールは送りません。",
+    "activityOpen": "足跡を見る",
     "digestTitle": "今月",
     "digestBody": "あなたのタイムゾーンで、この暦月に残したふりかえりの静かな集計。",
     "digestCountLabel": "ふりかえり",
@@ -644,6 +649,12 @@
     "color_cream": "クリーム",
     "color_lemon": "レモン",
     "color_sky": "スカイ",
+    "personalColorTitle": "自分だけの色",
+    "personalColorHint": "Soft+ は、みんなの色見本の外に自分の色を覚えられます。ピンした付箋に残ります。無料は、これまで通りの六色です。",
+    "color_lilac": "ライラック",
+    "color_rose": "ローズ",
+    "color_fern": "シダ",
+    "color_apricot": "アプリコット",
     "unshareTitle": "Soft Wall のあなたの付箋",
     "unshareHint": "いつでも下ろせるよ。下ろすと、その週はまた履歴だけの静かな場所に戻る。",
     "thankCta": "残してくれて、ありがとう",
@@ -680,7 +691,11 @@
     "palette_mint": "水をあげたばかり",
     "palette_cream": "しずかな紙",
     "palette_lemon": "明るいひとくち",
-    "palette_sky": "窓があいている"
+    "palette_sky": "窓があいている",
+    "palette_lilac": "静かな夕方",
+    "palette_rose": "小さなやさしさ",
+    "palette_fern": "雨のあと",
+    "palette_apricot": "夕方の光"
   },
   "Export": {
     "title": "印刷できるふりかえり",
@@ -699,7 +714,26 @@
     "moon": "月",
     "cloud": "雲",
     "peach": "桃",
-    "sparkle": "きらめき"
+    "sparkle": "きらめき",
+    "blossom": "花",
+    "leaf": "葉",
+    "honey": "はちみつ",
+    "shell": "貝がら",
+    "candle": "ろうそく"
+  },
+  "SoftActivity": {
+    "eyebrow": "あなたのデスク",
+    "title": "やわらかな足跡",
+    "lead": "保存した週、ピンした付箋、残したありがとうが、静かに並びます。メールは送りません。",
+    "emptyTitle": "まだ、何も置かれていません",
+    "emptyBody": "週を保存したり、ソフトウォールにピンしたり、ありがとうを残すと、ここにそっと跡が残ります。",
+    "emptyCta": "今週を書く",
+    "kind_review": "週を保存した",
+    "kind_pin": "ソフトウォールにピンした",
+    "kind_thanks": "ありがとうを残した",
+    "untitled": "静かな一週",
+    "back": "デスクに戻る",
+    "open": "開く"
   },
   "Onboarding": {
     "title": "小さな、最初の散歩。",

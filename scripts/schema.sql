@@ -144,7 +144,12 @@ INSERT OR IGNORE INTO stickers (id, slug, name, price_cents, stripe_price_id, em
   ('sticker-moon', 'moon', 'Moon', 99, NULL, '🌙', 5),
   ('sticker-cloud', 'cloud', 'Cloud', 99, NULL, '☁️', 6),
   ('sticker-peach', 'peach', 'Peach', 99, NULL, '🍑', 7),
-  ('sticker-sparkle', 'sparkle', 'Sparkle', 99, NULL, '✨', 8);
+  ('sticker-sparkle', 'sparkle', 'Sparkle', 99, NULL, '✨', 8),
+  ('sticker-blossom', 'blossom', 'Blossom', 99, NULL, '🌸', 9),
+  ('sticker-leaf', 'leaf', 'Leaf', 99, NULL, '🍃', 10),
+  ('sticker-honey', 'honey', 'Honey', 99, NULL, '🍯', 11),
+  ('sticker-shell', 'shell', 'Shell', 99, NULL, '🐚', 12),
+  ('sticker-candle', 'candle', 'Candle', 99, NULL, '🕯️', 13);
 
 CREATE TABLE IF NOT EXISTS payments (
   id TEXT PRIMARY KEY,
@@ -184,6 +189,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
   reminder_last_sent_at TEXT,
   custom_questions TEXT NOT NULL DEFAULT '[]',
   preferred_wall_color TEXT,
+  custom_note_color TEXT,
   timezone TEXT NOT NULL DEFAULT 'Asia/Taipei',
   onboarding_timezone_set INTEGER NOT NULL DEFAULT 0,
   seasonal_frame INTEGER NOT NULL DEFAULT 0,

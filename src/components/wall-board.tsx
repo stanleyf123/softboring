@@ -35,10 +35,18 @@ import {
   type SeasonalPackId,
 } from "@/lib/seasonal-frame";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
+import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+type NoteSticker = {
+  stickerId: string;
+  slug: string;
+  emoji: string;
+  count: number;
+};
 
 type TeaserNote = {
   id: string;
@@ -49,6 +57,7 @@ type TeaserNote = {
   praiseCount: number;
   thankCount?: number;
   ownerNickname?: string | null;
+  stickers?: NoteSticker[];
 };
 
 type FullNote = TeaserNote & {
@@ -69,7 +78,7 @@ type FullNote = TeaserNote & {
   ownerInviteBadge?: boolean;
   ownerIsDemo?: boolean;
   mood?: string | null;
-  stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
+  stickers: NoteSticker[];
   energy?: string;
   drain?: string;
   lessOf?: string;
@@ -100,6 +109,10 @@ const COLOR_CLASS: Record<string, string> = {
   cream: "bg-cream",
   lemon: "bg-lemon",
   sky: "bg-sky",
+  lilac: "bg-lilac",
+  rose: "bg-rose",
+  fern: "bg-fern",
+  apricot: "bg-apricot",
 };
 
 function noteClass(color: string) {
@@ -169,6 +182,9 @@ export function WallBoard({
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
+  function stickerName(slug: string) {
+    return isWallStickerSlug(slug) ? tStickers(slug) : slug;
+  }
   const tQuestions = useTranslations("Questions");
   const tPacks = useTranslations("SeasonalPacks");
   const locale = useLocale();
@@ -1198,12 +1214,26 @@ export function WallBoard({
                     </span>
                   ) : null}
                   {locked || !full ? (
-                    <span className="mt-2 block space-y-2 blur-[3px]">
-                      <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />
-                      <span className="block h-3 w-full rounded-full bg-foreground/10" />
-                      <span className="block h-3 w-2/3 rounded-full bg-foreground/10" />
-                      <span className="mt-6 block h-16 rounded-2xl bg-paper/50" />
-                    </span>
+                    <>
+                      <span className="mt-2 block space-y-2 blur-[3px]">
+                        <span className="block h-3 w-4/5 rounded-full bg-foreground/15" />
+                        <span className="block h-3 w-full rounded-full bg-foreground/10" />
+                        <span className="block h-3 w-2/3 rounded-full bg-foreground/10" />
+                        <span className="mt-6 block h-16 rounded-2xl bg-paper/50" />
+                      </span>
+                      {note.stickers?.length ? (
+                        <span className="mt-3 flex flex-wrap gap-1 text-base">
+                          {note.stickers.slice(0, 6).map((sticker) => (
+                            <span key={sticker.stickerId} aria-hidden="true">
+                              {sticker.emoji}
+                              {sticker.count > 1 ? (
+                                <span className="text-[10px] text-muted">×{sticker.count}</span>
+                              ) : null}
+                            </span>
+                          ))}
+                        </span>
+                      ) : null}
+                    </>
                   ) : (
                     <>
                       {full.ownerSoftPlus ? (
@@ -1352,18 +1382,7 @@ export function WallBoard({
                 >
                   <div>
                     <p className="font-display text-lg">
-                      {sticker.emoji}{" "}
-                      {tStickers(
-                        sticker.slug as
-                          | "star"
-                          | "heart"
-                          | "sprout"
-                          | "tea"
-                          | "moon"
-                          | "cloud"
-                          | "peach"
-                          | "sparkle",
-                      )}
+                      {sticker.emoji} {stickerName(sticker.slug)}
                     </p>
                     <p className="text-sm text-muted">
                       {sticker.formatted} · {t("owned", { count: inventory[sticker.id] ?? 0 })}
@@ -1548,17 +1567,7 @@ export function WallBoard({
                         className="rounded-full bg-blush px-3 py-1.5 text-sm disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                         title={t("owned", { count: owned })}
                         aria-label={t("placeStickerAria", {
-                          name: tStickers(
-                            sticker.slug as
-                              | "star"
-                              | "heart"
-                              | "sprout"
-                              | "tea"
-                              | "moon"
-                              | "cloud"
-                              | "peach"
-                              | "sparkle",
-                          ),
+                          name: stickerName(sticker.slug),
                           count: owned,
                         })}
                       >

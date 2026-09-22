@@ -2,19 +2,29 @@
 
 import { Link, useRouter } from "@/i18n/navigation";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
-import { isWallColor, WALL_COLORS, type WallColor } from "@/lib/wall-canvas";
+import {
+  isPlusNoteColor,
+  isWallColor,
+  PLUS_NOTE_COLORS,
+  WALL_COLORS,
+  type NoteColor,
+} from "@/lib/wall-canvas";
 import { isWeekMood, type WeekMood } from "@/lib/week-mood";
 import { WeekMoodChip } from "@/components/week-mood-picker";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-const COLOR_SWATCH: Record<WallColor, string> = {
+const COLOR_SWATCH: Record<NoteColor, string> = {
   peach: "bg-peach",
   blush: "bg-blush",
   mint: "bg-mint",
   cream: "bg-cream",
   lemon: "bg-lemon",
   sky: "bg-sky",
+  lilac: "bg-lilac",
+  rose: "bg-rose",
+  fern: "bg-fern",
+  apricot: "bg-apricot",
 };
 
 export function shareErrorCopy(
@@ -57,7 +67,7 @@ export function ShareToWall({
   const [noteId, setNoteId] = useState(initialNoteId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<WallShareErrorKey | null>(null);
-  const [color, setColor] = useState<WallColor>("peach");
+  const [color, setColor] = useState<NoteColor>("peach");
   const [colorReady, setColorReady] = useState(!softPlus);
   const hero = variant === "hero";
 
@@ -72,10 +82,16 @@ export function ShareToWall({
         const response = await fetch("/api/account/settings", { cache: "no-store" });
         if (!response.ok || cancelled) return;
         const data = (await response.json()) as {
-          settings?: { preferredWallColor?: string | null };
+          settings?: {
+            preferredWallColor?: string | null;
+            customNoteColor?: string | null;
+          };
         };
+        const custom = data.settings?.customNoteColor;
         const preferred = data.settings?.preferredWallColor;
-        if (!cancelled && typeof preferred === "string" && isWallColor(preferred)) {
+        if (!cancelled && typeof custom === "string" && isPlusNoteColor(custom)) {
+          setColor(custom);
+        } else if (!cancelled && typeof preferred === "string" && isWallColor(preferred)) {
           setColor(preferred);
         }
       } finally {
@@ -87,14 +103,17 @@ export function ShareToWall({
     };
   }, [softPlus, noteId]);
 
-  async function rememberColor(next: WallColor) {
+  async function rememberColor(next: NoteColor) {
     setColor(next);
     if (!softPlus) return;
+    const body = isPlusNoteColor(next)
+      ? { customNoteColor: next }
+      : { preferredWallColor: next, customNoteColor: null };
     try {
       await fetch("/api/account/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preferredWallColor: next }),
+        body: JSON.stringify(body),
       });
     } catch {
       // Preference is optional — share still works.
@@ -183,27 +202,45 @@ export function ShareToWall({
         <div className="mt-5">
           <p className="text-sm text-muted">{t("colorPreferTitle")}</p>
           <p className="mt-1 text-xs leading-relaxed text-muted">{t("colorPreferHint")}</p>
-          <div
-            className="mt-3 flex flex-wrap gap-2"
-            role="radiogroup"
-            aria-label={t("colorPreferTitle")}
-          >
-            {WALL_COLORS.map((swatch) => {
-              const selected = color === swatch;
-              return (
-                <button
-                  key={swatch}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  aria-label={t(`color_${swatch}`)}
-                  onClick={() => void rememberColor(swatch)}
-                  className={`h-9 w-9 rounded-full border-2 shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${COLOR_SWATCH[swatch]} ${
-                    selected ? "border-accent" : "border-line/70"
-                  }`}
-                />
-              );
-            })}
+          <div role="radiogroup" aria-label={t("colorPreferTitle")}>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {WALL_COLORS.map((swatch) => {
+                const selected = color === swatch;
+                return (
+                  <button
+                    key={swatch}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    aria-label={t(`color_${swatch}`)}
+                    onClick={() => void rememberColor(swatch)}
+                    className={`h-9 w-9 rounded-full border-2 shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${COLOR_SWATCH[swatch]} ${
+                      selected ? "border-accent" : "border-line/70"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <p className="mt-4 text-sm text-muted">{t("personalColorTitle")}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted">{t("personalColorHint")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {PLUS_NOTE_COLORS.map((swatch) => {
+                const selected = color === swatch;
+                return (
+                  <button
+                    key={swatch}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    aria-label={t(`color_${swatch}`)}
+                    onClick={() => void rememberColor(swatch)}
+                    className={`h-9 w-9 rounded-full border-2 shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${COLOR_SWATCH[swatch]} ${
+                      selected ? "border-accent" : "border-line/70"
+                    }`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       ) : null}

@@ -79,7 +79,17 @@ if (settingsTable) {
   ensureColumn("user_settings", "focus_chime", "INTEGER NOT NULL DEFAULT 1");
   ensureColumn("user_settings", "night_mode", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "memory_lane", "INTEGER NOT NULL DEFAULT 1");
+  ensureColumn("user_settings", "custom_note_color", "TEXT");
 }
+
+db.exec(`
+  INSERT OR IGNORE INTO stickers (id, slug, name, price_cents, stripe_price_id, emoji, sort_order) VALUES
+    ('sticker-blossom', 'blossom', 'Blossom', 99, NULL, '🌸', 9),
+    ('sticker-leaf', 'leaf', 'Leaf', 99, NULL, '🍃', 10),
+    ('sticker-honey', 'honey', 'Honey', 99, NULL, '🍯', 11),
+    ('sticker-shell', 'shell', 'Shell', 99, NULL, '🐚', 12),
+    ('sticker-candle', 'candle', 'Candle', 99, NULL, '🕯️', 13);
+`);
 
 const wallTable = db
   .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wall_notes'`)

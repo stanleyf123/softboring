@@ -49,6 +49,8 @@
     "wallSavedDescription": "Soft+ 私下收藏的軟軟牆便利貼，安靜地留在你身邊。",
     "snapshotTitle": "我的柔軟月份 · Soft Boring Weekly",
     "snapshotDescription": "用你的時區，把這個月的回顧鋪成可列印的奶油色頁面。免費打開最近四篇，Soft+ 打開整個月。",
+    "activityTitle": "柔軟足跡 · Soft Boring Weekly",
+    "activityDescription": "你存下的週次、釘上的便利貼、留下的謝謝，輕輕列在這裡。登入即可免費查看。不會寄信。",
     "guidelinesTitle": "軟軟牆禮儀 · Soft Boring Weekly",
     "guidelinesDescription": "軟軟牆的溫柔禮儀——善意、不洗版、只分享你願意分享的一週。"
   },
@@ -362,6 +364,9 @@
     "reminderSaving": "儲存中…",
     "timezoneHint": "用來算本週節奏，以及「我的柔軟月份」。書桌一開始是 Asia/Taipei。",
     "softMonth": "我的柔軟月份",
+    "activityTitle": "柔軟足跡",
+    "activityBody": "登入後免費查看：你存下的週次、釘上的便利貼、留下的謝謝。不會寄信。",
+    "activityOpen": "看看柔軟足跡",
     "digestTitle": "這個月",
     "digestBody": "以你的時區，把這個月存下的回顧安靜地加總。",
     "digestCountLabel": "回顧",
@@ -644,6 +649,12 @@
     "color_cream": "奶油",
     "color_lemon": "檸檬",
     "color_sky": "天空",
+    "personalColorTitle": "專屬的一點顏色",
+    "personalColorHint": "Soft+ 可以在共用色票之外記住一種自己的顏色，並留在你釘上的便利貼。免費仍使用原來的六種柔色。",
+    "color_lilac": "紫丁香",
+    "color_rose": "玫瑰",
+    "color_fern": "蕨綠",
+    "color_apricot": "杏子",
     "unshareTitle": "你在軟軟牆上的便利貼",
     "unshareHint": "想拿下來就拿下來。拿下後，這週又只留在歷史裡。",
     "thankCta": "謝謝你留下這則",
@@ -680,7 +691,11 @@
     "palette_mint": "剛澆過水",
     "palette_cream": "安靜的紙",
     "palette_lemon": "明亮的一口",
-    "palette_sky": "窗開著"
+    "palette_sky": "窗開著",
+    "palette_lilac": "安靜的傍晚",
+    "palette_rose": "小小的善意",
+    "palette_fern": "雨後",
+    "palette_apricot": "傍晚的光"
   },
   "Export": {
     "title": "可列印的回顧",
@@ -699,7 +714,26 @@
     "moon": "月亮",
     "cloud": "雲",
     "peach": "桃子",
-    "sparkle": "亮晶晶"
+    "sparkle": "亮晶晶",
+    "blossom": "小花",
+    "leaf": "葉子",
+    "honey": "蜂蜜",
+    "shell": "貝殼",
+    "candle": "蠟燭"
+  },
+  "SoftActivity": {
+    "eyebrow": "你的桌位",
+    "title": "柔軟足跡",
+    "lead": "你存下的週次、釘上的便利貼、留下的謝謝，輕輕排在這裡。不會寄信。",
+    "emptyTitle": "這裡還靜靜的",
+    "emptyBody": "存下一週、釘上軟軟牆，或留下一句謝謝，這頁就會記下輕輕的痕跡。",
+    "emptyCta": "寫下這一週",
+    "kind_review": "存下了一週",
+    "kind_pin": "釘上了軟軟牆",
+    "kind_thanks": "留下了謝謝",
+    "untitled": "安靜的一週",
+    "back": "回到你的桌位",
+    "open": "打開"
   },
   "Onboarding": {
     "title": "先走幾小步。",

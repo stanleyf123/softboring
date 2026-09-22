@@ -4,12 +4,12 @@ import { emailLocalFallback, wallOwnerNickname } from "@/lib/nickname";
 import { isSoftPlusPlan } from "@/lib/plan";
 import {
   clampNotePosition,
-  colorForIndex,
-  isWallColor,
+  displayNoteColor,
   noteExcerpt,
   notePositionForIndex,
+  resolveShareNoteColor,
   WALL_PIN_Z,
-  type WallColor,
+  type NoteColor,
 } from "@/lib/wall-canvas";
 import { parseWeekMood, type WeekMood } from "@/lib/week-mood";
 import { stickerCountsByNote } from "./stickers";
@@ -50,7 +50,7 @@ export type WallNoteListItem = {
   x: number;
   y: number;
   z: number;
-  color: WallColor;
+  color: NoteColor;
   praiseCount: number;
   createdAt: string;
   mine: boolean;
@@ -112,7 +112,7 @@ const NOTE_SELECT = `
 `;
 
 function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem {
-  const color = isWallColor(row.color) ? row.color : "peach";
+  const color = displayNoteColor(row.color);
   return {
     id: row.id,
     x: row.x,
@@ -238,7 +238,10 @@ export function getWallNoteIdForReview(reviewId: string): string | null {
 export function shareWallNote(input: {
   reviewId: string;
   userId: string;
-  color?: WallColor | null;
+  color?: string | null;
+  softPlus?: boolean;
+  preferredWallColor?: string | null;
+  customNoteColor?: string | null;
 }): WallNoteListItem {
   const db = getDb();
   const existing = db
@@ -262,8 +265,13 @@ export function shareWallNote(input: {
   const position = notePositionForIndex(countRow.n);
   const now = new Date().toISOString();
   const id = crypto.randomUUID();
-  const color =
-    input.color && isWallColor(input.color) ? input.color : colorForIndex(countRow.n);
+  const color = resolveShareNoteColor({
+    requested: input.color,
+    softPlus: Boolean(input.softPlus),
+    preferredWallColor: input.preferredWallColor,
+    customNoteColor: input.customNoteColor,
+    index: countRow.n,
+  });
 
   db.prepare(
     `INSERT INTO wall_notes (

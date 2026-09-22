@@ -1,6 +1,7 @@
 import type Database from "better-sqlite3";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { EXPANDED_STICKERS } from "../lib/wall-stickers.ts";
 
 function schemaSql() {
   return readFileSync(join(process.cwd(), "scripts/schema.sql"), "utf8");
@@ -87,6 +88,27 @@ export function ensureUserSettingsColumns(db: Database.Database) {
   ensureColumn(db, "user_settings", "focus_chime", "INTEGER NOT NULL DEFAULT 1");
   ensureColumn(db, "user_settings", "night_mode", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn(db, "user_settings", "memory_lane", "INTEGER NOT NULL DEFAULT 1");
+  ensureColumn(db, "user_settings", "custom_note_color", "TEXT");
+}
+
+export function ensureExpandedStickers(db: Database.Database) {
+  const table = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'stickers'`)
+    .get() as { name: string } | undefined;
+  if (!table) return;
+  const insert = db.prepare(
+    `INSERT OR IGNORE INTO stickers (id, slug, name, price_cents, stripe_price_id, emoji, sort_order)
+     VALUES (@id, @slug, @name, 99, NULL, @emoji, @sort_order)`,
+  );
+  for (const sticker of EXPANDED_STICKERS) {
+    insert.run({
+      id: sticker.id,
+      slug: sticker.slug,
+      name: sticker.name,
+      emoji: sticker.emoji,
+      sort_order: sticker.sortOrder,
+    });
+  }
 }
 
 export function ensureWallNotePinned(db: Database.Database) {
@@ -397,4 +419,5 @@ export function migrateDb(db: Database.Database) {
   ensureWeekPauses(db);
   ensureSoftLetters(db);
   ensureSoftPlusGiftCodes(db);
+  ensureExpandedStickers(db);
 }
