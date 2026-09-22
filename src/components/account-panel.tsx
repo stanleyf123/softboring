@@ -4,6 +4,7 @@ import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { GratitudeJarCard } from "@/components/gratitude-jar-card";
 import { SoftCapsuleCard } from "@/components/soft-capsule-card";
+import { SoftOpensInbox } from "@/components/soft-opens-inbox";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
 import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
@@ -19,6 +20,7 @@ import {
   planExpiryReminderDue,
 } from "@/lib/plan";
 import { applyNightPreference } from "@/lib/night-mode";
+import { SoftBloomPreference } from "@/components/soft-save-bloom";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
@@ -231,6 +233,7 @@ export function AccountPanel({
           <SoftIntentionCard signedIn variant="account" />
           <GratitudeJarCard signedIn softPlus={softPlus} variant="account" />
           <SoftCapsuleCard signedIn softPlus={softPlus} variant="account" />
+          <SoftOpensInbox signedIn softPlus={softPlus} />
           <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />
           <GiftRedeemCard softPlus={softPlus} />
@@ -509,6 +512,8 @@ export function AccountPanel({
               </span>
             </label>
           </div>
+
+          <SoftBloomPreference />
 
           <div className="mt-8 rounded-[1.5rem] bg-mint/40 px-5 py-5" data-memory-lane-preference>
             <p className="font-display text-lg tracking-tight">{t("memoryLaneTitle")}</p>
