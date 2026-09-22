@@ -435,6 +435,12 @@ export function AccountPanel({
                 {t("digest")}
               </Link>
             ) : null}
+            <Link
+              href="/account/snapshot"
+              className="rounded-full bg-cream px-5 py-2.5 text-sm shadow-card"
+            >
+              {t("softMonth")}
+            </Link>
             {softPlus ? (
               <Link
                 href="/history/export"

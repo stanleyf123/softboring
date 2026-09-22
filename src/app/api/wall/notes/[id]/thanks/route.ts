@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { flagWallNote } from "@/db/wall-flags";
 import { withViewerNoteState } from "@/db/wall-note-view";
+import { thankWallNote } from "@/db/wall-thanks";
 import { getWallNote } from "@/db/wall";
 import { getWallViewer, requireSoftPlus } from "@/lib/wall-access";
 
@@ -19,23 +19,23 @@ export async function POST(_request: Request, context: Context) {
     if (plus) return plus;
 
     try {
-      const result = flagWallNote(viewer.user!.id, id);
+      const result = thankWallNote(viewer.user!.id, id);
       const note = getWallNote(id, viewer.userId);
       return NextResponse.json({
         ...result,
         note: note ? withViewerNoteState(note, viewer.userId) : null,
       });
     } catch (error) {
-      if (error instanceof Error && error.name === "FlagNotFoundError") {
+      if (error instanceof Error && error.name === "ThanksNotFoundError") {
         return NextResponse.json({ error: "not_found" }, { status: 404 });
       }
-      if (error instanceof Error && error.name === "FlagOwnNoteError") {
+      if (error instanceof Error && error.name === "ThanksOwnNoteError") {
         return NextResponse.json({ error: "own_note" }, { status: 400 });
       }
       throw error;
     }
   } catch (error) {
-    console.error("POST /api/wall/notes/[id]/flag failed", error);
-    return NextResponse.json({ error: "Could not note this quietly." }, { status: 500 });
+    console.error("POST /api/wall/notes/[id]/thanks failed", error);
+    return NextResponse.json({ error: "Could not leave that thank-you." }, { status: 500 });
   }
 }

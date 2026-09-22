@@ -94,6 +94,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
         : isWallColor(patch.preferredWallColor)
           ? patch.preferredWallColor
           : current.preferredWallColor;
+  const nextTimezone =
+    patch.timezone === undefined ? current.timezone : normalizeTimeZone(patch.timezone);
 
   getDb()
     .prepare(
@@ -157,8 +159,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           : normalizeCustomQuestions(patch.customQuestions),
       ),
       preferred_wall_color: nextPreferred,
-      timezone:
-        patch.timezone === undefined ? current.timezone : normalizeTimeZone(patch.timezone),
+      timezone: nextTimezone,
     });
   return ensureUserSettings(userId);
 }

@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import {
-  attachBookmarkToDetail,
-  toggleWallNoteBookmark,
-} from "@/db/wall-bookmarks";
+import { toggleWallNoteBookmark } from "@/db/wall-bookmarks";
+import { withViewerNoteState } from "@/db/wall-note-view";
 import { getWallNote } from "@/db/wall";
 import { getWallViewer, requireSoftPlus } from "@/lib/wall-access";
 
@@ -27,7 +25,7 @@ export async function POST(_request: Request, context: Context) {
     }
     return NextResponse.json({
       bookmarked: result.bookmarked,
-      note: attachBookmarkToDetail(note, viewer.userId),
+      note: withViewerNoteState(note, viewer.userId),
     });
   } catch (error) {
     if (error instanceof Error && error.name === "BookmarkNotFoundError") {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getLatestReviewIdForUser, getReviewForOwner, listReviewsForOwner } from "@/db/reviews";
 import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
 import { withBookmarkFlag } from "@/db/wall-bookmarks";
+import { withThanks } from "@/db/wall-thanks";
 import { getWallNoteIdForReview, listVisibleWallNotes, shareWallNote } from "@/db/wall";
 import { isHistoryIndexUnlocked } from "@/lib/history-access";
 import { getReviewAccess } from "@/lib/review-access";
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const viewer = await getWallViewer();
-    const notes = listVisibleWallNotes(viewer.userId);
+    const notes = withThanks(listVisibleWallNotes(viewer.userId), viewer.userId);
     const latestOwnedReviewId = viewer.userId
       ? getLatestReviewIdForUser(viewer.userId)
       : null;

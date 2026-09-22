@@ -241,6 +241,20 @@ db.exec(
   "CREATE INDEX IF NOT EXISTS idx_wall_note_flags_created ON wall_note_flags (created_at DESC)",
 );
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_thanks (
+    user_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, note_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_thanks_note ON wall_note_thanks (note_id)",
+);
+
 if (usersTable) {
   ensureColumn("users", "plan_expires_at", "TEXT");
 }

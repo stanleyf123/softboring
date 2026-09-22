@@ -117,6 +117,17 @@ export function HistoryList() {
         </section>
       ) : null}
 
+      {access && !access.isGuest ? (
+        <p>
+          <Link
+            href="/account/snapshot"
+            className="inline-flex rounded-full bg-cream px-4 py-2 text-sm shadow-card"
+          >
+            {t("softMonth")}
+          </Link>
+        </p>
+      ) : null}
+
       {access?.softPlus ? (
         <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">
           <p className="font-display text-lg tracking-tight">{t("plusToolsTitle")}</p>

@@ -1,8 +1,10 @@
 import { SoftMemoryCard } from "@/components/soft-memory-card";
+import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
 import { HomeSoftStats } from "@/components/soft-stats-strip";
 import { listReviewsForOwner } from "@/db/reviews";
+import { ensureUserSettings } from "@/db/user-settings";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
@@ -35,6 +37,7 @@ export default async function HomePage({ params }: Props) {
 
   const t = await getTranslations("Home");
   const user = await getCurrentUser();
+  const settings = user ? ensureUserSettings(user.id) : null;
   const softPlus = userIsSoftPlus(user);
   const memory =
     user
@@ -92,6 +95,16 @@ export default async function HomePage({ params }: Props) {
           <HeroDoodle />
         </div>
       </section>
+
+      {settings ? (
+        <div className="mt-10">
+          <SoftRhythmCard
+            reminderWeekday={settings.reminderWeekday}
+            reminderEnabled={settings.reminderEnabled}
+            timezone={settings.timezone}
+          />
+        </div>
+      ) : null}
 
       <HomeSoftStats
         labels={{

@@ -180,6 +180,13 @@ a {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+
+  .soft-month-sheet {
+    background: #fff8f2 !important;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 @media (max-width: 767px) {

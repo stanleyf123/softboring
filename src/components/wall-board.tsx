@@ -33,6 +33,7 @@ type TeaserNote = {
   z: number;
   color: string;
   praiseCount: number;
+  thankCount?: number;
   ownerNickname?: string | null;
 };
 
@@ -45,6 +46,8 @@ type FullNote = TeaserNote & {
   pinned?: boolean;
   bookmarked?: boolean;
   flaggedByMe?: boolean;
+  thankCount?: number;
+  thankedByMe?: boolean;
   ownerSoftPlus?: boolean;
   ownerFallback?: string | null;
   ownerInviteBadge?: boolean;
@@ -454,6 +457,42 @@ export function WallBoard({
     setNotes((list) => list.filter((item) => item.id !== id));
     setSelectedId(null);
     setDetail(null);
+  }
+
+  async function thankNote(id: string) {
+    if (busy || locked || !softPlus) return;
+    setBusy(`thank:${id}`);
+    try {
+      const data = await readJson<{
+        thanked?: boolean;
+        thankCount?: number;
+        note?: FullNote;
+      }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(id)}/thanks`, {
+          method: "POST",
+        }),
+      );
+      const thankCount =
+        typeof data.thankCount === "number"
+          ? data.thankCount
+          : (data.note?.thankCount ?? 0);
+      setNotes((list) =>
+        list.map((item) =>
+          item.id === id ? { ...item, thankCount, thankedByMe: true } : item,
+        ),
+      );
+      if (data.note) {
+        setDetail(data.note);
+      } else if (data.thanked) {
+        setDetail((current) =>
+          current && current.id === id
+            ? { ...current, thankedByMe: true, thankCount }
+            : current,
+        );
+      }
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function reportNote(id: string) {
@@ -909,9 +948,20 @@ export function WallBoard({
                 t("softVisitor"),
                 Boolean(full),
               );
+              const thankCount = note.thankCount ?? 0;
+              const canThank = Boolean(full && !full.mine && softPlus && !locked);
               return (
-                <button
+                <div
                   key={note.id}
+                  className="absolute w-[216px]"
+                  style={{
+                    left: note.x,
+                    top: note.y,
+                    zIndex: note.z,
+                    transform: `rotate(${tiltFor(note.id)}deg)`,
+                  }}
+                >
+                <button
                   type="button"
                   data-note-id={note.id}
                   onPointerDown={(event) => onPointerDown(event, note)}
@@ -926,7 +976,7 @@ export function WallBoard({
                       // already released
                     }
                   }}
-                  className={`absolute w-[216px] cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
+                  className={`relative w-full cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${noteClass(note.color)} ${canThank ? "pb-14" : ""} ${locked ? "pointer-events-none select-none" : ""}`}
                   aria-label={
                     full
                       ? t("noteAria", { excerpt: full.excerpt || t("untitled") })
@@ -934,12 +984,6 @@ export function WallBoard({
                   }
                   aria-haspopup={full ? "dialog" : undefined}
                   aria-expanded={full ? selectedId === note.id : undefined}
-                  style={{
-                    left: note.x,
-                    top: note.y,
-                    zIndex: note.z,
-                    transform: `rotate(${tiltFor(note.id)}deg)`,
-                  }}
                 >
                   <span
                     className="absolute left-1/2 top-0 h-4 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/40"
@@ -971,6 +1015,14 @@ export function WallBoard({
                         aria-label={t("saved")}
                       >
                         ♥
+                      </span>
+                    ) : null}
+                    {thankCount > 0 ? (
+                      <span
+                        className="shrink-0 rounded-full bg-paper/80 px-2 py-0.5 text-muted"
+                        aria-label={t("thankCount", { count: thankCount })}
+                      >
+                        ✿ {thankCount}
                       </span>
                     ) : null}
                   </span>
@@ -1018,6 +1070,20 @@ export function WallBoard({
                     </>
                   )}
                 </button>
+                {canThank ? (
+                  <button
+                    type="button"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={() => void thankNote(note.id)}
+                    disabled={busy !== null || Boolean(full?.thankedByMe)}
+                    aria-pressed={Boolean(full?.thankedByMe)}
+                    aria-label={t("thankAria")}
+                    className="absolute bottom-3 left-3 right-3 z-10 rounded-full bg-paper/90 px-2 py-1.5 text-center text-[11px] leading-snug text-foreground shadow-card disabled:opacity-80"
+                  >
+                    {full?.thankedByMe ? t("thankDone") : t("thankCta")}
+                  </button>
+                ) : null}
+                </div>
               );
             })}
           </div>
@@ -1192,9 +1258,26 @@ export function WallBoard({
               {detail.feeling ? t("feeling", { value: detail.feeling }) : null}
               {detail.mine ? ` · ${t("yours")}` : ` · ${t("neighbor")}`}
               {` · ${t("praise", { count: detail.praiseCount })}`}
+              {(detail.thankCount ?? 0) > 0
+                ? ` · ${t("thankCount", { count: detail.thankCount ?? 0 })}`
+                : ""}
               {detail.pinned ? ` · ${t("pinned")}` : ""}
               {detail.bookmarked ? ` · ${t("saved")}` : ""}
             </p>
+            {!detail.mine ? (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => void thankNote(detail.id)}
+                  disabled={busy !== null || Boolean(detail.thankedByMe)}
+                  aria-pressed={Boolean(detail.thankedByMe)}
+                  aria-label={t("thankAria")}
+                  className="inline-flex min-h-11 items-center rounded-full bg-blush px-4 py-2 text-sm shadow-card disabled:opacity-70"
+                >
+                  {detail.thankedByMe ? t("thankDone") : t("thankCta")}
+                </button>
+              </div>
+            ) : null}
             <div className="mt-4">
               <button
                 type="button"
