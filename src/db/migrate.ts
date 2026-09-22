@@ -190,6 +190,24 @@ export function ensureUserNicknameColumn(db: Database.Database) {
   ensureColumn(db, "users", "nickname", "TEXT");
 }
 
+export function ensureSoftNotes(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_notes (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      week_key TEXT NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE (user_id, week_key)
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_notes_user_week ON soft_notes (user_id, week_key)`,
+  );
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -202,4 +220,5 @@ export function migrateDb(db: Database.Database) {
   // After oauth rebuild (which copies a fixed column list), re-add extras.
   ensureUserIsDemoColumn(db);
   ensureUserNicknameColumn(db);
+  ensureSoftNotes(db);
 }

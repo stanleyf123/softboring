@@ -236,3 +236,17 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   hits INTEGER NOT NULL,
   window_start INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS soft_notes (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  week_key TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE (user_id, week_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_soft_notes_user_week
+  ON soft_notes (user_id, week_key);

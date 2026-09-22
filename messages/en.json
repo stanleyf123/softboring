@@ -38,7 +38,11 @@
     "trendsTitle": "Trends · Soft Boring Weekly",
     "trendsDescription": "A small line of feeling, 1 to 5. Soft+ draws how the weeks felt.",
     "digestTitle": "Monthly digest · Soft Boring Weekly",
-    "digestDescription": "This month’s gentle tally — review count, average feeling, themes, and streak. Soft+ only."
+    "digestDescription": "This month’s gentle tally — review count, average feeling, themes, and streak. Soft+ only.",
+    "yearTitle": "Soft year · Soft Boring Weekly",
+    "yearDescription": "A gentle year-at-a-glance of weekly feeling dots. Soft+ opens the soft calendar.",
+    "wallActivityTitle": "Soft Wall compliments · Soft Boring Weekly",
+    "wallActivityDescription": "A quiet strip of recent stickers and comments across Soft Wall. Soft+ only."
   },
   "Nav": {
     "home": "Home",
@@ -53,7 +57,8 @@
     "brand": "Soft Boring",
     "memberNav": "Member pages",
     "mainNav": "Main",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "year": "Year"
   },
   "Footer": {
     "note": "Soft Boring — a quiet weekly pause",
@@ -332,7 +337,10 @@
     "inviteError": "Could not make that link just now.",
     "inviteCount": "{count} friends joined",
     "inviteReward": "A little star on your Soft Wall notes. No extra Soft+ days — just a quiet thank-you.",
-    "inviteEmpty": "No one has used it yet. That's all right."
+    "inviteEmpty": "No one has used it yet. That's all right.",
+    "yearTitle": "Soft year",
+    "yearBody": "Feeling dots for the year, one quiet glance.",
+    "yearOpen": "Open soft year"
   },
   "Digest": {
     "eyebrow": "Soft+ · in-app only",
@@ -358,7 +366,8 @@
     "lockedBody": "A gentle month summary — counts, feeling, themes, and streak — stays with Soft+.",
     "lockedCta": "See Soft+",
     "signedOutBody": "Log in on Soft+ to open this month’s digest.",
-    "loginCta": "Log in"
+    "loginCta": "Log in",
+    "seeYear": "Open soft year"
   },
   "SeasonalPacks": {
     "title": "Seasonal question packs",
@@ -476,7 +485,8 @@
     "energyChips": "Energy words",
     "drainChips": "Drain words",
     "chipsEmpty": "Not enough words yet. Write a few more weeks.",
-    "seeDigest": "Open monthly digest"
+    "seeDigest": "Open monthly digest",
+    "seeYear": "Open soft year"
   },
   "Wall": {
     "eyebrow": "A shared corkboard · opt-in",
@@ -685,5 +695,75 @@
     "plusReviewCta": "Write this week's review",
     "plusWallCta": "Open Soft Wall",
     "plusAccountCta": "Back to your desk"
+  },
+  "Year": {
+    "eyebrow": "Soft+ · in-app only",
+    "title": "Your soft year",
+    "lead": "A quiet calendar of the weeks you saved — feeling dots you can open again.",
+    "yearLabel": "{year}",
+    "filledLabel": "Weeks saved",
+    "filled": "{count}",
+    "feelingLabel": "Average feeling",
+    "feeling": "{value} / 5",
+    "feelingEmpty": "No feeling numbers yet",
+    "calendarHint": "Each soft dot is a week. Tap one to open that review.",
+    "calendarLabel": "Feeling calendar for {year}",
+    "weekFilled": "Week {week} · {feeling}",
+    "weekEmpty": "Week {week} · empty",
+    "feelingShort": "{value} / 5",
+    "feelingUnknown": "no feeling yet",
+    "legend": "{value}",
+    "legendEmpty": "Empty",
+    "seeHistory": "See history",
+    "seeTrends": "See trends",
+    "seeDigest": "See digest",
+    "emptyTitle": "No weeks in this year yet",
+    "empty": "Save a weekly review, and a soft calendar will wait here.",
+    "emptyCta": "Write a review",
+    "lockedTitle": "Soft year lives on Soft+",
+    "lockedBody": "A gentle year-at-a-glance — feeling dots and a soft calendar — stays with Soft+.",
+    "lockedCta": "See Soft+",
+    "signedOutBody": "Log in on Soft+ to open your soft year.",
+    "loginCta": "Log in"
+  },
+  "WallActivity": {
+    "eyebrow": "Soft+ · Soft Wall",
+    "title": "Gentle compliments",
+    "lead": "A quiet strip of recent stickers and comments — not a noisy feed.",
+    "pageTitle": "Soft Wall compliments",
+    "pageLead": "Recent kindness across the corkboard, kept soft.",
+    "loading": "Gathering a few soft notes…",
+    "loadError": "Could not load compliments just now.",
+    "empty": "No compliments yet. Soft Wall is still waiting for a sticker or a quiet word.",
+    "seeAll": "See more",
+    "someone": "Someone",
+    "aNote": "a note",
+    "aQuietWord": "a quiet word",
+    "stickerLine": "{who} left {emoji} on “{excerpt}”",
+    "commentLine": "{who} wrote “{body}” on “{excerpt}”",
+    "replyLine": "{who} replied “{body}” on “{excerpt}”",
+    "lockedTitle": "Compliments live on Soft+",
+    "lockedBody": "A gentle strip of Soft Wall kindness stays with Soft+.",
+    "signedOutBody": "Log in on Soft+ to see Soft Wall compliments.",
+    "lockedCta": "See Soft+",
+    "loginCta": "Log in",
+    "backToWall": "Back to Soft Wall"
+  },
+  "SoftNote": {
+    "title": "Mid-week soft note",
+    "lead": "One short private note for this week — between reviews, just for you.",
+    "guestBody": "Sign in to keep one soft mid-week note. It stays private; it is not on Soft Wall.",
+    "loginCta": "Log in",
+    "loading": "Opening this week’s note…",
+    "loadError": "Could not load the soft note just now.",
+    "weekLabel": "Week {week}",
+    "inputLabel": "Soft note",
+    "placeholder": "A quiet line for the middle of the week…",
+    "counter": "{count} / {max}",
+    "save": "Save note",
+    "saving": "Saving…",
+    "saved": "Saved. Still private.",
+    "saveError": "Could not save that note just now.",
+    "privacy": "Private only. Soft Wall does not see this note."
   }
 }

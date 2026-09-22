@@ -175,6 +175,19 @@ export function AccountPanel({
             </div>
           ) : null}
 
+          {softPlus ? (
+            <div className="mt-8 rounded-[1.5rem] bg-blush/40 px-5 py-5">
+              <p className="font-display text-lg tracking-tight">{t("yearTitle")}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t("yearBody")}</p>
+              <Link
+                href="/year"
+                className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card"
+              >
+                {t("yearOpen")}
+              </Link>
+            </div>
+          ) : null}
+
           <div className="mt-8 rounded-[1.5rem] bg-mint/50 px-5 py-5">
             <p className="font-display text-lg tracking-tight">{t("reminderTitle")}</p>
             <p className="mt-2 text-sm leading-relaxed text-muted">{t("reminderBody")}</p>

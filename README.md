@@ -48,7 +48,7 @@ Login, register, forgot-password, and OAuth start/callback are **rate-limited** 
 
 The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
-SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md).
+SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md). Soft year, wall compliments, mid-week notes: [docs/soft-year-activity-notes.md](./docs/soft-year-activity-notes.md).
 
 Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
@@ -56,8 +56,8 @@ Weekly reminders: on the account page, toggle a weekday. Cron later with `npm ru
 
 | Plan | Write reviews | History | Trends | Soft Wall |
 | --- | --- | --- | --- | --- |
-| **Free** (and guests) | Yes | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked | Locked teaser (no other people's text) |
-| **Soft+** | Yes | Unlimited, search, export CSV/PDF, custom questions, monthly digest | Feeling 1–5 over time, plus a gentle weekly streak | Full access: read, drag, comment, one-level replies, stickers, badge, pin |
+| **Free** (and guests) | Yes (+ private mid-week soft note when signed in) | Latest **4** reviews stay open; older ones show a Soft+ prompt | Locked (year / digest teasers) | Locked teaser (no other people's text) |
+| **Soft+** | Yes | Unlimited, search, export CSV/PDF, custom questions, monthly digest, soft year | Feeling 1–5 over time, plus a gentle weekly streak | Full access: read, drag, comment, one-level replies, stickers, badge, pin, compliments feed |
 
 Guests can try 1–4 reviews in the browser. After the first save, the app nudges them to register so the paid path is clear. Registering as Free still caps visible history at four; Soft+ is the unlock.
 

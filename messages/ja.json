@@ -38,7 +38,11 @@
     "trendsTitle": "傾向 · Soft Boring Weekly",
     "trendsDescription": "気持ちの小さな線。1 から 5。Soft+ が、週の感じ方を描きます。",
     "digestTitle": "月次ダイジェスト · Soft Boring Weekly",
-    "digestDescription": "今月のやさしいまとめ——回数、平均の気持ち、テーマ、連続週。Soft+ のみ。"
+    "digestDescription": "今月のやさしいまとめ——回数、平均の気持ち、テーマ、連続週。Soft+ のみ。",
+    "yearTitle": "やわらかい一年 · Soft Boring Weekly",
+    "yearDescription": "週ごとの気持ちの点で一年をそっと眺める。Soft+ で開けます。",
+    "wallActivityTitle": "Soft Wall のやさしい賛辞 · Soft Boring Weekly",
+    "wallActivityDescription": "壁の最近のステッカーとコメントの静かな帯。Soft+ のみ。"
   },
   "Nav": {
     "home": "ホーム",
@@ -53,7 +57,8 @@
     "memberNav": "会員のページ",
     "mainNav": "メイン",
     "skipToContent": "本文へスキップ",
-    "digest": "ダイジェスト"
+    "digest": "ダイジェスト",
+    "year": "一年"
   },
   "Footer": {
     "note": "Soft Boring — 静かな、週のひと休み",
@@ -332,7 +337,10 @@
     "inviteReward": "ソフトウォールの付箋に、小さな星。Soft+ の日数は増えません。ただの、やさしいお礼です。",
     "inviteEmpty": "まだ誰も使っていません。それで大丈夫。",
     "digestOpen": "詳しいダイジェストを開く",
-    "digest": "月次ダイジェスト"
+    "digest": "月次ダイジェスト",
+    "yearTitle": "やわらかい一年",
+    "yearBody": "一年分の気持ちの点を、そっと一望。",
+    "yearOpen": "やわらかい一年を開く"
   },
   "Pricing": {
     "eyebrow": "書くのは無料 · もっと覚えるのは有料",
@@ -406,7 +414,8 @@
     "energyChips": "元気のことば",
     "drainChips": "消耗のことば",
     "chipsEmpty": "まだことばが足りません。もう数週、書いてみて。",
-    "seeDigest": "月次ダイジェストを開く"
+    "seeDigest": "月次ダイジェストを開く",
+    "seeYear": "やわらかい一年を開く"
   },
   "Wall": {
     "eyebrow": "みんなのコルクボード · 自分から留める",
@@ -640,7 +649,8 @@
     "lockedBody": "やさしい月のまとめ——回数、気持ち、テーマ、連続週——は Soft+ にあります。",
     "lockedCta": "Soft+ を見る",
     "signedOutBody": "Soft+ でログインして、今月のダイジェストを開こう。",
-    "loginCta": "ログイン"
+    "loginCta": "ログイン",
+    "seeYear": "やわらかい一年を開く"
   },
   "SeasonalPacks": {
     "title": "季節の質問パック",
@@ -685,5 +695,75 @@
         "summary": "感謝の一文で、この週を。"
       }
     }
+  },
+  "Year": {
+    "eyebrow": "Soft+ · アプリ内のみ",
+    "title": "あなたのやわらかい一年",
+    "lead": "保存した週を静かなカレンダーに——もう一度開ける気持ちの点。",
+    "yearLabel": "{year}",
+    "filledLabel": "保存した週",
+    "filled": "{count}",
+    "feelingLabel": "平均の気持ち",
+    "feeling": "{value} / 5",
+    "feelingEmpty": "まだ気持ちの数字がありません",
+    "calendarHint": "点は一週。タップするとその振り返りが開きます。",
+    "calendarLabel": "{year} 年の気持ちカレンダー",
+    "weekFilled": "第 {week} 週 · {feeling}",
+    "weekEmpty": "第 {week} 週 · 空",
+    "feelingShort": "{value} / 5",
+    "feelingUnknown": "気持ちなし",
+    "legend": "{value}",
+    "legendEmpty": "空",
+    "seeHistory": "履歴を見る",
+    "seeTrends": "トレンドを見る",
+    "seeDigest": "ダイジェストを見る",
+    "emptyTitle": "この年はまだ週がありません",
+    "empty": "週次レビューを保存すると、やわらかいカレンダーがここに待ちます。",
+    "emptyCta": "レビューを書く",
+    "lockedTitle": "やわらかい一年は Soft+",
+    "lockedBody": "一年の一望——気持ちの点とカレンダー——は Soft+ にあります。",
+    "lockedCta": "Soft+ を見る",
+    "signedOutBody": "Soft+ でログインすると、やわらかい一年が開けます。",
+    "loginCta": "ログイン"
+  },
+  "WallActivity": {
+    "eyebrow": "Soft+ · Soft Wall",
+    "title": "やさしい賛辞",
+    "lead": "最近のステッカーとコメントの静かな帯——騒がしいフィードではありません。",
+    "pageTitle": "Soft Wall のやさしい賛辞",
+    "pageLead": "コルクボード上の最近のやさしさを、そっと。",
+    "loading": "やさしいメモを集めています…",
+    "loadError": "賛辞を読み込めませんでした。",
+    "empty": "まだ賛辞はありません。Soft Wall はステッカーや静かな一言を待っています。",
+    "seeAll": "もっと見る",
+    "someone": "だれか",
+    "aNote": "メモ",
+    "aQuietWord": "静かな一言",
+    "stickerLine": "{who} が「{excerpt}」に {emoji} を残しました",
+    "commentLine": "{who} が「{excerpt}」に「{body}」と書きました",
+    "replyLine": "{who} が「{excerpt}」に「{body}」と返事しました",
+    "lockedTitle": "賛辞は Soft+",
+    "lockedBody": "Soft Wall のやさしさの帯は Soft+ にあります。",
+    "signedOutBody": "Soft+ でログインすると、Soft Wall の賛辞が見られます。",
+    "lockedCta": "Soft+ を見る",
+    "loginCta": "ログイン",
+    "backToWall": "Soft Wall に戻る"
+  },
+  "SoftNote": {
+    "title": "週半ばのソフトノート",
+    "lead": "今週のための短いプライベートメモ——レビューのあいだに、自分だけへ。",
+    "guestBody": "ログインすると週半ばのソフトノートを残せます。非公開で、Soft Wall には出ません。",
+    "loginCta": "ログイン",
+    "loading": "今週のノートを開いています…",
+    "loadError": "ソフトノートを読み込めませんでした。",
+    "weekLabel": "週 {week}",
+    "inputLabel": "ソフトノート",
+    "placeholder": "週のまんなかへの静かな一行…",
+    "counter": "{count} / {max}",
+    "save": "ノートを保存",
+    "saving": "保存中…",
+    "saved": "保存しました。まだ非公開です。",
+    "saveError": "ノートを保存できませんでした。",
+    "privacy": "非公開のみ。Soft Wall には見えません。"
   }
 }
