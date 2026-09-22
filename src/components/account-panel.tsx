@@ -2,6 +2,7 @@
 
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
+import { GratitudeJarCard } from "@/components/gratitude-jar-card";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
 import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
@@ -17,6 +18,7 @@ import {
   planExpiryReminderDue,
 } from "@/lib/plan";
 import { applyNightPreference } from "@/lib/night-mode";
+import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
@@ -62,6 +64,7 @@ export function AccountPanel({
   seasonalFrame = false,
   nightMode = false,
   memoryLane = true,
+  wallLargerText = false,
   emailConfigured,
   customQuestions,
   digest,
@@ -82,6 +85,7 @@ export function AccountPanel({
   seasonalFrame?: boolean;
   nightMode?: boolean;
   memoryLane?: boolean;
+  wallLargerText?: boolean;
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
   digest: MonthlyDigest;
@@ -98,11 +102,13 @@ export function AccountPanel({
   const [frameOn, setFrameOn] = useState(seasonalFrame);
   const [nightOn, setNightOn] = useState(nightMode);
   const [laneOn, setLaneOn] = useState(memoryLane);
+  const [largerTextOn, setLargerTextOn] = useState(wallLargerText);
   const [savingReminder, setSavingReminder] = useState(false);
   const [savingZone, setSavingZone] = useState(false);
   const [savingFrame, setSavingFrame] = useState(false);
   const [savingNight, setSavingNight] = useState(false);
   const [savingLane, setSavingLane] = useState(false);
+  const [savingLargerText, setSavingLargerText] = useState(false);
   const [zoneSaved, setZoneSaved] = useState(false);
   const timeZones = useMemo(() => {
     const supported =
@@ -222,6 +228,7 @@ export function AccountPanel({
           <NicknameEditor initialNickname={nickname} />
           <SoftMemoryCard memory={softMemory} />
           <SoftIntentionCard signedIn variant="account" />
+          <GratitudeJarCard signedIn softPlus={softPlus} variant="account" />
           <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />
           <GiftRedeemCard softPlus={softPlus} />
@@ -412,6 +419,52 @@ export function AccountPanel({
                 {t("seasonalFrameToggle")}
                 {savingFrame ? (
                   <span className="mt-1 block text-xs text-muted">{t("seasonalFrameSaving")}</span>
+                ) : null}
+              </span>
+            </label>
+          </div>
+
+          <div className="mt-8 rounded-[1.5rem] bg-cream px-5 py-5" data-wall-larger-text-preference>
+            <p className="font-display text-lg tracking-tight">{t("largerTextTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("largerTextBody")}</p>
+            <label className="mt-4 flex items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={largerTextOn}
+                onChange={async (event) => {
+                  const next = event.target.checked;
+                  const previous = largerTextOn;
+                  setLargerTextOn(next);
+                  setSavingLargerText(true);
+                  try {
+                    localStorage.setItem(WALL_LARGER_TEXT_STORAGE_KEY, next ? "1" : "0");
+                  } catch {
+                    // The account flag still holds if this browser blocks storage.
+                  }
+                  try {
+                    const response = await fetch("/api/account/settings", {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ wallLargerText: next }),
+                    });
+                    if (!response.ok) throw new Error("wall-text");
+                  } catch {
+                    setLargerTextOn(previous);
+                    try {
+                      localStorage.setItem(WALL_LARGER_TEXT_STORAGE_KEY, previous ? "1" : "0");
+                    } catch {
+                      // Leave the checkbox on the last saved account value.
+                    }
+                  } finally {
+                    setSavingLargerText(false);
+                  }
+                }}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+              />
+              <span>
+                {t("largerTextToggle")}
+                {savingLargerText ? (
+                  <span className="mt-1 block text-xs text-muted">{t("largerTextSaving")}</span>
                 ) : null}
               </span>
             </label>

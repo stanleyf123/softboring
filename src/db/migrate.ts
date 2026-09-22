@@ -89,6 +89,7 @@ export function ensureUserSettingsColumns(db: Database.Database) {
   ensureColumn(db, "user_settings", "night_mode", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn(db, "user_settings", "memory_lane", "INTEGER NOT NULL DEFAULT 1");
   ensureColumn(db, "user_settings", "custom_note_color", "TEXT");
+  ensureColumn(db, "user_settings", "wall_larger_text", "INTEGER NOT NULL DEFAULT 0");
 }
 
 export function ensureExpandedStickers(db: Database.Database) {
@@ -374,6 +375,22 @@ export function ensureWeekPauses(db: Database.Database) {
   db.exec(`CREATE INDEX IF NOT EXISTS idx_week_pauses_user ON week_pauses (user_id)`);
 }
 
+export function ensureSoftGratitudes(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_gratitudes (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_gratitudes_user_created
+     ON soft_gratitudes (user_id, created_at)`,
+  );
+}
+
 export function ensureSoftPlusGiftCodes(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS soft_plus_gift_codes (
@@ -418,6 +435,7 @@ export function migrateDb(db: Database.Database) {
   ensureWallNoteEchoes(db);
   ensureWeekPauses(db);
   ensureSoftLetters(db);
+  ensureSoftGratitudes(db);
   ensureSoftPlusGiftCodes(db);
   ensureExpandedStickers(db);
 }

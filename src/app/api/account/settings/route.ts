@@ -44,6 +44,7 @@ export async function PATCH(request: Request) {
       focusChime?: unknown;
       nightMode?: unknown;
       memoryLane?: unknown;
+      wallLargerText?: unknown;
     };
 
     let preferredWallColor: WallColor | null | undefined;
@@ -98,6 +99,9 @@ export async function PATCH(request: Request) {
     if (body.memoryLane !== undefined && typeof body.memoryLane !== "boolean") {
       return NextResponse.json({ error: "invalid_memory_lane" }, { status: 400 });
     }
+    if (body.wallLargerText !== undefined && typeof body.wallLargerText !== "boolean") {
+      return NextResponse.json({ error: "invalid_wall_text" }, { status: 400 });
+    }
 
     const settings = updateUserSettings(user.id, {
       onboardingDismissed:
@@ -131,6 +135,8 @@ export async function PATCH(request: Request) {
       focusChime: typeof body.focusChime === "boolean" ? body.focusChime : undefined,
       nightMode: typeof body.nightMode === "boolean" ? body.nightMode : undefined,
       memoryLane: typeof body.memoryLane === "boolean" ? body.memoryLane : undefined,
+      wallLargerText:
+        typeof body.wallLargerText === "boolean" ? body.wallLargerText : undefined,
     });
 
     const response = NextResponse.json({ settings });

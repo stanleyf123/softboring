@@ -80,6 +80,7 @@ if (settingsTable) {
   ensureColumn("user_settings", "night_mode", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "memory_lane", "INTEGER NOT NULL DEFAULT 1");
   ensureColumn("user_settings", "custom_note_color", "TEXT");
+  ensureColumn("user_settings", "wall_larger_text", "INTEGER NOT NULL DEFAULT 0");
 }
 
 db.exec(`
@@ -337,6 +338,19 @@ db.exec(`
 `);
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_soft_letters_user_week ON soft_letters (user_id, week_key)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_gratitudes (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_gratitudes_user_created ON soft_gratitudes (user_id, created_at)",
 );
 
 db.close();

@@ -48,6 +48,7 @@ export default async function WallPage({ params, searchParams }: Props) {
         sharedSuccess={query.shared === "1"}
         initialNoteId={typeof query.note === "string" ? query.note : null}
         initialSeasonalFrame={Boolean(settings?.seasonalFrame)}
+        initialWallLargerText={Boolean(settings?.wallLargerText)}
       />
     </div>
   );

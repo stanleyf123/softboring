@@ -31,6 +31,7 @@ export type UserSettings = {
   focusChime: boolean;
   nightMode: boolean;
   memoryLane: boolean;
+  wallLargerText: boolean;
 };
 
 type SettingsRow = {
@@ -51,6 +52,7 @@ type SettingsRow = {
   focus_chime: number | null;
   night_mode: number | null;
   memory_lane: number | null;
+  wall_larger_text?: number | null;
 };
 
 function parsePreferredWallColor(value: string | null | undefined): WallColor | null {
@@ -84,6 +86,7 @@ function toSettings(row: SettingsRow): UserSettings {
     focusChime: storedFocusChime(row.focus_chime),
     nightMode: Boolean(row.night_mode),
     memoryLane: row.memory_lane == null ? true : Boolean(row.memory_lane),
+    wallLargerText: Boolean(row.wall_larger_text),
   };
 }
 
@@ -122,6 +125,7 @@ export type SettingsPatch = {
   focusChime?: boolean;
   nightMode?: boolean;
   memoryLane?: boolean;
+  wallLargerText?: boolean;
 };
 
 export function updateUserSettings(userId: string, patch: SettingsPatch): UserSettings {
@@ -159,6 +163,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
   const nextNightMode = patch.nightMode === undefined ? current.nightMode : patch.nightMode;
   const nextMemoryLane =
     patch.memoryLane === undefined ? current.memoryLane : patch.memoryLane;
+  const nextWallLargerText =
+    patch.wallLargerText === undefined ? current.wallLargerText : patch.wallLargerText;
 
   getDb()
     .prepare(
@@ -178,7 +184,8 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            focus_minutes = @focus_minutes,
            focus_chime = @focus_chime,
            night_mode = @night_mode,
-           memory_lane = @memory_lane
+           memory_lane = @memory_lane,
+           wall_larger_text = @wall_larger_text
        WHERE user_id = @user_id`,
     )
     .run({
@@ -237,6 +244,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
       focus_chime: nextFocusChime ? 1 : 0,
       night_mode: nextNightMode ? 1 : 0,
       memory_lane: nextMemoryLane ? 1 : 0,
+      wall_larger_text: nextWallLargerText ? 1 : 0,
     });
   return ensureUserSettings(userId);
 }
