@@ -1,7 +1,7 @@
 import { ThanksView } from "@/components/thanks-view";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { redirect } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ from?: string }>;
 };
 
 export async function generateMetadata({ params }: Props) {
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: Props) {
   });
 }
 
-export default async function PlusThanksPage({ params }: Props) {
+export default async function PlusThanksPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const appLocale = assertLocale(locale);
   setRequestLocale(appLocale);
@@ -36,37 +37,72 @@ export default async function PlusThanksPage({ params }: Props) {
     return;
   }
 
+  const { from } = await searchParams;
+  const fromGift = from === "gift";
   const t = await getTranslations("Thanks");
-  const softPlus = isSoftPlusPlan(user.plan, user.planStatus);
+  const softPlus = userIsSoftPlus(user);
+
+  const giftNote = softPlus
+    ? user.planExpiresAt
+      ? t("giftReadyUntil", {
+          date: new Intl.DateTimeFormat(appLocale, { dateStyle: "medium" }).format(
+            new Date(user.planExpiresAt),
+          ),
+        })
+      : t("giftReadyPermanent")
+    : t("plusPending");
 
   return (
     <ThanksView
-      kicker={t("plusKicker")}
-      title={t("plusTitle")}
-      body={t("plusBody")}
-      note={softPlus ? t("plusReady") : t("plusPending")}
+      kicker={fromGift ? t("giftKicker") : t("plusKicker")}
+      title={fromGift ? t("giftTitle") : t("plusTitle")}
+      body={fromGift ? t("giftBody") : t("plusBody")}
+      note={fromGift ? giftNote : softPlus ? t("plusReady") : t("plusPending")}
       doodle="hero"
       nextHeading={t("nextHeading")}
-      steps={[
-        {
-          href: "/review",
-          title: t("stepReviewTitle"),
-          body: t("stepReviewBody"),
-          cta: t("plusReviewCta"),
-        },
-        {
-          href: "/wall",
-          title: t("stepWallTitle"),
-          body: t("stepWallBody"),
-          cta: t("plusWallCta"),
-        },
-        {
-          href: "/account",
-          title: t("stepNicknameTitle"),
-          body: t("stepNicknameBody"),
-          cta: t("plusAccountCta"),
-        },
-      ]}
+      steps={
+        fromGift
+          ? [
+              {
+                href: "/wall",
+                title: t("stepWallTitle"),
+                body: t("stepWallBody"),
+                cta: t("plusWallCta"),
+              },
+              {
+                href: "/digest",
+                title: t("stepDigestTitle"),
+                body: t("stepDigestBody"),
+                cta: t("giftDigestCta"),
+              },
+              {
+                href: "/account",
+                title: t("stepNicknameTitle"),
+                body: t("stepNicknameBody"),
+                cta: t("plusAccountCta"),
+              },
+            ]
+          : [
+              {
+                href: "/review",
+                title: t("stepReviewTitle"),
+                body: t("stepReviewBody"),
+                cta: t("plusReviewCta"),
+              },
+              {
+                href: "/wall",
+                title: t("stepWallTitle"),
+                body: t("stepWallBody"),
+                cta: t("plusWallCta"),
+              },
+              {
+                href: "/account",
+                title: t("stepNicknameTitle"),
+                body: t("stepNicknameBody"),
+                cta: t("plusAccountCta"),
+              },
+            ]
+      }
     />
   );
 }

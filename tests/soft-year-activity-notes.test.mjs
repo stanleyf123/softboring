@@ -95,7 +95,7 @@ test("soft year page is Soft+ gated with history click-through", () => {
   const header = read("src/components/site-header.tsx");
 
   assert.match(page, /YearPanel/);
-  assert.match(page, /isSoftPlusPlan/);
+  assert.match(page, /userIsSoftPlus/);
   assert.match(page, /lockedTitle/);
   assert.match(page, /path: "\/year"/);
   assert.match(panel, /\/history\/\$\{cell\.reviewId\}/);
@@ -123,7 +123,7 @@ test("wall compliments feed is Soft+ gated and omits emails", () => {
   assert.match(board, /WallActivityStrip/);
   assert.match(board, /compact/);
   assert.match(page, /wall\/activity/);
-  assert.match(page, /isSoftPlusPlan/);
+  assert.match(page, /userIsSoftPlus/);
 });
 
 test("private mid-week soft note is signed-in only and stays off the wall", () => {

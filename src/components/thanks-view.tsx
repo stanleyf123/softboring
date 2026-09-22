@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
 
 export type ThanksStep = {
-  href: "/review" | "/wall" | "/account" | "/register";
+  href: "/review" | "/wall" | "/account" | "/register" | "/digest";
   title: string;
   body: string;
   cta: string;

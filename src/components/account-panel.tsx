@@ -11,6 +11,11 @@ import { NICKNAME_MAX } from "@/lib/nickname";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import type { SoftMemory } from "@/lib/soft-memory";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
+import {
+  daysUntilPlanExpiry,
+  planExpiryReminderDue,
+} from "@/lib/plan";
+import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useState, type FormEvent } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
@@ -86,6 +91,10 @@ export function AccountPanel({
     softPlus && planExpiresAt
       ? format.dateTime(new Date(planExpiresAt), { dateStyle: "medium" })
       : null;
+  const daysLeft =
+    softPlus && planExpiresAt ? daysUntilPlanExpiry(planExpiresAt) : null;
+  const showExpiryReminder =
+    softPlus && expiresLabel != null && planExpiryReminderDue(planExpiresAt);
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -155,6 +164,17 @@ export function AccountPanel({
               {expiresLabel ? (
                 <p className="mt-2 text-sm text-muted">
                   {t("planGiftUntil", { date: expiresLabel })}
+                </p>
+              ) : null}
+              {showExpiryReminder && daysLeft != null ? (
+                <p
+                  className="mt-3 rounded-[1.1rem] bg-lemon/50 px-4 py-3 text-sm leading-relaxed text-muted"
+                  role="status"
+                >
+                  {t("planGiftExpiringSoon", {
+                    days: daysLeft,
+                    date: expiresLabel,
+                  })}
                 </p>
               ) : null}
             </div>
@@ -529,7 +549,6 @@ function GiftRedeemCard({ softPlus }: { softPlus: boolean }) {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [okMessage, setOkMessage] = useState<string | null>(null);
 
   if (softPlus) {
     return (
@@ -545,7 +564,6 @@ function GiftRedeemCard({ softPlus }: { softPlus: boolean }) {
     if (busy) return;
     setBusy(true);
     setError(null);
-    setOkMessage(null);
     try {
       const response = await fetch("/api/account/gift-code", {
         method: "POST",
@@ -561,12 +579,9 @@ function GiftRedeemCard({ softPlus }: { softPlus: boolean }) {
         setError(data.error ?? "invalid");
         return;
       }
-      if (data.permanent) {
-        setOkMessage(t("giftSuccessPermanent"));
-      } else {
-        setOkMessage(t("giftSuccessDays", { days: data.days ?? 0 }));
-      }
       setCode("");
+      // Warm Soft+ thank-you with soft next steps (wall, digest, nickname).
+      router.push(`${PLUS_THANKS_PATH}?from=gift`);
       router.refresh();
     } catch {
       setError("invalid");
@@ -615,11 +630,6 @@ function GiftRedeemCard({ softPlus }: { softPlus: boolean }) {
       >
         {busy ? t("giftRedeeming") : t("giftRedeem")}
       </button>
-      {okMessage ? (
-        <p className="mt-3 text-sm text-muted" role="status">
-          {okMessage}
-        </p>
-      ) : null}
       {error ? (
         <p className="mt-3 text-sm text-accent" role="alert">
           {errorCopy(error)}

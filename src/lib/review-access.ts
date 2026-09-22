@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getOrCreateGuestId } from "@/lib/guest";
 import type { ReviewOwner } from "@/db/reviews";
 import type { PublicUser } from "@/db/users";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 
 export type ReviewAccess = {
   owner: ReviewOwner;
@@ -19,7 +19,7 @@ export async function getReviewAccess(): Promise<ReviewAccess> {
       owner: { kind: "user", userId: user.id, guestId },
       user,
       isGuest: false,
-      softPlus: isSoftPlusPlan(user.plan, user.planStatus),
+      softPlus: userIsSoftPlus(user),
     };
   }
   return {

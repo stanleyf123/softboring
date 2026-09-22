@@ -1,7 +1,7 @@
 import { getDb } from "./client";
 import { getUserById, updateUserBilling, type PublicUser } from "./users";
 import { giftExpiresAt, newGiftCode, normalizeGiftCode } from "@/lib/gift-code";
-import { isSoftPlusPlan, PLAN_SOFT_PLUS } from "@/lib/plan";
+import { userIsSoftPlus, PLAN_SOFT_PLUS } from "@/lib/plan";
 
 export type GiftCodeRow = {
   code: string;
@@ -127,7 +127,7 @@ export function redeemGiftCode(input: {
 
   const user = getUserById(input.userId);
   if (!user) return { ok: false, error: "invalid" };
-  if (isSoftPlusPlan(user.plan, user.planStatus, user.planExpiresAt)) {
+  if (userIsSoftPlus(user)) {
     return { ok: false, error: "already_plus" };
   }
 

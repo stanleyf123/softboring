@@ -7,13 +7,18 @@ import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import {
+  DEFAULT_WALL_SORT,
   EMPTY_WALL_FILTERS,
   filterWallNotes,
+  isWallSortMode,
   normalizeFeelingBound,
   readHideDemoPreference,
+  sortWallNotes,
   wallFiltersActive,
+  withSortStacking,
   writeHideDemoPreference,
   type WallDiscoveryFilters,
+  type WallSortMode,
 } from "@/lib/wall-filters";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
@@ -155,6 +160,7 @@ export function WallBoard({
     ...EMPTY_WALL_FILTERS,
     hideDemo: false,
   }));
+  const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
   const drag = useRef<{
     id: string;
     dx: number;
@@ -175,8 +181,9 @@ export function WallBoard({
 
   const visibleNotes = useMemo(() => {
     if (!softPlus || locked) return notes;
-    return filterWallNotes(notes as FullNote[], filters);
-  }, [notes, filters, softPlus, locked]);
+    const filtered = filterWallNotes(notes as FullNote[], filters);
+    return withSortStacking(sortWallNotes(filtered, sort));
+  }, [notes, filters, sort, softPlus, locked]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
 
@@ -696,6 +703,22 @@ export function WallBoard({
               {t("filterTitle")}
             </p>
             <p className="mt-1 text-sm leading-relaxed text-muted">{t("filterLead")}</p>
+            <label className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+              <span className="shrink-0">{t("sortLabel")}</span>
+              <select
+                value={sort}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setSort(isWallSortMode(next) ? next : DEFAULT_WALL_SORT);
+                }}
+                className="rounded-full border border-line bg-paper px-3 py-2 text-sm text-foreground"
+                aria-label={t("sortLabel")}
+              >
+                <option value="newest">{t("sortNewest")}</option>
+                <option value="most_praised">{t("sortMostPraised")}</option>
+                <option value="pinned_first">{t("sortPinnedFirst")}</option>
+              </select>
+            </label>
             <div
               className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]"
               role="search"

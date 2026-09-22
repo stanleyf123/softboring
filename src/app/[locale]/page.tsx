@@ -6,7 +6,7 @@ import { listReviewsForOwner } from "@/db/reviews";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pickSoftMemory } from "@/lib/soft-memory";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -35,7 +35,7 @@ export default async function HomePage({ params }: Props) {
 
   const t = await getTranslations("Home");
   const user = await getCurrentUser();
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
   const memory =
     user
       ? pickSoftMemory(listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }), softPlus)

@@ -2,7 +2,7 @@ import { DigestPanel } from "@/components/digest-panel";
 import { monthlyDigestForUser } from "@/db/reviews";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -33,7 +33,7 @@ export default async function DigestPage({ params }: Props) {
 
   const t = await getTranslations("Digest");
   const user = await getCurrentUser();
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
 
   return (
     <div className="pt-6">

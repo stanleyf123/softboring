@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { ensureUserSettings, updateUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { normalizeCustomQuestions } from "@/lib/custom-questions";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { requireSoftPlus } from "@/lib/wall-access";
 
 export const runtime = "nodejs";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const user = await getCurrentUser();
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
   const locked = requireSoftPlus(user, softPlus);
   if (locked) return locked;
 
@@ -21,7 +21,7 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const user = await getCurrentUser();
-    const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+    const softPlus = userIsSoftPlus(user);
     const locked = requireSoftPlus(user, softPlus);
     if (locked) return locked;
 
