@@ -150,7 +150,9 @@
     "upgradeNudgeBody": "Free keeps the latest four open. Soft+ remembers the rest, and draws a small feeling line.",
     "upgradeNudgeCta": "See Soft+",
     "customHeading": "Your extra questions",
-    "customLead": "Up to three questions from your account page."
+    "customLead": "Up to three questions from your account page.",
+    "quietEnter": "Quiet writing",
+    "quietExit": "Exit quiet mode"
   },
   "History": {
     "title": "History",
@@ -596,7 +598,12 @@
     "color_mint": "Mint",
     "color_cream": "Cream",
     "color_lemon": "Lemon",
-    "color_sky": "Sky"
+    "color_sky": "Sky",
+    "unshareTitle": "Your note on Soft Wall",
+    "unshareHint": "Take it down anytime. History keeps the week private again.",
+    "reportFeelsOff": "This feels off",
+    "reportHint": "A quiet note for Soft Boring — not a public complaint.",
+    "reportThanks": "Noted. Thank you for the soft signal."
   },
   "Export": {
     "title": "Printable reviews",
@@ -891,6 +898,15 @@
     "praise": "{count} praise",
     "open": "Open on wall",
     "listAria": "This week’s soft picks"
+  },
+  "SoftMemory": {
+    "title": "A soft note from then",
+    "lead": "From {date} — a gentle resurfacing, nothing urgent.",
+    "untitled": "A quiet week",
+    "open": "Open this week",
+    "openLocked": "See in History",
+    "teaser": "An older week is waiting softly. Soft+ opens the words; Free keeps the latest four open.",
+    "softPlusCta": "See Soft+"
   },
   "SoftTips": {
     "title": "A soft tip",

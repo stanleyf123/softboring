@@ -174,6 +174,8 @@ export const adminCopy = {
     owner: "擁有者",
     summary: "摘要",
     praise: "稱讚",
+    flags: "輕聲標記",
+    flagged: (count: number) => `${count} 則`,
     hidden: "已隱藏",
     quietWeek: "安靜的一週",
     yes: "是",

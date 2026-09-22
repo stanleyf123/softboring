@@ -150,7 +150,9 @@
     "upgradeNudgeBody": "Free は新しい四つだけ開きます。Soft+ が残りを覚えて、小さな気持ちの線を描きます。",
     "upgradeNudgeCta": "Soft+ を見る",
     "customHeading": "あなたが足した問い",
-    "customLead": "アカウントのページから、三つまで。"
+    "customLead": "アカウントのページから、三つまで。",
+    "quietEnter": "静かな執筆",
+    "quietExit": "静かなモードをやめる"
   },
   "History": {
     "title": "履歴",
@@ -525,7 +527,12 @@
     "color_mint": "ミント",
     "color_cream": "クリーム",
     "color_lemon": "レモン",
-    "color_sky": "スカイ"
+    "color_sky": "スカイ",
+    "unshareTitle": "Soft Wall のあなたの付箋",
+    "unshareHint": "いつでも下ろせるよ。下ろすと、その週はまた履歴だけの静かな場所に戻る。",
+    "reportFeelsOff": "少し気になる",
+    "reportHint": "Soft Boring へのやさしい合図——公開の通報じゃないよ。",
+    "reportThanks": "受け取ったよ。やさしい合図、ありがとう。"
   },
   "Export": {
     "title": "印刷できるふりかえり",
@@ -891,6 +898,15 @@
     "praise": "ほめ {count}",
     "open": "壁で開く",
     "listAria": "今週のやわらかいピック"
+  },
+  "SoftMemory": {
+    "title": "あの頃からのやわらかいメモ",
+    "lead": "{date} から——たまにふわりと戻ってくるだけ。",
+    "untitled": "静かな一週間",
+    "open": "この週を開く",
+    "openLocked": "履歴で見る",
+    "teaser": "もう少し前の週が、静かに待っているよ。Soft+ なら全文が開ける。Free は直近の4件が開いたまま。",
+    "softPlusCta": "Soft+ を見る"
   },
   "SoftTips": {
     "title": "やわらかいヒント",

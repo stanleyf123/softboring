@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { attachBookmarkToDetail } from "@/db/wall-bookmarks";
+import { attachFlagToDetail } from "@/db/wall-flags";
 import {
   deleteWallNoteForUser,
   getWallNote,
@@ -7,6 +8,13 @@ import {
   updateWallNotePosition,
 } from "@/db/wall";
 import { getWallViewer, parsePosition, requireSoftPlus, requireUser } from "@/lib/wall-access";
+
+function attachNoteExtras(
+  note: NonNullable<ReturnType<typeof getWallNote>>,
+  userId: string | null,
+) {
+  return attachFlagToDetail(attachBookmarkToDetail(note, userId), userId);
+}
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,7 +34,7 @@ export async function GET(_request: Request, context: Context) {
     if (!note) {
       return NextResponse.json({ error: "not_found" }, { status: 404 });
     }
-    return NextResponse.json({ note: attachBookmarkToDetail(note, viewer.userId) });
+    return NextResponse.json({ note: attachNoteExtras(note, viewer.userId) });
   } catch (error) {
     console.error("GET /api/wall/notes/[id] failed", error);
     return NextResponse.json({ error: "Could not load this note." }, { status: 500 });
@@ -61,7 +69,7 @@ export async function PATCH(request: Request, context: Context) {
       }
       const note = getWallNote(id, viewer.userId);
       return NextResponse.json({
-        note: note ? attachBookmarkToDetail(note, viewer.userId) : note,
+        note: note ? attachNoteExtras(note, viewer.userId) : note,
       });
     }
 
@@ -77,7 +85,7 @@ export async function PATCH(request: Request, context: Context) {
 
     const note = getWallNote(id, viewer.userId);
     return NextResponse.json({
-      note: note ? attachBookmarkToDetail(note, viewer.userId) : note,
+      note: note ? attachNoteExtras(note, viewer.userId) : note,
     });
   } catch (error) {
     console.error("PATCH /api/wall/notes/[id] failed", error);

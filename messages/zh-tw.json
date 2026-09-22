@@ -150,7 +150,9 @@
     "upgradeNudgeBody": "免費方案會打開最近四篇。Soft+ 會記住其餘的，並畫一條小小的感覺線。",
     "upgradeNudgeCta": "看看 Soft+",
     "customHeading": "你加的題目",
-    "customLead": "帳號頁最多可以加三題，會出現在這裡。"
+    "customLead": "帳號頁最多可以加三題，會出現在這裡。",
+    "quietEnter": "安靜書寫",
+    "quietExit": "離開安靜模式"
   },
   "History": {
     "title": "紀錄",
@@ -525,7 +527,12 @@
     "color_mint": "薄荷",
     "color_cream": "奶油",
     "color_lemon": "檸檬",
-    "color_sky": "天空"
+    "color_sky": "天空",
+    "unshareTitle": "你在軟軟牆上的便利貼",
+    "unshareHint": "想拿下來就拿下來。拿下後，這週又只留在歷史裡。",
+    "reportFeelsOff": "這張讀起來有點不對勁",
+    "reportHint": "只是輕輕告訴 Soft Boring——不是公開檢舉。",
+    "reportThanks": "收到了。謝謝你的輕聲提醒。"
   },
   "Export": {
     "title": "可列印的回顧",
@@ -891,6 +898,15 @@
     "praise": "{count} 則讚美",
     "open": "在牆上打開",
     "listAria": "本週軟軟精選"
+  },
+  "SoftMemory": {
+    "title": "一則來自那時的軟軟備忘",
+    "lead": "來自 {date}——偶爾浮現，不催促。",
+    "untitled": "安靜的一週",
+    "open": "打開這一週",
+    "openLocked": "到歷史看看",
+    "teaser": "更早的一週正安靜地等著。Soft+ 能打開全文；Free 仍保留最近四篇。",
+    "softPlusCta": "看看 Soft+"
   },
   "SoftTips": {
     "title": "一則軟提示",

@@ -36,6 +36,7 @@ type FullNote = TeaserNote & {
   createdAt: string;
   pinned?: boolean;
   bookmarked?: boolean;
+  flaggedByMe?: boolean;
   ownerSoftPlus?: boolean;
   ownerFallback?: string | null;
   ownerInviteBadge?: boolean;
@@ -430,6 +431,31 @@ export function WallBoard({
     setNotes((list) => list.filter((item) => item.id !== id));
     setSelectedId(null);
     setDetail(null);
+  }
+
+  async function reportNote(id: string) {
+    if (busy || locked || !softPlus) return;
+    setBusy(`flag:${id}`);
+    try {
+      const data = await readJson<{
+        flagged?: boolean;
+        note?: FullNote;
+        error?: string;
+      }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(id)}/flag`, {
+          method: "POST",
+        }),
+      );
+      if (data.note) {
+        setDetail(data.note);
+      } else if (data.flagged) {
+        setDetail((current) =>
+          current && current.id === id ? { ...current, flaggedByMe: true } : current,
+        );
+      }
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function shareLatest() {
@@ -1289,22 +1315,47 @@ export function WallBoard({
             </section>
 
             {detail.mine ? (
-              <div className="mt-6 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => togglePin(detail)}
-                  disabled={busy !== null}
-                  className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 py-2 text-sm shadow-card disabled:opacity-60"
-                >
-                  {detail.pinned ? t("unpin") : t("pin")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => unshare(detail.id)}
-                  className="text-sm text-muted hover:text-foreground"
-                >
-                  {t("unshare")}
-                </button>
+              <div className="mt-6 space-y-3 rounded-[1.5rem] bg-cream/80 px-4 py-4">
+                <p className="font-display text-lg tracking-tight">{t("unshareTitle")}</p>
+                <p className="text-sm leading-relaxed text-muted">{t("unshareHint")}</p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => togglePin(detail)}
+                    disabled={busy !== null}
+                    className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 py-2 text-sm shadow-card disabled:opacity-60"
+                  >
+                    {detail.pinned ? t("unpin") : t("pin")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => unshare(detail.id)}
+                    disabled={busy !== null}
+                    className="inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-4 py-2 text-sm text-muted shadow-card hover:text-foreground disabled:opacity-60"
+                  >
+                    {t("unshare")}
+                  </button>
+                </div>
+              </div>
+            ) : softPlus && !locked ? (
+              <div className="mt-6 space-y-2 border-t border-line/70 pt-5">
+                {detail.flaggedByMe ? (
+                  <p className="text-sm text-muted" role="status">
+                    {t("reportThanks")}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-xs leading-relaxed text-muted">{t("reportHint")}</p>
+                    <button
+                      type="button"
+                      onClick={() => void reportNote(detail.id)}
+                      disabled={busy !== null}
+                      className="text-sm text-muted underline-offset-2 hover:text-foreground hover:underline disabled:opacity-60"
+                    >
+                      {t("reportFeelsOff")}
+                    </button>
+                  </>
+                )}
               </div>
             ) : null}
           </div>

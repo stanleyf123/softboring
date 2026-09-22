@@ -1,4 +1,5 @@
 import { ReviewForm } from "@/components/review-form";
+import { QuietWritingToggle } from "@/components/quiet-writing";
 import {
   LastIntentionNudge,
   SoftIntentionCard,
@@ -40,9 +41,14 @@ export default async function ReviewPage({ params }: Props) {
 
   return (
     <div className="pt-6">
-      <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
-      <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
-      <div className="mt-8 space-y-4">
+      <div className="quiet-writing-chrome flex flex-wrap items-start justify-between gap-4">
+        <div className="max-w-lg">
+          <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
+          <p className="mt-4 text-lg leading-relaxed text-muted">{t("lead")}</p>
+        </div>
+        <QuietWritingToggle />
+      </div>
+      <div className="quiet-writing-chrome mt-8 space-y-4">
         <LastIntentionNudge signedIn={Boolean(user)} />
         <SoftIntentionCard signedIn={Boolean(user)} />
         <SoftNoteCard signedIn={Boolean(user)} />

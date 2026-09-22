@@ -3,11 +3,13 @@
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
+import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftTipsCard } from "@/components/soft-tips-card";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
 import { NICKNAME_MAX } from "@/lib/nickname";
 import type { MonthlyDigest } from "@/lib/plus-insights";
+import type { SoftMemory } from "@/lib/soft-memory";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useState, type FormEvent } from "react";
@@ -41,6 +43,7 @@ export function AccountPanel({
   createdAt,
   reviewCount,
   softPlus,
+  softMemory = null,
   stripeConfigured,
   hasStripeCustomer,
   checkoutSuccess,
@@ -55,6 +58,7 @@ export function AccountPanel({
   createdAt: string;
   reviewCount: number;
   softPlus: boolean;
+  softMemory?: SoftMemory | null;
   stripeConfigured: boolean;
   hasStripeCustomer: boolean;
   checkoutSuccess: boolean;
@@ -146,6 +150,7 @@ export function AccountPanel({
           </dl>
 
           <NicknameEditor initialNickname={nickname} />
+          <SoftMemoryCard memory={softMemory} />
           <SoftIntentionCard signedIn variant="account" />
           <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />

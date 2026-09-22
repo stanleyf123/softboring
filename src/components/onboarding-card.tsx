@@ -100,7 +100,7 @@ export function OnboardingCard({
   }
 
   return (
-    <section className={`${SITE_SHELL_CLASS} mb-8 print:hidden`}>
+    <section className={`${SITE_SHELL_CLASS} mb-8 print:hidden`} data-onboarding>
       <div className="overflow-hidden rounded-[2rem] bg-paper shadow-card">
         <div className="flex items-start justify-between gap-4 bg-mint/70 px-6 py-5 sm:px-8">
           <div className="flex items-center gap-3">
