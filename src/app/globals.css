@@ -807,8 +807,11 @@ html[data-quiet-writing="1"] main {
 
 .soft-wall-note[data-note-preview="soft"]:hover .wall-note-copy,
 .soft-wall-note[data-note-preview="soft"]:focus-within .wall-note-copy {
-  -webkit-line-clamp: 8 !important;
-  line-clamp: 8 !important;
+  display: block !important;
+  overflow: visible !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  line-clamp: unset !important;
 }
 
 @keyframes soft-wall-settle {
@@ -943,8 +946,10 @@ html[data-quiet-writing="1"] main {
   .soft-wall-note[data-note-preview="soft"]:hover .wall-note-copy,
   .soft-wall-note[data-note-preview="soft"]:focus-within .wall-note-copy {
     transition: none;
-    -webkit-line-clamp: 8 !important;
-    line-clamp: 8 !important;
+    display: block !important;
+    overflow: visible !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
   }
 }
 

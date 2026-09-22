@@ -2,11 +2,9 @@
 export const WALL_NOTE_PREVIEW_LINES = 5;
 
 /**
- * Hover and keyboard focus show a little more of the same short excerpt.
- * The excerpt itself is already capped, so this stays a slight open.
+ * Hover and keyboard focus drop the clamp.
+ * The excerpt is already short, so the open stays slight.
  */
-export const WALL_NOTE_PREVIEW_OPEN_LINES = 8;
-
-export function wallNotePreviewLines(open: boolean) {
-  return open ? WALL_NOTE_PREVIEW_OPEN_LINES : WALL_NOTE_PREVIEW_LINES;
+export function wallNotePreviewLines(open: boolean): number | null {
+  return open ? null : WALL_NOTE_PREVIEW_LINES;
 }

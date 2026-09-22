@@ -5,8 +5,9 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const { isSoftFaqId, softFaqIds, toggleSoftFaq } = await import("../src/lib/soft-faq.ts");
-const { wallNotePreviewLines, WALL_NOTE_PREVIEW_LINES, WALL_NOTE_PREVIEW_OPEN_LINES } =
-  await import("../src/lib/wall-note-preview.ts");
+const { wallNotePreviewLines, WALL_NOTE_PREVIEW_LINES } = await import(
+  "../src/lib/wall-note-preview.ts"
+);
 const { shapeSoftThanksHistory, SOFT_THANKS_HISTORY_LIMIT } = await import(
   "../src/lib/soft-thanks-history.ts"
 );
@@ -56,9 +57,8 @@ test("pricing FAQ is free copy and does not start checkout", () => {
 
 test("readable wall notes open a little more on hover and focus", () => {
   assert.equal(WALL_NOTE_PREVIEW_LINES, 5);
-  assert.equal(WALL_NOTE_PREVIEW_OPEN_LINES, 8);
   assert.equal(wallNotePreviewLines(false), 5);
-  assert.equal(wallNotePreviewLines(true), 8);
+  assert.equal(wallNotePreviewLines(true), null);
   const board = read("src/components/wall-board.tsx");
   const css = read("src/app/globals.css");
   assert.match(board, /line-clamp-5/);
@@ -66,10 +66,11 @@ test("readable wall notes open a little more on hover and focus", () => {
   assert.match(board, /data-wall-guest-search/);
   assert.match(css, /data-note-preview="soft"\]:hover \.wall-note-copy/);
   assert.match(css, /data-note-preview="soft"\]:focus-within \.wall-note-copy/);
-  assert.match(css, /-webkit-line-clamp:\s*8 !important/);
+  assert.match(css, /-webkit-line-clamp:\s*unset !important/);
+  assert.match(css, /overflow:\s*visible !important/);
   const still = css.slice(css.lastIndexOf("@media (prefers-reduced-motion: reduce)"));
   assert.match(still, /The note preview still opens/);
-  assert.match(still, /-webkit-line-clamp:\s*8 !important/);
+  assert.match(still, /-webkit-line-clamp:\s*unset !important/);
   assert.doesNotMatch(read("src/lib/wall-note-preview.ts"), /getDb|stripe|fetch\(/);
 });
 

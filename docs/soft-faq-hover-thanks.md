@@ -8,7 +8,7 @@ Pricing carries a short cream accordion. It says, in plain language, that checko
 
 ## Wall note hover
 
-A readable sticky still rests at five lines. Hover or keyboard focus shows a couple more lines of the same short excerpt, including when reduced motion is on. The open is a reading state, not an animation. Locked and guest notes stay blurred; the expand does not load hidden text.
+A readable sticky still rests at five lines. Hover or keyboard focus shows the rest of that same short excerpt, including when reduced motion is on. The open is a reading state, not an animation. Locked and guest notes stay blurred; the expand does not load hidden text.
 
 ## Thank-you history
 
