@@ -4,6 +4,7 @@ import { MemoryLaneCard } from "@/components/memory-lane-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftPauseCard } from "@/components/soft-pause-card";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
+import { SoftWeekWeather } from "@/components/soft-week-weather";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
 import { HomeSoftStats } from "@/components/soft-stats-strip";
@@ -17,6 +18,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pickMemoryLane } from "@/lib/memory-lane";
+import { moodForCurrentWeek } from "@/lib/soft-weather";
 import { pickSoftMemory } from "@/lib/soft-memory";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -54,6 +56,14 @@ export default async function HomePage({ params }: Props) {
     ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
     : [];
   const memory = user ? pickSoftMemory(reviews, softPlus) : null;
+  const weekMood =
+    user && settings
+      ? moodForCurrentWeek({
+          reviews,
+          weekKey: pauseWeekKey,
+          timeZone: settings.timezone,
+        })
+      : null;
   const lane =
     user && settings
       ? pickMemoryLane({
@@ -123,6 +133,12 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       <div className="mt-10 space-y-4">
+        <SoftWeekWeather
+          signedIn={Boolean(user)}
+          initialPaused={paused}
+          mood={weekMood}
+          weekKey={user ? pauseWeekKey : ""}
+        />
         <SoftPauseCard
           signedIn={Boolean(user)}
           initialWeekKey={pauseWeekKey}

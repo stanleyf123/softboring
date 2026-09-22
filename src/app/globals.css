@@ -717,3 +717,38 @@ html[data-quiet-writing="1"] main {
 #soft-intention {
   scroll-margin-top: 6rem;
 }
+
+.soft-shortcuts-sheet {
+  animation: soft-shortcuts-in 220ms ease;
+}
+
+@keyframes soft-shortcuts-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.soft-weather-drift {
+  animation: soft-weather-drift 7s ease-in-out infinite alternate;
+}
+
+@keyframes soft-weather-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soft-shortcuts-sheet,
+  .soft-weather-drift {
+    animation: none;
+  }
+}
