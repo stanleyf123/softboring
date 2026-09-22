@@ -532,6 +532,12 @@
     "loginCta": "Log in",
     "shopTitle": "Little stickers",
     "shopLead": "Buy a sticker, then tap a note to stick it. Each one adds a bit of praise.",
+    "placedThisMonth": "{count, plural, one {You placed # sticker this month.} other {You placed # stickers this month.}}",
+    "inventoryEmptyTitle": "Your pocket is empty",
+    "inventoryEmptyBody": "Nothing to stick yet. When payments are ready, a little pack can fill your pocket — or look around while Soft Wall stays quiet.",
+    "inventoryEmptyPlace": "Your pocket is empty just now. Open the sticker shop when you want a little praise ready.",
+    "inventoryCount": "{count, plural, one {# sticker waiting in your pocket.} other {# stickers waiting in your pocket.}}",
+    "placeStickerAria": "Place {name} sticker · {count} in pocket",
     "close": "Close",
     "owned": "{count} in pocket",
     "buy": "Buy",
@@ -769,6 +775,26 @@
     "saveError": "Could not save that note just now.",
     "privacy": "Private only. Soft Wall does not see this note."
   },
+  "SoftIntention": {
+    "title": "Soft intention",
+    "lead": "One gentle sentence for the coming week — not a todo list, just a soft aim.",
+    "guestBody": "Sign in to set one soft intention for the week ahead.",
+    "loginCta": "Log in",
+    "loading": "Opening this week’s intention…",
+    "loadError": "Could not load the soft intention just now.",
+    "weekLabel": "Week {week}",
+    "inputLabel": "Soft intention",
+    "placeholder": "Something soft to aim toward…",
+    "counter": "{count} / {max}",
+    "save": "Save intention",
+    "saving": "Saving…",
+    "saved": "Saved. A quiet aim for this week.",
+    "saveError": "Could not save that intention just now.",
+    "hint": "One sentence is enough. You can change it anytime this week.",
+    "lastAria": "Last soft intention",
+    "lastEyebrow": "Last intention",
+    "lastLead": "A light reminder from a quieter week — no pressure."
+  },
   "Postcard": {
     "brand": "Soft Boring Weekly",
     "kindWeek": "A soft postcard · one week",
@@ -833,6 +859,7 @@
     "aNote": "A quiet week",
     "byAuthor": "{name}",
     "praise": "{count} praise",
-    "open": "Open on wall"
+    "open": "Open on wall",
+    "listAria": "This week’s soft picks"
   }
 }

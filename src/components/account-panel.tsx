@@ -2,6 +2,7 @@
 
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
 import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
+import { SoftIntentionCard } from "@/components/soft-intention-card";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
 import { NICKNAME_MAX } from "@/lib/nickname";
@@ -144,6 +145,7 @@ export function AccountPanel({
           </dl>
 
           <NicknameEditor initialNickname={nickname} />
+          <SoftIntentionCard signedIn variant="account" />
           <InviteCard softPlus={softPlus} />
 
           {softPlus ? (
