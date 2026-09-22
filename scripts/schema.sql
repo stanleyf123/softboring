@@ -412,6 +412,18 @@ CREATE TABLE IF NOT EXISTS soft_gratitudes (
 CREATE INDEX IF NOT EXISTS idx_soft_gratitudes_user_created
   ON soft_gratitudes (user_id, created_at);
 
+CREATE TABLE IF NOT EXISTS soft_capsules (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  body TEXT NOT NULL,
+  unlock_at TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_soft_capsules_user_unlock
+  ON soft_capsules (user_id, unlock_at);
+
 CREATE TABLE IF NOT EXISTS soft_gratitude_draws (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,

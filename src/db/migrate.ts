@@ -435,6 +435,23 @@ export function ensureWallPresenceHours(db: Database.Database) {
   `);
 }
 
+export function ensureSoftCapsules(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_capsules (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      body TEXT NOT NULL,
+      unlock_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_capsules_user_unlock
+     ON soft_capsules (user_id, unlock_at)`,
+  );
+}
+
 export function ensureSoftGratitudes(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS soft_gratitudes (
@@ -498,6 +515,7 @@ export function migrateDb(db: Database.Database) {
   ensureSoftLetters(db);
   ensureSoftGratitudes(db);
   ensureSoftGratitudeDraws(db);
+  ensureSoftCapsules(db);
   ensureWallPresenceHours(db);
   ensureSoftPlusGiftCodes(db);
   ensureExpandedStickers(db);

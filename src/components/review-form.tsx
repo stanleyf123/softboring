@@ -1,6 +1,7 @@
 "use client";
 
 import { ShareToWall } from "@/components/share-to-wall";
+import { SoftWordCount } from "@/components/soft-word-count";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
 import {
   SeasonalPacksPanel,
@@ -438,6 +439,12 @@ function ReviewFormFields({
       </fieldset>
 
       <div className="flex flex-col items-start gap-3 pt-2 print:hidden">
+        <SoftWordCount
+          parts={[
+            ...TEXT_FIELDS.map((field) => draft[field]),
+            ...(draft.customAnswers ?? []).map((item) => item.answer),
+          ]}
+        />
         <button
           type="submit"
           disabled={saving}

@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  BookmarkUndoToast,
+  useBookmarkUndo,
+} from "@/components/bookmark-undo-toast";
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { SoftCssEmpty } from "@/components/soft-empty-illu";
 import { NeighborHighlightsStrip } from "@/components/neighbor-highlights-strip";
@@ -37,6 +41,7 @@ import {
   type SeasonalPackId,
 } from "@/lib/seasonal-frame";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
+import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
@@ -216,6 +221,7 @@ export function WallBoard({
   const [packLabel, setPackLabel] = useState<string | null>(null);
   const [stripeConfigured, setStripeConfigured] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
+  const bookmarkUndo = useBookmarkUndo();
   const [shopError, setShopError] = useState<"not_configured" | "generic" | null>(null);
   const [filters, setFilters] = useState<WallDiscoveryFilters>(() => ({
     ...EMPTY_WALL_FILTERS,
@@ -739,8 +745,52 @@ export function WallBoard({
     }
   }
 
+  function applyBookmarked(noteId: string, bookmarked: boolean) {
+    setDetail((current) =>
+      current && current.id === noteId ? { ...current, bookmarked } : current,
+    );
+    setNotes((list) =>
+      list.map((item) => (item.id === noteId ? { ...item, bookmarked } : item)),
+    );
+  }
+
+  async function commitUnbookmark(noteId: string) {
+    try {
+      const data = await readJson<{ note: FullNote; bookmarked: boolean }>(
+        await fetch(`/api/wall/notes/${encodeURIComponent(noteId)}/bookmark`, {
+          method: "POST",
+          keepalive: true,
+        }),
+      );
+      setDetail((current) => (current && current.id === data.note.id ? data.note : current));
+      setNotes((list) =>
+        list.map((item) => (item.id === data.note.id ? { ...item, ...data.note } : item)),
+      );
+    } catch {
+      applyBookmarked(noteId, true);
+    }
+  }
+
   async function toggleBookmark(note: FullNote) {
+    if (bookmarkUndo.matches(note.id)) {
+      bookmarkUndo.undo();
+      return;
+    }
+    if (note.bookmarked) {
+      if (busy) return;
+      applyBookmarked(note.id, false);
+      bookmarkUndo.begin({
+        noteId: note.id,
+        label: bookmarkUndoLabel(note.summary?.trim() || note.excerpt, t("untitled")),
+        onUndo: () => applyBookmarked(note.id, true),
+        onCommit: () => {
+          void commitUnbookmark(note.id);
+        },
+      });
+      return;
+    }
     if (busy) return;
+    bookmarkUndo.flush();
     setBusy("bookmark");
     try {
       const data = await readJson<{ note: FullNote; bookmarked: boolean }>(
@@ -1783,6 +1833,13 @@ export function WallBoard({
           </div>
         </div>
       ) : null}
+      <BookmarkUndoToast
+        open={Boolean(bookmarkUndo.toast)}
+        label={bookmarkUndo.toast?.label ?? ""}
+        durationMs={bookmarkUndo.durationMs}
+        toastKey={bookmarkUndo.toast?.key ?? 0}
+        onUndo={bookmarkUndo.undo}
+      />
     </div>
   );
 }
