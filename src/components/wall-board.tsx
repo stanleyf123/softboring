@@ -222,6 +222,9 @@ export function WallBoard({
   const [packLabel, setPackLabel] = useState<string | null>(null);
   const [stripeConfigured, setStripeConfigured] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
+  const [reportTone, setReportTone] = useState<{ id: string; tone: "fresh" | "already" } | null>(
+    null,
+  );
   const bookmarkUndo = useBookmarkUndo();
   const [shopError, setShopError] = useState<"not_configured" | "generic" | null>(null);
   const [filters, setFilters] = useState<WallDiscoveryFilters>(() => ({
@@ -685,6 +688,7 @@ export function WallBoard({
     try {
       const data = await readJson<{
         flagged?: boolean;
+        already?: boolean;
         note?: FullNote;
         error?: string;
       }>(
@@ -698,6 +702,9 @@ export function WallBoard({
         setDetail((current) =>
           current && current.id === id ? { ...current, flaggedByMe: true } : current,
         );
+      }
+      if (data.flagged) {
+        setReportTone({ id, tone: data.already ? "already" : "fresh" });
       }
     } finally {
       setBusy(null);
@@ -1850,9 +1857,33 @@ export function WallBoard({
             ) : softPlus && !locked ? (
               <div className="mt-6 space-y-2 border-t border-line/70 pt-5">
                 {detail.flaggedByMe ? (
-                  <p className="text-sm text-muted" role="status">
-                    {t("reportThanks")}
-                  </p>
+                  <div
+                    className={
+                      reportTone?.id === detail.id && reportTone.tone === "fresh"
+                        ? "rounded-[1.25rem] bg-cream px-4 py-3"
+                        : "rounded-[1.25rem] border border-line/80 bg-paper/80 px-4 py-3"
+                    }
+                    role="status"
+                    data-wall-report={
+                      reportTone?.id === detail.id && reportTone.tone === "fresh"
+                        ? "ack"
+                        : "already"
+                    }
+                  >
+                    <p className="font-display text-base tracking-tight">
+                      {reportTone?.id === detail.id && reportTone.tone === "fresh"
+                        ? t("reportAckTitle")
+                        : t("reportAlreadyTitle")}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted">
+                      {reportTone?.id === detail.id && reportTone.tone === "fresh"
+                        ? t("reportAckBody")
+                        : t("reportAlreadyBody")}
+                    </p>
+                    {reportTone?.id === detail.id && reportTone.tone === "fresh" ? (
+                      <p className="mt-2 text-xs text-muted">{t("reportThanks")}</p>
+                    ) : null}
+                  </div>
                 ) : (
                   <>
                     <p className="text-xs leading-relaxed text-muted">{t("reportHint")}</p>

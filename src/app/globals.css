@@ -808,12 +808,72 @@ html[data-quiet-writing="1"] main {
   }
 }
 
+.soft-save-bloom {
+  position: relative;
+  isolation: isolate;
+}
+
+.soft-save-bloom::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -0.45rem;
+  border-radius: 2.35rem;
+  background: radial-gradient(
+    circle,
+    rgba(255, 244, 232, 0.95) 0%,
+    rgba(244, 212, 198, 0.42) 46%,
+    transparent 72%
+  );
+  opacity: 0;
+  pointer-events: none;
+  animation: soft-save-bloom 2.6s ease-out 1 both;
+}
+
+.soft-save-bloom-card {
+  animation: soft-save-card-pulse 2.6s ease-out 1 both;
+}
+
+@keyframes soft-save-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  32% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes soft-save-card-pulse {
+  0% {
+    background-color: var(--paper);
+    box-shadow: 0 6px 20px rgba(154, 111, 90, 0.08);
+  }
+  30% {
+    background-color: var(--cream);
+    box-shadow:
+      0 0 0 10px rgba(255, 244, 232, 0.88),
+      0 10px 32px rgba(196, 127, 110, 0.14);
+  }
+  100% {
+    background-color: var(--paper);
+    box-shadow: 0 6px 20px rgba(154, 111, 90, 0.08);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .soft-shortcuts-sheet,
   .soft-weather-drift,
   .soft-sound-live,
   .soft-undo-bar,
-  .soft-wall-settle .soft-wall-note {
+  .soft-wall-settle .soft-wall-note,
+  .soft-save-bloom::before,
+  .soft-save-bloom-card {
     animation: none;
   }
 }

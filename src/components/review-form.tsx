@@ -7,6 +7,7 @@ import {
   SeasonalPacksPanel,
   packPrompts,
 } from "@/components/seasonal-packs-panel";
+import { SoftSaveBloom } from "@/components/soft-save-bloom";
 import { StreakCelebration } from "@/components/streak-celebration";
 import { Link } from "@/i18n/navigation";
 import {
@@ -278,7 +279,7 @@ function ReviewFormFields({
           />
         ) : null}
 
-        <div className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
+        <SoftSaveBloom>
           <h2 className="font-display text-3xl tracking-tight">{t("successTitle")}</h2>
           <p className="mt-4 max-w-md text-muted leading-relaxed">{t("successBody")}</p>
           <div className="mt-10 flex flex-wrap gap-4 text-sm">
@@ -300,7 +301,7 @@ function ReviewFormFields({
               {t("writeAnother")}
             </button>
           </div>
-        </div>
+        </SoftSaveBloom>
 
         {guest ? (
           <div className="rounded-[1.75rem] bg-blush/80 px-6 py-6 shadow-card sm:px-8">
