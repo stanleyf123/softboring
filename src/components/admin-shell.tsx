@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 const links = [
   { href: "/admin", label: adminCopy.nav.dashboard },
   { href: "/admin/members", label: adminCopy.nav.members },
+  { href: "/admin/gifts", label: adminCopy.nav.gifts },
   { href: "/admin/payments", label: adminCopy.nav.payments },
   { href: "/admin/reviews", label: adminCopy.nav.reviews },
   { href: "/admin/wall", label: adminCopy.nav.wall },

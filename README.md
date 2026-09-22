@@ -29,6 +29,7 @@ Pages:
 - `/en/reset-password` and `/zh-tw/reset-password`
 - `/en/privacy` and `/zh-tw/privacy`
 - `/en/terms` and `/zh-tw/terms`
+- `/en/guidelines` and `/zh-tw/guidelines` (Soft Wall etiquette)
 - `/en/thanks` and `/zh-tw/thanks` (short thank-you, also linked from the footer)
 - `/en/welcome` and `/zh-tw/welcome` (after register / first-time OAuth; `noindex`)
 - `/en/thanks/plus` and `/zh-tw/thanks/plus` (Soft+ checkout return; `noindex`)
@@ -50,7 +51,7 @@ Login, register, forgot-password, and OAuth start/callback are **rate-limited** 
 
 The public app is installable as a **PWA** (`/manifest.webmanifest`, icons under `/icons/`, service worker `/sw.js`). The worker does not cache `/api/*` or `/admin`, so sessions stay on the network.
 
-SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md). Soft year, wall compliments, mid-week notes: [docs/soft-year-activity-notes.md](./docs/soft-year-activity-notes.md). Soft postcard, wall spotlight, week compare: [docs/soft-postcard-spotlight-compare.md](./docs/soft-postcard-spotlight-compare.md). Soft intention, sticker pocket UX, Soft Wall a11y: [docs/soft-intention-wall-a11y.md](./docs/soft-intention-wall-a11y.md). Soft bookmarks, empty-state illustrations, Soft tips inbox: [docs/soft-bookmarks-empty-tips.md](./docs/soft-bookmarks-empty-tips.md). Soft print week, wall color preference, onboarding checklist: [docs/soft-print-wall-color-checklist.md](./docs/soft-print-wall-color-checklist.md). Soft memory resurfacing, quiet writing, Soft Wall flags: [docs/soft-memory-quiet-wall-report.md](./docs/soft-memory-quiet-wall-report.md).
+SEO: unique titles/descriptions, canonicals, and `hreflang` (`en` / `zh-TW` / `ja` / `x-default`) on public pages; `/sitemap.xml` and `/robots.txt` (allow public, disallow `/admin`, `/api/`, `/account`). JSON-LD is Organization / WebSite / SoftwareApplication with no invented ratings. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`. Operator checklist: [docs/seo.md](./docs/seo.md). Japanese and invites: [docs/ja-and-invites.md](./docs/ja-and-invites.md). Soft Wall filters, monthly digest, seasonal packs: [docs/engagement-trio.md](./docs/engagement-trio.md). Soft year, wall compliments, mid-week notes: [docs/soft-year-activity-notes.md](./docs/soft-year-activity-notes.md). Soft postcard, wall spotlight, week compare: [docs/soft-postcard-spotlight-compare.md](./docs/soft-postcard-spotlight-compare.md). Soft intention, sticker pocket UX, Soft Wall a11y: [docs/soft-intention-wall-a11y.md](./docs/soft-intention-wall-a11y.md). Soft bookmarks, empty-state illustrations, Soft tips inbox: [docs/soft-bookmarks-empty-tips.md](./docs/soft-bookmarks-empty-tips.md). Soft print week, wall color preference, onboarding checklist: [docs/soft-print-wall-color-checklist.md](./docs/soft-print-wall-color-checklist.md). Soft memory resurfacing, quiet writing, Soft Wall flags: [docs/soft-memory-quiet-wall-report.md](./docs/soft-memory-quiet-wall-report.md). Soft streak polish, Soft Wall hide-demo, soft shortcuts: [docs/streak-demo-shortcuts.md](./docs/streak-demo-shortcuts.md). Soft Wall guidelines, Soft+ gift codes, homepage soft-stats: [docs/guidelines-gifts-soft-stats.md](./docs/guidelines-gifts-soft-stats.md).
 
 Weekly reminders: on the account page, toggle a weekday. Cron later with `npm run reminders:dispatch` (selects due users; **no-op success** if email env is missing). See [DEPLOY-LINODE.md](./DEPLOY-LINODE.md).
 
@@ -132,7 +133,7 @@ Checkout is treated as configured only when the first three are non-empty.
 - Commenting notifies the note owner in the signed-in inbox (bell). A reply also notifies the parent comment author. Own comments do not.
 - **Demo Soft+ bots** (optional): ten `@softboring.demo` accounts can seed the wall and post a few zh-TW notes each day. See [docs/demo-bots.md](./docs/demo-bots.md).
 
-After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, `preferred_wall_color`, `wall_note_flags`, soft notes / intentions / bookmarks, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
+After pull, run `npm run db:migrate` so wall tables, comment `parent_id`, `preferred_wall_color`, `wall_note_flags`, soft notes / intentions / bookmarks, Soft+ gift codes / `plan_expires_at`, the eight seed stickers, `rate_limits`, `oauth_accounts`, and nullable `users.password_hash` exist.
 
 ## Admin
 

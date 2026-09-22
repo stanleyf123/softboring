@@ -624,6 +624,11 @@ export function WallBoard({
           <div>
             <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
             <p className="mt-3 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
+            <p className="mt-2 text-sm">
+              <Link href="/guidelines" className="text-accent hover:text-foreground">
+                {t("guidelinesLink")}
+              </Link>
+            </p>
             {softPlus ? (
               <p className="mt-3 text-sm text-muted">{t("dragHint")}</p>
             ) : null}

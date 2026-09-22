@@ -43,6 +43,7 @@ export function AccountPanel({
   createdAt,
   reviewCount,
   softPlus,
+  planExpiresAt = null,
   softMemory = null,
   stripeConfigured,
   hasStripeCustomer,
@@ -58,6 +59,7 @@ export function AccountPanel({
   createdAt: string;
   reviewCount: number;
   softPlus: boolean;
+  planExpiresAt?: string | null;
   softMemory?: SoftMemory | null;
   stripeConfigured: boolean;
   hasStripeCustomer: boolean;
@@ -80,6 +82,10 @@ export function AccountPanel({
   const [packQuestions, setPackQuestions] = useState(customQuestions);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
   const identity = oauthIdentityLabel(email);
+  const expiresLabel =
+    softPlus && planExpiresAt
+      ? format.dateTime(new Date(planExpiresAt), { dateStyle: "medium" })
+      : null;
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -146,6 +152,11 @@ export function AccountPanel({
               <dd className="mt-1">
                 {softPlus ? t("planSoftPlusBody") : t("planFreeBody")}
               </dd>
+              {expiresLabel ? (
+                <p className="mt-2 text-sm text-muted">
+                  {t("planGiftUntil", { date: expiresLabel })}
+                </p>
+              ) : null}
             </div>
           </dl>
 
@@ -154,6 +165,7 @@ export function AccountPanel({
           <SoftIntentionCard signedIn variant="account" />
           <SoftTipsCard softPlus={softPlus} />
           <InviteCard softPlus={softPlus} />
+          <GiftRedeemCard softPlus={softPlus} />
 
           {softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/50 px-5 py-5">
@@ -508,6 +520,112 @@ function InviteCard({ softPlus }: { softPlus: boolean }) {
         </div>
       )}
     </div>
+  );
+}
+
+function GiftRedeemCard({ softPlus }: { softPlus: boolean }) {
+  const t = useTranslations("Account");
+  const router = useRouter();
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [okMessage, setOkMessage] = useState<string | null>(null);
+
+  if (softPlus) {
+    return (
+      <div className="mt-8 rounded-[1.5rem] bg-blush/30 px-5 py-5">
+        <p className="font-display text-lg tracking-tight">{t("giftTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("giftAlreadyPlus")}</p>
+      </div>
+    );
+  }
+
+  async function redeem(event: FormEvent) {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    setOkMessage(null);
+    try {
+      const response = await fetch("/api/account/gift-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        permanent?: boolean;
+        days?: number | null;
+      };
+      if (!response.ok) {
+        setError(data.error ?? "invalid");
+        return;
+      }
+      if (data.permanent) {
+        setOkMessage(t("giftSuccessPermanent"));
+      } else {
+        setOkMessage(t("giftSuccessDays", { days: data.days ?? 0 }));
+      }
+      setCode("");
+      router.refresh();
+    } catch {
+      setError("invalid");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function errorCopy(codeValue: string | null) {
+    switch (codeValue) {
+      case "already_plus":
+        return t("giftErrorAlreadyPlus");
+      case "already_used":
+        return t("giftErrorUsed");
+      case "not_found":
+        return t("giftErrorMissing");
+      case "rate_limited":
+        return t("giftErrorRate");
+      default:
+        return t("giftError");
+    }
+  }
+
+  return (
+    <form
+      onSubmit={redeem}
+      className="mt-8 rounded-[1.5rem] bg-lemon/40 px-5 py-5"
+    >
+      <p className="font-display text-lg tracking-tight">{t("giftTitle")}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t("giftBody")}</p>
+      <label className="mt-4 block text-sm">
+        <span className="text-muted">{t("giftCodeLabel")}</span>
+        <input
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+          placeholder={t("giftCodePlaceholder")}
+          className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2 font-mono text-sm tracking-wide"
+        />
+      </label>
+      <button
+        type="submit"
+        disabled={busy || code.trim().length < 8}
+        className="mt-4 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+      >
+        {busy ? t("giftRedeeming") : t("giftRedeem")}
+      </button>
+      {okMessage ? (
+        <p className="mt-3 text-sm text-muted" role="status">
+          {okMessage}
+        </p>
+      ) : null}
+      {error ? (
+        <p className="mt-3 text-sm text-accent" role="alert">
+          {errorCopy(error)}
+        </p>
+      ) : null}
+    </form>
   );
 }
 

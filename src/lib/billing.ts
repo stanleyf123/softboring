@@ -285,6 +285,7 @@ export function applyCheckoutSession(
   updateUserBilling(user.id, {
     plan: mapped.plan,
     planStatus: mapped.planStatus,
+    planExpiresAt: null,
     stripeCustomerId: customerId ?? user.stripeCustomerId,
     stripeSubscriptionId: subscriptionId ?? user.stripeSubscriptionId,
   });
@@ -313,6 +314,7 @@ export function applySubscription(subscription: Stripe.Subscription) {
   updateUserBilling(user.id, {
     plan: mapped.plan,
     planStatus: mapped.planStatus,
+    planExpiresAt: null,
     stripeCustomerId: customerId ?? user.stripeCustomerId,
     stripeSubscriptionId: subscription.id,
     stripePriceId: priceId,

@@ -9,6 +9,7 @@ type SessionJoinRow = {
   expires_at: string;
   plan: string;
   plan_status: string | null;
+  plan_expires_at: string | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   nickname: string | null;
@@ -45,7 +46,7 @@ export function getUserBySessionToken(token: string): PublicUser | null {
   const tokenHash = hashSessionToken(token);
   const row = getDb()
     .prepare(
-      `SELECT u.id, u.email, u.created_at, u.plan, u.plan_status,
+      `SELECT u.id, u.email, u.created_at, u.plan, u.plan_status, u.plan_expires_at,
               u.stripe_customer_id, u.stripe_subscription_id, u.nickname, s.expires_at
        FROM sessions s
        JOIN users u ON u.id = s.user_id

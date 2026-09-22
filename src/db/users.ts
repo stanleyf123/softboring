@@ -16,6 +16,7 @@ export type UserRow = {
   stripe_subscription_id: string | null;
   stripe_price_id: string | null;
   plan_updated_at: string | null;
+  plan_expires_at: string | null;
   is_demo?: number;
   nickname: string | null;
 };
@@ -26,6 +27,7 @@ export type PublicUser = {
   createdAt: string;
   plan: PlanId;
   planStatus: string | null;
+  planExpiresAt: string | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
   nickname: string | null;
@@ -38,6 +40,7 @@ type PublicUserRow = Pick<
   | "created_at"
   | "plan"
   | "plan_status"
+  | "plan_expires_at"
   | "stripe_customer_id"
   | "stripe_subscription_id"
   | "nickname"
@@ -48,15 +51,16 @@ export function toPublicUser(row: PublicUserRow): PublicUser {
     id: row.id,
     email: row.email,
     createdAt: row.created_at,
-    plan: displayPlan(row.plan, row.plan_status),
+    plan: displayPlan(row.plan, row.plan_status, row.plan_expires_at),
     planStatus: row.plan_status,
+    planExpiresAt: row.plan_expires_at ?? null,
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
     nickname: row.nickname?.trim() ? row.nickname.trim() : null,
   };
 }
 
-const PUBLIC_USER_COLUMNS = `id, email, created_at, plan, plan_status, stripe_customer_id, stripe_subscription_id, nickname`;
+const PUBLIC_USER_COLUMNS = `id, email, created_at, plan, plan_status, plan_expires_at, stripe_customer_id, stripe_subscription_id, nickname`;
 
 export function createUser(email: string, passwordHash: string): PublicUser {
   const id = crypto.randomUUID();
@@ -90,6 +94,7 @@ export function createUser(email: string, passwordHash: string): PublicUser {
     createdAt,
     plan: PLAN_FREE,
     planStatus: null,
+    planExpiresAt: null,
     stripeCustomerId: null,
     stripeSubscriptionId: null,
     nickname: null,
@@ -144,6 +149,7 @@ export function updateUserNickname(userId: string, nickname: string | null) {
 export type BillingPatch = {
   plan?: PlanId;
   planStatus?: string | null;
+  planExpiresAt?: string | null;
   stripeCustomerId?: string | null;
   stripeSubscriptionId?: string | null;
   stripePriceId?: string | null;
@@ -160,6 +166,7 @@ export function updateUserBilling(userId: string, patch: BillingPatch) {
       `UPDATE users
        SET plan = @plan,
            plan_status = @plan_status,
+           plan_expires_at = @plan_expires_at,
            stripe_customer_id = @stripe_customer_id,
            stripe_subscription_id = @stripe_subscription_id,
            stripe_price_id = @stripe_price_id,
@@ -170,6 +177,8 @@ export function updateUserBilling(userId: string, patch: BillingPatch) {
       id: userId,
       plan: patch.plan ?? current.plan,
       plan_status: patch.planStatus === undefined ? current.plan_status : patch.planStatus,
+      plan_expires_at:
+        patch.planExpiresAt === undefined ? current.plan_expires_at : patch.planExpiresAt,
       stripe_customer_id:
         patch.stripeCustomerId === undefined
           ? current.stripe_customer_id

@@ -10,11 +10,13 @@ export function applyAdminPlanChange(
     return updateUserBilling(userId, {
       plan: PLAN_SOFT_PLUS,
       planStatus: "active",
+      planExpiresAt: null,
     });
   }
   return updateUserBilling(userId, {
     plan: PLAN_FREE,
     planStatus: "canceled",
+    planExpiresAt: null,
     ...(clearStripeIds
       ? {
           stripeCustomerId: null,
