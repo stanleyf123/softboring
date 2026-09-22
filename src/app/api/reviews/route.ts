@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createReview, listReviewsForOwner } from "@/db/reviews";
 import { withHistoryAccess } from "@/lib/history-access";
+import { visibleSoftTags } from "@/lib/soft-tags";
 import { InputError, parseAnswers } from "@/lib/review-input";
 import { accessPayload, getReviewAccess } from "@/lib/review-access";
 import { streakMilestone, weeklyStreak } from "@/lib/plus-insights";
@@ -13,7 +14,10 @@ export async function GET() {
   try {
     const access = await getReviewAccess();
     const all = listReviewsForOwner(access.owner);
-    const reviews = withHistoryAccess(all, access.softPlus);
+    const reviews = withHistoryAccess(all, access.softPlus).map((review) => ({
+      ...review,
+      softTags: visibleSoftTags(review.softTags, access.softPlus, review.locked),
+    }));
     const lockedCount = reviews.filter((review) => review.locked).length;
     return NextResponse.json({
       reviews,

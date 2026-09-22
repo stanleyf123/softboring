@@ -68,7 +68,59 @@ a {
   outline-offset: 3px;
 }
 
+/* Cream-dark evening. Tokens stay warm so the desk does not turn into a harsh black. */
+html[data-night="on"] {
+  color-scheme: dark;
+  --background: #2a221e;
+  --foreground: #f6ebe3;
+  --paper: #3c322c;
+  --muted: #cbb5a8;
+  --line: #5e4c44;
+  --accent: #d08b7a;
+  --blush: #6a4c44;
+  --peach: #735446;
+  --mint: #3e5548;
+  --sage: #a9c3b4;
+  --cream: #4a3d36;
+  --lemon: #6d5d42;
+  --sky: #3e4e55;
+  --lavender: #51485f;
+}
+
+html[data-night="on"] body {
+  background-image:
+    radial-gradient(ellipse 55% 42% at 8% -4%, rgba(106, 76, 68, 0.55), transparent 62%),
+    radial-gradient(ellipse 42% 36% at 96% 8%, rgba(62, 85, 72, 0.42), transparent 58%),
+    radial-gradient(ellipse 48% 32% at 82% 100%, rgba(115, 84, 70, 0.38), transparent 52%);
+}
+
+html[data-night="on"] .text-paper {
+  color: #fff8f2;
+}
+
 @media print {
+  html[data-night="on"] {
+    color-scheme: light;
+    --background: #fff8f2;
+    --foreground: #4a3c35;
+    --paper: #fff8f2;
+    --muted: #9a7f74;
+    --line: #ead6c8;
+    --accent: #c47f6e;
+    --blush: #f4d4c6;
+    --peach: #f8dcc8;
+    --mint: #d5e6d8;
+    --sage: #7d9b8c;
+    --cream: #fff4e8;
+    --lemon: #f3e3b6;
+    --sky: #d5e4ea;
+    --lavender: #e4d8f2;
+  }
+
+  html[data-night="on"] .text-paper {
+    color: #fff8f2;
+  }
+
   body {
     background: #fff8f2;
     background-image: none;

@@ -25,6 +25,7 @@ export function withHistoryAccess(
       feeling: null,
       summary: "",
       customAnswers: [],
+      softTags: [],
       locked: true,
     };
   });

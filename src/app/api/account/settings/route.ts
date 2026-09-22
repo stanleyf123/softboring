@@ -6,6 +6,7 @@ import {
 } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { isFocusMinutes } from "@/lib/focus-timer";
+import { NIGHT_COOKIE, nightCookieOptions } from "@/lib/night-mode";
 import { isIanaTimeZone } from "@/lib/timezone";
 import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
@@ -39,6 +40,8 @@ export async function PATCH(request: Request) {
       seasonalFrame?: unknown;
       focusMinutes?: unknown;
       focusChime?: unknown;
+      nightMode?: unknown;
+      memoryLane?: unknown;
     };
 
     let preferredWallColor: WallColor | null | undefined;
@@ -66,6 +69,12 @@ export async function PATCH(request: Request) {
     }
     if (body.focusChime !== undefined && typeof body.focusChime !== "boolean") {
       return NextResponse.json({ error: "invalid_focus" }, { status: 400 });
+    }
+    if (body.nightMode !== undefined && typeof body.nightMode !== "boolean") {
+      return NextResponse.json({ error: "invalid_night" }, { status: 400 });
+    }
+    if (body.memoryLane !== undefined && typeof body.memoryLane !== "boolean") {
+      return NextResponse.json({ error: "invalid_memory_lane" }, { status: 400 });
     }
 
     const settings = updateUserSettings(user.id, {
@@ -97,9 +106,15 @@ export async function PATCH(request: Request) {
         typeof body.seasonalFrame === "boolean" ? body.seasonalFrame : undefined,
       focusMinutes: isFocusMinutes(body.focusMinutes) ? body.focusMinutes : undefined,
       focusChime: typeof body.focusChime === "boolean" ? body.focusChime : undefined,
+      nightMode: typeof body.nightMode === "boolean" ? body.nightMode : undefined,
+      memoryLane: typeof body.memoryLane === "boolean" ? body.memoryLane : undefined,
     });
 
-    return NextResponse.json({ settings });
+    const response = NextResponse.json({ settings });
+    if (typeof body.nightMode === "boolean") {
+      response.cookies.set(NIGHT_COOKIE, body.nightMode ? "1" : "0", nightCookieOptions());
+    }
+    return response;
   } catch (error) {
     if (error instanceof SyntaxError) {
       return NextResponse.json({ error: "invalid_json" }, { status: 400 });

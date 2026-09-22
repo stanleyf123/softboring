@@ -1,3 +1,4 @@
+import { MemoryLaneCard } from "@/components/memory-lane-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftPauseCard } from "@/components/soft-pause-card";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
@@ -5,12 +6,14 @@ import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
 import { HomeSoftStats } from "@/components/soft-stats-strip";
 import { listReviewsForOwner } from "@/db/reviews";
+import { listOwnWallSnippets } from "@/db/wall";
 import { ensureUserSettings } from "@/db/user-settings";
 import { currentPauseWeekKey, isWeekPaused } from "@/db/week-pauses";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
+import { pickMemoryLane } from "@/lib/memory-lane";
 import { pickSoftMemory } from "@/lib/soft-memory";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -43,9 +46,19 @@ export default async function HomePage({ params }: Props) {
   const pauseWeekKey = settings ? currentPauseWeekKey(new Date(), settings.timezone) : "";
   const paused = user && pauseWeekKey ? isWeekPaused(user.id, pauseWeekKey) : false;
   const softPlus = userIsSoftPlus(user);
-  const memory =
-    user
-      ? pickSoftMemory(listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" }), softPlus)
+  const reviews = user
+    ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
+    : [];
+  const memory = user ? pickSoftMemory(reviews, softPlus) : null;
+  const lane =
+    user && settings
+      ? pickMemoryLane({
+          enabled: settings.memoryLane,
+          reviewsNewestFirst: reviews,
+          notes: listOwnWallSnippets(user.id),
+          softPlus,
+          timeZone: settings.timezone,
+        })
       : null;
 
   return (
@@ -124,6 +137,7 @@ export default async function HomePage({ params }: Props) {
         }}
       />
 
+      {lane ? <MemoryLaneCard lane={lane} /> : null}
       {memory ? <SoftMemoryCard memory={memory} /> : null}
 
       <section className="mt-16" aria-labelledby="home-sample">

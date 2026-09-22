@@ -14,6 +14,7 @@ export type PortableReview = {
   summary: string;
   customAnswers: Review["customAnswers"];
   mood: Review["mood"];
+  softTags: string[];
 };
 
 export function toPortableReview(review: Review): PortableReview {
@@ -29,6 +30,7 @@ export function toPortableReview(review: Review): PortableReview {
     summary: review.summary,
     customAnswers: review.customAnswers ?? [],
     mood: review.mood ?? null,
+    softTags: review.softTags ?? [],
   };
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { SoftLetterRecall } from "@/components/soft-letter-recall";
+import { SoftTagsEditor } from "@/components/soft-tags-editor";
 import { SoftPostcardFromReview } from "@/components/soft-postcard-button";
 import { ShareToWall } from "@/components/share-to-wall";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
@@ -184,6 +185,30 @@ export function HistoryDetail({ id }: { id: string }) {
               status={moodStatus}
             />
           </div>
+        ) : null}
+        {wall?.canShare && softPlus ? (
+          <SoftTagsEditor
+            reviewId={reviewId}
+            tags={review.softTags ?? []}
+            onChange={(next) =>
+              setReview((current) => (current ? { ...current, softTags: next } : current))
+            }
+          />
+        ) : null}
+        {wall?.canShare && !softPlus ? (
+          <section
+            className="mt-6 rounded-[1.5rem] bg-lavender/60 px-5 py-5 shadow-card"
+            data-soft-tags="tease"
+          >
+            <p className="font-display text-lg tracking-tight">{t("tagsTeaseTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("tagsTeaseBody")}</p>
+            <Link
+              href="/pricing"
+              className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card"
+            >
+              {t("tagsTeaseCta")}
+            </Link>
+          </section>
         ) : null}
 
         <dl className="mt-10 grid gap-8 lg:grid-cols-2">

@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS reviews (
   locale TEXT,
   custom_answers TEXT NOT NULL DEFAULT '[]',
   mood TEXT,
+  soft_tags TEXT NOT NULL DEFAULT '[]',
   created_at TEXT NOT NULL,
   CHECK (feeling IS NULL OR (feeling >= 1 AND feeling <= 5)),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -188,6 +189,8 @@ CREATE TABLE IF NOT EXISTS user_settings (
   seasonal_frame INTEGER NOT NULL DEFAULT 0,
   focus_minutes INTEGER NOT NULL DEFAULT 25,
   focus_chime INTEGER NOT NULL DEFAULT 1,
+  night_mode INTEGER NOT NULL DEFAULT 0,
+  memory_lane INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

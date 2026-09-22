@@ -1,6 +1,7 @@
 import { getReviewForOwner, listReviewsForOwner, setReviewMood } from "@/db/reviews";
 import { getWallNoteIdForReview } from "@/db/wall";
 import { isHistoryIndexUnlocked } from "@/lib/history-access";
+import { visibleSoftTags } from "@/lib/soft-tags";
 import { getReviewAccess } from "@/lib/review-access";
 import { InputError, parseMoodPatch } from "@/lib/review-input";
 import { NextResponse } from "next/server";
@@ -31,7 +32,10 @@ export async function GET(_request: Request, context: Context) {
     }
 
     return NextResponse.json({
-      review,
+      review: {
+        ...review,
+        softTags: visibleSoftTags(review.softTags, access.softPlus, false),
+      },
       wall: {
         noteId: access.owner.kind === "user" ? getWallNoteIdForReview(id) : null,
         canShare: access.owner.kind === "user",
@@ -79,7 +83,12 @@ export async function PATCH(request: Request, context: Context) {
     if (!review) {
       return NextResponse.json({ error: "Review not found." }, { status: 404 });
     }
-    return NextResponse.json({ review });
+    return NextResponse.json({
+      review: {
+        ...review,
+        softTags: visibleSoftTags(review.softTags, access.softPlus, false),
+      },
+    });
   } catch (error) {
     console.error("PATCH /api/reviews/[id] failed", error);
     return NextResponse.json({ error: "Could not update this review." }, { status: 500 });

@@ -34,6 +34,7 @@ if (!reviewCols.includes("user_id")) {
 }
 ensureColumn("reviews", "custom_answers", "TEXT NOT NULL DEFAULT '[]'");
 ensureColumn("reviews", "mood", "TEXT");
+ensureColumn("reviews", "soft_tags", "TEXT NOT NULL DEFAULT '[]'");
 db.exec(
   "CREATE INDEX IF NOT EXISTS idx_reviews_user_created ON reviews (user_id, created_at DESC)",
 );
@@ -76,6 +77,8 @@ if (settingsTable) {
   ensureColumn("user_settings", "seasonal_frame", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn("user_settings", "focus_minutes", "INTEGER NOT NULL DEFAULT 25");
   ensureColumn("user_settings", "focus_chime", "INTEGER NOT NULL DEFAULT 1");
+  ensureColumn("user_settings", "night_mode", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "memory_lane", "INTEGER NOT NULL DEFAULT 1");
 }
 
 const wallTable = db

@@ -203,6 +203,7 @@ export function reviewMatchesQuery(
     review.mood ?? "",
     moodLabel ?? "",
     ...(review.customAnswers ?? []).flatMap((item) => [item.prompt, item.answer]),
+    ...(review.softTags ?? []),
   ];
   return parts.join("\n").toLowerCase().includes(needle);
 }
@@ -230,6 +231,7 @@ export function reviewsToCsv(reviews: Review[]) {
     "custom_2_answer",
     "custom_3_prompt",
     "custom_3_answer",
+    "soft_tags",
   ];
   const rows = reviews.map((review) => {
     const custom = review.customAnswers ?? [];
@@ -247,6 +249,7 @@ export function reviewsToCsv(reviews: Review[]) {
       csvEscape(custom[1]?.answer),
       csvEscape(custom[2]?.prompt),
       csvEscape(custom[2]?.answer),
+      csvEscape((review.softTags ?? []).join(" ")),
     ].join(",");
   });
   return [header.join(","), ...rows].join("\n");

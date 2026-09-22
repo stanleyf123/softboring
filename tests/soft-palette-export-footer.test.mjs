@@ -128,6 +128,7 @@ test("free account download is the latest four reviews as JSON", () => {
     "locale",
     "mood",
     "priorities",
+    "softTags",
     "summary",
   ]);
 
