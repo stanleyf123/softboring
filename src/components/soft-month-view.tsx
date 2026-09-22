@@ -17,7 +17,7 @@ export function SoftMonthView({ snapshot }: { snapshot: SoftMonthSnapshot }) {
   });
 
   return (
-    <div className="soft-month-sheet rounded-[2rem] bg-[#fff8f2] px-5 py-6 text-[#3f342e] sm:px-8 sm:py-8">
+    <div className="soft-month-sheet soft-print-sheet rounded-[2rem] bg-[#fff8f2] px-5 py-6 text-[#3f342e] sm:px-8 sm:py-8">
       <div className="print:hidden">
         <p className="text-sm">
           <Link href="/account" className="text-muted hover:text-foreground">
@@ -55,17 +55,17 @@ export function SoftMonthView({ snapshot }: { snapshot: SoftMonthSnapshot }) {
       </p>
 
       <dl className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-[1.25rem] bg-[#f4d4c6] px-4 py-3">
+        <div className="soft-print-blush rounded-[1.25rem] bg-[#f4d4c6] px-4 py-3">
           <dt className="text-xs text-[#8a7468]">{t("countLabel")}</dt>
           <dd className="mt-1 font-display text-2xl">{snapshot.monthCount}</dd>
         </div>
-        <div className="rounded-[1.25rem] bg-[#d5e6d8] px-4 py-3">
+        <div className="soft-print-mint rounded-[1.25rem] bg-[#d5e6d8] px-4 py-3">
           <dt className="text-xs text-[#8a7468]">{t("feelingLabel")}</dt>
           <dd className="mt-1 font-display text-2xl">
             {snapshot.avgFeeling == null ? "—" : snapshot.avgFeeling}
           </dd>
         </div>
-        <div className="rounded-[1.25rem] bg-[#fff4e8] px-4 py-3">
+        <div className="soft-print-cream rounded-[1.25rem] bg-[#fff4e8] px-4 py-3">
           <dt className="text-xs text-[#8a7468]">{t("streakLabel")}</dt>
           <dd className="mt-1 font-display text-2xl">{snapshot.streak}</dd>
         </div>
@@ -96,7 +96,7 @@ export function SoftMonthView({ snapshot }: { snapshot: SoftMonthSnapshot }) {
           {snapshot.reviews.map((review) => (
             <li
               key={review.id}
-              className="break-inside-avoid rounded-[1.5rem] border border-[#e8d5c8] bg-white/80 px-5 py-5"
+              className="soft-print-card break-inside-avoid rounded-[1.5rem] border border-[#e8d5c8] bg-white/80 px-5 py-5"
             >
               <p className="text-sm text-[#8a7468]">
                 {format.dateTime(new Date(review.createdAt), {
@@ -172,7 +172,7 @@ function KeywordList({
         {words.map((chip) => (
           <li
             key={chip.word}
-            className="rounded-full bg-[#fff4e8] px-3 py-1 text-sm"
+            className="soft-print-cream rounded-full bg-[#fff4e8] px-3 py-1 text-sm"
           >
             {chip.word}
           </li>

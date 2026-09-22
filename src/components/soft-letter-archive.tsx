@@ -17,7 +17,7 @@ export async function SoftLetterArchive({
 
   return (
     <section
-      className="mb-8 rounded-[1.75rem] bg-blush/40 px-6 py-6 shadow-card sm:px-8"
+      className="soft-letter-sheet mb-8 rounded-[1.75rem] bg-blush/40 px-6 py-6 shadow-card sm:px-8"
       data-soft-letter-archive
     >
       <p className="text-sm text-accent">{t("plusKicker")}</p>

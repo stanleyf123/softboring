@@ -24,7 +24,7 @@ export function YearPanel({
   const letterBlock =
     letters.length === 0 ? null : (
       <section
-        className="rounded-[2rem] bg-blush/40 px-6 py-8 shadow-card sm:px-8"
+        className="soft-letter-sheet rounded-[2rem] bg-blush/40 px-6 py-8 shadow-card sm:px-8"
         data-year-letters
       >
         <p className="font-display text-xl tracking-tight">{t("lettersTitle")}</p>

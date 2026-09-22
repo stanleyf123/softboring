@@ -10,7 +10,7 @@ export function ExportPrintView({ reviews }: { reviews: Review[] }) {
   const format = useFormatter();
 
   return (
-    <div>
+    <div className="soft-export-sheet soft-print-sheet">
       <div className="print:hidden mb-6">
         <button
           type="button"
@@ -29,7 +29,7 @@ export function ExportPrintView({ reviews }: { reviews: Review[] }) {
           {reviews.map((review) => (
             <li
               key={review.id}
-              className="break-inside-avoid rounded-[1.75rem] bg-paper px-6 py-6 shadow-card"
+              className="soft-print-card break-inside-avoid rounded-[1.75rem] bg-paper px-6 py-6 shadow-card"
             >
               <p className="text-sm text-muted">
                 {format.dateTime(new Date(review.createdAt), { dateStyle: "long" })}

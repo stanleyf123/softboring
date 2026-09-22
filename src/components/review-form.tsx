@@ -302,7 +302,7 @@ function ReviewFormFields({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`space-y-8 ${moodTint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${moodTint}` : ""}`}
+      className={`soft-review-sheet space-y-8 ${moodTint ? `rounded-[2rem] px-4 py-6 sm:px-6 ${moodTint}` : ""}`}
       autoComplete="off"
     >
       {softPlus ? (
@@ -383,7 +383,7 @@ function ReviewFormFields({
         </div>
       </fieldset>
 
-      <div className="flex flex-col items-start gap-3 pt-2">
+      <div className="flex flex-col items-start gap-3 pt-2 print:hidden">
         <button
           type="submit"
           disabled={saving}
