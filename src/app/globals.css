@@ -733,6 +733,22 @@ html[data-quiet-writing="1"] main {
   }
 }
 
+.soft-sound-live {
+  animation: soft-sound-breathe 4.8s ease-in-out infinite;
+}
+
+@keyframes soft-sound-breathe {
+  from {
+    box-shadow: 0 0 0 0 rgba(125, 155, 140, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(213, 230, 216, 0.9);
+  }
+  to {
+    box-shadow: 0 0 0 0 rgba(125, 155, 140, 0);
+  }
+}
+
 .soft-weather-drift {
   animation: soft-weather-drift 7s ease-in-out infinite alternate;
 }
@@ -748,7 +764,8 @@ html[data-quiet-writing="1"] main {
 
 @media (prefers-reduced-motion: reduce) {
   .soft-shortcuts-sheet,
-  .soft-weather-drift {
+  .soft-weather-drift,
+  .soft-sound-live {
     animation: none;
   }
 }

@@ -383,6 +383,25 @@ db.exec(
   "CREATE INDEX IF NOT EXISTS idx_soft_gratitudes_user_created ON soft_gratitudes (user_id, created_at)",
 );
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_gratitude_draws (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_gratitude_draws_user_created ON soft_gratitude_draws (user_id, created_at)",
+);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_presence_hours (
+    hour_key TEXT PRIMARY KEY,
+    hits INTEGER NOT NULL DEFAULT 0
+  );
+`);
+
 db.close();
 
 console.log(`SQLite ready at ${sqlitePath}`);

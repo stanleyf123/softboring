@@ -411,3 +411,18 @@ CREATE TABLE IF NOT EXISTS soft_gratitudes (
 
 CREATE INDEX IF NOT EXISTS idx_soft_gratitudes_user_created
   ON soft_gratitudes (user_id, created_at);
+
+CREATE TABLE IF NOT EXISTS soft_gratitude_draws (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_soft_gratitude_draws_user_created
+  ON soft_gratitude_draws (user_id, created_at);
+
+CREATE TABLE IF NOT EXISTS wall_presence_hours (
+  hour_key TEXT PRIMARY KEY,
+  hits INTEGER NOT NULL DEFAULT 0
+);

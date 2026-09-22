@@ -2,11 +2,19 @@
 
 import { EmptyState } from "@/components/empty-state";
 import { SoftPostcardFromDigest } from "@/components/soft-postcard-button";
+import { SoftReportSection } from "@/components/soft-report-section";
 import { Link } from "@/i18n/navigation";
 import type { MonthlyDigest } from "@/lib/plus-insights";
+import type { MonthlySoftReport } from "@/lib/soft-report";
 import { useFormatter, useTranslations } from "next-intl";
 
-export function DigestPanel({ digest }: { digest: MonthlyDigest }) {
+export function DigestPanel({
+  digest,
+  report,
+}: {
+  digest: MonthlyDigest;
+  report: MonthlySoftReport;
+}) {
   const t = useTranslations("Digest");
   const format = useFormatter();
   const monthLabel = format.dateTime(new Date(digest.year, digest.month - 1, 1), {
@@ -26,6 +34,7 @@ export function DigestPanel({ digest }: { digest: MonthlyDigest }) {
           wash="bg-paper"
           illustration="digest"
         />
+        <SoftReportSection report={report} />
       </div>
     );
   }
@@ -93,6 +102,7 @@ export function DigestPanel({ digest }: { digest: MonthlyDigest }) {
         </div>
       </section>
       <SoftPostcardFromDigest digest={digest} />
+      <SoftReportSection report={report} />
     </div>
   );
 }

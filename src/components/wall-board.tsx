@@ -3,6 +3,7 @@
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { SoftCssEmpty } from "@/components/soft-empty-illu";
 import { NeighborHighlightsStrip } from "@/components/neighbor-highlights-strip";
+import { NeighborPresence } from "@/components/neighbor-presence";
 import { WallKindnessStrip } from "@/components/wall-kindness-strip";
 import { QuietWallComposer } from "@/components/quiet-wall-composer";
 import { shareErrorCopy } from "@/components/share-to-wall";
@@ -839,6 +840,7 @@ export function WallBoard({
   if (loadError) {
     return (
       <div className={`${SITE_SHELL_CLASS} pt-8`}>
+        <NeighborPresence />
         {kindness}
         <section className="mt-6 rounded-[2rem] bg-paper px-8 py-12 shadow-card">
           <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
@@ -856,6 +858,7 @@ export function WallBoard({
           <div>
             <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
             <p className="mt-3 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
+            <NeighborPresence />
             <p className="mt-2 text-sm">
               <Link href="/guidelines" className="text-accent hover:text-foreground">
                 {t("guidelinesLink")}
