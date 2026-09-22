@@ -1,9 +1,21 @@
 "use client";
 
+import { SoftCssEmpty, type SoftEmptyKind } from "./soft-empty-illu";
 import { SoftShapesEmpty } from "./soft-doodles";
 import { Link } from "@/i18n/navigation";
 
-export type EmptyIllustration = "default" | "history" | "digest" | "year" | "saved";
+export type EmptyIllustration =
+  | "default"
+  | "history"
+  | "digest"
+  | "year"
+  | "saved"
+  | "wall"
+  | "activity";
+
+function isCssEmpty(kind: EmptyIllustration): kind is SoftEmptyKind {
+  return kind === "wall" || kind === "history" || kind === "activity";
+}
 
 export function EmptyState({
   title,
@@ -12,6 +24,7 @@ export function EmptyState({
   ctaLabel,
   wash = "bg-paper",
   illustration = "default",
+  whisper,
 }: {
   title: string;
   body: string;
@@ -19,14 +32,25 @@ export function EmptyState({
   ctaLabel?: string;
   wash?: string;
   illustration?: EmptyIllustration;
+  whisper?: string;
 }) {
   return (
-    <section className={`rounded-[2rem] ${wash} px-8 py-12 shadow-card`}>
-      <SoftShapesEmpty
-        kind={illustration}
-        className="h-20 w-20 animate-[soft-empty-float_4s_ease-in-out_infinite] sm:h-24 sm:w-24"
-      />
-      <h2 className="mt-5 font-display text-2xl tracking-tight">{title}</h2>
+    <section
+      className={`rounded-[2rem] ${wash} px-8 py-12 shadow-card`}
+      data-empty-state={illustration}
+    >
+      {isCssEmpty(illustration) ? (
+        <SoftCssEmpty kind={illustration} />
+      ) : (
+        <SoftShapesEmpty
+          kind={illustration}
+          className="h-20 w-20 animate-[soft-empty-float_4s_ease-in-out_infinite] sm:h-24 sm:w-24"
+        />
+      )}
+      {whisper ? (
+        <p className="mt-4 font-display text-lg italic tracking-tight text-accent">{whisper}</p>
+      ) : null}
+      <h2 className={`${whisper ? "mt-3" : "mt-5"} font-display text-2xl tracking-tight`}>{title}</h2>
       <p className="mt-3 max-w-md leading-relaxed text-muted">{body}</p>
       {ctaHref && ctaLabel ? (
         <Link

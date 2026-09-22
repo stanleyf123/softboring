@@ -14,6 +14,14 @@ import {
 } from "@/lib/custom-questions";
 import type { StreakMilestone } from "@/lib/plus-insights";
 import {
+  autosaveView,
+  clearDraftSavedAt,
+  draftHasContent,
+  readDraftSavedAt,
+  writeDraftSavedAt,
+  type AutosavePhase,
+} from "@/lib/review-autosave";
+import {
   clearDraft,
   createReview,
   emptyDraft,
@@ -26,7 +34,7 @@ import type { SeasonalPackId } from "@/lib/seasonal-packs";
 import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const TEXT_FIELDS = [
   "energy",
@@ -116,6 +124,14 @@ function ReviewFormFields({
     };
   }, [softPlus, customQuestions]);
   const [draft, setDraft] = useState<ReviewAnswers>(initial);
+  const [autosavePhase, setAutosavePhase] = useState<AutosavePhase>(() =>
+    draftHasContent(initial) ? "saved" : "idle",
+  );
+  const [draftSavedAt, setDraftSavedAt] = useState<number | null>(() =>
+    draftHasContent(initial) ? readDraftSavedAt(window.localStorage) : null,
+  );
+  const [autosaveNow, setAutosaveNow] = useState(() => Date.now());
+  const autosaveTimer = useRef<number | null>(null);
   const [saved, setSaved] = useState(false);
   const [savedReviewId, setSavedReviewId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -133,23 +149,59 @@ function ReviewFormFields({
     return tQuestions(field);
   };
 
-  function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K]) {
-    setDraft((current) => {
-      const next = { ...current, [key]: value };
-      saveDraft(next);
-      return next;
-    });
+  useEffect(() => {
+    if (autosavePhase !== "saved") return;
+    const id = window.setInterval(() => setAutosaveNow(Date.now()), 10_000);
+    return () => window.clearInterval(id);
+  }, [autosavePhase]);
+
+  useEffect(() => {
+    return () => {
+      if (autosaveTimer.current != null) window.clearTimeout(autosaveTimer.current);
+    };
+  }, []);
+
+  function stopAutosaveTimer() {
+    if (autosaveTimer.current != null) {
+      window.clearTimeout(autosaveTimer.current);
+      autosaveTimer.current = null;
+    }
   }
 
-  function updateCustom(id: string, answer: string) {
-    setDraft((current) => {
-      const nextAnswers = (current.customAnswers ?? []).map((item) =>
+  function persistDraft(next: ReviewAnswers, now: number) {
+    saveDraft(next);
+    const has = draftHasContent(next);
+    if (has) {
+      writeDraftSavedAt(window.localStorage, now);
+      setDraftSavedAt(now);
+    } else {
+      clearDraftSavedAt(window.localStorage);
+      setDraftSavedAt(null);
+    }
+    setAutosavePhase("saving");
+    setAutosaveNow(now);
+    stopAutosaveTimer();
+    autosaveTimer.current = window.setTimeout(() => {
+      setAutosavePhase(has ? "saved" : "idle");
+      setAutosaveNow(Date.now());
+    }, 420);
+  }
+
+  function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K], now: number) {
+    const next = { ...draft, [key]: value };
+    setDraft(next);
+    persistDraft(next, now);
+  }
+
+  function updateCustom(id: string, answer: string, now: number) {
+    const next = {
+      ...draft,
+      customAnswers: (draft.customAnswers ?? []).map((item) =>
         item.id === id ? { ...item, answer } : item,
-      );
-      const next = { ...current, customAnswers: nextAnswers };
-      saveDraft(next);
-      return next;
-    });
+      ),
+    };
+    setDraft(next);
+    persistDraft(next, now);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -166,6 +218,7 @@ function ReviewFormFields({
       const result = await createReview(payload);
       setAccess(result.access);
       setSavedReviewId(result.review.id);
+      stopAutosaveTimer();
       setSaved(true);
       if (
         result.milestone &&
@@ -187,7 +240,10 @@ function ReviewFormFields({
     if (softPlus && liveCustomQuestions.length > 0) {
       next.customAnswers = answersForQuestions(liveCustomQuestions, []);
     }
+    stopAutosaveTimer();
     setDraft(next);
+    setAutosavePhase("idle");
+    setDraftSavedAt(null);
     setSaved(false);
     setSavedReviewId(null);
     setError(false);
@@ -198,14 +254,12 @@ function ReviewFormFields({
 
   function applyPackToCustom(questions: CustomQuestion[]) {
     setLiveCustomQuestions(questions);
-    setDraft((current) => {
-      const next = {
-        ...current,
-        customAnswers: answersForQuestions(questions, current.customAnswers ?? []),
-      };
-      saveDraft(next);
-      return next;
-    });
+    const next = {
+      ...draft,
+      customAnswers: answersForQuestions(questions, draft.customAnswers ?? []),
+    };
+    setDraft(next);
+    window.setTimeout(() => persistDraft(next, Date.now()), 0);
   }
 
   if (saved) {
@@ -323,7 +377,7 @@ function ReviewFormFields({
             </span>
             <textarea
               value={draft[field]}
-              onChange={(event) => update(field, event.target.value)}
+              onChange={(event) => update(field, event.target.value, Date.now())}
               rows={field === "summary" ? 2 : 3}
               className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
             />
@@ -341,7 +395,7 @@ function ReviewFormFields({
                 <span className="block text-base leading-relaxed">{item.prompt}</span>
                 <textarea
                   value={item.answer}
-                  onChange={(event) => updateCustom(item.id, event.target.value)}
+                  onChange={(event) => updateCustom(item.id, event.target.value, Date.now())}
                   rows={3}
                   className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
                 />
@@ -354,7 +408,7 @@ function ReviewFormFields({
       {signedIn ? (
         <WeekMoodPicker
           mood={draft.mood && isWeekMood(draft.mood) ? draft.mood : null}
-          onChange={(next: WeekMood | null) => update("mood", next)}
+          onChange={(next: WeekMood | null) => update("mood", next, Date.now())}
         />
       ) : null}
 
@@ -368,7 +422,7 @@ function ReviewFormFields({
               <button
                 key={value}
                 type="button"
-                onClick={() => update("feeling", value)}
+                onClick={() => update("feeling", value, Date.now())}
                 aria-pressed={selected}
                 className={
                   selected
@@ -392,8 +446,53 @@ function ReviewFormFields({
           {saving ? t("saving") : t("submit")}
         </button>
         {error ? <p className="text-sm text-muted">{t("saveError")}</p> : null}
-        <p className="text-sm text-muted">{t("draftHint")}</p>
+        <ReviewAutosaveStatus
+          phase={autosavePhase}
+          savedAt={draftSavedAt}
+          now={autosaveNow}
+        />
       </div>
     </form>
+  );
+}
+
+function ReviewAutosaveStatus({
+  phase,
+  savedAt,
+  now,
+}: {
+  phase: AutosavePhase;
+  savedAt: number | null;
+  now: number;
+}) {
+  const t = useTranslations("Review");
+  const view = autosaveView(phase, savedAt, now);
+  const label =
+    view.phase === "saving"
+      ? t("autosaveSaving")
+      : view.moment === "just"
+        ? t("autosaveJustNow")
+        : view.moment === "moment"
+          ? t("autosaveMoment")
+          : view.moment === "minutes"
+            ? t("autosaveMinutes", { minutes: view.minutes })
+            : view.moment === "later"
+              ? t("autosaveLater")
+              : t("draftHint");
+
+  return (
+    <div className="space-y-1">
+      <p
+        className="text-sm text-muted"
+        role="status"
+        aria-live="polite"
+        data-review-autosave={view.phase}
+        data-review-autosave-moment={view.moment}
+      >
+        <span className={`soft-autosave-dot soft-autosave-dot-${view.phase}`} aria-hidden="true" />
+        {label}
+      </p>
+      {view.phase === "idle" ? null : <p className="text-sm text-muted">{t("draftHint")}</p>}
+    </div>
   );
 }

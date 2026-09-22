@@ -275,6 +275,171 @@ html[data-night="on"] .text-paper {
   }
 }
 
+/* Soft empty illustrations: CSS only, cream / blush / peach / mint. */
+.soft-empty-illu {
+  position: relative;
+  width: 7.5rem;
+  height: 6.75rem;
+}
+
+.soft-empty-board,
+.soft-empty-note,
+.soft-empty-sheet,
+.soft-empty-bloom,
+.soft-empty-bead,
+.soft-empty-pin,
+.soft-empty-thread,
+.soft-empty-line {
+  position: absolute;
+  display: block;
+}
+
+.soft-empty-board {
+  inset: 10% 2% 8% 2%;
+  border-radius: 1.35rem;
+  background:
+    radial-gradient(circle at 18px 16px, rgba(196, 127, 110, 0.28) 1.3px, transparent 1.6px),
+    var(--cream);
+  background-size: 22px 22px, auto;
+  box-shadow: var(--shadow-card);
+}
+
+.soft-empty-note {
+  width: 46%;
+  height: 58%;
+  border-radius: 0.95rem;
+  box-shadow: var(--shadow-card);
+}
+
+.soft-empty-note-a {
+  left: 12%;
+  top: 18%;
+  background: var(--blush);
+  transform: rotate(-7deg);
+}
+
+.soft-empty-note-b {
+  right: 8%;
+  top: 30%;
+  height: 50%;
+  background: var(--mint);
+  transform: rotate(6deg);
+}
+
+.soft-empty-pin {
+  left: 30%;
+  top: 14%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(244, 212, 198, 0.85);
+}
+
+.soft-empty-sheet-back {
+  inset: 18% 18% 8% 8%;
+  border-radius: 1.1rem;
+  background: var(--peach);
+  transform: rotate(-6deg);
+}
+
+.soft-empty-sheet-front {
+  inset: 8% 8% 16% 22%;
+  border-radius: 1.15rem;
+  background: var(--paper);
+  box-shadow: var(--shadow-card);
+}
+
+.soft-empty-line {
+  left: 16%;
+  right: 18%;
+  height: 0.28rem;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.72;
+}
+
+.soft-empty-sheet-front .soft-empty-line:nth-child(1) {
+  top: 28%;
+}
+
+.soft-empty-sheet-front .soft-empty-line.is-short {
+  top: 46%;
+  right: 34%;
+  background: var(--sage);
+}
+
+.soft-empty-sheet-front .soft-empty-line.is-shorter {
+  top: 64%;
+  right: 46%;
+  background: var(--blush);
+  opacity: 1;
+}
+
+.soft-empty-bloom {
+  right: 4%;
+  top: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: var(--mint);
+  box-shadow: inset 0 0 0 0.35rem var(--peach);
+}
+
+.soft-empty-thread {
+  left: 48%;
+  top: 12%;
+  bottom: 12%;
+  width: 0.2rem;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.soft-empty-bead {
+  left: 42%;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 999px;
+  box-shadow: var(--shadow-card);
+}
+
+.soft-empty-bead.is-a {
+  top: 14%;
+  background: var(--blush);
+}
+
+.soft-empty-bead.is-b {
+  top: 44%;
+  left: 38%;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: var(--peach);
+}
+
+.soft-empty-bead.is-c {
+  top: 72%;
+  background: var(--mint);
+}
+
+.soft-autosave-dot {
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.45rem;
+  border-radius: 999px;
+  background: var(--line);
+  vertical-align: 0.05rem;
+}
+
+.soft-autosave-dot-saving {
+  background: var(--peach);
+  box-shadow: 0 0 0 4px rgba(248, 220, 200, 0.75);
+}
+
+.soft-autosave-dot-saved {
+  background: var(--sage);
+}
+
 @keyframes soft-streak-backdrop {
   from {
     opacity: 0;

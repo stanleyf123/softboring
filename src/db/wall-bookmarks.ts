@@ -49,9 +49,20 @@ export function bookmarkWallNote(userId: string, noteId: string) {
 }
 
 export function unbookmarkWallNote(userId: string, noteId: string) {
-  return getDb()
-    .prepare(`DELETE FROM wall_note_bookmarks WHERE user_id = ? AND note_id = ?`)
-    .run(userId, noteId).changes;
+  const db = getDb();
+  const remove = db.transaction(() => {
+    db.prepare(
+      `DELETE FROM wall_note_collection_items
+       WHERE note_id = ?
+         AND collection_id IN (
+           SELECT id FROM wall_note_collections WHERE user_id = ?
+         )`,
+    ).run(noteId, userId);
+    return db
+      .prepare(`DELETE FROM wall_note_bookmarks WHERE user_id = ? AND note_id = ?`)
+      .run(userId, noteId).changes;
+  });
+  return remove();
 }
 
 export function toggleWallNoteBookmark(userId: string, noteId: string) {

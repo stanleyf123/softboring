@@ -243,6 +243,36 @@ db.exec(
 );
 
 db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_collections (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_collections_user ON wall_note_collections (user_id, created_at DESC)",
+);
+db.exec(
+  "CREATE UNIQUE INDEX IF NOT EXISTS idx_wall_note_collections_user_name ON wall_note_collections (user_id, name COLLATE NOCASE)",
+);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wall_note_collection_items (
+    collection_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (collection_id, note_id),
+    FOREIGN KEY (collection_id) REFERENCES wall_note_collections(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES wall_notes(id) ON DELETE CASCADE
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_wall_note_collection_items_note ON wall_note_collection_items (note_id)",
+);
+
+db.exec(`
   CREATE TABLE IF NOT EXISTS wall_note_flags (
     id TEXT PRIMARY KEY,
     note_id TEXT NOT NULL,
