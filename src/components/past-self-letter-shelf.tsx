@@ -106,6 +106,13 @@ export async function PastSelfLetterShelf({
           })}
         </ul>
       )}
+      <Link
+        href="/account"
+        className="mt-4 inline-flex text-sm text-accent"
+        data-past-letter-inbox-link
+      >
+        {t("inboxLink")}
+      </Link>
     </section>
   );
 }

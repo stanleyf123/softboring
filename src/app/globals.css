@@ -1092,6 +1092,12 @@ html[data-quiet-writing="1"] main {
   animation: none;
 }
 
+.soft-draft-banner {
+  border-radius: 1.5rem;
+  border: 1px solid var(--peach);
+  background: var(--cream);
+}
+
 @keyframes soft-rate-toast-in {
   from {
     opacity: 0;
@@ -1115,6 +1121,7 @@ html[data-quiet-writing="1"] main {
   .soft-save-bloom-card,
   .soft-copy-toast,
   .soft-rate-toast,
+  .soft-draft-banner,
   .soft-offline-banner,
   [data-breath-circle],
   [data-breath-circle] * {
@@ -1137,6 +1144,7 @@ html[data-quiet-writing="1"] main {
   .soft-undo-toast,
   .soft-copy-toast,
   .soft-rate-toast,
+  .soft-draft-banner,
   .soft-offline-banner {
     display: none;
   }
