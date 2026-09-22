@@ -9,7 +9,9 @@ import { SoftRhythmCard } from "@/components/soft-rhythm-card";
 import { SoftWeekWeather } from "@/components/soft-week-weather";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
+import { PublicWallCounter } from "@/components/public-wall-counter";
 import { HomeSoftStats } from "@/components/soft-stats-strip";
+import { publicSoftStats } from "@/db/soft-stats";
 import { listReviewsForOwner } from "@/db/reviews";
 import { getCurrentSoftIntention } from "@/db/soft-intentions";
 import { listOwnWallSnippets } from "@/db/wall";
@@ -54,6 +56,7 @@ export default async function HomePage({ params }: Props) {
   const pauseWeekKey = settings ? currentPauseWeekKey(new Date(), settings.timezone) : "";
   const paused = user && pauseWeekKey ? isWeekPaused(user.id, pauseWeekKey) : false;
   const softPlus = userIsSoftPlus(user);
+  const publicStats = publicSoftStats();
   const intention = user ? getCurrentSoftIntention(user.id) : null;
   const reviews = user
     ? listReviewsForOwner({ kind: "user", userId: user.id, guestId: "" })
@@ -124,6 +127,11 @@ export default async function HomePage({ params }: Props) {
               {t("ctaWall")}
             </Link>
           </div>
+          <PublicWallCounter
+            count={publicStats.publicWallNotes}
+            label={t("wallCountLabel")}
+            ariaLabel={t("wallCountAria", { count: publicStats.publicWallNotes })}
+          />
           {intention ? (
             <div className="mt-5">
               <IntentionReminderChip body={intention.body} weekKey={intention.weekKey} />
@@ -163,6 +171,7 @@ export default async function HomePage({ params }: Props) {
         labels={{
           aria: t("statsAria"),
           wallWeek: t("statsWallWeek"),
+          wallPublic: t("statsWallPublic"),
           languages: t("statsLanguages"),
           note: t("statsNote"),
         }}

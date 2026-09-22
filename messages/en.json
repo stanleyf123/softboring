@@ -133,7 +133,10 @@
     "statsAria": "A few soft public numbers",
     "statsNote": "Quiet counts only — no private reviews, no names.",
     "statsWallWeek": "Visible Soft Wall notes this week",
-    "statsLanguages": "Languages Soft Boring speaks"
+    "statsWallPublic": "Public Soft Wall notes",
+    "statsLanguages": "Languages Soft Boring speaks",
+    "wallCountLabel": "public notes on Soft Wall",
+    "wallCountAria": "{count} public notes resting on Soft Wall"
   },
   "Questions": {
     "energy": "What gave you the most energy this week?",
@@ -613,6 +616,7 @@
     "featureDigestFree": "Monthly digest and the soft month report stay with Soft+",
     "featureCapsuleFree": "A note sealed until a future day stays with Soft+",
     "featureStreakProtectFree": "One monthly pause that keeps a streak from breaking stays with Soft+",
+    "featureReflectionFree": "Three gentle week marks stay with Soft+",
     "featureWallPlus": "Soft Wall full access: read, drag, comment, and reply",
     "featureCollectionsPlus": "Group saved wall notes into named soft collections",
     "featureCollectionExportPlus": "Download soft collections and bookmarked note ids as JSON",
@@ -622,6 +626,7 @@
     "featureDigestPlus": "An in-app monthly digest, plus thanks, echoes, gratitude draws, and pause weeks",
     "featureCapsulePlus": "Seal a short note until a future day, and see what opened this week. In the app — no email",
     "featureStreakProtectPlus": "One gentle pause a month when a streak is at risk. In the app — no email",
+    "featureReflectionPlus": "An optional soft checklist of three gentle marks, kept with the week",
     "featureStickersPlus": "Buy and place wall stickers",
     "featureBadgePlus": "Soft+ wall badge, and pin one of your notes",
     "featurePortal": "Manage or cancel in the Stripe customer portal",
@@ -1171,6 +1176,28 @@
     "archiveEmpty": "No letter yet. This week’s review can hold one.",
     "openWeek": "Open that week",
     "writeThisWeek": "Write this week’s letter"
+  },
+  "SoftReflection": {
+    "plusKicker": "Soft+",
+    "title": "A soft checklist for this week",
+    "lead": "Three gentle marks. Optional. Not a to-do list — only if it already happened. They stay with this week.",
+    "guestBody": "Sign in on Soft+ to keep three quiet marks with this week. Free still has the weekly review.",
+    "loginCta": "Log in",
+    "lockedTitle": "A soft checklist waits on Soft+",
+    "lockedBody": "Soft+ can keep three gentle marks with the week. Free desks still write the review.",
+    "lockedCta": "See Soft+",
+    "loading": "Opening this week’s marks…",
+    "loadError": "Could not load the soft checklist just now.",
+    "weekLabel": "Week {week}",
+    "checksLabel": "Gentle marks for this week",
+    "items": {
+      "noticed": "I noticed one small thing that felt okay",
+      "unfinished": "I left one thing unfinished on purpose",
+      "kind": "I was a little kind to myself"
+    },
+    "progress": "{count} of {total} gentle marks",
+    "saved": "Kept with this week.",
+    "saveError": "Could not keep that mark just now."
   },
   "SoftIntention": {
     "title": "Soft intention",

@@ -133,7 +133,10 @@
     "statsAria": "すこし静かな公開の数字",
     "statsNote": "穏やかな数え方だけ——個人の振り返りも名前も出しません。",
     "statsWallWeek": "今週みえるソフトウォールのメモ",
-    "statsLanguages": "Soft Boring が話す言語"
+    "statsWallPublic": "ソフトウォールの公開メモ",
+    "statsLanguages": "Soft Boring が話す言語",
+    "wallCountLabel": "枚の公開メモがソフトウォールに",
+    "wallCountAria": "ソフトウォールに公開メモが {count} 枚あります"
   },
   "Questions": {
     "energy": "今週、いちばん元気をもらったものは？",
@@ -528,6 +531,7 @@
     "featureDigestFree": "月次ダイジェストと今月のやわらかい報告は Soft+",
     "featureCapsuleFree": "未来の日まで封じるメモは Soft+ にあります",
     "featureStreakProtectFree": "連続が切れそうなとき、月に一度の休止は Soft+ にあります",
+    "featureReflectionFree": "やさしい三つの週の印は Soft+ にあります",
     "featureWallPlus": "ソフトウォールを全部：読む、動かす、コメント、返信",
     "featureCollectionsPlus": "保存した壁の付箋を、名前つきのやわらかい集まりに",
     "featureCollectionExportPlus": "やわらかい集まりと、保存した付箋 ID を JSON でダウンロード",
@@ -537,6 +541,7 @@
     "featureDigestPlus": "アプリ内の月次ダイジェスト。ありがとう、エコー、引いた感謝、休んだ週も",
     "featureCapsulePlus": "短いメモを未来の日まで封じ、今週ひらいたものも見られます。アプリの中だけ。メールは送りません",
     "featureStreakProtectPlus": "連続が危うい週に、月いちどのやさしい休止。アプリの中だけ。メールは送りません",
+    "featureReflectionPlus": "任意のやわらかいチェック。三つのやさしい印を、その週といっしょに残します",
     "featureStickersPlus": "壁のシールを買って、貼る",
     "featureBadgePlus": "Soft+ の壁バッジと、自分の付箋をひとつピン留め",
     "featurePortal": "Stripe のお客さまポータルで管理や解約",
@@ -1171,6 +1176,28 @@
     "archiveEmpty": "まだ手紙はありません。今週のふりかえりに一通おけます。",
     "openWeek": "その週を開く",
     "writeThisWeek": "今週の手紙を書く"
+  },
+  "SoftReflection": {
+    "plusKicker": "Soft+",
+    "title": "今週のやわらかいチェック",
+    "lead": "やさしい印が三つ。任意です。やることリストではなく、すでに起きたときだけ。その週といっしょに残ります。",
+    "guestBody": "Soft+ でログインすると、静かな印を三つ、今週といっしょに残せます。Free でも週のふりかえりは書けます。",
+    "loginCta": "ログイン",
+    "lockedTitle": "やわらかいチェックは Soft+ で",
+    "lockedBody": "Soft+ は、やさしい印を三つ、その週といっしょに残せます。Free でもふりかえりは書けます。",
+    "lockedCta": "Soft+ を見る",
+    "loading": "今週の印を開いています…",
+    "loadError": "やわらかいチェックを読み込めませんでした。",
+    "weekLabel": "週 {week}",
+    "checksLabel": "今週のやさしい印",
+    "items": {
+      "noticed": "小さくて、まあよかったことをひとつ気づいた",
+      "unfinished": "わざと、ひとつ終わらせないままにした",
+      "kind": "自分に、すこしやさしくした"
+    },
+    "progress": "{total} のうち {count}",
+    "saved": "この週といっしょに残しました。",
+    "saveError": "いまはその印を残せませんでした。"
   },
   "SoftIntention": {
     "title": "やわらかい意図",

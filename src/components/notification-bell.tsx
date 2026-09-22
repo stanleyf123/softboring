@@ -2,6 +2,7 @@
 
 import { SoftTipsList } from "@/components/soft-tips-card";
 import { Link } from "@/i18n/navigation";
+import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -101,7 +102,7 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
       <button
         type="button"
         onClick={toggle}
-        className="relative grid h-11 w-11 place-items-center rounded-full text-muted hover:bg-peach/70 hover:text-foreground"
+        className={`${SOFT_CHROME_FOCUS} relative grid h-11 w-11 place-items-center rounded-full text-muted hover:bg-peach/70 hover:text-foreground`}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label={t("label")}
@@ -138,7 +139,7 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
               <button
                 type="button"
                 onClick={markAll}
-                className="min-h-11 text-xs text-muted hover:text-foreground"
+                className={`${SOFT_CHROME_FOCUS} min-h-11 rounded-full px-2 text-xs text-muted hover:text-foreground`}
               >
                 {t("markAll")}
               </button>
@@ -158,8 +159,8 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
                 onClick={() => setFilter(item.id)}
                 className={
                   filter === item.id
-                    ? "rounded-full bg-peach px-3 py-1.5 text-xs text-foreground"
-                    : "rounded-full px-3 py-1.5 text-xs text-muted hover:bg-cream/80 hover:text-foreground"
+                    ? `${SOFT_CHROME_FOCUS} rounded-full bg-peach px-3 py-1.5 text-xs text-foreground`
+                    : `${SOFT_CHROME_FOCUS} rounded-full px-3 py-1.5 text-xs text-muted hover:bg-cream/80 hover:text-foreground`
                 }
               >
                 {item.label}
@@ -187,7 +188,7 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
                       if (!item.readAt) void markOne(item.id);
                       setOpen(false);
                     }}
-                    className={`block rounded-2xl px-3 py-2 text-sm ${
+                    className={`${SOFT_CHROME_FOCUS} block rounded-2xl px-3 py-2 text-sm ${
                       item.readAt ? "bg-cream/70" : "bg-peach/70"
                     }`}
                   >

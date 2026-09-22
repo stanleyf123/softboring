@@ -3,12 +3,12 @@
 import { usePathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { rewriteLocalePath } from "@/lib/locale-path";
+import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 function localeClass(current: boolean, footer: boolean, active: string) {
-  const focus =
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  const focus = SOFT_CHROME_FOCUS;
   if (footer) {
     return current
       ? `inline-flex min-h-11 items-center gap-1.5 rounded-full ${active} px-3 py-1.5 text-sm text-foreground shadow-card ${focus}`

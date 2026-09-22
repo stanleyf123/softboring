@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import { useTranslations } from "next-intl";
 
 const items = [
@@ -37,7 +38,7 @@ export function MobileBottomNav({ email }: { email: string | null }) {
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-1 text-[11px] ${
+                className={`${SOFT_CHROME_FOCUS} flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-1 text-[11px] ${
                   active ? "bg-peach text-foreground" : "text-muted hover:text-foreground"
                 }`}
               >
@@ -51,7 +52,7 @@ export function MobileBottomNav({ email }: { email: string | null }) {
           <Link
             href={authHref}
             aria-current={authActive ? "page" : undefined}
-            className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-1 text-[11px] ${
+            className={`${SOFT_CHROME_FOCUS} flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-1 text-[11px] ${
               authActive ? "bg-blush text-foreground" : "text-muted hover:text-foreground"
             }`}
           >

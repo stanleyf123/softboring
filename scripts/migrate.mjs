@@ -430,6 +430,27 @@ db.exec(
   "CREATE INDEX IF NOT EXISTS idx_streak_protect_tokens_user ON streak_protect_tokens (user_id)",
 );
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_week_reflections (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    week_key TEXT NOT NULL,
+    noticed INTEGER NOT NULL DEFAULT 0,
+    unfinished INTEGER NOT NULL DEFAULT 0,
+    kind INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id, week_key),
+    CHECK (noticed IN (0, 1)),
+    CHECK (unfinished IN (0, 1)),
+    CHECK (kind IN (0, 1))
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_week_reflections_user_week ON soft_week_reflections (user_id, week_key)",
+);
+
 db.close();
 
 console.log(`SQLite ready at ${sqlitePath}`);

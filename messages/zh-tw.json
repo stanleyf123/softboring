@@ -133,7 +133,10 @@
     "statsAria": "幾個安靜的公開數字",
     "statsNote": "只有溫柔計數——沒有私人回顧，也沒有名字。",
     "statsWallWeek": "本週可見的軟軟牆便利貼",
-    "statsLanguages": "Soft Boring 支援的語言"
+    "statsWallPublic": "軟軟牆上的公開便利貼",
+    "statsLanguages": "Soft Boring 支援的語言",
+    "wallCountLabel": "張公開便利貼在軟軟牆",
+    "wallCountAria": "軟軟牆上有 {count} 張公開便利貼"
   },
   "Questions": {
     "energy": "這週最給你能量的是什麼？",
@@ -528,6 +531,7 @@
     "featureDigestFree": "每月摘要與本月軟報告在 Soft+",
     "featureCapsuleFree": "封到未來某天的短箋留在 Soft+",
     "featureStreakProtectFree": "連續週數快斷時，每月一次的暫停保護留在 Soft+",
+    "featureReflectionFree": "三個輕輕的週記勾選留在 Soft+",
     "featureWallPlus": "軟軟牆完整使用：讀、拖、留言、回覆",
     "featureCollectionsPlus": "把已存的牆上記事收成有名字的柔軟小集",
     "featureCollectionExportPlus": "把柔軟小集與已存便利貼編號下載成 JSON",
@@ -537,6 +541,7 @@
     "featureDigestPlus": "應用內每月摘要，另含謝謝、回聲、抽出的感恩與休息週",
     "featureCapsulePlus": "把一小段話封到未來的一天，也能看見這週打開了哪些。只在應用裡，不寄信",
     "featureStreakProtectPlus": "連續週數有風險時，每月可以輕輕暫停一次。只在應用裡，不寄信",
+    "featureReflectionPlus": "可選的柔軟清單，三個輕輕的記號，跟著這一週一起留下",
     "featureStickersPlus": "購買並貼上牆上貼紙",
     "featureBadgePlus": "Soft+ 牆上徽章，並可釘選自己的一張便利貼",
     "featurePortal": "可在 Stripe 顧客入口管理或取消",
@@ -1171,6 +1176,28 @@
     "archiveEmpty": "還沒有信。這一週的回顧可以放一封。",
     "openWeek": "打開那一週",
     "writeThisWeek": "寫這一週的信"
+  },
+  "SoftReflection": {
+    "plusKicker": "Soft+",
+    "title": "這一週的柔軟清單",
+    "lead": "三個輕輕的記號。可勾可不勾。不是待辦——只有已經發生的才勾。它們會跟著這一週留下。",
+    "guestBody": "登入 Soft+ 才能把三個安靜的記號留在這一週。Free 仍然可以寫每週回顧。",
+    "loginCta": "登入",
+    "lockedTitle": "柔軟清單在 Soft+ 等你",
+    "lockedBody": "Soft+ 可以把三個輕輕的記號留在這一週。Free 仍然可以寫回顧。",
+    "lockedCta": "看看 Soft+",
+    "loading": "正在打開本週的記號…",
+    "loadError": "暫時無法載入柔軟清單。",
+    "weekLabel": "週次 {week}",
+    "checksLabel": "這一週的輕輕記號",
+    "items": {
+      "noticed": "我注意到一件小小的、還不錯的事",
+      "unfinished": "我故意留了一件事沒做完",
+      "kind": "我對自己溫柔了一點點"
+    },
+    "progress": "{total} 個裡勾了 {count} 個",
+    "saved": "已跟著這一週留下。",
+    "saveError": "暫時無法留下這個記號。"
   },
   "SoftIntention": {
     "title": "軟軟意向",

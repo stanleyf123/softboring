@@ -1,4 +1,5 @@
 import { ReviewForm } from "@/components/review-form";
+import { SoftReflectionCard } from "@/components/soft-reflection-card";
 import { SoftBreathCard } from "@/components/soft-breath-card";
 import { SoftSoundscapeToggle } from "@/components/soft-soundscape-toggle";
 import { SoftFocusTimer } from "@/components/soft-focus-timer";
@@ -88,7 +89,8 @@ export default async function ReviewPage({ params }: Props) {
         />
         <SoftBreathCard />
       </div>
-      <div className="mt-10">
+      <div className="mt-10 space-y-4">
+        <SoftReflectionCard signedIn={Boolean(user)} softPlus={softPlus} />
         <ReviewForm
           signedIn={Boolean(user)}
           softPlus={softPlus}
