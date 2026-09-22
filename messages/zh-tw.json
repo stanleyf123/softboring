@@ -36,7 +36,9 @@
     "resetTitle": "選一個新密碼 · Soft Boring Weekly",
     "resetDescription": "八個字就夠了。然後你可以再登入。",
     "trendsTitle": "趨勢 · Soft Boring Weekly",
-    "trendsDescription": "一條小小的感覺線，從 1 到 5。Soft+ 會畫出這幾週的樣子。"
+    "trendsDescription": "一條小小的感覺線，從 1 到 5。Soft+ 會畫出這幾週的樣子。",
+    "digestTitle": "每月摘要 · Soft Boring Weekly",
+    "digestDescription": "這個月的溫柔小結——回顧次數、平均感覺、主題與連續週數。僅 Soft+。"
   },
   "Nav": {
     "home": "首頁",
@@ -50,7 +52,8 @@
     "brand": "Soft Boring",
     "memberNav": "會員頁面",
     "mainNav": "主要導覽",
-    "skipToContent": "跳到主要內容"
+    "skipToContent": "跳到主要內容",
+    "digest": "摘要"
   },
   "Footer": {
     "note": "Soft Boring — 每週一次的安靜停頓",
@@ -327,7 +330,9 @@
     "inviteError": "剛剛做不出這個連結。",
     "inviteCount": "{count} 位朋友坐下了",
     "inviteReward": "軟軟牆上會有一顆小星星。不會多給 Soft+ 天數，只是安靜的謝謝。",
-    "inviteEmpty": "還沒有人用過。沒關係。"
+    "inviteEmpty": "還沒有人用過。沒關係。",
+    "digestOpen": "打開完整摘要",
+    "digest": "每月摘要"
   },
   "Pricing": {
     "eyebrow": "寫是免費的 · 記得更多是付費的",
@@ -356,8 +361,8 @@
     "featureWallPlus": "軟軟牆完整使用：讀、拖、留言、回覆",
     "featureExportPlus": "把週次匯出成 CSV 或可列印 PDF",
     "featureSearchPlus": "搜尋完整紀錄",
-    "featureCustomPlus": "最多三題自訂每週問題",
-    "featureDigestPlus": "帳號頁有本月摘要",
+    "featureCustomPlus": "最多三題自訂每週問題，外加季節題包",
+    "featureDigestPlus": "應用內每月摘要，含主題與連續週數",
     "featureStickersPlus": "購買並貼上牆上貼紙",
     "featureBadgePlus": "Soft+ 牆上徽章，並可釘選自己的一張便利貼",
     "featurePortal": "可在 Stripe 顧客入口管理或取消",
@@ -400,7 +405,8 @@
     "pointsCount": "{count}",
     "energyChips": "能量關鍵詞",
     "drainChips": "消耗關鍵詞",
-    "chipsEmpty": "詞還不夠。再寫幾週就會出現。"
+    "chipsEmpty": "詞還不夠。再寫幾週就會出現。",
+    "seeDigest": "打開每月摘要"
   },
   "Wall": {
     "eyebrow": "共用的軟木板 · 要自己貼上去",
@@ -475,7 +481,18 @@
     "shareError_review_required": "還沒選要釘哪一週。",
     "shareError_locked": "這一週還鎖在紀錄裡。升級 Soft+ 就能打開再釘上去。",
     "shareError_soft_plus_required": "把便利貼釘給鄰居看，需要 Soft+。",
-    "shareError_forbidden": "這一週已經被釘過，或你沒有權限。"
+    "shareError_forbidden": "這一週已經被釘過，或你沒有權限。",
+    "filterTitle": "找一張軟軟的紙條",
+    "filterLead": "依感覺區間篩選，或搜尋暱稱與摘錄。免費預覽仍會鎖住。",
+    "filterSearchLabel": "搜尋軟軟牆",
+    "filterSearchPlaceholder": "暱稱或摘錄…",
+    "filterFeelingMin": "從",
+    "filterFeelingMax": "到",
+    "filterFeelingAny": "不限",
+    "filterClear": "清除",
+    "filterResult": "顯示 {shown} / {total}",
+    "filterEmptyTitle": "目前沒有符合的",
+    "filterEmpty": "試試更寬的感覺區間，或清除搜尋。"
   },
   "Export": {
     "title": "可列印的回顧",
@@ -598,5 +615,75 @@
     "plusReviewCta": "寫本週回顧",
     "plusWallCta": "打開軟軟牆",
     "plusAccountCta": "回到你的小桌子"
+  },
+  "Digest": {
+    "eyebrow": "Soft+ · 僅在應用內",
+    "title": "這個月，溫柔地",
+    "lead": "從你存下的週次抽出一份安靜小結——不必開信箱。",
+    "monthLabel": "{month}",
+    "countLabel": "本月回顧",
+    "count": "{count}",
+    "feelingLabel": "平均感覺",
+    "feeling": "{value} / 5",
+    "feelingEmpty": "還沒有感覺分數",
+    "streakLabel": "連續週數",
+    "streak": "連續 {count} 週",
+    "energyTitle": "能量主題",
+    "drainTitle": "耗能主題",
+    "chipsEmpty": "字還不夠。再寫幾週就好。",
+    "seeTrends": "看趨勢",
+    "seeHistory": "看紀錄",
+    "emptyTitle": "這個月還沒有回顧",
+    "empty": "存下一份每週回顧，溫柔的小結就會等在這裡。",
+    "emptyCta": "寫一份回顧",
+    "lockedTitle": "每月摘要屬於 Soft+",
+    "lockedBody": "溫柔的月度小結——次數、感覺、主題與連續週數——留在 Soft+。",
+    "lockedCta": "看 Soft+",
+    "signedOutBody": "以 Soft+ 登入，打開這個月的摘要。",
+    "loginCta": "登入"
+  },
+  "SeasonalPacks": {
+    "title": "季節題包",
+    "lead": "Soft+ 一鍵套用。可把三題存成自訂問題，或只借用六題給這次回顧。免費仍是原本的六題。",
+    "applyCustom": "設為我的自訂問題",
+    "applying": "儲存中…",
+    "appliedCustom": "已存成自訂問題。會出現在回顧表單。",
+    "applyError": "剛剛沒辦法存下這個題包。",
+    "useThisWeek": "這次回顧試用",
+    "usingThisWeek": "正在用於這次回顧",
+    "clearWeek": "回到原本六題",
+    "activeBanner": "這次回顧正用「{name}」。答案仍寫進同一組欄位。",
+    "packs": {
+      "spring-soft-reset": {
+        "name": "春日軟重置",
+        "blurb": "冬後較輕的開始——要澆水的，與可以放下的。",
+        "energy": "這週有什麼感覺像新綠、剛醒過來？",
+        "drain": "還有什麼冬意黏著，想要休息？",
+        "lessOf": "光線回來時，你可以溫柔放下什麼？",
+        "priorities": "接下來一週，三個柔軟的小意圖？",
+        "feeling": "這週有多輕盈，1 到 5？",
+        "summary": "用一句話記下這週的軟重置。"
+      },
+      "rainy-week-comfort": {
+        "name": "雨週安慰",
+        "blurb": "給灰天與熱茶——安慰，不必修好一切。",
+        "energy": "這週什麼給了你一點遮雨的安慰？",
+        "drain": "什麼感覺潮濕、沉重，或怎麼也灰著？",
+        "lessOf": "下週你可以把什麼噪音轉小聲？",
+        "priorities": "三件想靠近的溫柔安慰？",
+        "feeling": "這週有多舒服或多重，1 到 5？",
+        "summary": "雨裡的一句話。"
+      },
+      "year-end-gratitude": {
+        "name": "年終感謝",
+        "blurb": "日曆翻頁前，一份安靜的感謝清單。",
+        "energy": "這週你安靜感謝什麼撐著你？",
+        "drain": "年底前，你準備放下什麼？",
+        "lessOf": "什麼可以無罪疚地留到明年？",
+        "priorities": "下週三個柔軟的感謝或收尾？",
+        "feeling": "這週心有多滿，1 到 5？",
+        "summary": "一句感謝的週結。"
+      }
+    }
   }
 }

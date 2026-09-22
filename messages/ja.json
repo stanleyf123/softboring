@@ -36,7 +36,9 @@
     "resetTitle": "新しいパスワードを選ぶ · Soft Boring Weekly",
     "resetDescription": "八文字あれば足ります。それから、またログインできます。",
     "trendsTitle": "傾向 · Soft Boring Weekly",
-    "trendsDescription": "気持ちの小さな線。1 から 5。Soft+ が、週の感じ方を描きます。"
+    "trendsDescription": "気持ちの小さな線。1 から 5。Soft+ が、週の感じ方を描きます。",
+    "digestTitle": "月次ダイジェスト · Soft Boring Weekly",
+    "digestDescription": "今月のやさしいまとめ——回数、平均の気持ち、テーマ、連続週。Soft+ のみ。"
   },
   "Nav": {
     "home": "ホーム",
@@ -50,7 +52,8 @@
     "brand": "Soft Boring",
     "memberNav": "会員のページ",
     "mainNav": "メイン",
-    "skipToContent": "本文へスキップ"
+    "skipToContent": "本文へスキップ",
+    "digest": "ダイジェスト"
   },
   "Footer": {
     "note": "Soft Boring — 静かな、週のひと休み",
@@ -327,7 +330,9 @@
     "inviteError": "いまはリンクを作れませんでした。",
     "inviteCount": "{count} 人が座ってくれました",
     "inviteReward": "ソフトウォールの付箋に、小さな星。Soft+ の日数は増えません。ただの、やさしいお礼です。",
-    "inviteEmpty": "まだ誰も使っていません。それで大丈夫。"
+    "inviteEmpty": "まだ誰も使っていません。それで大丈夫。",
+    "digestOpen": "詳しいダイジェストを開く",
+    "digest": "月次ダイジェスト"
   },
   "Pricing": {
     "eyebrow": "書くのは無料 · もっと覚えるのは有料",
@@ -356,8 +361,8 @@
     "featureWallPlus": "ソフトウォールを全部：読む、動かす、コメント、返信",
     "featureExportPlus": "週を CSV か、印刷できる PDF に",
     "featureSearchPlus": "履歴のすべてを検索",
-    "featureCustomPlus": "自分の週の問いを三つまで",
-    "featureDigestPlus": "アカウントのページに、月のまとめ",
+    "featureCustomPlus": "カスタム質問は最大3つ。季節パックも",
+    "featureDigestPlus": "アプリ内の月次ダイジェスト（テーマと連続週つき）",
     "featureStickersPlus": "壁のシールを買って、貼る",
     "featureBadgePlus": "Soft+ の壁バッジと、自分の付箋をひとつピン留め",
     "featurePortal": "Stripe のお客さまポータルで管理や解約",
@@ -400,7 +405,8 @@
     "pointsCount": "{count}",
     "energyChips": "元気のことば",
     "drainChips": "消耗のことば",
-    "chipsEmpty": "まだことばが足りません。もう数週、書いてみて。"
+    "chipsEmpty": "まだことばが足りません。もう数週、書いてみて。",
+    "seeDigest": "月次ダイジェストを開く"
   },
   "Wall": {
     "eyebrow": "みんなのコルクボード · 自分から留める",
@@ -475,7 +481,18 @@
     "shareError_review_required": "先に留める週を選んで。",
     "shareError_locked": "この週はまだ履歴にしまってあります。Soft+ が開くと、留められます。",
     "shareError_soft_plus_required": "となりの人に見せる付箋を留めるには、Soft+ が要ります。",
-    "shareError_forbidden": "この週はもう留めてあるか、開く権限がありません。"
+    "shareError_forbidden": "この週はもう留めてあるか、開く権限がありません。",
+    "filterTitle": "やさしいメモを探す",
+    "filterLead": "気持ちの幅や、ニックネーム／抜粋で絞り込み。無料のチラ見せは鍵のまま。",
+    "filterSearchLabel": "ソフトウォールを検索",
+    "filterSearchPlaceholder": "ニックネームや抜粋…",
+    "filterFeelingMin": "から",
+    "filterFeelingMax": "まで",
+    "filterFeelingAny": "指定なし",
+    "filterClear": "クリア",
+    "filterResult": "{total} 件中 {shown} 件",
+    "filterEmptyTitle": "いまは一致しない",
+    "filterEmpty": "気持ちの幅を広げるか、検索を消してみて。"
   },
   "Export": {
     "title": "印刷できるふりかえり",
@@ -598,5 +615,75 @@
     "plusReviewCta": "今週のふりかえりを書く",
     "plusWallCta": "ソフトウォールを開く",
     "plusAccountCta": "机にもどる"
+  },
+  "Digest": {
+    "eyebrow": "Soft+ · アプリ内のみ",
+    "title": "今月を、やさしく",
+    "lead": "保存した週からの静かな要約。メールは要りません。",
+    "monthLabel": "{month}",
+    "countLabel": "今月のふりかえり",
+    "count": "{count}",
+    "feelingLabel": "平均の気持ち",
+    "feeling": "{value} / 5",
+    "feelingEmpty": "まだ気持ちの数字がない",
+    "streakLabel": "連続週",
+    "streak": "{count} 週つづき",
+    "energyTitle": "エネルギーのテーマ",
+    "drainTitle": "消耗のテーマ",
+    "chipsEmpty": "まだ言葉が足りない。もう少し書いてみよう。",
+    "seeTrends": "傾向を見る",
+    "seeHistory": "履歴を見る",
+    "emptyTitle": "今月はまだふりかえりがない",
+    "empty": "週のふりかえりを保存すると、ここにやさしい集計が待つ。",
+    "emptyCta": "ふりかえりを書く",
+    "lockedTitle": "月次ダイジェストは Soft+",
+    "lockedBody": "やさしい月のまとめ——回数、気持ち、テーマ、連続週——は Soft+ にあります。",
+    "lockedCta": "Soft+ を見る",
+    "signedOutBody": "Soft+ でログインして、今月のダイジェストを開こう。",
+    "loginCta": "ログイン"
+  },
+  "SeasonalPacks": {
+    "title": "季節の質問パック",
+    "lead": "Soft+ のワンクリック。3問をカスタムに、または6問をこの回だけ借りる。無料はいつもの6問のまま。",
+    "applyCustom": "カスタム質問にする",
+    "applying": "保存中…",
+    "appliedCustom": "カスタム質問として保存した。ふりかえりフォームに出るよ。",
+    "applyError": "いまはそのパックを保存できなかった。",
+    "useThisWeek": "このふりかえりで試す",
+    "usingThisWeek": "このふりかえりで使用中",
+    "clearWeek": "いつもの6問に戻す",
+    "activeBanner": "この回だけ「{name}」を使っている。答えは同じ欄に保存される。",
+    "packs": {
+      "spring-soft-reset": {
+        "name": "春のソフトリセット",
+        "blurb": "冬のあとの軽いはじめ——育てることと、置くこと。",
+        "energy": "今週、新緑みたいに生き生きしたのは？",
+        "drain": "冬からまだくっついていて、休みたいものは？",
+        "lessOf": "光が戻るにつれ、やさしく置けるものは？",
+        "priorities": "来週への、やわらかい意図は3つ？",
+        "feeling": "今週はどれくらい軽かった？1から5。",
+        "summary": "このソフトリセットの週を、一文で。"
+      },
+      "rainy-week-comfort": {
+        "name": "雨の週の慰め",
+        "blurb": "灰色の日と温かいカップへ——全部直さなくていい慰め。",
+        "energy": "今週、小さなシェルターや慰めになったのは？",
+        "drain": "湿って重い、ずっと灰色だったのは？",
+        "lessOf": "来週、小さくできる雑音は？",
+        "priorities": "そばに置きたい慰めは3つ？",
+        "feeling": "今週は居心地よく／重かった？1から5。",
+        "summary": "雨の下の一文。"
+      },
+      "year-end-gratitude": {
+        "name": "年末のありがとう",
+        "blurb": "カレンダーがめくれる前の、静かな感謝リスト。",
+        "energy": "今週、静かに支えてくれてありがとうと思うのは？",
+        "drain": "年の終わりに、手放したいのは？",
+        "lessOf": "罪悪感なく来年にまわせるものは？",
+        "priorities": "来週の、やわらかい感謝や締めは3つ？",
+        "feeling": "今週はどれくらい心が満ちた？1から5。",
+        "summary": "感謝の一文で、この週を。"
+      }
+    }
   }
 }

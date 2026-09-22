@@ -1,9 +1,16 @@
 "use client";
 
 import { ShareToWall } from "@/components/share-to-wall";
+import {
+  SeasonalPacksPanel,
+  packPrompts,
+} from "@/components/seasonal-packs-panel";
 import { StreakCelebration } from "@/components/streak-celebration";
 import { Link } from "@/i18n/navigation";
-import { answersForQuestions, type CustomQuestion } from "@/lib/custom-questions";
+import {
+  answersForQuestions,
+  type CustomQuestion,
+} from "@/lib/custom-questions";
 import type { StreakMilestone } from "@/lib/plus-insights";
 import {
   clearDraft,
@@ -14,6 +21,7 @@ import {
   type ReviewAccessInfo,
   type ReviewAnswers,
 } from "@/lib/reviews";
+import type { SeasonalPackId } from "@/lib/seasonal-packs";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
@@ -93,6 +101,7 @@ function ReviewFormFields({
 }) {
   const t = useTranslations("Review");
   const tQuestions = useTranslations("Questions");
+  const tPacks = useTranslations("SeasonalPacks");
   const locale = useLocale();
   const initial = useMemo(() => {
     const draft = loadDraft();
@@ -111,6 +120,16 @@ function ReviewFormFields({
   const [error, setError] = useState(false);
   const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
   const [milestone, setMilestone] = useState<StreakMilestone | null>(null);
+  const [activePackId, setActivePackId] = useState<SeasonalPackId | null>(null);
+  const [liveCustomQuestions, setLiveCustomQuestions] =
+    useState<CustomQuestion[]>(customQuestions);
+
+  const questionLabel = (field: (typeof TEXT_FIELDS)[number] | "feeling") => {
+    if (activePackId) {
+      return packPrompts(tPacks, activePackId)[field];
+    }
+    return tQuestions(field);
+  };
 
   function update<K extends keyof ReviewAnswers>(key: K, value: ReviewAnswers[K]) {
     setDraft((current) => {
@@ -163,8 +182,8 @@ function ReviewFormFields({
   function handleWriteAnother() {
     clearDraft();
     const next = emptyDraft();
-    if (softPlus && customQuestions.length > 0) {
-      next.customAnswers = answersForQuestions(customQuestions, []);
+    if (softPlus && liveCustomQuestions.length > 0) {
+      next.customAnswers = answersForQuestions(liveCustomQuestions, []);
     }
     setDraft(next);
     setSaved(false);
@@ -172,6 +191,19 @@ function ReviewFormFields({
     setError(false);
     setAccess(null);
     setMilestone(null);
+    setActivePackId(null);
+  }
+
+  function applyPackToCustom(questions: CustomQuestion[]) {
+    setLiveCustomQuestions(questions);
+    setDraft((current) => {
+      const next = {
+        ...current,
+        customAnswers: answersForQuestions(questions, current.customAnswers ?? []),
+      };
+      saveDraft(next);
+      return next;
+    });
   }
 
   if (saved) {
@@ -258,11 +290,21 @@ function ReviewFormFields({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8" autoComplete="off">
+      {softPlus ? (
+        <SeasonalPacksPanel
+          mode="review"
+          activePackId={activePackId}
+          onUseThisWeek={setActivePackId}
+          onClearThisWeek={() => setActivePackId(null)}
+          onCustomApplied={applyPackToCustom}
+        />
+      ) : null}
+
       <div className="grid gap-8 lg:grid-cols-2">
         {TEXT_FIELDS.map((field) => (
           <label key={field} className={field === "summary" ? "block lg:col-span-2" : "block"}>
             <span className="block text-base leading-relaxed">
-              {tQuestions(field)}
+              {questionLabel(field)}
             </span>
             <textarea
               value={draft[field]}
@@ -274,7 +316,7 @@ function ReviewFormFields({
         ))}
       </div>
 
-      {softPlus && draft.customAnswers.length > 0 ? (
+      {softPlus && draft.customAnswers && draft.customAnswers.length > 0 ? (
         <fieldset className="rounded-[1.75rem] bg-mint/40 px-5 py-6">
           <legend className="font-display text-xl tracking-tight">{t("customHeading")}</legend>
           <p className="mt-2 text-sm text-muted">{t("customLead")}</p>
@@ -295,7 +337,7 @@ function ReviewFormFields({
       ) : null}
 
       <fieldset>
-        <legend className="text-base leading-relaxed">{tQuestions("feeling")}</legend>
+        <legend className="text-base leading-relaxed">{questionLabel("feeling")}</legend>
         <p className="mt-1 text-sm text-muted">{tQuestions("feelingHint")}</p>
         <div className="mt-4 flex gap-2">
           {[1, 2, 3, 4, 5].map((value) => {

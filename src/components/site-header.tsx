@@ -31,6 +31,7 @@ export function SiteHeader({
   const authActive =
     pathname === authHref || pathname.startsWith(`${authHref}/`);
   const trendsActive = pathname === "/trends" || pathname.startsWith("/trends/");
+  const digestActive = pathname === "/digest" || pathname.startsWith("/digest/");
 
   return (
     <header className={`${SITE_SHELL_CLASS} py-4 md:py-5 print:hidden`}>
@@ -85,6 +86,18 @@ export function SiteHeader({
                 }
               >
                 {t("trends")}
+              </Link>
+            ) : null}
+            {softPlus ? (
+              <Link
+                href="/digest"
+                className={
+                  digestActive
+                    ? "rounded-full bg-lemon px-2.5 py-1 text-foreground"
+                    : "rounded-full px-2.5 py-1 hover:text-foreground"
+                }
+              >
+                {t("digest")}
               </Link>
             ) : null}
             {email ? <NotificationBell unreadCount={unreadNotifications} /> : null}

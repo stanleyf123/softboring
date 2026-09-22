@@ -1,9 +1,11 @@
 "use client";
 
 import { CustomQuestionsEditor } from "@/components/custom-questions-editor";
+import { SeasonalPacksPanel } from "@/components/seasonal-packs-panel";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
 import { NICKNAME_MAX } from "@/lib/nickname";
+import type { MonthlyDigest } from "@/lib/plus-insights";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useState, type FormEvent } from "react";
@@ -58,7 +60,7 @@ export function AccountPanel({
   reminderWeekday: number;
   emailConfigured: boolean;
   customQuestions: CustomQuestion[];
-  digest: { year: number; month: number; count: number; avgFeeling: number | null };
+  digest: MonthlyDigest;
   nickname: string | null;
 }) {
   const t = useTranslations("Account");
@@ -69,6 +71,7 @@ export function AccountPanel({
   const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
   const [weekday, setWeekday] = useState(reminderWeekday);
   const [savingReminder, setSavingReminder] = useState(false);
+  const [packQuestions, setPackQuestions] = useState(customQuestions);
   const joined = format.dateTime(new Date(createdAt), { dateStyle: "medium" });
   const identity = oauthIdentityLabel(email);
 
@@ -163,6 +166,12 @@ export function AccountPanel({
                   </dd>
                 </div>
               </dl>
+              <Link
+                href="/digest"
+                className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card"
+              >
+                {t("digestOpen")}
+              </Link>
             </div>
           ) : null}
 
@@ -224,7 +233,18 @@ export function AccountPanel({
             </p>
           </div>
 
-          {softPlus ? <CustomQuestionsEditor initialQuestions={customQuestions} /> : null}
+          {softPlus ? (
+            <>
+              <CustomQuestionsEditor
+                key={packQuestions.map((item) => item.id).join("|")}
+                initialQuestions={packQuestions}
+              />
+              <SeasonalPacksPanel
+                mode="account"
+                onCustomApplied={setPackQuestions}
+              />
+            </>
+          ) : null}
 
           {!softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/60 px-5 py-5">
@@ -283,6 +303,14 @@ export function AccountPanel({
                 {tPricing("navHint")}
               </Link>
             )}
+            {softPlus ? (
+              <Link
+                href="/digest"
+                className="rounded-full bg-lemon px-5 py-2.5 text-sm shadow-card"
+              >
+                {t("digest")}
+              </Link>
+            ) : null}
             {softPlus ? (
               <Link
                 href="/history/export"
