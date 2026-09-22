@@ -289,8 +289,10 @@
     "tagsTeaseCta": "Soft+ を見る"
   },
   "NotFound": {
-    "title": "このページは、ここにありません。",
-    "home": "ホームにもどる"
+    "title": "このページは、そっと迷子です。",
+    "body": "やかんはまだ温かいです。この住所だけ、置いていないページです。",
+    "home": "ホームにもどる",
+    "wall": "ソフトウォール"
   },
   "Auth": {
     "loginTitle": "いらっしゃい。お湯が湧いてるよ。",
@@ -363,6 +365,13 @@
     "reviewCount": "{count} 件残しています",
     "dataSizeTitle": "やわらかい大きさメモ",
     "dataSizeBody": "この机には、およそ {reviews} 件のふりかえりと {notes} 枚のソフトウォール付箋（下ろしたものも含めて）が残っています。いまの大きさのメモです。メールは送りません。",
+    "sessionsTitle": "ログイン中の机",
+    "sessionsCount": "{count} つの静かなブラウザでログインしています。",
+    "sessionsRecencyToday": "いちばん新しいものは、今日来ました。",
+    "sessionsRecencyThisWeek": "いちばん新しいものは、今週来ました。",
+    "sessionsRecencyEarlier": "いちばん新しいものは、しばらくここにあります。",
+    "sessionsTip": "端末や場所、正確な時刻は出しません。ログアウトはこのブラウザだけを閉じます。",
+    "sessionsDevicesTip": "このブラウザでログインしています。ほかの机は、自分で離れるまで残ります。端末の一覧は残しません。",
     "planLabel": "プラン",
     "planFree": "Free",
     "planSoftPlus": "Soft+",
@@ -531,6 +540,7 @@
     "featureWallFree": "ソフトウォールは、やわらかいカーテンの向こう",
     "featureCollectionsFree": "保存した付箋の名前つき集まりは Soft+",
     "featureCollectionExportFree": "集まりと保存した付箋 ID の JSON は Soft+",
+    "featureBookmarkExportFree": "保存した付箋 ID の JSON は Soft+",
     "featureStickersFree": "壁のシールは Soft+ と",
     "featureExportFree": "CSV と印刷できるページは Soft+。無料は最近の四週間を JSON で持ち帰れます。",
     "featureSoftCount": "書いているあいだ、静かな文字数と語数を出せます",
@@ -544,6 +554,7 @@
     "featureWallPlus": "ソフトウォールを全部：読む、動かす、コメント、返信",
     "featureCollectionsPlus": "保存した壁の付箋を、名前つきのやわらかい集まりに",
     "featureCollectionExportPlus": "やわらかい集まりと、保存した付箋 ID を JSON でダウンロード",
+    "featureBookmarkExportPlus": "保存した付箋 ID と、どの集まりに入っているかをダウンロード",
     "featureExportPlus": "週を CSV か、印刷できる PDF に",
     "featureSearchPlus": "履歴のすべてを検索",
     "featureCustomPlus": "カスタム質問は最大3つ。季節パックも",
@@ -1565,6 +1576,14 @@
     "exportBody": "名前つきの集まりと、保存した付箋の ID を持ち帰れます。メールは送らず、本文も含みません。",
     "exportCta": "集まりの JSON をダウンロード",
     "exportTeaseBody": "Soft+ は、その集まりと保存した付箋の ID を、小さな JSON としてダウンロードできます。"
+  },
+  "WallBookmarks": {
+    "exportTitle": "保存した付箋の小さな一覧",
+    "exportBody": "保存した付箋の ID と、どの集まりに入っているかをダウンロードします。付箋の本文は入らず、メールも送りません。",
+    "exportCta": "ブックマーク JSON をダウンロード",
+    "exportTeaseTitle": "保存した付箋 ID は Soft+ で",
+    "exportTeaseBody": "無料では、このアイデアだけ見えます。Soft+ は、保存した付箋 ID と所属する集まりの JSON をダウンロードできます。付箋の本文は入りません。",
+    "exportTeaseCta": "Soft+ を見る"
   },
   "WallSaved": {
     "eyebrow": "Soft+ · 非公開",

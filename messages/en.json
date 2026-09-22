@@ -289,8 +289,10 @@
     "tagsTeaseCta": "See Soft+"
   },
   "NotFound": {
-    "title": "This page is not here.",
-    "home": "Back home"
+    "title": "This page wandered off.",
+    "body": "The kettle is still on. This address just isn't a page we keep.",
+    "home": "Back home",
+    "wall": "Soft Wall"
   },
   "Auth": {
     "loginTitle": "Come in, the kettle's on.",
@@ -363,6 +365,13 @@
     "reviewCount": "{count} saved",
     "dataSizeTitle": "A soft size note",
     "dataSizeBody": "This desk is keeping about {reviews, plural, one {# review} other {# reviews}} and {notes, plural, one {# Soft Wall note} other {# Soft Wall notes}}, including notes you took down. A snapshot for this visit — nothing is emailed.",
+    "sessionsTitle": "Signed-in desks",
+    "sessionsCount": "{count, plural, one {# quiet browser is still signed in.} other {# quiet browsers are still signed in.}}",
+    "sessionsRecencyToday": "The newest one arrived today.",
+    "sessionsRecencyThisWeek": "The newest one arrived this week.",
+    "sessionsRecencyEarlier": "The newest one has been here a while.",
+    "sessionsTip": "We don't list devices, places, or exact times. Signing out closes only this browser.",
+    "sessionsDevicesTip": "You're signed in on this browser. Other desks stay until they leave on their own. We don't keep a device list.",
     "planLabel": "Plan",
     "planFree": "Free",
     "planSoftPlus": "Soft+",
@@ -630,6 +639,7 @@
     "featureWallFree": "Soft Wall stays behind a soft curtain",
     "featureCollectionsFree": "Named collections for saved wall notes stay with Soft+",
     "featureCollectionExportFree": "A JSON download of collections and saved note ids stays with Soft+",
+    "featureBookmarkExportFree": "A JSON download of bookmarked note ids stays with Soft+",
     "featureStickersFree": "Wall stickers stay with Soft+",
     "featureExportFree": "CSV and printable pages stay with Soft+. Free can take the latest four weeks as JSON.",
     "featureSoftCount": "A quiet, optional word and character count while you write",
@@ -643,6 +653,7 @@
     "featureWallPlus": "Soft Wall full access: read, drag, comment, and reply",
     "featureCollectionsPlus": "Group saved wall notes into named soft collections",
     "featureCollectionExportPlus": "Download soft collections and bookmarked note ids as JSON",
+    "featureBookmarkExportPlus": "Download bookmarked note ids, and which collections they belong to",
     "featureExportPlus": "Export your weeks as CSV or a printable PDF",
     "featureSearchPlus": "Search the full history",
     "featureCustomPlus": "Up to three custom weekly questions, plus seasonal packs",
@@ -1565,6 +1576,14 @@
     "exportBody": "Take your named piles and the ids of notes you saved. No emails, and no note text.",
     "exportCta": "Download collections JSON",
     "exportTeaseBody": "Soft+ can download those piles, plus the ids of bookmarked notes, as a small JSON file."
+  },
+  "WallBookmarks": {
+    "exportTitle": "A small list of saved notes",
+    "exportBody": "Download the ids of notes you bookmarked, and which collections they sit in. No note text, and nothing is emailed.",
+    "exportCta": "Download bookmarks JSON",
+    "exportTeaseTitle": "Saved note ids wait on Soft+",
+    "exportTeaseBody": "Free can see the idea. Soft+ downloads a JSON file of bookmarked note ids, and the collections they belong to. No note text.",
+    "exportTeaseCta": "See Soft+"
   },
   "WallSaved": {
     "eyebrow": "Soft+ · private",

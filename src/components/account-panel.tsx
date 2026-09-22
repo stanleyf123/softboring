@@ -24,6 +24,7 @@ import { applyNightPreference } from "@/lib/night-mode";
 import { SoftBloomPreference } from "@/components/soft-save-bloom";
 import { SoftCopyLink } from "@/components/soft-copy-link";
 import { softDeskSize } from "@/lib/soft-desk-size";
+import type { SoftSessionView } from "@/lib/soft-sessions";
 import type { SoftThanksEntry } from "@/lib/soft-thanks-history";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
@@ -78,6 +79,7 @@ export function AccountPanel({
   digest,
   nickname,
   thankedNotes = [],
+  softSessions,
 }: {
   email: string;
   createdAt: string;
@@ -101,6 +103,7 @@ export function AccountPanel({
   digest: MonthlyDigest;
   nickname: string | null;
   thankedNotes?: SoftThanksEntry[];
+  softSessions: SoftSessionView;
 }) {
   const t = useTranslations("Account");
   const tPricing = useTranslations("Pricing");
@@ -234,6 +237,30 @@ export function AccountPanel({
             <p className="mt-2 text-sm leading-relaxed text-muted">
               {t("dataSizeBody", { reviews: deskSize.reviews, notes: deskSize.notes })}
             </p>
+          </div>
+
+          <div
+            className="mt-8 rounded-[1.5rem] bg-mint/40 px-5 py-5"
+            data-soft-sessions={softSessions.mode}
+          >
+            <p className="font-display text-lg tracking-tight">{t("sessionsTitle")}</p>
+            {softSessions.mode === "count" ? (
+              <>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {t("sessionsCount", { count: softSessions.count })}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {softSessions.recency === "today"
+                    ? t("sessionsRecencyToday")
+                    : softSessions.recency === "thisWeek"
+                      ? t("sessionsRecencyThisWeek")
+                      : t("sessionsRecencyEarlier")}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{t("sessionsTip")}</p>
+              </>
+            ) : (
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t("sessionsDevicesTip")}</p>
+            )}
           </div>
 
           <SoftThanksHistory softPlus={softPlus} notes={thankedNotes} />

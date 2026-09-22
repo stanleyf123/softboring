@@ -556,8 +556,77 @@ html[data-night="on"] .text-paper {
   animation: soft-streak-doodle 5s ease-in-out infinite;
 }
 
+/* A lost teacup for missing pages. Cream, blush, peach, mint. */
+.soft-lost-illu {
+  position: relative;
+  width: 8.5rem;
+  height: 7.5rem;
+  animation: soft-empty-float 4.5s ease-in-out infinite;
+}
+
+.soft-lost-saucer,
+.soft-lost-cup,
+.soft-lost-steam,
+.soft-lost-card,
+.soft-lost-mark {
+  position: absolute;
+  display: block;
+}
+
+.soft-lost-saucer {
+  left: 4%;
+  bottom: 8%;
+  width: 48%;
+  height: 16%;
+  border-radius: 999px;
+  background: var(--peach);
+  box-shadow: var(--shadow-card);
+}
+
+.soft-lost-cup {
+  left: 14%;
+  bottom: 20%;
+  width: 28%;
+  height: 34%;
+  border-radius: 0.45rem 0.45rem 1rem 1rem;
+  background: var(--blush);
+  box-shadow: inset 0 -0.45rem 0 rgba(196, 127, 110, 0.18);
+}
+
+.soft-lost-steam {
+  left: 22%;
+  bottom: 56%;
+  width: 0.35rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  background: var(--cream);
+  box-shadow: 0.6rem 0.15rem 0 var(--mint);
+}
+
+.soft-lost-card {
+  right: 4%;
+  top: 10%;
+  width: 42%;
+  height: 58%;
+  border-radius: 0.95rem;
+  background: var(--paper);
+  box-shadow: var(--shadow-card);
+  transform: rotate(8deg);
+}
+
+.soft-lost-mark {
+  right: 20%;
+  top: 26%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--mint);
+  box-shadow: 0 0.9rem 0 var(--accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-\[soft-empty-float_4s_ease-in-out_infinite\] {
+  .animate-\[soft-empty-float_4s_ease-in-out_infinite\],
+  .soft-lost-illu {
     animation: none !important;
   }
 

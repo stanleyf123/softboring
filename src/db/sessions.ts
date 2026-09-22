@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import type { Database } from "better-sqlite3";
+import type { OpenSessionSummary } from "@/lib/soft-sessions";
 import { getDb } from "./client";
 import { toPublicUser, type PublicUser } from "./users";
 
@@ -40,6 +42,54 @@ export function createSession(input: {
 
 export function deleteSession(tokenHash: string) {
   getDb().prepare(`DELETE FROM sessions WHERE id = ?`).run(tokenHash);
+}
+
+/**
+ * Open sessions for one member: a count and the newest created_at.
+ * Session ids stay in the table. A missing table returns null.
+ */
+export function readOpenSessionSummary(
+  db: Database,
+  userId: string,
+  now: Date,
+): OpenSessionSummary | null {
+  const table = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sessions'`)
+    .get() as { name?: string } | undefined;
+  if (!table?.name) return null;
+
+  const columns = db.prepare(`PRAGMA table_info(sessions)`).all() as Array<{ name: string }>;
+  const names = new Set(columns.map((column) => column.name));
+  if (!names.has("user_id") || !names.has("expires_at") || !names.has("created_at")) {
+    return null;
+  }
+
+  const rows = db
+    .prepare(
+      `SELECT created_at AS createdAt, expires_at AS expiresAt
+       FROM sessions
+       WHERE user_id = ?`,
+    )
+    .all(userId) as Array<{ createdAt: string; expiresAt: string }>;
+
+  const nowMs = now.getTime();
+  const open = rows.filter((row) => {
+    const expires = Date.parse(row.expiresAt);
+    return Number.isFinite(expires) && expires > nowMs;
+  });
+  if (open.length === 0) return { count: 0, newestCreatedAt: null };
+
+  let newest = open[0]!;
+  for (const row of open) {
+    const created = Date.parse(row.createdAt);
+    const best = Date.parse(newest.createdAt);
+    if (Number.isNaN(best) || created > best) newest = row;
+  }
+  return { count: open.length, newestCreatedAt: newest.createdAt };
+}
+
+export function summarizeOpenSessions(userId: string, now = new Date()) {
+  return readOpenSessionSummary(getDb(), userId, now);
 }
 
 export function getUserBySessionToken(token: string): PublicUser | null {
