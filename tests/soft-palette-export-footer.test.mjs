@@ -172,11 +172,13 @@ test("footer cluster is guidelines, privacy, terms, then languages", () => {
   assert.match(footer, /SITE_SHELL_CLASS/);
 
   const switcher = read("src/components/locale-switcher.tsx");
-  const en = switcher.indexOf('locale="en"');
-  const zh = switcher.indexOf('locale="zh-tw"');
-  const ja = switcher.indexOf('locale="ja"');
+  const en = switcher.indexOf('hrefFor("en")');
+  const zh = switcher.indexOf('hrefFor("zh-tw")');
+  const ja = switcher.indexOf('hrefFor("ja")');
   assert.ok(en > 0 && en < zh && zh < ja);
   assert.match(switcher, /variant === "footer"/);
+  assert.match(switcher, /rewriteLocalePath/);
+  assert.doesNotMatch(switcher, /zh-TW/);
 
   const messages = ["en", "zh-tw", "ja"].map((locale) =>
     JSON.parse(read(`messages/${locale}.json`)),

@@ -795,11 +795,25 @@ html[data-quiet-writing="1"] main {
   }
 }
 
+.soft-wall-settle .soft-wall-note {
+  animation: soft-wall-settle 520ms ease;
+}
+
+@keyframes soft-wall-settle {
+  from {
+    opacity: 0.62;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .soft-shortcuts-sheet,
   .soft-weather-drift,
   .soft-sound-live,
-  .soft-undo-bar {
+  .soft-undo-bar,
+  .soft-wall-settle .soft-wall-note {
     animation: none;
   }
 }

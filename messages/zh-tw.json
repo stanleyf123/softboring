@@ -82,8 +82,11 @@
   },
   "LocaleSwitcher": {
     "en": "EN",
+    "enName": "English",
     "zhTW": "繁中",
+    "zhName": "繁體中文",
     "ja": "日",
+    "jaName": "日本語",
     "label": "語言"
   },
   "Home": {
@@ -673,6 +676,11 @@
     "seasonalFrameHint": "這個季節的安靜邊框。人人免費——只是視覺。",
     "largerText": "便利貼字再大一點",
     "largerTextHint": "軟軟牆的字稍微大一點。免費，會留在這台裝置；登入後也會記在帳號裡。",
+    "shuffle": "輕輕洗牌",
+    "shuffleAria": "輕輕打亂目前看得到的便利貼",
+    "shuffleHint": "把看得到的便利貼換一個順序。只在這次瀏覽，不會記住。",
+    "shuffleReset": "回到原來的順序",
+    "shuffled": "這次瀏覽已輕輕換過順序。",
     "seasonalFrameWithPack": "{season} · 借用「{pack}」",
     "seasonalFrameSeason": "{season}的框",
     "season_spring": "春天",
@@ -1227,6 +1235,21 @@
     "loadError": "現在沒能打開這個架子。",
     "empty": "還沒有膠囊。一小段話就夠了。",
     "count": "架子上有 {count} 個"
+  },
+  "CapsuleHints": {
+    "kicker": "Soft+",
+    "title": "膠囊日子",
+    "lead": "在打開的那一天留一個柔軟記號。字還在膠囊裡。",
+    "empty": "還沒有膠囊。封上一則之後，那一天會安靜地出現在這裡。",
+    "sealed": "還封著",
+    "opened": "已打開",
+    "mixed": "{sealed} 封著 · {open} 已打開",
+    "privacy": "這裡只顯示日子。封著的字不會露出，也不會寄信。",
+    "accountLink": "打開你的膠囊",
+    "teaseKicker": "Soft+",
+    "teaseTitle": "膠囊日子是 Soft+ 的安靜記號",
+    "teaseBody": "Soft+ 會在還封著、或已經打開的日子上，留一點腮紅或薄荷。",
+    "teaseCta": "看看 Soft+"
   },
   "Postcard": {
     "brand": "Soft Boring Weekly",

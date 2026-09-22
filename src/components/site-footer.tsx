@@ -35,8 +35,8 @@ export async function SiteFooter() {
           {t("terms")}
         </Link>
         <span aria-hidden="true">·</span>
-        <span className="inline-flex flex-wrap items-center gap-2">
-          <span>{t("languages")}</span>
+        <span className="inline-flex basis-full flex-wrap items-center gap-2 rounded-[1.25rem] bg-cream/80 px-3 py-2">
+          <span className="text-foreground">{t("languages")}</span>
           <LocaleSwitcher variant="footer" />
         </span>
       </nav>

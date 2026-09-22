@@ -82,8 +82,11 @@
   },
   "LocaleSwitcher": {
     "en": "EN",
+    "enName": "English",
     "zhTW": "繁中",
+    "zhName": "繁體中文",
     "ja": "日",
+    "jaName": "日本語",
     "label": "言語"
   },
   "Home": {
@@ -673,6 +676,11 @@
     "seasonalFrameHint": "この季節の静かな枠。だれでも無料——見た目だけです。",
     "largerText": "付箋の文字を少し大きく",
     "largerTextHint": "ソフトウォールの文字を、ほんの少し大きく。無料。この端末に残り、ログイン中はアカウントにも残ります。",
+    "shuffle": "そっと混ぜる",
+    "shuffleAria": "見えている付箋をそっと混ぜる",
+    "shuffleHint": "見えている付箋の順を入れ替えます。この訪問だけ。保存しません。",
+    "shuffleReset": "静かな順にもどす",
+    "shuffled": "この訪問だけ、順を変えました。",
     "seasonalFrameWithPack": "{season} · 「{pack}」を借りています",
     "seasonalFrameSeason": "{season}の枠",
     "season_spring": "春",
@@ -1227,6 +1235,21 @@
     "loadError": "いまは棚を開けられませんでした。",
     "empty": "まだカプセルはありません。短い一文で十分です。",
     "count": "棚に {count} 個"
+  },
+  "CapsuleHints": {
+    "kicker": "Soft+",
+    "title": "カプセルの日",
+    "lead": "ノートが開く日に、やわらかい印を残します。言葉はカプセルの中にあります。",
+    "empty": "まだカプセルはありません。ひとつ封をすると、その日が静かにここに残ります。",
+    "sealed": "封をしたまま",
+    "opened": "開いた",
+    "mixed": "封 {sealed} · 開いた {open}",
+    "privacy": "ここに出るのは日付だけ。封をした言葉は隠れたまま。メールは送りません。",
+    "accountLink": "カプセルを開く",
+    "teaseKicker": "Soft+",
+    "teaseTitle": "カプセルの日は Soft+ の静かな印",
+    "teaseBody": "Soft+ は、まだ封の日と、もう開いた日に、ブラッシュかミントの印を残します。",
+    "teaseCta": "Soft+ を見る"
   },
   "Postcard": {
     "brand": "Soft Boring Weekly",

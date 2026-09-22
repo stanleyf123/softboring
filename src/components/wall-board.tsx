@@ -42,6 +42,7 @@ import {
 } from "@/lib/seasonal-frame";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
+import { nextShuffleSeed, shuffleWallNotes } from "@/lib/wall-shuffle";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
@@ -252,6 +253,7 @@ export function WallBoard({
   const largerText =
     textOverride !== null ? textOverride : signedIn ? initialWallLargerText : storedLargerText;
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
+  const [shuffleSeed, setShuffleSeed] = useState<number | null>(null);
   const drag = useRef<{
     id: string;
     dx: number;
@@ -271,10 +273,13 @@ export function WallBoard({
   const detailReturnFocusRef = useRef<HTMLElement | null>(null);
 
   const visibleNotes = useMemo(() => {
-    if (!softPlus || locked) return notes;
-    const filtered = filterWallNotes(notes as FullNote[], filters);
-    return withSortStacking(sortWallNotes(filtered, sort));
-  }, [notes, filters, sort, softPlus, locked]);
+    const ordered =
+      !softPlus || locked
+        ? notes
+        : withSortStacking(sortWallNotes(filterWallNotes(notes as FullNote[], filters), sort));
+    if (shuffleSeed == null) return ordered;
+    return withSortStacking(shuffleWallNotes(ordered, shuffleSeed));
+  }, [notes, filters, sort, softPlus, locked, shuffleSeed]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
 
@@ -949,6 +954,38 @@ export function WallBoard({
                 <span className="mt-0.5 block text-xs text-muted">{t("largerTextHint")}</span>
               </span>
             </label>
+            {notes.length > 1 ? (
+              <div className="mt-4 flex max-w-lg flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  data-wall-shuffle
+                  aria-label={t("shuffleAria")}
+                  onClick={() => setShuffleSeed((current) => nextShuffleSeed(current))}
+                  disabled={visibleNotes.length < 2}
+                  aria-pressed={shuffleSeed != null}
+                  className="inline-flex min-h-11 items-center rounded-full bg-peach px-4 py-2 text-sm text-foreground shadow-card disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  {t("shuffle")}
+                </button>
+                {shuffleSeed != null ? (
+                  <button
+                    type="button"
+                    data-wall-shuffle-reset
+                    onClick={() => setShuffleSeed(null)}
+                    className="inline-flex min-h-11 items-center rounded-full border border-line px-4 py-2 text-sm text-muted hover:text-foreground"
+                  >
+                    {t("shuffleReset")}
+                  </button>
+                ) : (
+                  <p className="text-xs leading-relaxed text-muted">{t("shuffleHint")}</p>
+                )}
+                {shuffleSeed != null ? (
+                  <p className="basis-full text-xs text-muted" role="status">
+                    {t("shuffled")}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
             {softPlus ? (
               <p className="mt-3 text-sm text-muted">{t("dragHint")}</p>
             ) : null}
@@ -1145,7 +1182,8 @@ export function WallBoard({
         >
           <div
             ref={canvasRef}
-            className="relative"
+            data-wall-shuffled={shuffleSeed == null ? "0" : "1"}
+            className={shuffleSeed == null ? "relative" : "relative soft-wall-settle"}
             style={{
               width: WALL_CANVAS.width,
               height: WALL_CANVAS.height,
@@ -1245,7 +1283,7 @@ export function WallBoard({
               return (
                 <div
                   key={note.id}
-                  className="absolute w-[216px]"
+                  className="soft-wall-note absolute w-[216px]"
                   style={{
                     left: note.x,
                     top: note.y,

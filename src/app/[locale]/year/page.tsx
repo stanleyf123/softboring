@@ -1,5 +1,7 @@
+import { CapsuleCalendarHints } from "@/components/capsule-calendar-hints";
 import { QuietYearChips } from "@/components/quiet-year-chips";
 import { YearPanel } from "@/components/year-panel";
+import { listPublicCapsules } from "@/db/soft-capsules";
 import { listReviewsForOwner } from "@/db/reviews";
 import { listSoftLettersForYear } from "@/db/soft-letters";
 import { ensureUserSettings } from "@/db/user-settings";
@@ -7,6 +9,7 @@ import { listPauseWeekKeys } from "@/db/week-pauses";
 import { buildQuietYearChips } from "@/lib/quiet-chips";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
+import { buildCapsuleDayHints } from "@/lib/capsule-hints";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { matchLettersToReviews } from "@/lib/soft-letter";
@@ -64,6 +67,10 @@ export default async function YearPage({ params }: Props) {
           settings.timezone,
         )
       : [];
+  const capsuleHints =
+    user && softPlus
+      ? buildCapsuleDayHints(listPublicCapsules(user.id), settings?.timezone)
+      : [];
 
   return (
     <div className="pt-6">
@@ -71,6 +78,7 @@ export default async function YearPage({ params }: Props) {
       <h1 className="mt-2 font-display text-4xl tracking-tight">{t("title")}</h1>
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
       <div className="mt-10 space-y-6">
+        <CapsuleCalendarHints softPlus={softPlus} hints={capsuleHints} />
         {quietChips ? (
           <QuietYearChips
             year={quietChips.year}
