@@ -5,6 +5,7 @@
  * A one-time import copies older localStorage reviews into the API.
  */
 
+import { DRAFT_SAVED_AT_KEY } from "@/lib/review-autosave";
 import {
   emptyDraft,
   type Review,
@@ -61,6 +62,7 @@ export function saveDraft(draft: ReviewAnswers) {
 export function clearDraft() {
   if (!canUseStorage()) return;
   window.localStorage.removeItem(DRAFT_KEY);
+  window.localStorage.removeItem(DRAFT_SAVED_AT_KEY);
 }
 
 function loadLocalReviews(): Review[] {

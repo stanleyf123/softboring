@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/empty-state";
 import { Link } from "@/i18n/navigation";
 import type { SoftActivityItem } from "@/lib/soft-activity";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -8,16 +9,15 @@ export async function SoftActivityTimeline({ items }: { items: SoftActivityItem[
 
   if (items.length === 0) {
     return (
-      <section className="rounded-[2rem] bg-cream px-8 py-12 shadow-card">
-        <h2 className="font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
-        <p className="mt-3 max-w-md leading-relaxed text-muted">{t("emptyBody")}</p>
-        <Link
-          href="/review"
-          className="mt-8 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
-        >
-          {t("emptyCta")}
-        </Link>
-      </section>
+      <EmptyState
+        title={t("emptyTitle")}
+        body={t("emptyBody")}
+        ctaHref="/review"
+        ctaLabel={t("emptyCta")}
+        wash="bg-cream"
+        illustration="activity"
+        whisper={t("emptyWhisper")}
+      />
     );
   }
 

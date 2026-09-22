@@ -1,6 +1,7 @@
 "use client";
 
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
+import { SoftCssEmpty } from "@/components/soft-empty-illu";
 import { NeighborHighlightsStrip } from "@/components/neighbor-highlights-strip";
 import { WallKindnessStrip } from "@/components/wall-kindness-strip";
 import { QuietWallComposer } from "@/components/quiet-wall-composer";
@@ -1102,8 +1103,15 @@ export function WallBoard({
             {notes.length === 0 ? (
               <div className="absolute left-8 top-8 max-w-md">
                 {softPlus ? (
-                  <section className="rounded-[2rem] bg-peach/70 px-8 py-12 shadow-card">
-                    <h2 className="font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
+                  <section
+                    className="rounded-[2rem] bg-peach/70 px-8 py-12 shadow-card"
+                    data-empty-state="wall"
+                  >
+                    <SoftCssEmpty kind="wall" />
+                    <p className="mt-4 font-display text-lg italic tracking-tight text-accent">
+                      {t("emptyWhisper")}
+                    </p>
+                    <h2 className="mt-3 font-display text-2xl tracking-tight">{t("emptyTitle")}</h2>
                     <p className="mt-3 max-w-md leading-relaxed text-muted">{t("empty")}</p>
                     {latestOwnedReviewId ? (
                       <p className="mt-3 text-sm text-muted">{t("emptyShareHint")}</p>
@@ -1146,6 +1154,8 @@ export function WallBoard({
                     ctaHref="/history"
                     ctaLabel={t("emptyCta")}
                     wash="bg-peach/70"
+                    illustration="wall"
+                    whisper={t("emptyWhisper")}
                   />
                 )}
               </div>

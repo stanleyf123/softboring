@@ -1,3 +1,4 @@
+import { WallCollectionsTease } from "@/components/wall-collections-panel";
 import { WallSavedPanel } from "@/components/wall-saved-panel";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
@@ -43,7 +44,9 @@ export default async function WallSavedPage({ params }: Props) {
         {user ? (
           <WallSavedPanel softPlus={softPlus} />
         ) : (
-          <section className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
+          <section className="space-y-6">
+            <WallCollectionsTease />
+            <div className="rounded-[2rem] bg-paper px-8 py-12 shadow-card">
             <h2 className="font-display text-2xl tracking-tight">{t("signedOutTitle")}</h2>
             <p className="mt-3 max-w-md leading-relaxed text-muted">{t("signedOutBody")}</p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -59,6 +62,7 @@ export default async function WallSavedPage({ params }: Props) {
               >
                 {t("lockedCta")}
               </Link>
+            </div>
             </div>
           </section>
         )}

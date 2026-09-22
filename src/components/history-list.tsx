@@ -89,6 +89,7 @@ export function HistoryList() {
         ctaLabel={t("emptyCta")}
         wash="bg-peach/50"
         illustration="history"
+        whisper={t("emptyWhisper")}
       />
     );
   }
