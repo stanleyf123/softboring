@@ -42,7 +42,9 @@
     "yearTitle": "柔軟一年 · Soft Boring Weekly",
     "yearDescription": "一年的每週心情小點，輕柔日曆。Soft+ 可開啟。",
     "wallActivityTitle": "Soft Wall 溫柔讚美 · Soft Boring Weekly",
-    "wallActivityDescription": "牆上近期貼紙與留言的安靜條帶。僅 Soft+。"
+    "wallActivityDescription": "牆上近期貼紙與留言的安靜條帶。僅 Soft+。",
+    "historyCompareTitle": "比較兩週 · Soft Boring Weekly",
+    "historyCompareDescription": "選兩份過去的回顧，並排看看心情、能量與消耗。僅 Soft+。"
   },
   "Nav": {
     "home": "首頁",
@@ -173,7 +175,8 @@
     "searchPlaceholder": "搜尋標題與答案…",
     "searchEmpty": "沒有符合的週次。",
     "exportCsv": "下載 CSV",
-    "exportPrint": "可列印的頁面"
+    "exportPrint": "可列印的頁面",
+    "compareWeeks": "比較兩週"
   },
   "HistoryDetail": {
     "back": "回到紀錄",
@@ -765,5 +768,71 @@
     "saved": "已儲存。仍然私密。",
     "saveError": "暫時無法儲存這則筆記。",
     "privacy": "僅私人。Soft Wall 看不到這則筆記。"
+  },
+  "Postcard": {
+    "brand": "Soft Boring Weekly",
+    "kindWeek": "軟軟明信片 · 一週",
+    "kindDigest": "軟軟明信片 · 這個月",
+    "weekTitle": "軟軟明信片",
+    "weekLead": "把這一週匯出成奶油粉嫩色的 PNG，輕輕留下或分享。",
+    "digestTitle": "軟軟明信片",
+    "digestLead": "把這個月的摘要變成可分享的軟軟明信片圖。",
+    "exportWeek": "下載明信片 PNG",
+    "exportDigest": "下載本月明信片",
+    "exporting": "繪製中…",
+    "exportError": "暫時無法繪製這張明信片。",
+    "feeling": "心情 {value}／5",
+    "noFeeling": "還沒有心情數字",
+    "energy": "能量",
+    "drain": "消耗",
+    "summary": "摘要",
+    "count": "這個月 {count} 則回顧",
+    "streak": "連續 {count} 週",
+    "avgFeeling": "平均心情 {value}／5",
+    "themes": "柔和主題",
+    "footer": "softboring.com · 故意安靜"
+  },
+  "HistoryCompare": {
+    "eyebrow": "Soft+ · 歷史",
+    "title": "比較兩週",
+    "lead": "溫柔並排——心情、能量與消耗。沒有分數，只是看見。",
+    "back": "← 回歷史",
+    "loading": "載入你的週次…",
+    "loadErrorTitle": "暫時無法比較",
+    "loadError": "請稍後再試。",
+    "lockedTitle": "週次比較在 Soft+",
+    "lockedBody": "選兩份過去的回顧，溫柔並排查看——僅 Soft+。",
+    "signedOutBody": "登入 Soft+ 即可比較週次。",
+    "lockedCta": "看看 Soft+",
+    "loginCta": "登入",
+    "needTwoTitle": "需要兩週開放的回顧",
+    "needTwoBody": "至少存下兩份每週回顧，再回來比較。",
+    "needTwoCta": "寫一則回顧",
+    "pickTitle": "選兩週",
+    "pickLead": "挑一對安靜的週次。同一週選兩次無法比較。",
+    "leftLabel": "較早／左側",
+    "rightLabel": "較晚／右側",
+    "sameWeek": "請選兩個不同的週次來比較。",
+    "pickHint": "請在上方選兩個不同的週次。",
+    "feelingSame": "心情維持一樣。",
+    "feelingUp": "心情上升了 {value}。",
+    "feelingDown": "心情緩緩下降了 {value}。",
+    "feelingMissing": "其中一週或兩週還沒有心情數字。",
+    "noFeeling": "還沒有心情數字",
+    "openWeek": "打開這一週"
+  },
+  "WallSpotlight": {
+    "title": "本週軟軟精選",
+    "lead": "置頂筆記，再加幾則高讚美的——刻意保持少量。",
+    "loading": "收集軟軟精選…",
+    "loadError": "暫時無法載入軟軟精選。",
+    "empty": "還沒有置頂或讚美。Soft Wall 仍在安頓。",
+    "reasonPinned": "置頂",
+    "reasonPraise": "高讚美",
+    "someone": "某人",
+    "aNote": "安靜的一週",
+    "byAuthor": "{name}",
+    "praise": "{count} 則讚美",
+    "open": "在牆上打開"
   }
 }

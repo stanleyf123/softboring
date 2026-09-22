@@ -3,6 +3,7 @@
 import { EmptyState, WallSkeleton } from "@/components/empty-state";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
+import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import {
@@ -109,11 +110,13 @@ export function WallBoard({
   softPlus,
   stickerSuccess = false,
   sharedSuccess = false,
+  initialNoteId = null,
 }: {
   signedIn: boolean;
   softPlus: boolean;
   stickerSuccess?: boolean;
   sharedSuccess?: boolean;
+  initialNoteId?: string | null;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
@@ -155,6 +158,7 @@ export function WallBoard({
   } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const openedInitialNote = useRef(false);
 
   const visibleNotes = useMemo(() => {
     if (!softPlus || locked) return notes;
@@ -222,6 +226,16 @@ export function WallBoard({
       cancelled = true;
     };
   }, [loadNotes, loadShop, softPlus]);
+
+  useEffect(() => {
+    if (openedInitialNote.current) return;
+    if (!ready || !softPlus || locked || !initialNoteId) return;
+    if (!notes.some((note) => note.id === initialNoteId)) return;
+    openedInitialNote.current = true;
+    void openNote(initialNoteId);
+    // openNote is stable enough for a one-shot deep link after first load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, softPlus, locked, initialNoteId, notes]);
 
   async function openNote(id: string) {
     if (locked) return;
@@ -527,7 +541,8 @@ export function WallBoard({
           </p>
         ) : null}
         {softPlus && !locked ? (
-          <div className="mt-6">
+          <div className="mt-6 space-y-4">
+            <WallSpotlightStrip softPlus />
             <WallActivityStrip softPlus compact />
           </div>
         ) : null}
