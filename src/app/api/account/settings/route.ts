@@ -5,6 +5,7 @@ import {
   updateUserSettings,
 } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
+import { isWallColor, type WallColor } from "@/lib/wall-canvas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,7 +31,20 @@ export async function PATCH(request: Request) {
       onboardingWallSeen?: unknown;
       reminderEnabled?: unknown;
       reminderWeekday?: unknown;
+      preferredWallColor?: unknown;
     };
+
+    let preferredWallColor: WallColor | null | undefined;
+    if (body.preferredWallColor === null) {
+      preferredWallColor = null;
+    } else if (
+      typeof body.preferredWallColor === "string" &&
+      isWallColor(body.preferredWallColor)
+    ) {
+      preferredWallColor = body.preferredWallColor;
+    } else {
+      preferredWallColor = undefined;
+    }
 
     const settings = updateUserSettings(user.id, {
       onboardingDismissed:
@@ -51,6 +65,7 @@ export async function PATCH(request: Request) {
         body.reminderWeekday === undefined
           ? undefined
           : clampWeekday(body.reminderWeekday),
+      preferredWallColor,
     });
 
     return NextResponse.json({ settings });

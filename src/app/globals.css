@@ -71,6 +71,115 @@ a {
     background: #fff8f2;
     background-image: none;
   }
+
+  .soft-week-print {
+    display: block !important;
+  }
+
+  .soft-week-detail .print\:hidden,
+  .soft-week-detail [class*="print:hidden"] {
+    display: none !important;
+  }
+}
+
+/* Soft week postcard — screen-hidden; shown only when printing */
+.soft-week-print {
+  display: none;
+}
+
+.soft-week-print__card {
+  box-sizing: border-box;
+  min-height: 640px;
+  padding: 2.5rem 2.75rem;
+  border: 2px solid #e8d5c8;
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(145deg, #fff4e8 0%, #fff8f2 45%, #f4d4c6 100%);
+  color: #3f342e;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.soft-week-print__brand {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-size: 1.35rem;
+  color: #c47f6e;
+}
+
+.soft-week-print__kind {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: #8a7468;
+}
+
+.soft-week-print__date {
+  margin: 1.25rem 0 0;
+  font-size: 1.05rem;
+}
+
+.soft-week-print__title {
+  margin: 0.85rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.soft-week-print__feeling {
+  margin: 0.65rem 0 0;
+  font-size: 0.95rem;
+  color: #8a7468;
+}
+
+.soft-week-print__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.soft-week-print__panel {
+  border-radius: 1.25rem;
+  padding: 1rem 1.15rem;
+  min-height: 8rem;
+}
+
+.soft-week-print__panel--mint {
+  background: #d5e6d8;
+}
+
+.soft-week-print__panel--blush {
+  background: #f4d4c6;
+}
+
+.soft-week-print__label {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #8a7468;
+}
+
+.soft-week-print__body {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.soft-week-print__footer {
+  margin: 1.75rem 0 0;
+  font-size: 0.8rem;
+  color: #8a7468;
+}
+
+@media print {
+  .soft-week-print__card {
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 @media (max-width: 767px) {

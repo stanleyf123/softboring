@@ -6,58 +6,83 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { SoftMark } from "./soft-doodles";
 
-const HIDDEN_PATHS = new Set([
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-  "/privacy",
-  "/terms",
-  "/history/export",
-]);
+/** Soft checklist only on home + account — not naggy across the app. */
+const VISIBLE_PATHS = new Set(["/", "/account"]);
+
+type ChecklistItem = {
+  id: string;
+  done: boolean;
+  title: string;
+  body: string;
+  href: "/account" | "/review" | "/wall";
+  cta: string;
+};
 
 export function OnboardingCard({
   reviewCount,
-  historySeen,
+  historySeen: _historySeen,
   wallSeen,
   dismissed,
+  softPlus = false,
+  hasNickname = false,
+  hasInvite = false,
 }: {
   reviewCount: number;
   historySeen: boolean;
   wallSeen: boolean;
   dismissed: boolean;
+  softPlus?: boolean;
+  hasNickname?: boolean;
+  hasInvite?: boolean;
 }) {
   const t = useTranslations("Onboarding");
   const pathname = usePathname();
   const [hidden, setHidden] = useState(dismissed);
   const [busy, setBusy] = useState(false);
 
-  if (hidden || HIDDEN_PATHS.has(pathname)) return null;
+  if (hidden || !VISIBLE_PATHS.has(pathname)) return null;
 
   const wrote = reviewCount > 0;
-  const items = [
+  const items: ChecklistItem[] = [
     {
+      id: "nickname",
+      done: hasNickname,
+      title: t("nicknameTitle"),
+      body: t("nicknameBody"),
+      href: "/account",
+      cta: t("nicknameCta"),
+    },
+    {
+      id: "write",
       done: wrote,
       title: t("writeTitle"),
       body: t("writeBody"),
-      href: "/review" as const,
+      href: "/review",
       cta: t("writeCta"),
     },
     {
-      done: historySeen,
-      title: t("historyTitle"),
-      body: t("historyBody"),
-      href: "/history" as const,
-      cta: t("historyCta"),
-    },
-    {
+      id: "wall",
       done: wallSeen,
       title: t("wallTitle"),
       body: t("wallBody"),
-      href: "/wall" as const,
+      href: "/wall",
       cta: t("wallCta"),
     },
   ];
+
+  if (softPlus) {
+    items.push({
+      id: "invite",
+      done: hasInvite,
+      title: t("inviteTitle"),
+      body: t("inviteBody"),
+      href: "/account",
+      cta: t("inviteCta"),
+    });
+  }
+
+  // Quietly tuck away once every soft step is done — no nag.
+  if (items.every((item) => item.done)) return null;
 
   async function dismiss() {
     if (busy) return;
@@ -97,7 +122,7 @@ export function OnboardingCard({
         <ol className="space-y-3 px-6 py-6 sm:px-8">
           {items.map((item, index) => (
             <li
-              key={item.href}
+              key={item.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] bg-peach/40 px-4 py-3"
             >
               <div className="min-w-0">
@@ -108,12 +133,18 @@ export function OnboardingCard({
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-muted">{item.body}</p>
               </div>
-              <Link
-                href={item.href}
-                className="rounded-full bg-blush px-4 py-1.5 text-sm shadow-card"
-              >
-                {item.cta}
-              </Link>
+              {!item.done ? (
+                <Link
+                  href={item.href}
+                  className="rounded-full bg-blush px-4 py-1.5 text-sm shadow-card"
+                >
+                  {item.cta}
+                </Link>
+              ) : (
+                <span className="rounded-full bg-mint/80 px-4 py-1.5 text-sm text-muted">
+                  {t("done")}
+                </span>
+              )}
             </li>
           ))}
         </ol>

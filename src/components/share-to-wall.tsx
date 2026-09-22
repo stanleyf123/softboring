@@ -2,8 +2,18 @@
 
 import { Link, useRouter } from "@/i18n/navigation";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
+import { isWallColor, WALL_COLORS, type WallColor } from "@/lib/wall-canvas";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const COLOR_SWATCH: Record<WallColor, string> = {
+  peach: "bg-peach",
+  blush: "bg-blush",
+  mint: "bg-mint",
+  cream: "bg-cream",
+  lemon: "bg-lemon",
+  sky: "bg-sky",
+};
 
 export function shareErrorCopy(
   t: ReturnType<typeof useTranslations<"Wall">>,
@@ -30,10 +40,12 @@ export function shareErrorCopy(
 export function ShareToWall({
   reviewId,
   initialNoteId,
+  softPlus = false,
   variant = "card",
 }: {
   reviewId: string;
   initialNoteId: string | null;
+  softPlus?: boolean;
   variant?: "card" | "hero";
 }) {
   const t = useTranslations("Wall");
@@ -41,7 +53,49 @@ export function ShareToWall({
   const [noteId, setNoteId] = useState(initialNoteId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<WallShareErrorKey | null>(null);
+  const [color, setColor] = useState<WallColor>("peach");
+  const [colorReady, setColorReady] = useState(!softPlus);
   const hero = variant === "hero";
+
+  useEffect(() => {
+    if (!softPlus || noteId) {
+      setColorReady(true);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const response = await fetch("/api/account/settings", { cache: "no-store" });
+        if (!response.ok || cancelled) return;
+        const data = (await response.json()) as {
+          settings?: { preferredWallColor?: string | null };
+        };
+        const preferred = data.settings?.preferredWallColor;
+        if (!cancelled && typeof preferred === "string" && isWallColor(preferred)) {
+          setColor(preferred);
+        }
+      } finally {
+        if (!cancelled) setColorReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [softPlus, noteId]);
+
+  async function rememberColor(next: WallColor) {
+    setColor(next);
+    if (!softPlus) return;
+    try {
+      await fetch("/api/account/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferredWallColor: next }),
+      });
+    } catch {
+      // Preference is optional — share still works.
+    }
+  }
 
   async function share() {
     if (busy) return;
@@ -51,7 +105,9 @@ export function ShareToWall({
       const response = await fetch("/api/wall/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reviewId }),
+        body: JSON.stringify(
+          softPlus ? { reviewId, color } : { reviewId },
+        ),
       });
       const data = (await response.json().catch(() => ({}))) as {
         wallNoteId?: string;
@@ -60,6 +116,9 @@ export function ShareToWall({
       if (!response.ok || !data.wallNoteId) {
         setError(parseWallShareError(data.error));
         return;
+      }
+      if (softPlus) {
+        void rememberColor(color);
       }
       setNoteId(data.wallNoteId);
       router.push({ pathname: "/wall", query: { shared: "1" } });
@@ -111,6 +170,34 @@ export function ShareToWall({
       <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
         {noteId ? t("sharedBody") : t("shareBody")}
       </p>
+      {softPlus && !noteId && colorReady ? (
+        <div className="mt-5">
+          <p className="text-sm text-muted">{t("colorPreferTitle")}</p>
+          <p className="mt-1 text-xs leading-relaxed text-muted">{t("colorPreferHint")}</p>
+          <div
+            className="mt-3 flex flex-wrap gap-2"
+            role="radiogroup"
+            aria-label={t("colorPreferTitle")}
+          >
+            {WALL_COLORS.map((swatch) => {
+              const selected = color === swatch;
+              return (
+                <button
+                  key={swatch}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={t(`color_${swatch}`)}
+                  onClick={() => void rememberColor(swatch)}
+                  className={`h-9 w-9 rounded-full border-2 shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${COLOR_SWATCH[swatch]} ${
+                    selected ? "border-accent" : "border-line/70"
+                  }`}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
       <div className="mt-6 flex flex-wrap gap-3">
         {noteId ? (
           <>
@@ -133,7 +220,7 @@ export function ShareToWall({
           <button
             type="button"
             onClick={share}
-            disabled={busy}
+            disabled={busy || (softPlus && !colorReady)}
             className={
               hero
                 ? "inline-flex min-h-12 items-center rounded-full bg-accent px-7 py-3.5 text-base text-paper shadow-soft disabled:opacity-60"
