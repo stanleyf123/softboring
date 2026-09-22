@@ -208,6 +208,24 @@ export function ensureSoftNotes(db: Database.Database) {
   );
 }
 
+export function ensureSoftIntentions(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS soft_intentions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      week_key TEXT NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE (user_id, week_key)
+    );
+  `);
+  db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_soft_intentions_user_week ON soft_intentions (user_id, week_key)`,
+  );
+}
+
 export function migrateDb(db: Database.Database) {
   db.exec(schemaSql());
   ensureReviewUserId(db);
@@ -221,4 +239,5 @@ export function migrateDb(db: Database.Database) {
   ensureUserIsDemoColumn(db);
   ensureUserNicknameColumn(db);
   ensureSoftNotes(db);
+  ensureSoftIntentions(db);
 }

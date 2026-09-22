@@ -76,6 +76,28 @@ export function listInventory(userId: string): Record<string, number> {
   return inventory;
 }
 
+export function inventoryTotal(inventory: Record<string, number>) {
+  return Object.values(inventory).reduce((sum, qty) => sum + Math.max(0, qty), 0);
+}
+
+/** Stickers this member placed on Soft Wall notes in the current calendar month (UTC). */
+export function countPlacedStickersThisMonth(userId: string, now = new Date()) {
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const start = new Date(Date.UTC(year, month, 1)).toISOString();
+  const end = new Date(Date.UTC(year, month + 1, 1)).toISOString();
+  const row = getDb()
+    .prepare(
+      `SELECT COUNT(*) AS n
+       FROM wall_note_stickers
+       WHERE user_id = ?
+         AND datetime(created_at) >= datetime(?)
+         AND datetime(created_at) < datetime(?)`,
+    )
+    .get(userId, start, end) as { n: number };
+  return row.n;
+}
+
 function addInventory(userId: string, stickerId: string, quantity: number) {
   getDb()
     .prepare(

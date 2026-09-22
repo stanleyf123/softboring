@@ -450,6 +450,12 @@
     "loginCta": "登入",
     "shopTitle": "小小貼紙",
     "shopLead": "買一張貼紙，點便利貼貼上去。每貼一張，稱讚就多一點。",
+    "placedThisMonth": "這個月你貼了 {count} 張貼紙。",
+    "inventoryEmptyTitle": "口袋還是空的",
+    "inventoryEmptyBody": "還沒有可貼的貼紙。付款就緒後，小小一包可以裝滿口袋——也可以先安靜地看看 Soft Wall。",
+    "inventoryEmptyPlace": "口袋暫時是空的。想準備一點稱讚時，再打開貼紙小舖。",
+    "inventoryCount": "口袋裡還有 {count} 張貼紙。",
+    "placeStickerAria": "貼上 {name} 貼紙 · 口袋裡有 {count} 張",
     "close": "關閉",
     "owned": "口袋裡有 {count} 張",
     "buy": "買",
@@ -769,6 +775,26 @@
     "saveError": "暫時無法儲存這則筆記。",
     "privacy": "僅私人。Soft Wall 看不到這則筆記。"
   },
+  "SoftIntention": {
+    "title": "軟軟意向",
+    "lead": "為即將到來的一週寫一句溫柔的意向——不是待辦清單，只是一個輕輕的方向。",
+    "guestBody": "登入後可為接下來的一週設定一句軟軟意向。",
+    "loginCta": "登入",
+    "loading": "正在打開本週意向…",
+    "loadError": "暫時無法載入軟軟意向。",
+    "weekLabel": "週次 {week}",
+    "inputLabel": "軟軟意向",
+    "placeholder": "想輕輕朝向的一件事…",
+    "counter": "{count} / {max}",
+    "save": "儲存意向",
+    "saving": "儲存中…",
+    "saved": "已儲存。這週一個安靜的方向。",
+    "saveError": "暫時無法儲存這句意向。",
+    "hint": "一句話就夠了。這一週隨時可以改。",
+    "lastAria": "上次的軟軟意向",
+    "lastEyebrow": "上次的意向",
+    "lastLead": "來自較安靜那一週的輕提醒——沒有壓力。"
+  },
   "Postcard": {
     "brand": "Soft Boring Weekly",
     "kindWeek": "軟軟明信片 · 一週",
@@ -833,6 +859,7 @@
     "aNote": "安靜的一週",
     "byAuthor": "{name}",
     "praise": "{count} 則讚美",
-    "open": "在牆上打開"
+    "open": "在牆上打開",
+    "listAria": "本週軟軟精選"
   }
 }

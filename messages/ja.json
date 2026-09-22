@@ -450,6 +450,12 @@
     "loginCta": "ログイン",
     "shopTitle": "小さなシール",
     "shopLead": "シールを買って、付箋をタップして貼ります。ひとつずつ、小さなほめが足されます。",
+    "placedThisMonth": "今月、シールを {count} 枚貼りました。",
+    "inventoryEmptyTitle": "ポケットはまだ空っぽ",
+    "inventoryEmptyBody": "貼るシールがまだありません。支払いの準備ができたら、小さなパックでポケットを満たせます——それまでは Soft Wall を静かに眺めて。",
+    "inventoryEmptyPlace": "いまポケットは空です。ほめの準備をしたくなったら、シールショップを開いて。",
+    "inventoryCount": "ポケットにシールが {count} 枚あります。",
+    "placeStickerAria": "{name} シールを貼る · ポケットに {count}",
     "close": "閉じる",
     "owned": "ポケットに {count}",
     "buy": "買う",
@@ -769,6 +775,26 @@
     "saveError": "ノートを保存できませんでした。",
     "privacy": "非公開のみ。Soft Wall には見えません。"
   },
+  "SoftIntention": {
+    "title": "やわらかい意図",
+    "lead": "これから来る一週間への、やさしい一文——やることリストではなく、そっと目指す方向。",
+    "guestBody": "ログインすると、来週のためのやわらかい意図をひとつ残せます。",
+    "loginCta": "ログイン",
+    "loading": "今週の意図を開いています…",
+    "loadError": "やわらかい意図を読み込めませんでした。",
+    "weekLabel": "週 {week}",
+    "inputLabel": "やわらかい意図",
+    "placeholder": "そっと向かいたいこと…",
+    "counter": "{count} / {max}",
+    "save": "意図を保存",
+    "saving": "保存中…",
+    "saved": "保存しました。今週への静かな方向。",
+    "saveError": "意図を保存できませんでした。",
+    "hint": "一文で十分。今週いつでも変えられます。",
+    "lastAria": "前回のやわらかい意図",
+    "lastEyebrow": "前回の意図",
+    "lastLead": "静かな週からの軽いお知らせ——無理はなし。"
+  },
   "Postcard": {
     "brand": "Soft Boring Weekly",
     "kindWeek": "やわらかいポストカード · 一週間",
@@ -833,6 +859,7 @@
     "aNote": "静かな一週間",
     "byAuthor": "{name}",
     "praise": "ほめ {count}",
-    "open": "壁で開く"
+    "open": "壁で開く",
+    "listAria": "今週のやわらかいピック"
   }
 }

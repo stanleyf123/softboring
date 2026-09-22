@@ -140,6 +140,8 @@ export function WallBoard({
   const [shopOpen, setShopOpen] = useState(false);
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [inventory, setInventory] = useState<Record<string, number>>({});
+  const [inventoryCount, setInventoryCount] = useState(0);
+  const [placedThisMonth, setPlacedThisMonth] = useState(0);
   const [packLabel, setPackLabel] = useState<string | null>(null);
   const [stripeConfigured, setStripeConfigured] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
@@ -159,6 +161,9 @@ export function WallBoard({
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const openedInitialNote = useRef(false);
+  const noteCloseRef = useRef<HTMLButtonElement>(null);
+  const shopCloseRef = useRef<HTMLButtonElement>(null);
+  const detailReturnFocusRef = useRef<HTMLElement | null>(null);
 
   const visibleNotes = useMemo(() => {
     if (!softPlus || locked) return notes;
@@ -201,14 +206,39 @@ export function WallBoard({
     const data = await readJson<{
       stickers: Sticker[];
       inventory: Record<string, number>;
+      inventoryCount?: number;
+      placedThisMonth?: number;
       pack: { formatted: string };
       stripeConfigured: boolean;
     }>(await fetch("/api/wall/stickers", { cache: "no-store" }));
     setStickers(data.stickers);
     setInventory(data.inventory);
+    const count =
+      typeof data.inventoryCount === "number"
+        ? data.inventoryCount
+        : Object.values(data.inventory).reduce((sum, qty) => sum + Math.max(0, qty), 0);
+    setInventoryCount(count);
+    setPlacedThisMonth(
+      typeof data.placedThisMonth === "number" ? data.placedThisMonth : 0,
+    );
     setPackLabel(data.pack.formatted);
     setStripeConfigured(data.stripeConfigured);
   }, []);
+
+  function closeNoteDetail() {
+    setSelectedId(null);
+    setDetail(null);
+    setReplyToId(null);
+    const returnTo = detailReturnFocusRef.current;
+    detailReturnFocusRef.current = null;
+    if (returnTo) {
+      window.requestAnimationFrame(() => returnTo.focus());
+    }
+  }
+
+  function closeShop() {
+    setShopOpen(false);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -237,8 +267,35 @@ export function WallBoard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, softPlus, locked, initialNoteId, notes]);
 
+  useEffect(() => {
+    if (!selectedId && !shopOpen) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      if (selectedId) {
+        closeNoteDetail();
+        return;
+      }
+      if (shopOpen) closeShop();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedId, shopOpen]);
+
+  useEffect(() => {
+    if (selectedId && detail) {
+      noteCloseRef.current?.focus();
+      return;
+    }
+    if (shopOpen) {
+      shopCloseRef.current?.focus();
+    }
+  }, [selectedId, detail, shopOpen]);
+
   async function openNote(id: string) {
     if (locked) return;
+    detailReturnFocusRef.current =
+      (document.activeElement as HTMLElement | null) ?? null;
     setSelectedId(id);
     try {
       const [noteData, commentData] = await Promise.all([
@@ -443,6 +500,8 @@ export function WallBoard({
         ...current,
         [stickerId]: Math.max(0, (current[stickerId] ?? 1) - 1),
       }));
+      setInventoryCount((count) => Math.max(0, count - 1));
+      setPlacedThisMonth((count) => count + 1);
     } catch {
       await loadShop();
     } finally {
@@ -507,6 +566,11 @@ export function WallBoard({
             {softPlus ? (
               <p className="mt-1 text-sm text-muted">{t("pinHint")}</p>
             ) : null}
+            {softPlus ? (
+              <p className="mt-2 text-sm text-muted" role="status">
+                {t("placedThisMonth", { count: placedThisMonth })}
+              </p>
+            ) : null}
           </div>
           {softPlus ? (
             <div className="flex flex-wrap items-center gap-3">
@@ -523,7 +587,9 @@ export function WallBoard({
               <button
                 type="button"
                 onClick={() => setShopOpen((open) => !open)}
-                className="rounded-full bg-mint px-5 py-2.5 text-sm shadow-card"
+                className="rounded-full bg-mint px-5 py-2.5 text-sm shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                aria-expanded={shopOpen}
+                aria-controls="wall-shop-dialog"
               >
                 {t("openShop")}
               </button>
@@ -547,10 +613,19 @@ export function WallBoard({
           </div>
         ) : null}
         {softPlus && !locked ? (
-          <section className="mt-6 rounded-[1.75rem] bg-paper px-5 py-5 shadow-card sm:px-6">
-            <p className="font-display text-lg tracking-tight">{t("filterTitle")}</p>
+          <section
+            className="mt-6 rounded-[1.75rem] bg-paper px-5 py-5 shadow-card sm:px-6"
+            aria-labelledby="wall-filter-title"
+          >
+            <p id="wall-filter-title" className="font-display text-lg tracking-tight">
+              {t("filterTitle")}
+            </p>
             <p className="mt-1 text-sm leading-relaxed text-muted">{t("filterLead")}</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
+            <div
+              className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]"
+              role="search"
+              aria-label={t("filterSearchLabel")}
+            >
               <label className="block sm:col-span-1">
                 <span className="sr-only">{t("filterSearchLabel")}</span>
                 <input
@@ -560,7 +635,7 @@ export function WallBoard({
                     setFilters((current) => ({ ...current, query: event.target.value }))
                   }
                   placeholder={t("filterSearchPlaceholder")}
-                  className="w-full rounded-full border border-line bg-cream/70 px-4 py-2.5 text-sm outline-none focus:border-accent"
+                  className="w-full rounded-full border border-line bg-cream/70 px-4 py-2.5 text-sm outline-none focus:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 />
               </label>
               <label className="flex items-center gap-2 text-sm text-muted">
@@ -729,12 +804,14 @@ export function WallBoard({
                       // already released
                     }
                   }}
-                  className={`absolute w-[216px] cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
+                  className={`absolute w-[216px] cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${noteClass(note.color)} ${locked ? "pointer-events-none select-none" : ""}`}
                   aria-label={
                     full
                       ? t("noteAria", { excerpt: full.excerpt || t("untitled") })
                       : t("noteLockedAria")
                   }
+                  aria-haspopup={full ? "dialog" : undefined}
+                  aria-expanded={full ? selectedId === note.id : undefined}
                   style={{
                     left: note.x,
                     top: note.y,
@@ -844,8 +921,14 @@ export function WallBoard({
       </div>
 
       {softPlus && shopOpen ? (
-        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+        <div
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeShop();
+          }}
+        >
           <div
+            id="wall-shop-dialog"
             className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8"
             role="dialog"
             aria-modal="true"
@@ -853,18 +936,36 @@ export function WallBoard({
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id="wall-shop-title" className="font-display text-2xl tracking-tight">{t("shopTitle")}</h2>
+                <h2 id="wall-shop-title" className="font-display text-2xl tracking-tight">
+                  {t("shopTitle")}
+                </h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{t("shopLead")}</p>
+                <p className="mt-2 text-sm text-muted" role="status">
+                  {t("placedThisMonth", { count: placedThisMonth })}
+                </p>
               </div>
               <button
+                ref={shopCloseRef}
                 type="button"
-                onClick={() => setShopOpen(false)}
-                className="min-h-11 min-w-11 text-sm text-muted hover:text-foreground"
+                onClick={closeShop}
+                className="min-h-11 min-w-11 text-sm text-muted hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 aria-label={t("close")}
               >
                 {t("close")}
               </button>
             </div>
+            {inventoryCount === 0 ? (
+              <div className="mt-6 rounded-[1.35rem] bg-cream/80 px-5 py-5" role="status">
+                <p className="font-display text-lg tracking-tight">{t("inventoryEmptyTitle")}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {t("inventoryEmptyBody")}
+                </p>
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-muted" role="status">
+                {t("inventoryCount", { count: inventoryCount })}
+              </p>
+            )}
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
               {stickers.map((sticker) => (
                 <li
@@ -894,7 +995,7 @@ export function WallBoard({
                     type="button"
                     onClick={() => buy(sticker.id)}
                     disabled={busy !== null}
-                    className="rounded-full bg-accent px-3 py-1.5 text-sm text-paper disabled:opacity-60"
+                    className="rounded-full bg-accent px-3 py-1.5 text-sm text-paper disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
                     {busy === sticker.id ? t("redirecting") : t("buy")}
                   </button>
@@ -905,7 +1006,7 @@ export function WallBoard({
               type="button"
               onClick={() => buy(undefined, true)}
               disabled={busy !== null}
-              className="mt-5 rounded-full bg-mint px-5 py-2.5 text-sm shadow-card disabled:opacity-60"
+              className="mt-5 rounded-full bg-mint px-5 py-2.5 text-sm shadow-card disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               {busy === "pack"
                 ? t("redirecting")
@@ -927,7 +1028,12 @@ export function WallBoard({
       ) : null}
 
       {selectedId && detail ? (
-        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+        <div
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/20 p-4 sm:items-center"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeNoteDetail();
+          }}
+        >
           <div
             className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] bg-paper px-6 py-6 shadow-soft sm:px-8"
             role="dialog"
@@ -939,13 +1045,10 @@ export function WallBoard({
                 {detail.summary.trim() || t("untitled")}
               </p>
               <button
+                ref={noteCloseRef}
                 type="button"
-                onClick={() => {
-                  setSelectedId(null);
-                  setDetail(null);
-                  setReplyToId(null);
-                }}
-                className="min-h-11 min-w-11 text-sm text-muted hover:text-foreground"
+                onClick={closeNoteDetail}
+                className="min-h-11 min-w-11 text-sm text-muted hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 aria-label={t("close")}
               >
                 {t("close")}
@@ -981,20 +1084,56 @@ export function WallBoard({
 
             <div className="mt-6">
               <p className="text-sm text-muted">{t("placeHint")}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {stickers.map((sticker) => (
+              {inventoryCount === 0 ? (
+                <div className="mt-3 rounded-[1.25rem] bg-cream/80 px-4 py-4" role="status">
+                  <p className="text-sm leading-relaxed text-muted">
+                    {t("inventoryEmptyPlace")}
+                  </p>
                   <button
-                    key={sticker.id}
                     type="button"
-                    onClick={() => placeSticker(sticker.id)}
-                    disabled={busy !== null}
-                    className="rounded-full bg-blush px-3 py-1.5 text-sm disabled:opacity-60"
-                    title={t("owned", { count: inventory[sticker.id] ?? 0 })}
+                    onClick={() => setShopOpen(true)}
+                    className="mt-3 rounded-full bg-mint px-4 py-2 text-sm shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
-                    {sticker.emoji} {inventory[sticker.id] ?? 0}
+                    {t("openShop")}
                   </button>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div
+                  className="mt-2 flex flex-wrap gap-2"
+                  role="group"
+                  aria-label={t("placeHint")}
+                >
+                  {stickers.map((sticker) => {
+                    const owned = inventory[sticker.id] ?? 0;
+                    return (
+                      <button
+                        key={sticker.id}
+                        type="button"
+                        onClick={() => placeSticker(sticker.id)}
+                        disabled={busy !== null || owned < 1}
+                        className="rounded-full bg-blush px-3 py-1.5 text-sm disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                        title={t("owned", { count: owned })}
+                        aria-label={t("placeStickerAria", {
+                          name: tStickers(
+                            sticker.slug as
+                              | "star"
+                              | "heart"
+                              | "sprout"
+                              | "tea"
+                              | "moon"
+                              | "cloud"
+                              | "peach"
+                              | "sparkle",
+                          ),
+                          count: owned,
+                        })}
+                      >
+                        {sticker.emoji} {owned}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <section className="mt-8">

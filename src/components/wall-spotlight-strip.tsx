@@ -41,8 +41,14 @@ export function WallSpotlightStrip({ softPlus }: { softPlus: boolean }) {
 
   if (!hydrated || (items === null && !error)) {
     return (
-      <section className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6">
-        <p className="font-display text-lg tracking-tight">{t("title")}</p>
+      <section
+        className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6"
+        aria-labelledby="wall-spotlight-title"
+        aria-busy="true"
+      >
+        <p id="wall-spotlight-title" className="font-display text-lg tracking-tight">
+          {t("title")}
+        </p>
         <p className="mt-2 text-sm text-muted">{t("loading")}</p>
       </section>
     );
@@ -50,8 +56,13 @@ export function WallSpotlightStrip({ softPlus }: { softPlus: boolean }) {
 
   if (error) {
     return (
-      <section className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6">
-        <p className="font-display text-lg tracking-tight">{t("title")}</p>
+      <section
+        className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6"
+        aria-labelledby="wall-spotlight-title"
+      >
+        <p id="wall-spotlight-title" className="font-display text-lg tracking-tight">
+          {t("title")}
+        </p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("loadError")}</p>
       </section>
     );
@@ -59,8 +70,13 @@ export function WallSpotlightStrip({ softPlus }: { softPlus: boolean }) {
 
   if (!items || items.length === 0) {
     return (
-      <section className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6">
-        <p className="font-display text-lg tracking-tight">{t("title")}</p>
+      <section
+        className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6"
+        aria-labelledby="wall-spotlight-title"
+      >
+        <p id="wall-spotlight-title" className="font-display text-lg tracking-tight">
+          {t("title")}
+        </p>
         <p className="mt-1 text-sm leading-relaxed text-muted">{t("lead")}</p>
         <p className="mt-3 text-sm leading-relaxed text-muted">{t("empty")}</p>
       </section>
@@ -68,12 +84,17 @@ export function WallSpotlightStrip({ softPlus }: { softPlus: boolean }) {
   }
 
   return (
-    <section className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6">
+    <section
+      className="rounded-[1.75rem] bg-paper/90 px-5 py-5 shadow-card sm:px-6"
+      aria-labelledby="wall-spotlight-title"
+    >
       <div>
-        <p className="font-display text-lg tracking-tight">{t("title")}</p>
+        <p id="wall-spotlight-title" className="font-display text-lg tracking-tight">
+          {t("title")}
+        </p>
         <p className="mt-1 text-sm leading-relaxed text-muted">{t("lead")}</p>
       </div>
-      <ul className="mt-4 flex gap-3 overflow-x-auto pb-1">
+      <ul className="mt-4 flex gap-3 overflow-x-auto pb-1" aria-label={t("listAria")}>
         {items.map((item) => (
           <li
             key={item.noteId}
@@ -93,7 +114,7 @@ export function WallSpotlightStrip({ softPlus }: { softPlus: boolean }) {
             </p>
             <Link
               href={`/wall?note=${encodeURIComponent(item.noteId)}`}
-              className="mt-3 inline-block text-sm text-accent"
+              className="mt-3 inline-block text-sm text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               {t("open")}
             </Link>
