@@ -28,6 +28,7 @@ type FullNote = TeaserNote & {
   pinned?: boolean;
   ownerSoftPlus?: boolean;
   ownerFallback?: string | null;
+  ownerInviteBadge?: boolean;
   stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
   energy?: string;
   drain?: string;
@@ -622,7 +623,18 @@ export function WallBoard({
                   />
                   <span className="sr-only">{t("dragHandle")}</span>
                   <span className="flex items-center justify-between gap-2 text-[11px]">
-                    <span className="truncate text-muted">{t("byAuthor", { name: author })}</span>
+                    <span className="flex min-w-0 items-center gap-1">
+                      <span className="truncate text-muted">{t("byAuthor", { name: author })}</span>
+                      {full?.ownerInviteBadge ? (
+                        <span
+                          className="shrink-0 text-accent"
+                          title={t("inviteBadge")}
+                          aria-label={t("inviteBadge")}
+                        >
+                          ✦
+                        </span>
+                      ) : null}
+                    </span>
                     {full?.pinned ? (
                       <span className="shrink-0 rounded-full bg-paper/80 px-2 py-0.5 text-muted">
                         {t("pinned")}
@@ -817,6 +829,7 @@ export function WallBoard({
             <p className="mt-1 text-sm text-muted">
               {`${t("byAuthor", { name: wallAuthorLabel(detail, t("softVisitor"), true) })} · `}
               {detail.ownerSoftPlus ? `${t("plusBadge")} · ` : ""}
+              {detail.ownerInviteBadge ? `${t("inviteBadge")} · ` : ""}
               {detail.feeling ? t("feeling", { value: detail.feeling }) : null}
               {detail.mine ? ` · ${t("yours")}` : ` · ${t("neighbor")}`}
               {` · ${t("praise", { count: detail.praiseCount })}`}

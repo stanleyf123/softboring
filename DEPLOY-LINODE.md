@@ -271,6 +271,7 @@ sudo systemctl list-timers | grep -i certbot
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/en
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/zh-tw
+curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/ja
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/admin/login
 # 未帶 token 應不是 200 儀表板
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3001/admin

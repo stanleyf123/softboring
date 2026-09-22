@@ -14,10 +14,14 @@ export default async function Image({
   const { locale } = await params;
   const appLocale = assertLocale(locale);
   const kickerSafe =
-    appLocale === "zh-tw" ? "once a week  ·  a quiet pause" : "once a week  ·  not a to-do list";
+    appLocale === "ja"
+      ? "週に一度  ·  小さな休息"
+      : appLocale === "zh-tw"
+        ? "once a week  ·  a quiet pause"
+        : "once a week  ·  not a to-do list";
   const line =
-    appLocale === "zh-tw"
-      ? "Six small questions. Save how the week felt."
+    appLocale === "ja"
+      ? "六つの小さな問い。その週の気持ちを、そっと残す。"
       : "Six small questions. Save how the week felt.";
 
   return new ImageResponse(

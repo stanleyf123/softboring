@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getStickerById, getPackStripePriceId, getStickerStripePriceId } from "@/db/stickers";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { stripeCheckoutLocale } from "@/lib/locale";
 import { publicOrigin } from "@/lib/public-origin";
 import { getStripe, getStripeConfig, isStripeConfigured } from "@/lib/stripe";
 import { getWallViewer, requireSoftPlus } from "@/lib/wall-access";
@@ -94,7 +95,7 @@ export async function POST(request: Request) {
     customer: user.stripeCustomerId ?? undefined,
     customer_email: user.stripeCustomerId ? undefined : user.email,
     metadata,
-    locale: (locale === "zh-tw" ? "zh-TW" : "en") as "en" | "zh-TW",
+    locale: stripeCheckoutLocale(locale),
   });
 
   if (!session.url) {

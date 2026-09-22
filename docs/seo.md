@@ -1,6 +1,6 @@
 # SEO and Search Console
 
-Public site: [https://softboring.com](https://softboring.com). Locales are `/en` (default) and `/zh-tw` only (never `/zh-TW`).
+Public site: [https://softboring.com](https://softboring.com). Locales are `/en` (default), `/zh-tw`, and `/ja` (never `/zh-TW`).
 
 This note is the operator checklist after deploy. Copy is bilingual in the app; admin stays 繁體中文 and is not indexed.
 
@@ -12,41 +12,42 @@ This note is the operator checklist after deploy. Copy is bilingual in the app; 
    - `BING_SITE_VERIFICATION` — Bing Webmaster `msvalidate.01` token
 3. Open [Google Search Console](https://search.google.com/search-console), add the **URL-prefix** property `https://softboring.com/`, verify, then submit `https://softboring.com/sitemap.xml`.
 4. Optional: [Bing Webmaster Tools](https://www.bing.com/webmasters) with the same sitemap.
-5. Request indexing for the homepage pair first (`/en`, `/zh-tw`), then pricing and Soft Wall.
+5. Request indexing for the homepages first (`/en`, `/zh-tw`, `/ja`), then pricing and Soft Wall.
 
 Do not invent review stars or aggregate ratings. JSON-LD is Organization / WebSite / SoftwareApplication with a Free offer only.
 
 ## Search Console URL checklist
 
-Submit these as the public surface (hreflang pairs `en` ↔ `zh-TW`, `x-default` → English):
+Submit these as the public surface (hreflang `en`, `zh-TW`, `ja`, `x-default` → English):
 
-| Page | English | 繁體中文 |
-| --- | --- | --- |
-| Home | https://softboring.com/en | https://softboring.com/zh-tw |
-| Pricing | https://softboring.com/en/pricing | https://softboring.com/zh-tw/pricing |
-| Soft Wall | https://softboring.com/en/wall | https://softboring.com/zh-tw/wall |
-| Review | https://softboring.com/en/review | https://softboring.com/zh-tw/review |
-| History | https://softboring.com/en/history | https://softboring.com/zh-tw/history |
-| Log in | https://softboring.com/en/login | https://softboring.com/zh-tw/login |
-| Register | https://softboring.com/en/register | https://softboring.com/zh-tw/register |
-| Privacy | https://softboring.com/en/privacy | https://softboring.com/zh-tw/privacy |
-| Terms | https://softboring.com/en/terms | https://softboring.com/zh-tw/terms |
-| Thanks | https://softboring.com/en/thanks | https://softboring.com/zh-tw/thanks |
+| Page | English | 繁體中文 | 日本語 |
+| --- | --- | --- | --- |
+| Home | https://softboring.com/en | https://softboring.com/zh-tw | https://softboring.com/ja |
+| Pricing | https://softboring.com/en/pricing | https://softboring.com/zh-tw/pricing | https://softboring.com/ja/pricing |
+| Soft Wall | https://softboring.com/en/wall | https://softboring.com/zh-tw/wall | https://softboring.com/ja/wall |
+| Review | https://softboring.com/en/review | https://softboring.com/zh-tw/review | https://softboring.com/ja/review |
+| History | https://softboring.com/en/history | https://softboring.com/zh-tw/history | https://softboring.com/ja/history |
+| Log in | https://softboring.com/en/login | https://softboring.com/zh-tw/login | https://softboring.com/ja/login |
+| Register | https://softboring.com/en/register | https://softboring.com/zh-tw/register | https://softboring.com/ja/register |
+| Privacy | https://softboring.com/en/privacy | https://softboring.com/zh-tw/privacy | https://softboring.com/ja/privacy |
+| Terms | https://softboring.com/en/terms | https://softboring.com/zh-tw/terms | https://softboring.com/ja/terms |
+| Thanks | https://softboring.com/en/thanks | https://softboring.com/zh-tw/thanks | https://softboring.com/ja/thanks |
 
 Machine-readable:
 
 - https://softboring.com/sitemap.xml
 - https://softboring.com/robots.txt
-- OG image (per locale): https://softboring.com/en/opengraph-image · https://softboring.com/zh-tw/opengraph-image
+- OG image (per locale): https://softboring.com/en/opengraph-image · https://softboring.com/zh-tw/opengraph-image · https://softboring.com/ja/opengraph-image
 
 ## Keep out of the index
 
 `robots.txt` disallows `/admin`, `/api/`, and `/account`. These routes also send `noindex` (or live under `/admin`):
 
 - `/admin` and `/api/admin/*`
-- `/en/account`, `/zh-tw/account`
-- `/en/welcome`, `/zh-tw/welcome` (post-register)
-- `/en/thanks/plus`, `/zh-tw/thanks/plus` (Soft+ checkout return)
+- `/en/account`, `/zh-tw/account`, `/ja/account`
+- `/en/welcome`, `/zh-tw/welcome`, `/ja/welcome` (post-register)
+- `/en/thanks/plus`, `/zh-tw/thanks/plus`, `/ja/thanks/plus` (Soft+ checkout return)
+- `/en/invite/*`, `/zh-tw/invite/*`, `/ja/invite/*` (redirects to register; `noindex`)
 - History detail, export, forgot/reset password, trends
 
 Google Analytics (`G-MFQ9J6B9DH`) stays on public locale pages only.

@@ -33,9 +33,10 @@
   --color-sky: var(--sky);
   --shadow-soft: 0 12px 32px rgba(154, 111, 90, 0.12);
   --shadow-card: 0 6px 20px rgba(154, 111, 90, 0.08);
-  --font-sans: var(--font-body), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
-    sans-serif;
-  --font-display: var(--font-display-face), "Noto Serif TC", "Songti TC", serif;
+  --font-sans: var(--font-body), "Noto Sans TC", "Noto Sans JP", "PingFang TC",
+    "Hiragino Sans", "Yu Gothic", "Microsoft JhengHei", sans-serif;
+  --font-display: var(--font-display-face), "Noto Serif TC", "Noto Serif JP", "Songti TC",
+    serif;
 }
 
 html,

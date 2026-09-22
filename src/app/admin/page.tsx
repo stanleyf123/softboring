@@ -24,6 +24,7 @@ export default async function AdminDashboardPage() {
         <StatCard href="/admin/members" label={copy.free} value={counts.free} wash="bg-blush/80" />
         <StatCard href="/admin/reviews" label={copy.reviews} value={counts.reviews} wash="bg-mint/80" />
         <StatCard href="/admin/wall" label={copy.wallNotes} value={counts.wallNotes} wash="bg-mint/60" />
+        <StatCard href="/admin/members" label={copy.invites} value={counts.invitesRedeemed} wash="bg-blush/60" />
         <StatCard
           href="/admin/payments"
           label={copy.succeededPayments}

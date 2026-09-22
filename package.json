@@ -12,7 +12,7 @@
     "demo:seed": "node scripts/demo-seed.mjs",
     "demo:daily": "node scripts/demo-daily.mjs",
     "demo:purge": "node scripts/demo-seed.mjs --purge",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

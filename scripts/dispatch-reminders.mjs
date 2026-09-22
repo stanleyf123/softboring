@@ -80,6 +80,7 @@ A quiet nudge from Soft Boring Weekly — if this is a good day, sit down for si
 
 ${origin}/en/review
 ${origin}/zh-tw/review
+${origin}/ja/review
 
 You can change the weekday or turn this off on your account page.
 

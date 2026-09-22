@@ -32,6 +32,7 @@ export async function GET(request: Request, context: Context) {
     url.searchParams.get("locale") ?? localeFromReferer(request.headers.get("referer")),
   );
   const returnTo = url.searchParams.get("next") ?? url.searchParams.get("returnTo");
+  const invite = url.searchParams.get("invite");
 
   if (!isOAuthProvider(rawProvider)) {
     return NextResponse.redirect(oauthErrorRedirectUrl(request.url, locale, "oauth_failed", returnTo));
@@ -54,6 +55,7 @@ export async function GET(request: Request, context: Context) {
     provider: rawProvider,
     returnTo,
     locale,
+    invite,
   });
   const redirectUri = oauthRedirectUri(rawProvider, request.url);
   const challenge = pkceChallenge(payload.verifier);

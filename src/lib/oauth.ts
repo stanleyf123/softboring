@@ -1,9 +1,11 @@
 import { createHmac, createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { hasLocale } from "next-intl";
 import {
   isOAuthProvider,
   oauthCallbackPath,
   type OAuthProvider,
 } from "@/lib/oauth-config";
+import { normalizeInviteCode } from "@/lib/invite";
 import { publicAbsoluteUrl, publicOrigin, safeAppPath } from "@/lib/public-origin";
 import { routing, type AppLocale } from "@/i18n/routing";
 
@@ -17,6 +19,7 @@ export type OAuthStatePayload = {
   provider: OAuthProvider;
   returnTo: string;
   locale: AppLocale;
+  invite: string | null;
   exp: number;
 };
 
@@ -69,13 +72,18 @@ export function readOAuthState(raw: string | undefined | null): OAuthStatePayloa
       !isOAuthProvider(parsed.provider) ||
       typeof parsed.returnTo !== "string" ||
       typeof parsed.locale !== "string" ||
-      (parsed.locale !== "en" && parsed.locale !== "zh-tw") ||
+      !hasLocale(routing.locales, parsed.locale) ||
+      (parsed.invite != null && typeof parsed.invite !== "string") ||
       typeof parsed.exp !== "number"
     ) {
       return null;
     }
     if (parsed.exp <= Date.now()) return null;
-    return parsed as OAuthStatePayload;
+    return {
+      ...(parsed as OAuthStatePayload),
+      locale: parsed.locale,
+      invite: typeof parsed.invite === "string" ? normalizeInviteCode(parsed.invite) : null,
+    };
   } catch {
     return null;
   }
@@ -93,6 +101,7 @@ export function newOAuthState(input: {
   provider: OAuthProvider;
   returnTo?: string | null;
   locale?: string | null;
+  invite?: string | null;
 }): OAuthStatePayload {
   return {
     state: randomBytes(24).toString("base64url"),
@@ -101,12 +110,13 @@ export function newOAuthState(input: {
     provider: input.provider,
     returnTo: safeAppPath(input.returnTo, "/account"),
     locale: parseOAuthLocale(input.locale),
+    invite: normalizeInviteCode(input.invite),
     exp: Date.now() + OAUTH_STATE_MAX_AGE_SECONDS * 1000,
   };
 }
 
 export function parseOAuthLocale(value: string | null | undefined): AppLocale {
-  if (value === "en" || value === "zh-tw") return value;
+  if (value && hasLocale(routing.locales, value)) return value;
   return routing.defaultLocale;
 }
 

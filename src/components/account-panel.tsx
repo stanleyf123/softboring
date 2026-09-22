@@ -5,8 +5,8 @@ import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
 import { NICKNAME_MAX } from "@/lib/nickname";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
-import { useFormatter, useTranslations } from "next-intl";
-import { useState, type FormEvent } from "react";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useEffect, useState, type FormEvent } from "react";
 import { CheckoutButtons, PaymentsNotice, PortalButton } from "./billing-buttons";
 import { SoftMark } from "./soft-doodles";
 
@@ -141,6 +141,7 @@ export function AccountPanel({
           </dl>
 
           <NicknameEditor initialNickname={nickname} />
+          <InviteCard softPlus={softPlus} />
 
           {softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/50 px-5 py-5">
@@ -302,6 +303,152 @@ export function AccountPanel({
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function InviteCard({ softPlus }: { softPlus: boolean }) {
+  const t = useTranslations("Account");
+  const locale = useLocale();
+  const [link, setLink] = useState<string | null>(null);
+  const [count, setCount] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const response = await fetch(`/api/account/invite?locale=${encodeURIComponent(locale)}`);
+        if (!response.ok || cancelled) return;
+        const data = (await response.json()) as { link?: string | null; redeemedCount?: number };
+        if (cancelled) return;
+        setLink(data.link ?? null);
+        setCount(data.redeemedCount ?? 0);
+      } finally {
+        if (!cancelled) setReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+
+  async function makeLink() {
+    if (busy) return;
+    setBusy(true);
+    setError(false);
+    try {
+      const response = await fetch("/api/account/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        link?: string | null;
+        redeemedCount?: number;
+      };
+      if (!response.ok || !data.link) {
+        setError(true);
+        return;
+      }
+      setLink(data.link);
+      setCount(data.redeemedCount ?? 0);
+    } catch {
+      setError(true);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function copyLink() {
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  if (!ready) {
+    return (
+      <div className="mt-8 rounded-[1.5rem] bg-mint/30 px-5 py-5">
+        <p className="font-display text-lg tracking-tight">
+          {softPlus ? t("inviteTitle") : t("inviteLockedTitle")}
+        </p>
+      </div>
+    );
+  }
+
+  if (!softPlus && !link) {
+    return (
+      <div className="mt-8 rounded-[1.5rem] bg-peach/40 px-5 py-5">
+        <p className="font-display text-lg tracking-tight">{t("inviteLockedTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("inviteLockedBody")}</p>
+        <Link
+          href="/pricing"
+          className="mt-4 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+        >
+          {t("inviteLockedCta")}
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8 rounded-[1.5rem] bg-mint/40 px-5 py-5">
+      <p className="font-display text-lg tracking-tight">{t("inviteTitle")}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t("inviteBody")}</p>
+      <p className="mt-3 text-sm text-muted">{t("inviteReward")}</p>
+      {link ? (
+        <div className="mt-4">
+          <label className="block text-sm">
+            <span className="text-muted">{t("inviteLinkLabel")}</span>
+            <input
+              readOnly
+              value={link}
+              className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2 text-sm"
+              onFocus={(event) => event.currentTarget.select()}
+            />
+          </label>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={copyLink}
+              className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+            >
+              {t("inviteCopy")}
+            </button>
+            {copied ? (
+              <p className="text-sm text-muted" role="status">
+                {t("inviteCopied")}
+              </p>
+            ) : null}
+          </div>
+          <p className="mt-3 text-sm text-muted">
+            {count > 0 ? t("inviteCount", { count }) : t("inviteEmpty")}
+          </p>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={makeLink}
+            disabled={busy || !softPlus}
+            className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+          >
+            {busy ? t("inviteMaking") : t("inviteMake")}
+          </button>
+          {error ? (
+            <p className="mt-3 text-sm text-accent" role="alert">
+              {t("inviteError")}
+            </p>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

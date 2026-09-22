@@ -63,6 +63,7 @@
   "LocaleSwitcher": {
     "en": "EN",
     "zhTW": "繁中",
+    "ja": "日",
     "label": "Language"
   },
   "Home": {
@@ -223,6 +224,7 @@
     "toLogin": "Already have an account?",
     "toLoginLink": "Log in",
     "guestHint": "If you already wrote as a guest in this browser, those reviews will move to your account when you log in.",
+    "inviteHint": "A friend left this door open. Creating a desk is what ties you to them.",
     "error": {
       "invalid_credentials": "Email or password is not right.",
       "email_taken": "That email already has an account. Try logging in.",
@@ -311,7 +313,21 @@
     "customSave": "Save questions",
     "customSaved": "Saved.",
     "customError": "Could not save those questions just now.",
-    "export": "Export reviews"
+    "export": "Export reviews",
+    "inviteTitle": "Invite a friend",
+    "inviteBody": "Soft+ can share a little door. When someone new sits down through your link, a small star rests on your wall notes — a thank-you, not a charge.",
+    "inviteLockedTitle": "A little door for friends",
+    "inviteLockedBody": "Soft+ can make a personal invite link. Only someone new here can use it when they create a desk.",
+    "inviteLockedCta": "See Soft+",
+    "inviteLinkLabel": "Your invite link",
+    "inviteCopy": "Copy link",
+    "inviteCopied": "Copied. Hand it over gently.",
+    "inviteMake": "Make my invite link",
+    "inviteMaking": "Making…",
+    "inviteError": "Could not make that link just now.",
+    "inviteCount": "{count} friends joined",
+    "inviteReward": "A little star on your Soft Wall notes. No extra Soft+ days — just a quiet thank-you.",
+    "inviteEmpty": "No one has used it yet. That's all right."
   },
   "Pricing": {
     "eyebrow": "Free to write · paid to remember more",
@@ -404,6 +420,7 @@
     "loading": "Laying out the corkboard",
     "dragHint": "On a phone, press and drag the note — the board will hold still while you move it.",
     "plusBadge": "Soft+",
+    "inviteBadge": "Little star",
     "pin": "Pin to top",
     "unpin": "Unpin",
     "pinned": "Pinned",
@@ -559,6 +576,7 @@
     "welcomeTitle": "Your desk is ready. The kettle's on.",
     "welcomeBody": "That's the whole door. A few soft next steps, whenever you like.",
     "welcomeBodyGuest": "A little desk is waiting. Create an account, or just write this week's review first.",
+    "invitedNote": "Your friend's little star noticed you sat down.",
     "nextHeading": "A few soft next steps",
     "stepReviewTitle": "Write a first review",
     "stepReviewBody": "Six small questions. Yours starts blank.",

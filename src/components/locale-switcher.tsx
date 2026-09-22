@@ -37,6 +37,18 @@ export function LocaleSwitcher() {
       >
         {t("zhTW")}
       </Link>
+      <span aria-hidden="true">·</span>
+      <Link
+        href={pathname}
+        locale="ja"
+        className={
+          locale === "ja"
+            ? "inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-lemon px-2.5 py-1 text-foreground"
+            : "inline-flex min-h-9 min-w-9 items-center justify-center rounded-full px-2.5 py-1 hover:text-foreground"
+        }
+      >
+        {t("ja")}
+      </Link>
     </div>
   );
 }

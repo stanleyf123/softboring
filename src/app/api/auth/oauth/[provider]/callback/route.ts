@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { redeemInviteCode } from "@/db/invites";
 import { findOrLinkOAuthUser, OAuthLinkError } from "@/db/oauth";
 import {
   claimGuestReviewsForUser,
@@ -86,11 +87,15 @@ export async function GET(request: Request, context: Context) {
       nonce: payload.nonce,
     });
     const { user, created } = findOrLinkOAuthUser(identity);
+    const inviteRedeemed =
+      created && payload.invite
+        ? redeemInviteCode({ code: payload.invite, inviteeId: user.id })
+        : false;
     const token = issueSession(user.id);
     await claimGuestReviewsForUser(user.id);
 
     const dest = publicAbsoluteUrl(
-      oauthPostAuthPath(locale, payload.returnTo, created),
+      oauthPostAuthPath(locale, payload.returnTo, created, inviteRedeemed),
       request.url,
     );
     const response = NextResponse.redirect(dest);
