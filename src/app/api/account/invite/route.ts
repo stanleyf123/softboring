@@ -7,7 +7,7 @@ import {
 import { routing, type AppLocale } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth";
 import { inviteRegisterPath } from "@/lib/invite";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { publicOrigin } from "@/lib/public-origin";
 
 export const runtime = "nodejs";
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   }
 
   const locale = asLocale(new URL(request.url).searchParams.get("locale"));
-  const eligible = isSoftPlusPlan(user.plan, user.planStatus);
+  const eligible = userIsSoftPlus(user);
   const existing = getInviteCodeForUser(user.id);
   return NextResponse.json(payload(request, locale, user.id, eligible, existing?.code ?? null));
 }
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ error: "auth_required" }, { status: 401 });
   }
-  if (!isSoftPlusPlan(user.plan, user.planStatus)) {
+  if (!userIsSoftPlus(user)) {
     return NextResponse.json({ error: "soft_plus_required" }, { status: 403 });
   }
 

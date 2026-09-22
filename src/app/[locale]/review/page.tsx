@@ -8,7 +8,7 @@ import { SoftNoteCard } from "@/components/soft-note-card";
 import { ensureUserSettings } from "@/db/user-settings";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -36,7 +36,7 @@ export default async function ReviewPage({ params }: Props) {
 
   const t = await getTranslations("Review");
   const user = await getCurrentUser();
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
   const customQuestions = user && softPlus ? ensureUserSettings(user.id).customQuestions : [];
 
   return (

@@ -126,7 +126,7 @@ test("monthly digest page is Soft+ gated and richer than account teaser", () => 
   const trends = read("src/components/trends-panel.tsx");
 
   assert.match(page, /DigestPanel/);
-  assert.match(page, /isSoftPlusPlan/);
+  assert.match(page, /userIsSoftPlus/);
   assert.match(page, /lockedTitle/);
   assert.match(page, /path: "\/digest"/);
   assert.match(panel, /energyKeywords/);

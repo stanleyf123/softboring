@@ -2,7 +2,7 @@ import { ExportPrintView } from "@/components/export-print-view";
 import { listReviewsForOwner } from "@/db/reviews";
 import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
 import { Link, redirect } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -36,7 +36,7 @@ export default async function HistoryExportPage({ params }: Props) {
     redirect({ href: "/login", locale: appLocale });
     return;
   }
-  if (!isSoftPlusPlan(user.plan, user.planStatus)) {
+  if (!userIsSoftPlus(user)) {
     redirect({ href: "/pricing", locale: appLocale });
     return;
   }

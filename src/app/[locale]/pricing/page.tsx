@@ -1,6 +1,6 @@
 import { PricingView } from "@/components/pricing-view";
 import { getCurrentUser } from "@/lib/auth";
-import { isSoftPlusPlan } from "@/lib/plan";
+import { userIsSoftPlus } from "@/lib/plan";
 import { getPublicStripePrices } from "@/lib/stripe";
 import { assertLocale } from "@/lib/locale";
 import { pageMetadata } from "@/lib/seo";
@@ -29,7 +29,7 @@ export default async function PricingPage({ params }: Props) {
   setRequestLocale(assertLocale(locale));
 
   const [user, prices] = await Promise.all([getCurrentUser(), getPublicStripePrices()]);
-  const softPlus = Boolean(user && isSoftPlusPlan(user.plan, user.planStatus));
+  const softPlus = userIsSoftPlus(user);
 
   return (
     <PricingView
