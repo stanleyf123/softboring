@@ -301,6 +301,19 @@ export function AccountPanel({
           ) : null}
 
           {!softPlus ? (
+            <div className="mt-8 rounded-[1.5rem] bg-cream px-5 py-5">
+              <p className="font-display text-lg tracking-tight">{t("dataDownloadTitle")}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t("dataDownloadBody")}</p>
+              <a
+                href="/api/account/export"
+                className="mt-4 inline-flex rounded-full bg-paper px-5 py-2.5 text-sm shadow-card"
+              >
+                {t("dataDownloadCta")}
+              </a>
+            </div>
+          ) : null}
+
+          {!softPlus ? (
             <div className="mt-8 rounded-[1.5rem] bg-peach/60 px-5 py-5">
               <p className="font-display text-lg tracking-tight">{t("upgradeTitle")}</p>
               <p className="mt-2 text-sm leading-relaxed text-muted">{t("upgradeBody")}</p>

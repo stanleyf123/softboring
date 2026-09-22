@@ -70,10 +70,11 @@
     "note": "Soft Boring — 静かな、週のひと休み",
     "thanks": "座ってくれて、ありがとう。",
     "thanksLink": "ありがとう",
-    "navLabel": "フッター",
+    "navLabel": "案内、プライバシー、規約、言語",
     "privacy": "プライバシー",
     "terms": "利用規約",
-    "guidelines": "案内"
+    "guidelines": "案内",
+    "languages": "言語"
   },
   "LocaleSwitcher": {
     "en": "EN",
@@ -181,6 +182,8 @@
     "guestCta": "アカウントをつくる",
     "freeBannerTitle": "新しい四つが開いています",
     "freeBanner": "Soft+ はすべての週を残して、小さな気持ちの図も足します。",
+    "freeDownload": "この四週間をダウンロード（JSON）",
+    "freeDownloadHint": "すでに開ける週だけの、小さなファイル。メールは送りません。",
     "plusToolsTitle": "Soft+ の道具",
     "searchLabel": "ふりかえりを検索",
     "searchPlaceholder": "題と答えを検索…",
@@ -336,6 +339,9 @@
     "customSaved": "残しました。",
     "customError": "いまはその問いを残せませんでした。",
     "export": "ふりかえりを書き出す",
+    "dataDownloadTitle": "最近の四週間を持って帰る",
+    "dataDownloadBody": "すでに開ける四週間だけの、小さな JSON。それより前は Soft+ にしまってあります。メールは送りません。",
+    "dataDownloadCta": "JSON をダウンロード",
     "inviteTitle": "友だちをそっと誘う",
     "inviteBody": "Soft+ なら、小さな扉を渡せます。そのリンクから新しい人が座ったら、壁の付箋に小さな星がのります。お礼であって、お支払いはありません。",
     "inviteLockedTitle": "友だちのための小さな扉",
@@ -395,7 +401,7 @@
     "featureTrendsPlus": "気持ちの傾向と、やさしい週の連続記録",
     "featureWallFree": "ソフトウォールは、やわらかいカーテンの向こう",
     "featureStickersFree": "壁のシールは Soft+ と",
-    "featureExportFree": "CSV と印刷できる PDF の書き出しは Soft+ と",
+    "featureExportFree": "CSV と印刷できるページは Soft+。無料は最近の四週間を JSON で持ち帰れます。",
     "featureDigestFree": "月のまとめは Soft+ と",
     "featureWallPlus": "ソフトウォールを全部：読む、動かす、コメント、返信",
     "featureExportPlus": "週を CSV か、印刷できる PDF に",
@@ -562,7 +568,15 @@
     "reportFeelsOff": "少し気になる",
     "reportHint": "Soft Boring へのやさしい合図——公開の通報じゃないよ。",
     "reportThanks": "受け取ったよ。やさしい合図、ありがとう。",
-    "guidelinesLink": "ソフトウォールの案内"
+    "guidelinesLink": "ソフトウォールの案内",
+    "paletteTitle": "小さな色のしおり",
+    "paletteLead": "週をピンするとき、色は自分で選びます。湯のみを選ぶみたいに、気分であって、点数ではありません。",
+    "palette_peach": "あたたかい午後",
+    "palette_blush": "すこしやわらか",
+    "palette_mint": "水をあげたばかり",
+    "palette_cream": "しずかな紙",
+    "palette_lemon": "明るいひとくち",
+    "palette_sky": "窓があいている"
   },
   "Export": {
     "title": "印刷できるふりかえり",
@@ -645,7 +659,7 @@
   },
   "Privacy": {
     "title": "プライバシーポリシー",
-    "updated": "最終更新：2026年9月15日",
+    "updated": "最終更新：2026年9月22日",
     "lead": "Soft Boring Weekly は、小さな週のふりかえりです。このページは、何を集めて、なぜ、どれだけ置くかを説明します。",
     "home": "ホームにもどる",
     "s1Title": "私たちについて",
@@ -659,7 +673,7 @@
     "s5Title": "共有と処理者",
     "s5Body": "支払いは Stripe が処理します。メールを送るときは Resend か、設定した SMTP を使います。ホスティングとバックアップは運用の人のサーバー（ディスク上の SQLite）です。共有したソフトウォールの内容は、面識のない Soft+ の人にも見えます。共有は、初期ではオフです。",
     "s6Title": "保管と、あなたの選択",
-    "s6Body": "アカウントとふりかえりは、あなたが消すまで（または運用の人が消すまで）置きます。ソフトウォールの付箋は、いつでも下ろせます。週のリマインダーはアカウントのページで消せます。削除やデータの写しは、ログインして運用の人へ。この方針は更新されることがあり、上の日付が変わります。"
+    "s6Body": "アカウントとふりかえりは、あなたが消すまで（または運用の人が消すまで）置きます。ソフトウォールの付箋は、いつでも下ろせます。週のリマインダーはアカウントのページで消せます。ログインした無料アカウントは、アカウントのページから、すでに開ける最近の四週間を JSON で自分で受け取れます。メールは要りません。Soft+ は、より長いふりかえりを今までどおり書き出せます。削除はログインして運用の人へ。この方針は更新されることがあり、上の日付が変わります。"
   },
   "Terms": {
     "title": "利用規約",
