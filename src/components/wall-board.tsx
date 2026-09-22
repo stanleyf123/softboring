@@ -26,8 +26,15 @@ import {
   type WallSortMode,
 } from "@/lib/wall-filters";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
+import {
+  SEASONAL_FRAME_STORAGE_KEY,
+  seasonFrameForDate,
+  type SeasonId,
+  type SeasonalPackId,
+} from "@/lib/seasonal-frame";
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { isWeekMood } from "@/lib/week-mood";
+import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -125,22 +132,41 @@ async function readJson<T>(response: Response): Promise<T> {
   return data;
 }
 
+function seasonLabel(t: ReturnType<typeof useTranslations<"Wall">>, season: SeasonId) {
+  if (season === "spring") return t("season_spring");
+  if (season === "rain") return t("season_rain");
+  if (season === "autumn") return t("season_autumn");
+  return t("season_year_end");
+}
+
+function seasonalPackLabel(
+  t: ReturnType<typeof useTranslations<"SeasonalPacks">>,
+  packId: SeasonalPackId,
+) {
+  if (packId === "spring-soft-reset") return t("packs.spring-soft-reset.name");
+  if (packId === "rainy-week-comfort") return t("packs.rainy-week-comfort.name");
+  return t("packs.year-end-gratitude.name");
+}
+
 export function WallBoard({
   signedIn,
   softPlus,
   stickerSuccess = false,
   sharedSuccess = false,
   initialNoteId = null,
+  initialSeasonalFrame = false,
 }: {
   signedIn: boolean;
   softPlus: boolean;
   stickerSuccess?: boolean;
   sharedSuccess?: boolean;
   initialNoteId?: string | null;
+  initialSeasonalFrame?: boolean;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
   const tQuestions = useTranslations("Questions");
+  const tPacks = useTranslations("SeasonalPacks");
   const locale = useLocale();
   const router = useRouter();
   const [notes, setNotes] = useState<Array<TeaserNote | FullNote>>([]);
@@ -170,6 +196,19 @@ export function WallBoard({
     ...EMPTY_WALL_FILTERS,
     hideDemo: false,
   }));
+  const hydrated = useHydrated();
+  const [frameOverride, setFrameOverride] = useState<boolean | null>(null);
+  const frame = useMemo(() => seasonFrameForDate(), []);
+  let storedFrame = false;
+  if (hydrated && !signedIn) {
+    try {
+      storedFrame = localStorage.getItem(SEASONAL_FRAME_STORAGE_KEY) === "1";
+    } catch {
+      storedFrame = false;
+    }
+  }
+  const seasonalFrame =
+    frameOverride !== null ? frameOverride : signedIn ? initialSeasonalFrame : storedFrame;
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
   const drag = useRef<{
     id: string;
@@ -196,6 +235,34 @@ export function WallBoard({
   }, [notes, filters, sort, softPlus, locked]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
+
+  useEffect(() => {
+    if (!signedIn) return;
+    try {
+      localStorage.setItem(SEASONAL_FRAME_STORAGE_KEY, initialSeasonalFrame ? "1" : "0");
+    } catch {
+      // Storage can be blocked; the account flag still holds for members.
+    }
+  }, [signedIn, initialSeasonalFrame]);
+
+  async function toggleSeasonalFrame(next: boolean) {
+    setFrameOverride(next);
+    try {
+      localStorage.setItem(SEASONAL_FRAME_STORAGE_KEY, next ? "1" : "0");
+    } catch {
+      // The server flag still remembers signed-in desks.
+    }
+    if (!signedIn) return;
+    try {
+      await fetch("/api/account/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ seasonalFrame: next }),
+      });
+    } catch {
+      // Visual toggle already applied; the next visit can retry.
+    }
+  }
 
   useEffect(() => {
     if (!softPlus || locked) return;
@@ -683,6 +750,28 @@ export function WallBoard({
                 {t("guidelinesLink")}
               </Link>
             </p>
+            <label className="mt-4 flex max-w-lg cursor-pointer items-start gap-3 text-sm leading-relaxed text-muted">
+              <input
+                type="checkbox"
+                checked={seasonalFrame}
+                onChange={(event) => void toggleSeasonalFrame(event.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-line accent-accent"
+              />
+              <span>
+                <span className="block text-foreground">{t("seasonalFrame")}</span>
+                <span className="mt-0.5 block text-xs text-muted">{t("seasonalFrameHint")}</span>
+                {seasonalFrame ? (
+                  <span className="mt-1 block text-xs text-foreground">
+                    {frame.packId
+                      ? t("seasonalFrameWithPack", {
+                          season: seasonLabel(t, frame.season),
+                          pack: seasonalPackLabel(tPacks, frame.packId),
+                        })
+                      : t("seasonalFrameSeason", { season: seasonLabel(t, frame.season) })}
+                  </span>
+                ) : null}
+              </span>
+            </label>
             {softPlus ? (
               <p className="mt-3 text-sm text-muted">{t("dragHint")}</p>
             ) : null}
@@ -988,7 +1077,8 @@ export function WallBoard({
                       // already released
                     }
                   }}
-                  className={`relative w-full cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${noteClass(note.color)} ${canThank ? "pb-14" : ""} ${locked ? "pointer-events-none select-none" : ""}`}
+                  data-season-frame={seasonalFrame ? frame.season : undefined}
+                  className={`relative w-full cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${noteClass(note.color)} ${seasonalFrame ? frame.className : ""} ${canThank ? "pb-14" : ""} ${locked ? "pointer-events-none select-none" : ""}`}
                   aria-label={
                     full
                       ? t("noteAria", { excerpt: full.excerpt || t("untitled") })

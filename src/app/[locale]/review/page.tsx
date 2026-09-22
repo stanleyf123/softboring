@@ -6,6 +6,7 @@ import {
   LastIntentionNudge,
   SoftIntentionCard,
 } from "@/components/soft-intention-card";
+import { SoftLetterCard } from "@/components/soft-letter-card";
 import { SoftNoteCard } from "@/components/soft-note-card";
 import { ensureUserSettings } from "@/db/user-settings";
 import { currentPauseWeekKey, isWeekPaused } from "@/db/week-pauses";
@@ -70,6 +71,7 @@ export default async function ReviewPage({ params }: Props) {
         <LastIntentionNudge signedIn={Boolean(user)} />
         <SoftIntentionCard signedIn={Boolean(user)} />
         <SoftNoteCard signedIn={Boolean(user)} />
+        <SoftLetterCard signedIn={Boolean(user)} softPlus={softPlus} />
       </div>
       <div className="mt-10">
         <ReviewForm

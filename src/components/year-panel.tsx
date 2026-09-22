@@ -5,19 +5,64 @@ import { Link } from "@/i18n/navigation";
 import { feelingDotClass, type SoftYearTimeline } from "@/lib/soft-year";
 import { useTranslations } from "next-intl";
 
-export function YearPanel({ timeline }: { timeline: SoftYearTimeline }) {
+export type YearLetter = {
+  weekKey: string;
+  body: string;
+  reviewId: string | null;
+};
+
+export function YearPanel({
+  timeline,
+  letters = [],
+}: {
+  timeline: SoftYearTimeline;
+  letters?: YearLetter[];
+}) {
   const t = useTranslations("Year");
+  const tLetter = useTranslations("SoftLetter");
+
+  const letterBlock =
+    letters.length === 0 ? null : (
+      <section
+        className="rounded-[2rem] bg-blush/40 px-6 py-8 shadow-card sm:px-8"
+        data-year-letters
+      >
+        <p className="font-display text-xl tracking-tight">{t("lettersTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("lettersLead")}</p>
+        <ul className="mt-5 space-y-3">
+          {letters.map((letter) => (
+            <li key={letter.weekKey} className="rounded-[1.25rem] bg-paper/80 px-4 py-3">
+              <p className="text-xs text-muted">
+                {tLetter("weekLabel", { week: letter.weekKey })}
+              </p>
+              <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{letter.body}</p>
+              {letter.reviewId ? (
+                <Link
+                  href={`/history/${letter.reviewId}`}
+                  className="mt-2 inline-flex text-sm text-accent"
+                >
+                  {tLetter("openWeek")}
+                </Link>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
 
   if (timeline.filledCount === 0) {
     return (
-      <EmptyState
-        title={t("emptyTitle")}
-        body={t("empty")}
-        ctaHref="/review"
-        ctaLabel={t("emptyCta")}
-        wash="bg-paper"
-        illustration="year"
-      />
+      <div className="space-y-5">
+        <EmptyState
+          title={t("emptyTitle")}
+          body={t("empty")}
+          ctaHref="/review"
+          ctaLabel={t("emptyCta")}
+          wash="bg-paper"
+          illustration="year"
+        />
+        {letterBlock}
+      </div>
     );
   }
 
@@ -129,6 +174,7 @@ export function YearPanel({ timeline }: { timeline: SoftYearTimeline }) {
           </Link>
         </div>
       </section>
+      {letterBlock}
     </div>
   );
 }

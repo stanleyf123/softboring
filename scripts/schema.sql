@@ -184,6 +184,8 @@ CREATE TABLE IF NOT EXISTS user_settings (
   custom_questions TEXT NOT NULL DEFAULT '[]',
   preferred_wall_color TEXT,
   timezone TEXT NOT NULL DEFAULT 'Asia/Taipei',
+  onboarding_timezone_set INTEGER NOT NULL DEFAULT 0,
+  seasonal_frame INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -332,3 +334,17 @@ CREATE TABLE IF NOT EXISTS week_pauses (
 );
 
 CREATE INDEX IF NOT EXISTS idx_week_pauses_user ON week_pauses (user_id);
+
+CREATE TABLE IF NOT EXISTS soft_letters (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  week_key TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE (user_id, week_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_soft_letters_user_week
+  ON soft_letters (user_id, week_key);

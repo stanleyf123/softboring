@@ -273,3 +273,78 @@ html[data-quiet-writing="1"] .quiet-writing-chrome {
 html[data-quiet-writing="1"] main {
   padding-bottom: 2rem;
 }
+
+/* Soft Wall seasonal frames — decorative only, cream / blush / peach / mint. */
+.season-frame {
+  box-shadow:
+    0 0 0 3px rgba(255, 248, 242, 0.95),
+    0 8px 18px rgba(154, 111, 90, 0.12);
+}
+
+.season-frame::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 1rem;
+  pointer-events: none;
+  border: 1px dashed transparent;
+}
+
+.season-frame--spring {
+  box-shadow:
+    0 0 0 3px #d5e6d8,
+    0 0 0 7px rgba(244, 212, 198, 0.9),
+    0 8px 18px rgba(125, 155, 140, 0.2);
+}
+
+.season-frame--spring::after {
+  border-color: rgba(125, 155, 140, 0.55);
+}
+
+.season-frame--rain {
+  box-shadow:
+    0 0 0 3px #d5e4ea,
+    0 0 0 7px rgba(213, 230, 216, 0.75),
+    0 8px 18px rgba(154, 127, 116, 0.16);
+}
+
+.season-frame--rain::after {
+  border-color: rgba(154, 127, 116, 0.4);
+  border-style: dotted;
+}
+
+.season-frame--autumn {
+  box-shadow:
+    0 0 0 3px #f3e3b6,
+    0 0 0 7px rgba(248, 220, 200, 0.95),
+    0 8px 18px rgba(196, 127, 110, 0.16);
+}
+
+.season-frame--autumn::after {
+  border-color: rgba(196, 127, 110, 0.45);
+}
+
+.season-frame--year-end {
+  box-shadow:
+    0 0 0 3px #f4d4c6,
+    0 0 0 7px rgba(228, 216, 242, 0.9),
+    0 8px 18px rgba(196, 127, 110, 0.18);
+}
+
+.season-frame--year-end::after {
+  border-color: rgba(196, 127, 110, 0.4);
+}
+
+@media print {
+  .season-frame,
+  .season-frame--spring,
+  .season-frame--rain,
+  .season-frame--autumn,
+  .season-frame--year-end {
+    box-shadow: none !important;
+  }
+
+  .season-frame::after {
+    display: none;
+  }
+}

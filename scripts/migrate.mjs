@@ -72,6 +72,8 @@ if (settingsTable) {
   ensureColumn("user_settings", "custom_questions", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn("user_settings", "preferred_wall_color", "TEXT");
   ensureColumn("user_settings", "timezone", "TEXT NOT NULL DEFAULT 'Asia/Taipei'");
+  ensureColumn("user_settings", "onboarding_timezone_set", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn("user_settings", "seasonal_frame", "INTEGER NOT NULL DEFAULT 0");
 }
 
 const wallTable = db
@@ -289,6 +291,22 @@ db.exec(`
   );
 `);
 db.exec("CREATE INDEX IF NOT EXISTS idx_week_pauses_user ON week_pauses (user_id)");
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS soft_letters (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    week_key TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id, week_key)
+  );
+`);
+db.exec(
+  "CREATE INDEX IF NOT EXISTS idx_soft_letters_user_week ON soft_letters (user_id, week_key)",
+);
 
 db.close();
 

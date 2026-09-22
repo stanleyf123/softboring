@@ -2,19 +2,26 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
+import { useHydrated } from "@/lib/use-hydrated";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SoftMark } from "./soft-doodles";
 
 /** Soft checklist only on home + account — not naggy across the app. */
 const VISIBLE_PATHS = new Set(["/", "/account"]);
+
+const DISMISS_KEY = "softboring-onboarding-dismissed";
+const PROGRESS_KEY = "softboring-onboarding-progress";
+
+type ChecklistHref = "/account" | "/review" | "/wall";
 
 type ChecklistItem = {
   id: string;
   done: boolean;
   title: string;
   body: string;
-  href: "/account" | "/review" | "/wall";
+  href: ChecklistHref;
+  hash?: string;
   cta: string;
 };
 
@@ -26,6 +33,7 @@ export function OnboardingCard({
   softPlus = false,
   hasNickname = false,
   hasInvite = false,
+  timezoneSet = false,
 }: {
   reviewCount: number;
   historySeen: boolean;
@@ -34,16 +42,54 @@ export function OnboardingCard({
   softPlus?: boolean;
   hasNickname?: boolean;
   hasInvite?: boolean;
+  timezoneSet?: boolean;
 }) {
   const t = useTranslations("Onboarding");
   const pathname = usePathname();
-  const [hidden, setHidden] = useState(dismissed);
+  const hydrated = useHydrated();
+  const [dismissedNow, setDismissedNow] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  let storedDismissed = false;
+  if (hydrated) {
+    try {
+      storedDismissed = localStorage.getItem(DISMISS_KEY) === "1";
+    } catch {
+      storedDismissed = false;
+    }
+  }
+  const hidden = dismissed || dismissedNow || storedDismissed;
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        PROGRESS_KEY,
+        JSON.stringify({
+          write: reviewCount > 0,
+          nickname: hasNickname,
+          timezone: timezoneSet,
+          wall: wallSeen,
+          history: _historySeen,
+        }),
+      );
+      if (dismissed) localStorage.setItem(DISMISS_KEY, "1");
+    } catch {
+      // Private mode can refuse storage; the server flag still holds.
+    }
+  }, [dismissed, hasNickname, reviewCount, timezoneSet, wallSeen]);
 
   if (hidden || !VISIBLE_PATHS.has(pathname)) return null;
 
   const wrote = reviewCount > 0;
   const items: ChecklistItem[] = [
+    {
+      id: "write",
+      done: wrote,
+      title: t("writeTitle"),
+      body: t("writeBody"),
+      href: "/review",
+      cta: t("writeCta"),
+    },
     {
       id: "nickname",
       done: hasNickname,
@@ -53,12 +99,13 @@ export function OnboardingCard({
       cta: t("nicknameCta"),
     },
     {
-      id: "write",
-      done: wrote,
-      title: t("writeTitle"),
-      body: t("writeBody"),
-      href: "/review",
-      cta: t("writeCta"),
+      id: "timezone",
+      done: timezoneSet,
+      title: t("timezoneTitle"),
+      body: t("timezoneBody"),
+      href: "/account",
+      hash: "member-timezone",
+      cta: t("timezoneCta"),
     },
     {
       id: "wall",
@@ -88,16 +135,23 @@ export function OnboardingCard({
     if (busy) return;
     setBusy(true);
     try {
+      try {
+        localStorage.setItem(DISMISS_KEY, "1");
+      } catch {
+        // Server flag is the durable copy.
+      }
       await fetch("/api/account/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ onboardingDismissed: true }),
       });
-      setHidden(true);
+      setDismissedNow(true);
     } finally {
       setBusy(false);
     }
   }
+
+  const doneCount = items.filter((item) => item.done).length;
 
   return (
     <section className={`${SITE_SHELL_CLASS} mb-8 print:hidden`} data-onboarding>
@@ -108,6 +162,9 @@ export function OnboardingCard({
             <div>
               <p className="font-display text-xl tracking-tight">{t("title")}</p>
               <p className="text-sm text-muted">{t("lead")}</p>
+              <p className="mt-1 text-xs text-muted">
+                {t("progress", { done: doneCount, total: items.length })}
+              </p>
             </div>
           </div>
           <button
@@ -123,6 +180,7 @@ export function OnboardingCard({
           {items.map((item, index) => (
             <li
               key={item.id}
+              data-onboarding-step={item.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] bg-peach/40 px-4 py-3"
             >
               <div className="min-w-0">
@@ -135,7 +193,9 @@ export function OnboardingCard({
               </div>
               {!item.done ? (
                 <Link
-                  href={item.href}
+                  href={
+                    item.hash ? { pathname: item.href, hash: item.hash } : item.href
+                  }
                   className="rounded-full bg-blush px-4 py-1.5 text-sm shadow-card"
                 >
                   {item.cta}

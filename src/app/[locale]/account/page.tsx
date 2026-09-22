@@ -70,6 +70,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           reminderEnabled={settings.reminderEnabled}
           reminderWeekday={settings.reminderWeekday}
           timezone={settings.timezone}
+          seasonalFrame={settings.seasonalFrame}
           emailConfigured={isEmailConfigured()}
           customQuestions={settings.customQuestions}
           digest={monthlyDigestForUser(user.id, new Date(), settings.timezone)}
