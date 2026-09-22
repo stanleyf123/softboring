@@ -55,6 +55,7 @@ export async function PricingView({
             <li className="text-muted">{t("featureDigestFree")}</li>
             <li className="text-muted">{t("featureCapsuleFree")}</li>
             <li className="text-muted">{t("featureStreakProtectFree")}</li>
+            <li className="text-muted">{t("featureReflectionFree")}</li>
           </ul>
           <p className="mt-8 text-sm leading-relaxed text-muted">{t("freeToPlus")}</p>
         </article>
@@ -88,6 +89,7 @@ export async function PricingView({
             <li>{t("featureDigestPlus")}</li>
             <li>{t("featureCapsulePlus")}</li>
             <li>{t("featureStreakProtectPlus")}</li>
+            <li>{t("featureReflectionPlus")}</li>
             <li>{t("featureBadgePlus")}</li>
             <li>{t("featurePortal")}</li>
           </ul>

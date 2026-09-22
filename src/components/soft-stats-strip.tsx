@@ -2,16 +2,23 @@ import { publicSoftStats } from "@/db/soft-stats";
 
 type Props = {
   wallNotesThisWeek: number;
+  publicWallNotes: number;
   languages: number;
   labels: {
     aria: string;
     wallWeek: string;
+    wallPublic: string;
     languages: string;
     note: string;
   };
 };
 
-export function SoftStatsStrip({ wallNotesThisWeek, languages, labels }: Props) {
+export function SoftStatsStrip({
+  wallNotesThisWeek,
+  publicWallNotes,
+  languages,
+  labels,
+}: Props) {
   return (
     <section
       className="mt-12 rounded-[1.75rem] bg-mint/35 px-6 py-6 sm:px-8"
@@ -23,6 +30,12 @@ export function SoftStatsStrip({ wallNotesThisWeek, languages, labels }: Props) 
           <dt className="text-xs tracking-wide text-muted">{labels.wallWeek}</dt>
           <dd className="mt-1 font-display text-3xl tracking-tight tabular-nums">
             {wallNotesThisWeek}
+          </dd>
+        </div>
+        <div data-public-wall-count={publicWallNotes}>
+          <dt className="text-xs tracking-wide text-muted">{labels.wallPublic}</dt>
+          <dd className="mt-1 font-display text-3xl tracking-tight tabular-nums">
+            {publicWallNotes}
           </dd>
         </div>
         <div>
@@ -45,6 +58,7 @@ export async function HomeSoftStats({
   return (
     <SoftStatsStrip
       wallNotesThisWeek={stats.wallNotesThisWeek}
+      publicWallNotes={stats.publicWallNotes}
       languages={stats.languages}
       labels={labels}
     />

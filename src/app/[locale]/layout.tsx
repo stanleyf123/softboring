@@ -125,10 +125,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <QuietWritingSync />
           <QuietWritingExit />
           <SoftShortcutsHelp />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-paper focus:px-4 focus:py-2 focus:shadow-card"
-          >
+          <a href="#main-content" className="soft-skip-link" data-soft-skip>
             {tNav("skipToContent")}
           </a>
           <SiteHeader
@@ -153,6 +150,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           ) : null}
           <main
             id="main-content"
+            tabIndex={-1}
             className={`${SITE_SHELL_CLASS} flex-1 pb-28 md:pb-16`}
           >
             {children}

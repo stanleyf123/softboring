@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
+import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import {
   applyQuietWritingDom,
   QUIET_WRITING_EVENT,
@@ -64,7 +65,7 @@ export function QuietWritingToggle() {
         setOn(next);
       }}
       aria-pressed={on}
-      className="quiet-writing-toggle inline-flex min-h-11 items-center rounded-full border border-line bg-paper/90 px-4 py-2 text-sm text-muted shadow-card hover:text-foreground"
+      className={`${SOFT_CHROME_FOCUS} quiet-writing-toggle inline-flex min-h-11 items-center rounded-full border border-line bg-paper/90 px-4 py-2 text-sm text-muted shadow-card hover:text-foreground`}
     >
       {on ? t("quietExit") : t("quietEnter")}
     </button>
@@ -97,7 +98,7 @@ export function QuietWritingExit() {
         writeQuietWriting(false);
         setOn(false);
       }}
-      className="quiet-writing-exit fixed right-4 top-4 z-[60] inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-soft"
+      className={`${SOFT_CHROME_FOCUS} quiet-writing-exit fixed right-4 top-4 z-[60] inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-soft`}
     >
       {t("quietExit")}
     </button>
