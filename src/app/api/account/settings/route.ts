@@ -7,8 +7,9 @@ import {
 import { getCurrentUser } from "@/lib/auth";
 import { isFocusMinutes } from "@/lib/focus-timer";
 import { NIGHT_COOKIE, nightCookieOptions } from "@/lib/night-mode";
+import { userIsSoftPlus } from "@/lib/plan";
 import { isIanaTimeZone } from "@/lib/timezone";
-import { isWallColor, type WallColor } from "@/lib/wall-canvas";
+import { isPlusNoteColor, isWallColor, type PlusNoteColor, type WallColor } from "@/lib/wall-canvas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,6 +37,7 @@ export async function PATCH(request: Request) {
       reminderEnabled?: unknown;
       reminderWeekday?: unknown;
       preferredWallColor?: unknown;
+      customNoteColor?: unknown;
       timezone?: unknown;
       seasonalFrame?: unknown;
       focusMinutes?: unknown;
@@ -54,6 +56,26 @@ export async function PATCH(request: Request) {
       preferredWallColor = body.preferredWallColor;
     } else {
       preferredWallColor = undefined;
+    }
+
+    let customNoteColor: PlusNoteColor | null | undefined;
+    if (body.customNoteColor === undefined) {
+      customNoteColor = undefined;
+    } else if (body.customNoteColor === null) {
+      customNoteColor = null;
+    } else if (
+      typeof body.customNoteColor === "string" &&
+      isPlusNoteColor(body.customNoteColor)
+    ) {
+      customNoteColor = body.customNoteColor;
+    } else {
+      return NextResponse.json({ error: "invalid_color" }, { status: 400 });
+    }
+    if (customNoteColor !== undefined && !userIsSoftPlus(user)) {
+      return NextResponse.json(
+        { error: "soft_plus_required", locked: true },
+        { status: 403 },
+      );
     }
 
     let timezone: string | undefined;
@@ -101,6 +123,7 @@ export async function PATCH(request: Request) {
           ? undefined
           : clampWeekday(body.reminderWeekday),
       preferredWallColor,
+      customNoteColor,
       timezone,
       seasonalFrame:
         typeof body.seasonalFrame === "boolean" ? body.seasonalFrame : undefined,

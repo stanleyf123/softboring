@@ -208,6 +208,17 @@ export function AccountPanel({
             </div>
           </dl>
 
+          <div className="mt-8 rounded-[1.5rem] bg-blush/40 px-5 py-5">
+            <p className="font-display text-lg tracking-tight">{t("activityTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("activityBody")}</p>
+            <Link
+              href="/account/activity"
+              className="mt-4 inline-flex rounded-full bg-paper px-5 py-2.5 text-sm shadow-card"
+            >
+              {t("activityOpen")}
+            </Link>
+          </div>
+
           <NicknameEditor initialNickname={nickname} />
           <SoftMemoryCard memory={softMemory} />
           <SoftIntentionCard signedIn variant="account" />

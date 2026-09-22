@@ -9,7 +9,11 @@ import { isHistoryIndexUnlocked } from "@/lib/history-access";
 import { getReviewAccess } from "@/lib/review-access";
 import { wallSharePayload } from "@/lib/wall-share";
 import { getWallViewer, requireUser } from "@/lib/wall-access";
-import { isWallColor, toTeaserNote, type WallColor } from "@/lib/wall-canvas";
+import {
+  isPlusNoteColor,
+  isWallColor,
+  toTeaserNote,
+} from "@/lib/wall-canvas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -50,13 +54,11 @@ export async function POST(request: Request) {
     if (unauthorized) return unauthorized;
 
     let reviewId = "";
-    let requestedColor: WallColor | null = null;
+    let requestedColor: string | null = null;
     try {
       const body = (await request.json()) as { reviewId?: unknown; color?: unknown };
       if (typeof body.reviewId === "string") reviewId = body.reviewId.trim();
-      if (typeof body.color === "string" && isWallColor(body.color)) {
-        requestedColor = body.color;
-      }
+      if (typeof body.color === "string") requestedColor = body.color.trim();
     } catch (error) {
       if (!(error instanceof SyntaxError)) throw error;
     }
@@ -81,19 +83,27 @@ export async function POST(request: Request) {
     }
 
     const settings = ensureUserSettings(access.owner.userId);
-    const color =
-      requestedColor ??
-      (access.softPlus ? settings.preferredWallColor : null);
+    const explicitWall = requestedColor != null && isWallColor(requestedColor);
 
     const existingId = getWallNoteIdForReview(reviewId);
     const note = shareWallNote({
       reviewId,
       userId: access.owner.userId,
-      color,
+      color: requestedColor,
+      softPlus: access.softPlus,
+      preferredWallColor: settings.preferredWallColor,
+      customNoteColor: settings.customNoteColor,
     });
 
-    if (access.softPlus && isWallColor(note.color) && !existingId) {
-      updateUserSettings(access.owner.userId, { preferredWallColor: note.color });
+    if (access.softPlus && !existingId) {
+      if (isPlusNoteColor(note.color)) {
+        updateUserSettings(access.owner.userId, { customNoteColor: note.color });
+      } else if (isWallColor(note.color)) {
+        updateUserSettings(access.owner.userId, {
+          preferredWallColor: note.color,
+          ...(explicitWall ? { customNoteColor: null } : {}),
+        });
+      }
     }
 
     const payload = wallSharePayload(note);

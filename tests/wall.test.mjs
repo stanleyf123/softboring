@@ -56,10 +56,24 @@ test("wall tables, sticker seed, praise, hide, and teaser payload", () => {
   }
 
   const stickers = db.prepare(`SELECT slug FROM stickers ORDER BY sort_order`).all();
-  assert.equal(stickers.length, 8);
+  assert.equal(stickers.length, 13);
   assert.deepEqual(
     stickers.map((row) => row.slug),
-    ["star", "heart", "sprout", "tea", "moon", "cloud", "peach", "sparkle"],
+    [
+      "star",
+      "heart",
+      "sprout",
+      "tea",
+      "moon",
+      "cloud",
+      "peach",
+      "sparkle",
+      "blossom",
+      "leaf",
+      "honey",
+      "shell",
+      "candle",
+    ],
   );
 
   db.prepare(

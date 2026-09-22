@@ -1,15 +1,19 @@
 "use client";
 
-import { WALL_COLORS, type WallColor } from "@/lib/wall-canvas";
+import { PLUS_NOTE_COLORS, WALL_COLORS, type NoteColor } from "@/lib/wall-canvas";
 import { useTranslations } from "next-intl";
 
-const SWATCH: Record<WallColor, string> = {
+const SWATCH: Record<NoteColor, string> = {
   peach: "bg-peach",
   blush: "bg-blush",
   mint: "bg-mint",
   cream: "bg-cream",
   lemon: "bg-lemon",
   sky: "bg-sky",
+  lilac: "bg-lilac",
+  rose: "bg-rose",
+  fern: "bg-fern",
+  apricot: "bg-apricot",
 };
 
 export function WallMoodLegend() {
@@ -29,6 +33,25 @@ export function WallMoodLegend() {
           <li
             key={color}
             className="inline-flex items-center gap-2 rounded-full bg-cream/70 py-1 pl-1 pr-3 text-xs"
+          >
+            <span
+              className={`h-5 w-5 shrink-0 rounded-full border border-line/80 ${SWATCH[color]}`}
+              aria-hidden="true"
+            />
+            <span>
+              <span className="text-foreground">{t(`color_${color}`)}</span>
+              <span className="text-muted"> · {t(`palette_${color}`)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4 font-display text-base tracking-tight">{t("personalColorTitle")}</p>
+      <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">{t("personalColorHint")}</p>
+      <ul className="mt-3 flex flex-wrap gap-2">
+        {PLUS_NOTE_COLORS.map((color) => (
+          <li
+            key={color}
+            className="inline-flex items-center gap-2 rounded-full bg-blush/40 py-1 pl-1 pr-3 text-xs"
           >
             <span
               className={`h-5 w-5 shrink-0 rounded-full border border-line/80 ${SWATCH[color]}`}

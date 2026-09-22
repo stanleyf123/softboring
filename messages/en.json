@@ -49,6 +49,8 @@
     "wallSavedDescription": "Soft+ private bookmarks of Soft Wall notes you want to keep close.",
     "snapshotTitle": "My soft month · Soft Boring Weekly",
     "snapshotDescription": "A printable cream page of this month’s reviews, in your timezone. Free keeps the latest four. Soft+ opens the month.",
+    "activityTitle": "Soft activity · Soft Boring Weekly",
+    "activityDescription": "A quiet list of weeks you saved, notes you pinned, and thank-yous you left. Free for signed-in members. Nothing is emailed.",
     "guidelinesTitle": "Soft Wall guidelines · Soft Boring Weekly",
     "guidelinesDescription": "Soft etiquette for Soft Wall — be kind, skip spam, and only share weeks you mean to share."
   },
@@ -362,6 +364,9 @@
     "reminderSaving": "Saving…",
     "timezoneHint": "Used for this week’s rhythm and your soft month. The desk starts in Asia/Taipei.",
     "softMonth": "My soft month",
+    "activityTitle": "Soft activity",
+    "activityBody": "A free list of weeks you saved, notes you pinned, and thank-yous you left. Nothing is emailed.",
+    "activityOpen": "See soft activity",
     "digestTitle": "This month",
     "digestBody": "A quiet tally from the reviews saved this calendar month, in your timezone.",
     "digestOpen": "Open full digest",
@@ -716,6 +721,12 @@
     "color_cream": "Cream",
     "color_lemon": "Lemon",
     "color_sky": "Sky",
+    "personalColorTitle": "A personal color",
+    "personalColorHint": "Soft+ can keep a wash beyond the shared palette. It stays on the note you pin. Free weeks keep the six soft colors.",
+    "color_lilac": "Lilac",
+    "color_rose": "Rose",
+    "color_fern": "Fern",
+    "color_apricot": "Apricot",
     "unshareTitle": "Your note on Soft Wall",
     "unshareHint": "Take it down anytime. History keeps the week private again.",
     "thankCta": "Thank you for leaving this",
@@ -752,7 +763,11 @@
     "palette_mint": "freshly watered",
     "palette_cream": "quiet paper",
     "palette_lemon": "a bright sip",
-    "palette_sky": "window open"
+    "palette_sky": "window open",
+    "palette_lilac": "a quiet evening",
+    "palette_rose": "a small kindness",
+    "palette_fern": "after the rain",
+    "palette_apricot": "late sunlight"
   },
   "Export": {
     "title": "Printable reviews",
@@ -771,7 +786,26 @@
     "moon": "Moon",
     "cloud": "Cloud",
     "peach": "Peach",
-    "sparkle": "Sparkle"
+    "sparkle": "Sparkle",
+    "blossom": "Blossom",
+    "leaf": "Leaf",
+    "honey": "Honey",
+    "shell": "Shell",
+    "candle": "Candle"
+  },
+  "SoftActivity": {
+    "eyebrow": "Your desk",
+    "title": "Soft activity",
+    "lead": "Weeks you saved, notes you pinned, and thank-yous you left — in a quiet line. Nothing is emailed.",
+    "emptyTitle": "Nothing resting here yet",
+    "emptyBody": "Save a week, pin it to Soft Wall, or leave a thank-you. This page will keep a gentle trace.",
+    "emptyCta": "Write this week",
+    "kind_review": "Saved a week",
+    "kind_pin": "Pinned to Soft Wall",
+    "kind_thanks": "Left a thank-you",
+    "untitled": "A quiet week",
+    "back": "Back to your desk",
+    "open": "Open"
   },
   "Onboarding": {
     "title": "A tiny first walk.",

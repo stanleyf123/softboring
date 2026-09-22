@@ -11,7 +11,7 @@ import {
   storedFocusMinutes,
   type FocusMinutes,
 } from "@/lib/focus-timer";
-import { isWallColor, type WallColor } from "@/lib/wall-canvas";
+import { isPlusNoteColor, isWallColor, type PlusNoteColor, type WallColor } from "@/lib/wall-canvas";
 
 export type UserSettings = {
   userId: string;
@@ -24,6 +24,7 @@ export type UserSettings = {
   reminderLastSentAt: string | null;
   customQuestions: CustomQuestion[];
   preferredWallColor: WallColor | null;
+  customNoteColor: PlusNoteColor | null;
   timezone: string;
   seasonalFrame: boolean;
   focusMinutes: FocusMinutes;
@@ -43,6 +44,7 @@ type SettingsRow = {
   reminder_last_sent_at: string | null;
   custom_questions: string | null;
   preferred_wall_color: string | null;
+  custom_note_color?: string | null;
   timezone: string | null;
   seasonal_frame: number;
   focus_minutes: number | null;
@@ -57,6 +59,12 @@ function parsePreferredWallColor(value: string | null | undefined): WallColor | 
   return isWallColor(trimmed) ? trimmed : null;
 }
 
+function parseCustomNoteColor(value: string | null | undefined): PlusNoteColor | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return isPlusNoteColor(trimmed) ? trimmed : null;
+}
+
 function toSettings(row: SettingsRow): UserSettings {
   return {
     userId: row.user_id,
@@ -69,6 +77,7 @@ function toSettings(row: SettingsRow): UserSettings {
     reminderLastSentAt: row.reminder_last_sent_at,
     customQuestions: parseCustomQuestionsJson(row.custom_questions),
     preferredWallColor: parsePreferredWallColor(row.preferred_wall_color),
+    customNoteColor: parseCustomNoteColor(row.custom_note_color),
     timezone: normalizeTimeZone(row.timezone),
     seasonalFrame: Boolean(row.seasonal_frame),
     focusMinutes: storedFocusMinutes(row.focus_minutes),
@@ -106,6 +115,7 @@ export type SettingsPatch = {
   reminderLastSentAt?: string | null;
   customQuestions?: CustomQuestion[];
   preferredWallColor?: WallColor | null;
+  customNoteColor?: PlusNoteColor | null;
   timezone?: string;
   seasonalFrame?: boolean;
   focusMinutes?: FocusMinutes;
@@ -124,6 +134,14 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
         : isWallColor(patch.preferredWallColor)
           ? patch.preferredWallColor
           : current.preferredWallColor;
+  const nextCustom =
+    patch.customNoteColor === undefined
+      ? current.customNoteColor
+      : patch.customNoteColor === null
+        ? null
+        : isPlusNoteColor(patch.customNoteColor)
+          ? patch.customNoteColor
+          : current.customNoteColor;
   const nextTimezone =
     patch.timezone === undefined ? current.timezone : normalizeTimeZone(patch.timezone);
   const nextTimezoneSet = nextOnboardingTimezoneSet(current.onboardingTimezoneSet, {
@@ -154,6 +172,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
            reminder_last_sent_at = @reminder_last_sent_at,
            custom_questions = @custom_questions,
            preferred_wall_color = @preferred_wall_color,
+           custom_note_color = @custom_note_color,
            timezone = @timezone,
            seasonal_frame = @seasonal_frame,
            focus_minutes = @focus_minutes,
@@ -211,6 +230,7 @@ export function updateUserSettings(userId: string, patch: SettingsPatch): UserSe
           : normalizeCustomQuestions(patch.customQuestions),
       ),
       preferred_wall_color: nextPreferred,
+      custom_note_color: nextCustom,
       timezone: nextTimezone,
       seasonal_frame: nextSeasonalFrame ? 1 : 0,
       focus_minutes: nextFocusMinutes,
