@@ -1,3 +1,4 @@
+import { isDemoEmail } from "@/lib/demo";
 import { noteExcerpt } from "@/lib/wall-canvas";
 import { emailLocalFallback, wallOwnerNickname } from "@/lib/nickname";
 
@@ -14,6 +15,7 @@ export type SoftSpotlightSourceNote = {
   updatedAt?: string;
   ownerNickname: string | null;
   ownerEmail: string | null;
+  ownerIsDemo?: boolean;
 };
 
 export type SoftSpotlightPick = {
@@ -24,6 +26,7 @@ export type SoftSpotlightPick = {
   feeling: number | null;
   ownerNickname: string | null;
   ownerFallback: string | null;
+  ownerIsDemo: boolean;
   reason: SoftSpotlightReason;
 };
 
@@ -72,6 +75,7 @@ export function toPublicSpotlightCard(pick: SoftSpotlightPick): SoftSpotlightPic
     feeling: pick.feeling,
     ownerNickname: pick.ownerNickname,
     ownerFallback: pick.ownerFallback,
+    ownerIsDemo: Boolean(pick.ownerIsDemo),
     reason: pick.reason === "pinned" ? "pinned" : "praise",
   };
 }
@@ -102,6 +106,7 @@ export function pickSoftWallSpotlight(
       allowEmailFallback: false,
     }),
     ownerFallback: emailLocalFallback(note.ownerEmail),
+    ownerIsDemo: Boolean(note.ownerIsDemo) || isDemoEmail(note.ownerEmail),
     reason,
   });
 

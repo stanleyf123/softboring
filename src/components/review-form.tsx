@@ -1,6 +1,7 @@
 "use client";
 
 import { ReviewProgressDots } from "@/components/review-progress-dots";
+import { ReviewSoftLimitHint } from "@/components/review-soft-limit-hint";
 import { ShareToWall } from "@/components/share-to-wall";
 import { SoftWordCount } from "@/components/soft-word-count";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
@@ -37,6 +38,7 @@ import {
   type ReviewAnswers,
 } from "@/lib/reviews";
 import type { SeasonalPackId } from "@/lib/seasonal-packs";
+import { reviewFieldNeedsSoftHint } from "@/lib/review-soft-limit";
 import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
@@ -444,19 +446,30 @@ function ReviewFormFields({
       />
 
       <div className="grid gap-8 lg:grid-cols-2">
-        {TEXT_FIELDS.map((field) => (
-          <label key={field} className={field === "summary" ? "block lg:col-span-2" : "block"}>
-            <span className="block text-base leading-relaxed">
-              {questionLabel(field)}
-            </span>
-            <textarea
-              value={draft[field]}
-              onChange={(event) => update(field, event.target.value, Date.now())}
-              rows={field === "summary" ? 2 : 3}
-              className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
-            />
-          </label>
-        ))}
+        {TEXT_FIELDS.map((field) => {
+          const hintId = `soft-limit-${field}`;
+          const long = reviewFieldNeedsSoftHint(draft[field]);
+          return (
+            <label
+              key={field}
+              className={field === "summary" ? "block lg:col-span-2" : "block"}
+              data-review-field={field}
+              data-soft-limit={long ? "hint" : "quiet"}
+            >
+              <span className="block text-base leading-relaxed">
+                {questionLabel(field)}
+              </span>
+              <textarea
+                value={draft[field]}
+                onChange={(event) => update(field, event.target.value, Date.now())}
+                rows={field === "summary" ? 2 : 3}
+                aria-describedby={long ? hintId : undefined}
+                className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
+              />
+              <ReviewSoftLimitHint id={hintId} value={draft[field]} />
+            </label>
+          );
+        })}
       </div>
 
       {softPlus && draft.customAnswers && draft.customAnswers.length > 0 ? (
@@ -464,17 +477,28 @@ function ReviewFormFields({
           <legend className="font-display text-xl tracking-tight">{t("customHeading")}</legend>
           <p className="mt-2 text-sm text-muted">{t("customLead")}</p>
           <div className="mt-4 grid gap-5 lg:grid-cols-2">
-            {draft.customAnswers.map((item) => (
-              <label key={item.id} className="block">
-                <span className="block text-base leading-relaxed">{item.prompt}</span>
-                <textarea
-                  value={item.answer}
-                  onChange={(event) => updateCustom(item.id, event.target.value, Date.now())}
-                  rows={3}
-                  className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
-                />
-              </label>
-            ))}
+            {draft.customAnswers.map((item) => {
+              const hintId = `soft-limit-custom-${item.id}`;
+              const long = reviewFieldNeedsSoftHint(item.answer);
+              return (
+                <label
+                  key={item.id}
+                  className="block"
+                  data-review-field="custom"
+                  data-soft-limit={long ? "hint" : "quiet"}
+                >
+                  <span className="block text-base leading-relaxed">{item.prompt}</span>
+                  <textarea
+                    value={item.answer}
+                    onChange={(event) => updateCustom(item.id, event.target.value, Date.now())}
+                    rows={3}
+                    aria-describedby={long ? hintId : undefined}
+                    className="mt-3 w-full resize-none rounded-3xl border border-line bg-paper px-5 py-4 text-foreground shadow-card outline-none focus:border-accent"
+                  />
+                  <ReviewSoftLimitHint id={hintId} value={item.answer} />
+                </label>
+              );
+            })}
           </div>
         </fieldset>
       ) : null}

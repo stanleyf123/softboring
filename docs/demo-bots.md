@@ -14,7 +14,7 @@ Shared password (override with `DEMO_PASSWORD`):
 
 `softboring-demo-2026`
 
-Rows are marked `users.is_demo = 1`. Admin also shows a **Demo** badge on `@softboring.demo` addresses. Locale stays `zh-tw`.
+Rows are marked `users.is_demo = 1`. Admin also shows a **Demo** badge on `@softboring.demo` addresses. On Soft Wall itself, those notes wear a cream **demo neighbor** badge for everyone, including Free and guests — the review text stays blurred until Soft+. Locale stays `zh-tw`.
 
 These scripts **never** update or delete `stanleys1225@gmail.com`, and they only insert/update/delete `@softboring.demo` users (plus those users’ reviews and `wall_notes`). Real members’ notes are left alone.
 

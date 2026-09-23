@@ -1098,6 +1098,22 @@ html[data-quiet-writing="1"] main {
   background: var(--cream);
 }
 
+.soft-demo-neighbor {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--blush);
+  background: var(--cream);
+  padding: 0.12rem 0.55rem;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: var(--foreground);
+}
+
+.soft-limit-hint {
+  color: var(--muted);
+}
+
 @keyframes soft-rate-toast-in {
   from {
     opacity: 0;

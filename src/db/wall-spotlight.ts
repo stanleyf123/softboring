@@ -1,4 +1,5 @@
 import { getDb } from "./client";
+import { isDemoEmail } from "@/lib/demo";
 import { pickSoftWallSpotlight, type SoftSpotlightPick } from "@/lib/wall-spotlight";
 
 type SpotlightRow = {
@@ -12,6 +13,7 @@ type SpotlightRow = {
   updated_at: string;
   owner_nickname: string | null;
   owner_email: string | null;
+  owner_is_demo: number;
 };
 
 /**
@@ -31,7 +33,8 @@ export function listWallSpotlight(limit = 5): SoftSpotlightPick[] {
          n.created_at AS created_at,
          n.updated_at AS updated_at,
          u.nickname AS owner_nickname,
-         u.email AS owner_email
+         u.email AS owner_email,
+         COALESCE(u.is_demo, 0) AS owner_is_demo
        FROM wall_notes n
        JOIN reviews r ON r.id = n.review_id
        LEFT JOIN users u ON u.id = n.user_id
@@ -56,6 +59,7 @@ export function listWallSpotlight(limit = 5): SoftSpotlightPick[] {
       updatedAt: row.updated_at,
       ownerNickname: row.owner_nickname,
       ownerEmail: row.owner_email,
+      ownerIsDemo: Boolean(row.owner_is_demo) || isDemoEmail(row.owner_email),
     })),
     { limit },
   );

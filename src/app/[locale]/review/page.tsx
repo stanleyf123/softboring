@@ -11,6 +11,7 @@ import {
   LastIntentionNudge,
   SoftIntentionCard,
 } from "@/components/soft-intention-card";
+import { SoftIntentionHistory } from "@/components/soft-intention-history";
 import { SoftLetterCard } from "@/components/soft-letter-card";
 import { SoftNoteCard } from "@/components/soft-note-card";
 import { ensureUserSettings } from "@/db/user-settings";
@@ -77,6 +78,7 @@ export default async function ReviewPage({ params }: Props) {
         ) : null}
         <LastIntentionNudge signedIn={Boolean(user)} />
         <SoftIntentionCard signedIn={Boolean(user)} />
+        <SoftIntentionHistory signedIn={Boolean(user)} softPlus={softPlus} />
         <SoftNoteCard signedIn={Boolean(user)} />
         <SoftLetterCard signedIn={Boolean(user)} softPlus={softPlus} />
       </div>
