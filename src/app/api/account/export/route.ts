@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { listReviewsForOwner } from "@/db/reviews";
+import { listSoftReflectionsForUser } from "@/db/soft-reflections";
 import { FREE_HISTORY_LIMIT } from "@/lib/plan";
 import { getReviewAccess } from "@/lib/review-access";
 import { accountDownloadBody, accountDownloadFilename } from "@/lib/review-export";
@@ -15,11 +16,14 @@ export async function GET() {
     if (locked) return locked;
 
     const reviews = listReviewsForOwner(access.owner);
+    const reflections =
+      access.softPlus && access.user ? listSoftReflectionsForUser(access.user.id) : [];
     const body = accountDownloadBody(
       reviews,
       access.softPlus,
       new Date().toISOString(),
       FREE_HISTORY_LIMIT,
+      reflections,
     );
     return new NextResponse(body, {
       status: 200,

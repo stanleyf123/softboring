@@ -1140,6 +1140,21 @@ html[data-quiet-writing="1"] main {
   }
 }
 
+/* Escape folds a hover- or focus-opened sticky until the pointer leaves or focus returns. */
+[data-note-preview-rest="1"] .soft-wall-note[data-note-preview="soft"]:hover,
+[data-note-preview-rest="1"] .soft-wall-note[data-note-preview="soft"]:focus-within {
+  z-index: auto !important;
+}
+
+[data-note-preview-rest="1"] .soft-wall-note[data-note-preview="soft"]:hover .wall-note-copy,
+[data-note-preview-rest="1"] .soft-wall-note[data-note-preview="soft"]:focus-within .wall-note-copy {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 5 !important;
+  line-clamp: 5 !important;
+}
+
 @media print {
   .soft-undo-toast,
   .soft-copy-toast,

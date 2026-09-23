@@ -59,6 +59,8 @@ import {
 } from "@/lib/wall-load-more";
 import { SoftCopyLink } from "@/components/soft-copy-link";
 import { wallNoteSharePath, withWallNoteQuery } from "@/lib/soft-copy-link";
+import { isTypingTarget } from "@/lib/soft-shortcuts";
+import { isWallNotePreviewOpen, wallEscapeAction } from "@/lib/soft-escape";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
@@ -284,6 +286,7 @@ export function WallBoard({
   const [guestQuery, setGuestQuery] = useState("");
   const [shuffleSeed, setShuffleSeed] = useState<number | null>(null);
   const [shownCount, setShownCount] = useState(WALL_NOTE_PAGE);
+  const [previewRest, setPreviewRest] = useState(false);
   const [arrivedFrom, setArrivedFrom] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
   const drag = useRef<{
@@ -518,19 +521,44 @@ export function WallBoard({
   }, [ready, softPlus, locked, initialNoteId, notes]);
 
   useEffect(() => {
-    if (!selectedId && !shopOpen) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
+      const action = wallEscapeAction({
+        key: event.key,
+        repeat: event.repeat,
+        typing: isTypingTarget(event.target),
+        dialogOpen: Boolean(selectedId || shopOpen),
+        previewOpen: isWallNotePreviewOpen(document),
+      });
+      if (!action || event.defaultPrevented) return;
+      if (action === "rest-preview" && document.querySelector("[role='dialog']")) return;
       event.preventDefault();
-      if (selectedId) {
-        closeNoteDetail();
+      if (action === "close-dialog") {
+        if (selectedId) closeNoteDetail();
+        else closeShop();
         return;
       }
-      if (shopOpen) closeShop();
+      setPreviewRest(true);
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && active.closest(".soft-wall-note")) {
+        active.blur();
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectedId, shopOpen]);
+
+  useEffect(() => {
+    if (!previewRest) return;
+    function onFocusIn(event: FocusEvent) {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest(".soft-wall-note[data-note-preview='soft']")) {
+        setPreviewRest(false);
+      }
+    }
+    window.addEventListener("focusin", onFocusIn);
+    return () => window.removeEventListener("focusin", onFocusIn);
+  }, [previewRest]);
 
   useEffect(() => {
     if (selectedId && detail) {
@@ -995,7 +1023,11 @@ export function WallBoard({
   }
 
   return (
-    <div className={largerText ? "wall-larger-text pb-10" : "pb-10"} data-wall-larger-text={largerText ? "1" : "0"}>
+    <div
+      className={largerText ? "wall-larger-text pb-10" : "pb-10"}
+      data-wall-larger-text={largerText ? "1" : "0"}
+      data-note-preview-rest={previewRest ? "1" : "0"}
+    >
       <div className={`${SITE_SHELL_CLASS} pt-4`}>
         <p className="font-display italic text-accent">{t("eyebrow")}</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
@@ -1435,6 +1467,7 @@ export function WallBoard({
                   key={note.id}
                   className="soft-wall-note absolute w-[216px]"
                   data-note-preview={full && !locked ? "soft" : undefined}
+                  onPointerLeave={() => setPreviewRest(false)}
                   data-wall-load={
                     !reducedMotion && arrivedFrom > 0 && index >= arrivedFrom ? "fresh" : undefined
                   }

@@ -37,6 +37,19 @@ export function currentReflectionWeekKey(userId: string, now = new Date()) {
   return reflectionWeekKey(now, ensureUserSettings(userId).timezone);
 }
 
+/** Newest ISO week first. Used by the Soft+ weekly JSON download. */
+export function listSoftReflectionsForUser(userId: string): SoftWeekReflection[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT week_key, noticed, unfinished, kind, updated_at
+       FROM soft_week_reflections
+       WHERE user_id = ?
+       ORDER BY week_key DESC, updated_at DESC`,
+    )
+    .all(userId) as ReflectionRow[];
+  return rows.map(toReflection);
+}
+
 export function getSoftReflectionForWeek(
   userId: string,
   weekKey: string,

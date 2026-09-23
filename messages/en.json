@@ -290,6 +290,9 @@
     "freeBanner": "Soft+ keeps every week, and adds a small feeling chart.",
     "freeDownload": "Download these four (JSON)",
     "freeDownloadHint": "A small file of the weeks you can already open. Nothing is emailed.",
+    "reflectionTease": "Soft+ also keeps the soft checklist inside that JSON. Free downloads stay the latest four reviews.",
+    "exportJson": "Download JSON",
+    "exportJsonHint": "Your reviews, plus the soft checklist for each week you marked. Nothing is emailed.",
     "plusToolsTitle": "Soft+ tools",
     "searchLabel": "Search reviews",
     "searchPlaceholder": "Search titles and answers…",
@@ -502,7 +505,7 @@
     "customError": "Could not save those questions just now.",
     "export": "Export reviews",
     "dataDownloadTitle": "Take the latest four with you",
-    "dataDownloadBody": "A small JSON file of the four weeks you can already open. Older weeks stay tucked with Soft+. Nothing is emailed.",
+    "dataDownloadBody": "A small JSON file of the four weeks you can already open. The soft checklist stays with Soft+. Older weeks stay tucked there too. Nothing is emailed.",
     "dataDownloadCta": "Download JSON",
     "inviteTitle": "Invite a friend",
     "inviteBody": "Soft+ can share a little door. When someone new sits down through your link, a small star rests on your wall notes — a thank-you, not a charge.",
@@ -706,7 +709,7 @@
     "featureDigestArchiveFree": "A list of past digest months stays with Soft+",
     "featureCapsuleFree": "A note sealed until a future day stays with Soft+",
     "featureStreakProtectFree": "One monthly pause that keeps a streak from breaking stays with Soft+",
-    "featureReflectionFree": "Three gentle week marks stay with Soft+",
+    "featureReflectionFree": "Three gentle week marks, and their place in the weekly JSON, stay with Soft+",
     "featureActivityExportFree": "A JSON download of your soft activity stays with Soft+",
     "featureGratitudeCardFree": "A cream card of a drawn gratitude stays with Soft+",
     "featurePastLetterFree": "A short letter to an earlier week stays with Soft+",
@@ -721,7 +724,7 @@
     "featureDigestArchivePlus": "A quiet in-app list of earlier digest months",
     "featureCapsulePlus": "Seal a short note until a future day, and see what opened this week. In the app — no email",
     "featureStreakProtectPlus": "One gentle pause a month when a streak is at risk. In the app — no email",
-    "featureReflectionPlus": "An optional soft checklist of three gentle marks, kept with the week",
+    "featureReflectionPlus": "An optional soft checklist of three gentle marks, kept with the week and included in the weekly JSON",
     "featureActivityExportPlus": "Download saved weeks, pins, and thank-yous as a soft activity JSON",
     "featureGratitudeCardPlus": "Download a cream card of a gratitude you drew — the picture is only that line",
     "featurePastLetterPlus": "Write a short letter to a past week — in the app, never emailed",
@@ -1099,7 +1102,7 @@
     "groupWall": "On Soft Wall",
     "here": "You are here",
     "toggleHelp": "Open or fold this help sheet.",
-    "escape": "Close a note, the sticker shop, or this sheet.",
+    "escape": "Fold an open sticky, close a note or the sticker shop, or fold this sheet.",
     "quiet": "Press Q to toggle quiet writing. The page chrome steps aside.",
     "search": "When Soft Wall filters are open, move to the search field.",
     "filters": "Feeling range, search, and hide-demo live above the corkboard.",
@@ -1121,7 +1124,7 @@
     "s5Title": "Sharing and processors",
     "s5Body": "Stripe processes payments. If we send email, we use Resend or an SMTP provider you configure. Hosting and backups are on the operator’s server (SQLite on disk). Shared Soft Wall content is visible to Soft+ members you do not personally know; sharing is off by default.",
     "s6Title": "Retention and your choices",
-    "s6Body": "We keep account and review data until you delete the account from the account page (or an operator deletes it for you). Deleting the account takes your reviews with you and lifts your notes off Soft Wall. You can still take a single note off Soft Wall at any time. You can turn weekly reminders off, and choose a timezone for reminders and this month’s digest, on the account page. Signed-in Free accounts can download the latest four open reviews as a JSON file from Account — no email required. Soft+ can still export the fuller history. This policy may be updated; the date above will change."
+    "s6Body": "We keep account and review data until you delete the account from the account page (or an operator deletes it for you). Deleting the account takes your reviews with you and lifts your notes off Soft Wall. You can still take a single note off Soft Wall at any time. You can turn weekly reminders off, and choose a timezone for reminders and this month’s digest, on the account page. Signed-in Free accounts can download the latest four open reviews as a JSON file from Account — no email required. Soft+ can still export the fuller history, including the optional soft checklist for weeks you marked. This policy may be updated; the date above will change."
   },
   "Terms": {
     "title": "Terms of Use",
@@ -1306,7 +1309,10 @@
     },
     "progress": "{count} of {total} gentle marks",
     "saved": "Kept with this week.",
-    "saveError": "Could not keep that mark just now."
+    "saveError": "Could not keep that mark just now.",
+    "exportTease": "Soft+ can tuck these three marks into the weekly JSON download. Free keeps the latest four reviews, without the checklist.",
+    "exportBody": "These marks travel with your weekly JSON. Nothing is emailed.",
+    "exportCta": "Download JSON with marks"
   },
   "SoftIntention": {
     "title": "Soft intention",
@@ -1719,7 +1725,11 @@
     "s5Title": "A quiet report, when needed",
     "s5Body": "If something feels unkind or out of place, Soft+ members can leave a soft flag for operators. We may hide notes that break these guidelines. We prefer a quiet fix over a loud fight.",
     "s6Title": "Soft Boring tone",
-    "s6Body": "This is a corkboard, not a feed. Slow is fine. Silence is fine. Come when the kettle's on — leave when you're done."
+    "s6Body": "This is a corkboard, not a feed. Slow is fine. Silence is fine. Come when the kettle's on — leave when you're done.",
+    "securityTitle": "Quiet browser headers",
+    "securityLead": "Every page sends a few quiet headers so a browser can keep this desk in its own frame. You can see the same names in the response. Nothing here starts a payment or an email.",
+    "securityListLabel": "Headers this site sends",
+    "privacyLink": "Privacy policy"
   },
   "Pwa": {
     "title": "A quieter home screen",

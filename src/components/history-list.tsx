@@ -146,6 +146,9 @@ export function HistoryList() {
           <p className="font-display text-lg tracking-tight">{t("freeBannerTitle")}</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">{t("freeBanner")}</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">{t("freeDownloadHint")}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted" data-reflection-export="tease">
+            {t("reflectionTease")}
+          </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <a
               href="/api/account/export"
@@ -206,7 +209,15 @@ export function HistoryList() {
       {access?.softPlus ? (
         <section className="rounded-[1.75rem] bg-paper px-6 py-5 shadow-card">
           <p className="font-display text-lg tracking-tight">{t("plusToolsTitle")}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{t("exportJsonHint")}</p>
           <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              href="/api/account/export"
+              data-reflection-export="download"
+              className="rounded-full bg-cream px-4 py-2 text-sm shadow-card"
+            >
+              {t("exportJson")}
+            </a>
             <a
               href="/api/reviews/export"
               className="rounded-full bg-mint px-4 py-2 text-sm shadow-card"

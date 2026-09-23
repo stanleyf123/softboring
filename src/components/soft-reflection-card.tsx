@@ -104,6 +104,9 @@ export function SoftReflectionCard({
           {t("lockedTitle")}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("lockedBody")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted" data-reflection-export="tease">
+          {t("exportTease")}
+        </p>
         <Link
           href="/pricing"
           className={`${SOFT_CHROME_FOCUS} mt-4 inline-flex min-h-11 items-center rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card`}
@@ -227,6 +230,14 @@ export function SoftReflectionCard({
           {t("saveError")}
         </p>
       ) : null}
+      <p className="mt-4 text-sm leading-relaxed text-muted">{t("exportBody")}</p>
+      <a
+        href="/api/account/export"
+        data-reflection-export="download"
+        className={`${SOFT_CHROME_FOCUS} mt-3 inline-flex min-h-11 items-center rounded-full bg-paper px-4 py-2 text-sm shadow-card`}
+      >
+        {t("exportCta")}
+      </a>
     </section>
   );
 }

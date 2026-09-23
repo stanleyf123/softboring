@@ -1,3 +1,7 @@
+import {
+  portableReflections,
+  type ReflectionExportInput,
+} from "./reflection-export.ts";
 import type { Review } from "@/lib/review-types";
 
 export const ACCOUNT_EXPORT_KIND = "softboring-reviews";
@@ -61,15 +65,21 @@ export function accountDownloadPayload(
   softPlus: boolean,
   exportedAt: string,
   freeLimit: number,
+  reflections: ReflectionExportInput[] = [],
 ) {
   const included = reviewsForAccountDownload(reviews, softPlus, freeLimit).map(toPortableReview);
-  return {
+  const payload = {
     kind: ACCOUNT_EXPORT_KIND,
     exportedAt,
     plan: softPlus ? "soft_plus" : "free",
     included: included.length,
     limit: softPlus ? null : freeLimit,
     reviews: included,
+  };
+  if (!softPlus) return payload;
+  return {
+    ...payload,
+    reflections: portableReflections(reflections, true) ?? [],
   };
 }
 
@@ -82,6 +92,11 @@ export function accountDownloadBody(
   softPlus: boolean,
   exportedAt: string,
   freeLimit: number,
+  reflections: ReflectionExportInput[] = [],
 ) {
-  return `${JSON.stringify(accountDownloadPayload(reviews, softPlus, exportedAt, freeLimit), null, 2)}\n`;
+  return `${JSON.stringify(
+    accountDownloadPayload(reviews, softPlus, exportedAt, freeLimit, reflections),
+    null,
+    2,
+  )}\n`;
 }
