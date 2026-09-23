@@ -56,6 +56,7 @@ export async function PricingView({
             <li>{t("featureDemoNeighbor")}</li>
             <li>{t("featureSoftLimit")}</li>
             <li className="text-muted">{t("featureIntentionHistoryFree")}</li>
+            <li className="text-muted">{t("featureIntentionExportFree")}</li>
             <li className="text-muted">{t("featureDigestFree")}</li>
             <li className="text-muted">{t("featureDigestArchiveFree")}</li>
             <li className="text-muted">{t("featureCapsuleFree")}</li>
@@ -99,6 +100,7 @@ export async function PricingView({
             <li>{t("featureDemoNeighbor")}</li>
             <li>{t("featureSoftLimit")}</li>
             <li>{t("featureIntentionHistoryPlus")}</li>
+            <li>{t("featureIntentionExportPlus")}</li>
             <li>{t("featureDigestPlus")}</li>
             <li>{t("featureDigestArchivePlus")}</li>
             <li>{t("featureCapsulePlus")}</li>

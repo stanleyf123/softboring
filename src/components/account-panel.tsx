@@ -29,6 +29,7 @@ import { softDeskSize } from "@/lib/soft-desk-size";
 import type { SoftSessionView } from "@/lib/soft-sessions";
 import type { SoftThanksEntry } from "@/lib/soft-thanks-history";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
+import { timezoneChangePending } from "@/lib/timezone-confirm";
 import { DEFAULT_TIMEZONE } from "@/lib/timezone";
 import { PLUS_THANKS_PATH } from "@/lib/thanks-path";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
@@ -115,6 +116,7 @@ export function AccountPanel({
   const [weeklyOn, setWeeklyOn] = useState(reminderEnabled);
   const [weekday, setWeekday] = useState(reminderWeekday);
   const [zone, setZone] = useState(timezone || DEFAULT_TIMEZONE);
+  const [savedZone, setSavedZone] = useState(timezone || DEFAULT_TIMEZONE);
   const [frameOn, setFrameOn] = useState(seasonalFrame);
   const [nightOn, setNightOn] = useState(nightMode);
   const [laneOn, setLaneOn] = useState(memoryLane);
@@ -392,21 +394,11 @@ export function AccountPanel({
               <select
                 className="mt-2 w-full rounded-full border border-line bg-paper px-4 py-2"
                 value={zone}
-                onChange={async (event) => {
-                  const next = event.target.value;
-                  setZone(next);
+                data-timezone-select=""
+                disabled={savingZone}
+                onChange={(event) => {
+                  setZone(event.target.value);
                   setZoneSaved(false);
-                  setSavingZone(true);
-                  try {
-                    const response = await fetch("/api/account/settings", {
-                      method: "PATCH",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ timezone: next }),
-                    });
-                    if (response.ok) setZoneSaved(true);
-                  } finally {
-                    setSavingZone(false);
-                  }
                 }}
               >
                 {timeZones.map((item) => (
@@ -418,35 +410,59 @@ export function AccountPanel({
             </label>
             <p className="mt-2 text-sm leading-relaxed text-muted">{t("timezoneBody")}</p>
             <p className="mt-2 text-xs leading-relaxed text-muted">{t("timezoneNote")}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                disabled={savingZone}
-                onClick={async () => {
-                  setZoneSaved(false);
-                  setSavingZone(true);
-                  try {
-                    const response = await fetch("/api/account/settings", {
-                      method: "PATCH",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ timezone: zone }),
-                    });
-                    if (response.ok) setZoneSaved(true);
-                  } finally {
-                    setSavingZone(false);
-                  }
-                }}
-                className="rounded-full bg-paper px-4 py-1.5 text-sm shadow-card disabled:opacity-60"
+            {timezoneChangePending(savedZone, zone) ? (
+              <div
+                className="mt-3 rounded-[1.25rem] bg-cream px-4 py-4"
+                data-timezone-confirm="pending"
+                role="status"
               >
-                {t("timezoneConfirm")}
-              </button>
-              <p className="text-xs text-muted">
-                {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
-                {savingReminder ? ` · ${t("reminderSaving")}` : null}
-                {savingZone ? ` · ${t("timezoneSaving")}` : null}
-                {zoneSaved && !savingZone ? ` · ${t("timezoneSaved")}` : null}
-              </p>
-            </div>
+                <p className="text-sm leading-relaxed">{t("timezoneChangeConfirm", { zone })}</p>
+                <p className="mt-2 text-xs leading-relaxed text-muted">{t("timezoneChangeHint")}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    disabled={savingZone}
+                    onClick={async () => {
+                      setZoneSaved(false);
+                      setSavingZone(true);
+                      try {
+                        const response = await fetch("/api/account/settings", {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ timezone: zone }),
+                        });
+                        if (response.ok) {
+                          setSavedZone(zone);
+                          setZoneSaved(true);
+                        }
+                      } finally {
+                        setSavingZone(false);
+                      }
+                    }}
+                    className="rounded-full bg-paper px-4 py-1.5 text-sm shadow-card disabled:opacity-60"
+                  >
+                    {t("timezoneConfirm")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={savingZone}
+                    onClick={() => {
+                      setZone(savedZone);
+                      setZoneSaved(false);
+                    }}
+                    className="rounded-full border border-line px-4 py-1.5 text-sm text-muted disabled:opacity-60"
+                  >
+                    {t("timezoneChangeKeep")}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            <p className="mt-3 text-xs text-muted">
+              {emailConfigured ? t("reminderEmailOn") : t("reminderEmailOff")}
+              {savingReminder ? ` · ${t("reminderSaving")}` : null}
+              {savingZone ? ` · ${t("timezoneSaving")}` : null}
+              {zoneSaved && !savingZone ? ` · ${t("timezoneSaved")}` : null}
+            </p>
           </div>
 
           <div className="mt-8 rounded-[1.5rem] bg-peach/40 px-5 py-5">

@@ -1125,7 +1125,22 @@ html[data-quiet-writing="1"] main {
   }
 }
 
-/* Bloom, breathe, shuffle, and the copy toast stay still when motion is reduced. */
+@keyframes soft-wall-skeleton {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.soft-wall-skeleton__bar,
+.soft-wall-skeleton__card {
+  animation: soft-wall-skeleton 1.6s ease-in-out infinite;
+}
+
+/* Bloom, breathe, shuffle, the copy toast, and wall skeletons stay still when motion is reduced. */
 @media (prefers-reduced-motion: reduce) {
   .soft-shortcuts-sheet,
   .soft-weather-drift,
@@ -1139,6 +1154,9 @@ html[data-quiet-writing="1"] main {
   .soft-rate-toast,
   .soft-draft-banner,
   .soft-offline-banner,
+  .soft-wall-skeleton,
+  .soft-wall-skeleton__bar,
+  .soft-wall-skeleton__card,
   [data-breath-circle],
   [data-breath-circle] * {
     animation: none !important;

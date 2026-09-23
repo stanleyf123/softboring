@@ -998,7 +998,7 @@ export function WallBoard({
 
   if (!ready && !loadError) {
     return (
-      <div className={`${SITE_SHELL_CLASS} pt-8`}>
+      <div className={`${SITE_SHELL_CLASS} pt-8`} data-wall-loading="skeleton">
         {kindness}
         {!softPlus ? (
           <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
