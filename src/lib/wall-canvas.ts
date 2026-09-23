@@ -125,6 +125,7 @@ export function toTeaserNote(note: {
   color: string;
   praiseCount: number;
   ownerNickname?: string | null;
+  ownerIsDemo?: boolean;
   thankCount?: number;
   stickers?: TeaserSticker[];
 }) {
@@ -148,6 +149,7 @@ export function toTeaserNote(note: {
     color: displayNoteColor(note.color),
     praiseCount: note.praiseCount,
     ownerNickname: note.ownerNickname?.trim() ? note.ownerNickname.trim() : null,
+    ownerIsDemo: Boolean(note.ownerIsDemo),
     thankCount,
     stickers,
   };

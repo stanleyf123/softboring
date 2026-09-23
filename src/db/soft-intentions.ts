@@ -130,6 +130,18 @@ export function saveSoftIntentionForWeek(input: {
   };
 }
 
+export function listSoftIntentionsForUser(userId: string): SoftIntention[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT id, user_id, week_key, body, created_at, updated_at
+       FROM soft_intentions
+       WHERE user_id = ?
+       ORDER BY week_key DESC`,
+    )
+    .all(userId) as SoftIntentionRow[];
+  return rows.map(toIntention);
+}
+
 export function saveCurrentSoftIntention(
   userId: string,
   body: string | null,

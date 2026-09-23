@@ -7,6 +7,7 @@ import { SoftCapsuleCard } from "@/components/soft-capsule-card";
 import { PastLetterInbox } from "@/components/past-letter-inbox";
 import { SoftOpensInbox } from "@/components/soft-opens-inbox";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
+import { SoftIntentionHistory } from "@/components/soft-intention-history";
 import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftThanksHistory } from "@/components/soft-thanks-history";
@@ -280,6 +281,7 @@ export function AccountPanel({
           <NicknameEditor initialNickname={nickname} />
           <SoftMemoryCard memory={softMemory} />
           <SoftIntentionCard signedIn variant="account" />
+          <SoftIntentionHistory signedIn softPlus={softPlus} variant="account" />
           <GratitudeJarCard signedIn softPlus={softPlus} variant="account" />
           <SoftCapsuleCard signedIn softPlus={softPlus} variant="account" />
           <SoftOpensInbox signedIn softPlus={softPlus} />

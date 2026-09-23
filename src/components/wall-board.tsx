@@ -13,6 +13,7 @@ import { QuietWallComposer } from "@/components/quiet-wall-composer";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
 import { WallMoodLegend } from "@/components/wall-mood-legend";
+import { DemoNeighborBadge, DemoNeighborNote } from "@/components/demo-neighbor-badge";
 import { GuestWallSpotlight } from "@/components/guest-wall-spotlight";
 import { WallSpotlightStrip } from "@/components/wall-spotlight-strip";
 import type { SoftSpotlightPick } from "@/lib/wall-spotlight";
@@ -84,6 +85,7 @@ type TeaserNote = {
   praiseCount: number;
   thankCount?: number;
   ownerNickname?: string | null;
+  ownerIsDemo?: boolean;
   stickers?: NoteSticker[];
 };
 
@@ -1034,6 +1036,14 @@ export function WallBoard({
           <div>
             <h1 className="font-display text-4xl tracking-tight">{t("title")}</h1>
             <p className="mt-3 max-w-lg text-lg leading-relaxed text-muted">{t("lead")}</p>
+            {notes.some((note) => note.ownerIsDemo) ? (
+              <p
+                className="mt-3 max-w-lg text-sm leading-relaxed text-muted"
+                data-demo-neighbor-legend
+              >
+                {t("demoNeighborLegend")}
+              </p>
+            ) : null}
             <NeighborPresence />
             <p className="mt-2 text-sm">
               <Link href="/guidelines" className="text-accent hover:text-foreground">
@@ -1495,11 +1505,11 @@ export function WallBoard({
                   }}
                   data-season-frame={seasonalFrame ? frame.season : undefined}
                   className={`relative w-full cursor-grab touch-none select-none rounded-[1.4rem] px-4 py-4 text-left shadow-card active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${noteClass(note.color)} ${seasonalFrame ? frame.className : ""} ${canThank ? "pb-14" : ""} ${locked ? "pointer-events-none select-none" : ""}`}
-                  aria-label={
+                  aria-label={`${note.ownerIsDemo ? `${t("demoNeighbor")}. ` : ""}${
                     full
                       ? t("noteAria", { excerpt: full.excerpt || t("untitled") })
                       : t("noteLockedAria")
-                  }
+                  }`}
                   aria-haspopup={full ? "dialog" : undefined}
                   aria-expanded={full ? selectedId === note.id : undefined}
                 >
@@ -1552,6 +1562,11 @@ export function WallBoard({
                       </span>
                     ) : null}
                   </span>
+                  {note.ownerIsDemo ? (
+                    <span className="mt-2 inline-flex">
+                      <DemoNeighborBadge />
+                    </span>
+                  ) : null}
                   {full?.mood && isWeekMood(full.mood) ? (
                     <span className="mt-2 inline-flex">
                       <WeekMoodChip mood={full.mood} />
@@ -1823,6 +1838,7 @@ export function WallBoard({
                 {t("close")}
               </button>
             </div>
+            {detail.ownerIsDemo ? <DemoNeighborNote className="mt-3" /> : null}
             {detail.mood && isWeekMood(detail.mood) ? (
               <div className="mt-3">
                 <WeekMoodChip mood={detail.mood} />

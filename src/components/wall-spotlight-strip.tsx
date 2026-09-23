@@ -1,5 +1,6 @@
 "use client";
 
+import { DemoNeighborBadge } from "@/components/demo-neighbor-badge";
 import { Link } from "@/i18n/navigation";
 import { useHydrated } from "@/lib/use-hydrated";
 import type { SoftSpotlightPick } from "@/lib/wall-spotlight";
@@ -106,11 +107,14 @@ export function WallSpotlightStrip({ softPlus }: { softPlus: boolean }) {
             <p className="mt-2 text-sm leading-relaxed">
               {item.excerpt.trim() || t("aNote")}
             </p>
-            <p className="mt-3 text-xs text-muted">
-              {t("byAuthor", { name: authorLabel(item, t("someone")) })}
-              {item.praiseCount > 0
-                ? ` · ${t("praise", { count: item.praiseCount })}`
-                : ""}
+            <p className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted">
+              <span>
+                {t("byAuthor", { name: authorLabel(item, t("someone")) })}
+                {item.praiseCount > 0
+                  ? ` · ${t("praise", { count: item.praiseCount })}`
+                  : ""}
+              </span>
+              {item.ownerIsDemo ? <DemoNeighborBadge /> : null}
             </p>
             <Link
               href={`/wall?note=${encodeURIComponent(item.noteId)}`}
