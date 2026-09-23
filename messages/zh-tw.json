@@ -290,6 +290,9 @@
     "freeBanner": "Soft+ 會留下每一週，並加上一條小小的感覺圖。",
     "freeDownload": "下載這四週（JSON）",
     "freeDownloadHint": "一份小小的檔案，只含你已經能打開的週次。不會寄信。",
+    "reflectionTease": "Soft+ 也會把柔軟清單放進那份 JSON。免費下載仍是最近四週的回顧。",
+    "exportJson": "下載 JSON",
+    "exportJsonHint": "你的回顧，以及每一週勾過的柔軟清單。不會寄信。",
     "plusToolsTitle": "Soft+ 工具",
     "searchLabel": "搜尋回顧",
     "searchPlaceholder": "搜尋標題與答案…",
@@ -500,7 +503,7 @@
     "customError": "現在沒能存下這些題目。",
     "export": "匯出回顧",
     "dataDownloadTitle": "把最近四週帶走",
-    "dataDownloadBody": "一份小小的 JSON，只含你已經能打開的四週。更早的週次仍留在 Soft+。不會寄信。",
+    "dataDownloadBody": "一份小小的 JSON，只含你已經能打開的四週。柔軟清單留在 Soft+。更早的週次也留在那裡。不會寄信。",
     "dataDownloadCta": "下載 JSON",
     "inviteTitle": "邀請一位朋友",
     "inviteBody": "Soft+ 可以分享一扇小小的門。有人用你的連結新坐下時，牆上的便利貼會多一顆小星星——是謝謝，不是收費。",
@@ -607,7 +610,7 @@
     "featureDigestArchiveFree": "過去月份的摘要清單留在 Soft+",
     "featureCapsuleFree": "封到未來某天的短箋留在 Soft+",
     "featureStreakProtectFree": "連續週數快斷時，每月一次的暫停保護留在 Soft+",
-    "featureReflectionFree": "三個輕輕的週記勾選留在 Soft+",
+    "featureReflectionFree": "三個輕輕的週記勾選，以及它們在每週 JSON 裡的位置，留在 Soft+",
     "featureActivityExportFree": "柔軟足跡的 JSON 下載留在 Soft+",
     "featureGratitudeCardFree": "抽出一句感謝的奶油色卡片，留在 Soft+",
     "featurePastLetterFree": "寫給更早一週的短信，留在 Soft+",
@@ -622,7 +625,7 @@
     "featureDigestArchivePlus": "應用內一份更早月份的安靜清單",
     "featureCapsulePlus": "把一小段話封到未來的一天，也能看見這週打開了哪些。只在應用裡，不寄信",
     "featureStreakProtectPlus": "連續週數有風險時，每月可以輕輕暫停一次。只在應用裡，不寄信",
-    "featureReflectionPlus": "可選的柔軟清單，三個輕輕的記號，跟著這一週一起留下",
+    "featureReflectionPlus": "可選的柔軟清單，三個輕輕的記號，跟著這一週一起留下，並寫進每週 JSON",
     "featureActivityExportPlus": "把存下的週次、釘選與謝謝下載成柔軟足跡 JSON",
     "featureGratitudeCardPlus": "把抽出的一句感謝下載成奶油色卡片——圖上只有那句話",
     "featurePastLetterPlus": "寫一封短短的信給過去的一週。只在應用裡，不會寄出",
@@ -1000,7 +1003,7 @@
     "groupWall": "在軟軟牆",
     "here": "你在這裡",
     "toggleHelp": "打開或折起這張說明。",
-    "escape": "關閉便利貼詳情、貼紙小店，或這張說明。",
+    "escape": "收起展開的便利貼、關閉便利貼詳情或貼紙小店，或收起這張說明。",
     "quiet": "按 Q：安靜書寫會先把頁面邊框藏起來。",
     "search": "軟軟牆的篩選開著時，把焦點移到搜尋欄。",
     "filters": "感覺區間、搜尋，以及隱藏示範，都在軟木塞上方。",
@@ -1022,7 +1025,7 @@
     "s5Title": "分享與處理者",
     "s5Body": "付款由 Stripe 處理。若寄信，會使用你設定的 Resend 或 SMTP。託管與備份在維運者的伺服器（磁碟上的 SQLite）。釘上軟軟牆的內容，其他 Soft+ 會員也看得到；預設不公開。",
     "s6Title": "保存期間與你的選擇",
-    "s6Body": "帳號與回顧會保存到你在帳號頁刪除帳號（或維運者代你刪除）。刪除時，回顧會一起離開，軟軟牆上的便利貼也會悄悄拿下來。你仍可以隨時只拿下一張便利貼。每週提醒可以在帳號頁關掉，也可以在那裡選時區，讓提醒的星期和「這個月」跟著你的時鐘。已登入的免費帳號可以在帳號頁自行下載最近四週的 JSON，不必寄信。Soft+ 仍可匯出更完整的回顧。本政策可能更新；上方日期會一併修改。"
+    "s6Body": "帳號與回顧會保存到你在帳號頁刪除帳號（或維運者代你刪除）。刪除時，回顧會一起離開，軟軟牆上的便利貼也會悄悄拿下來。你仍可以隨時只拿下一張便利貼。每週提醒可以在帳號頁關掉，也可以在那裡選時區，讓提醒的星期和「這個月」跟著你的時鐘。已登入的免費帳號可以在帳號頁自行下載最近四週的 JSON，不必寄信。Soft+ 仍可匯出更完整的回顧；若你勾過柔軟清單，也會一起放進每週 JSON。本政策可能更新；上方日期會一併修改。"
   },
   "Terms": {
     "title": "使用條款",
@@ -1306,7 +1309,10 @@
     },
     "progress": "{total} 個裡勾了 {count} 個",
     "saved": "已跟著這一週留下。",
-    "saveError": "暫時無法留下這個記號。"
+    "saveError": "暫時無法留下這個記號。",
+    "exportTease": "Soft+ 可以把這三個記號放進每週 JSON。免費仍是最近四週的回顧，不含這份清單。",
+    "exportBody": "這些記號會跟著每週 JSON 一起走。不會寄信。",
+    "exportCta": "下載含記號的 JSON"
   },
   "SoftIntention": {
     "title": "軟軟意向",
@@ -1719,7 +1725,11 @@
     "s5Title": "需要時，輕聲回報",
     "s5Body": "若有內容顯得不友善或不合適，Soft+ 會員可以留下輕聲標記給營運者。我們可能隱藏違反禮儀的便利貼。我們偏好安靜處理，而不是大聲爭吵。",
     "s6Title": "Soft Boring 的節奏",
-    "s6Body": "這裡是軟木板，不是動態牆。慢一點沒關係。安靜也沒關係。水開了再來——寫完就可以離開。"
+    "s6Body": "這裡是軟木板，不是動態牆。慢一點沒關係。安靜也沒關係。水開了再來——寫完就可以離開。",
+    "securityTitle": "安靜的瀏覽器標頭",
+    "securityLead": "每個頁面都會送出幾個安靜的標頭，讓瀏覽器把這張書桌留在自己的框裡。你可以在回應裡看到同樣的名稱。這裡不會啟動付款，也不會寄信。",
+    "securityListLabel": "這個網站送出的標頭",
+    "privacyLink": "隱私權政策"
   },
   "Pwa": {
     "title": "更安靜的主畫面",

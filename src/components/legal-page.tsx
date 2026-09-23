@@ -1,3 +1,4 @@
+import { SoftSecurityNote } from "@/components/soft-security-note";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
@@ -39,11 +40,14 @@ export async function LegalPage({
         </p>
       ) : null}
       {namespace === "Guidelines" ? (
-        <p className="mt-8 text-sm text-muted">
-          <Link href="/terms" className="text-accent hover:text-foreground">
-            {t("termsLink")}
-          </Link>
-        </p>
+        <>
+          <SoftSecurityNote />
+          <p className="mt-8 text-sm text-muted">
+            <Link href="/terms" className="text-accent hover:text-foreground">
+              {t("termsLink")}
+            </Link>
+          </p>
+        </>
       ) : null}
       <p className="mt-10 text-sm text-muted">
         <Link href="/" className="text-accent hover:text-foreground">

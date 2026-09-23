@@ -2,6 +2,7 @@
 
 import { SoftTipsList } from "@/components/soft-tips-card";
 import { Link } from "@/i18n/navigation";
+import { softDialogShouldClose } from "@/lib/soft-escape";
 import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -40,6 +41,27 @@ export function NotificationBell({ unreadCount }: { unreadCount: number }) {
     }
     window.addEventListener("pointerdown", onPointer);
     return () => window.removeEventListener("pointerdown", onPointer);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(event: KeyboardEvent) {
+      const modalOpen = Boolean(document.querySelector("[aria-modal='true']"));
+      if (
+        !softDialogShouldClose({
+          key: event.key,
+          repeat: event.repeat,
+          open: true,
+          modalOpen,
+        })
+      ) {
+        return;
+      }
+      event.preventDefault();
+      setOpen(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
   async function load() {
