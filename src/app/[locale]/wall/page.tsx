@@ -75,6 +75,7 @@ export default async function WallPage({ params, searchParams }: Props) {
         initialWallLargerText={Boolean(settings?.wallLargerText)}
         guestSpotlight={guestSpotlight}
         guestSpotlightIndex={guestSpotlightIndex}
+        weekTimeZone={settings?.timezone}
       />
     </div>
   );

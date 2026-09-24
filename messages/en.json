@@ -349,7 +349,16 @@
     "tagsCount": "{count} of 5",
     "tagsTeaseTitle": "Private tags are a Soft+ quiet",
     "tagsTeaseBody": "Label a week with up to five soft tags, then find it in history. Nothing is emailed.",
-    "tagsTeaseCta": "See Soft+"
+    "tagsTeaseCta": "See Soft+",
+    "weekNavLabel": "Other open weeks",
+    "earlier": "Earlier week",
+    "later": "Later week",
+    "earlierEnd": "This is the earliest open week",
+    "laterEnd": "This is the latest open week",
+    "onlyOpen": "This is the only open week. Older weeks stay tucked until Soft+.",
+    "onlyWeek": "This is the only week saved here.",
+    "openPlace": "Open week {index} of {count}",
+    "neighborUntitled": "A quiet week"
   },
   "NotFound": {
     "title": "This page wandered off.",
@@ -682,6 +691,52 @@
       }
     }
   },
+  "SeasonalVariants": {
+    "title": "A seasonal way to hear the questions",
+    "lead": "Same six fields. A gentler seasonal phrasing, only while you write. Answers still save in the usual places. This is not a Soft+ pack, and nothing is emailed.",
+    "chipLabel": "Question phrasing",
+    "usual": "Usual questions",
+    "hear": "Hear {season}",
+    "on": "{season} phrasing is on for this visit. A Soft+ pack, if you try one, speaks instead.",
+    "season_spring": "spring",
+    "season_summer": "summer",
+    "season_autumn": "autumn",
+    "season_winter": "winter",
+    "seasons": {
+      "spring": {
+        "energy": "What felt newly green or lightly awake this week?",
+        "drain": "What still asked to thaw, slowly?",
+        "lessOf": "What could you set down as the light returns?",
+        "priorities": "Three small things to tend next week?",
+        "feeling": "How light did the week feel, 1 to 5?",
+        "summary": "One sentence for this softer start."
+      },
+      "summer": {
+        "energy": "What felt warm, unhurried, or brightly alive?",
+        "drain": "What felt too hot, too full, or too loud?",
+        "lessOf": "What could you leave in the shade?",
+        "priorities": "Three gentle plans for the week ahead?",
+        "feeling": "How easy did the week feel, 1 to 5?",
+        "summary": "One sentence in the warm light."
+      },
+      "autumn": {
+        "energy": "What felt ripe, golden, or quietly enough?",
+        "drain": "What felt like it was falling away too fast?",
+        "lessOf": "What can you let drop without picking it back up?",
+        "priorities": "Three soft things to carry into next week?",
+        "feeling": "How settled did the week feel, 1 to 5?",
+        "summary": "One sentence for this turning week."
+      },
+      "winter": {
+        "energy": "What kept a small warmth going?",
+        "drain": "What felt long, dark, or heavy?",
+        "lessOf": "What can wait until there is more light?",
+        "priorities": "Three quiet intentions for the week ahead?",
+        "feeling": "How held did the week feel, 1 to 5?",
+        "summary": "One sentence beside the quiet."
+      }
+    }
+  },
   "Pricing": {
     "eyebrow": "Free to write · paid to remember more",
     "title": "Keep the quiet weeks.",
@@ -805,7 +860,7 @@
     "loading": "Laying out the corkboard",
     "dragHint": "On a phone, press and drag the note — the board will hold still while you move it.",
     "filterTitle": "Find a soft note",
-    "filterLead": "Filter by feeling, search a nickname or excerpt, mute demo notes, or sort the corkboard. Free teasers stay locked.",
+    "filterLead": "Filter by feeling, search a nickname or excerpt, mute demo notes, sort the corkboard, or rest it on this week. Free teasers stay locked.",
     "sortLabel": "Sort Soft Wall",
     "sortNewest": "Newest",
     "sortMostPraised": "Most praised",
@@ -818,9 +873,14 @@
     "filterClear": "Clear",
     "filterResult": "Showing {shown} of {total}",
     "filterEmptyTitle": "Nothing matches just now",
-    "filterEmpty": "Try a wider feeling range, clear the search, or show demo notes again.",
+    "filterEmpty": "Try a wider feeling range, clear the search, show demo notes again, or look at all weeks.",
     "filterHideDemo": "Hide demo notes",
     "filterHideDemoHint": "Tucks away @softboring.demo accounts so real neighbors feel clearer.",
+    "weekChipsLabel": "Which weeks to show",
+    "weekChipAll": "All weeks",
+    "weekChipThis": "This week",
+    "weekChipEarlier": "Earlier weeks",
+    "weekChipsHint": "This ISO week follows your account clock. Notes stay on the wall; only what you see changes.",
     "seasonalFrame": "Seasonal frame",
     "seasonalFrameHint": "A quiet border for this season. Free for everyone — purely a look.",
     "largerText": "Larger note text",

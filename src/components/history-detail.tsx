@@ -1,5 +1,6 @@
 "use client";
 
+import { HistoryWeekNav } from "@/components/history-week-nav";
 import { PastSelfLetterCard } from "@/components/past-self-letter-card";
 import { SoftLetterRecall } from "@/components/soft-letter-recall";
 import { SoftTagsEditor } from "@/components/soft-tags-editor";
@@ -9,7 +10,11 @@ import { postcardSharePath } from "@/lib/soft-copy-link";
 import { ShareToWall } from "@/components/share-to-wall";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
 import { Link } from "@/i18n/navigation";
-import { ensureLocalReviewsMigrated, fetchReview, type Review } from "@/lib/reviews";
+import {
+  historyWeekNeighbors,
+  type HistoryWeekNeighbors,
+} from "@/lib/history-week-nav";
+import { ensureLocalReviewsMigrated, fetchReview, fetchReviews, type Review } from "@/lib/reviews";
 import { useHydrated } from "@/lib/use-hydrated";
 import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
@@ -40,6 +45,11 @@ export function HistoryDetail({ id }: { id: string }) {
   const [error, setError] = useState(false);
   const [moodStatus, setMoodStatus] = useState<"saved" | "error" | null>(null);
   const [moodBusy, setMoodBusy] = useState(false);
+  const [neighborState, setNeighborState] = useState<{
+    id: string;
+    neighbors: HistoryWeekNeighbors;
+  } | null>(null);
+  const neighbors = neighborState?.id === id ? neighborState.neighbors : null;
 
   useEffect(() => {
     if (!hydrated) return;
@@ -48,11 +58,12 @@ export function HistoryDetail({ id }: { id: string }) {
     (async () => {
       try {
         await ensureLocalReviewsMigrated();
-        const [next, me] = await Promise.all([
+        const [next, me, list] = await Promise.all([
           fetchReview(id),
           fetch("/api/auth/me", { cache: "no-store" })
             .then((response) => response.json())
             .catch(() => null),
+          fetchReviews().catch(() => null),
         ]);
         if (cancelled) return;
         const meUser =
@@ -79,6 +90,11 @@ export function HistoryDetail({ id }: { id: string }) {
         if ("review" in next) {
           setReview(next.review);
           setWall(next.wall);
+          setNeighborState(
+            list ? { id, neighbors: historyWeekNeighbors(list.reviews, id) } : null,
+          );
+        } else if (!cancelled) {
+          setNeighborState(null);
         }
       } catch {
         if (!cancelled) setError(true);
@@ -179,6 +195,7 @@ export function HistoryDetail({ id }: { id: string }) {
         <Link href="/history" className="text-sm text-muted hover:text-foreground">
           {t("back")}
         </Link>
+        {neighbors ? <HistoryWeekNav neighbors={neighbors} /> : null}
         <p className="mt-8 text-sm text-muted">{t("savedOn", { date })}</p>
         <h1 className="mt-3 font-display text-3xl tracking-tight">
           {review.summary.trim() || tHistory("untitled")}
