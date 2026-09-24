@@ -6,6 +6,8 @@ No new environment variables. Stripe and email are not required.
 
 `sitemap.xml` lists public locale URLs for home, pricing, wall, review, history, login, register, privacy, terms, guidelines, thanks, digest, and soft year. Hreflang stays `en` / `zh-TW` / `ja` / `x-default`, while the path segment stays `zh-tw`.
 
+Visible Soft Wall notes are added as `/{locale}/wall?note={id}` when the database can list them. Locales stay `en`, `zh-tw`, and `ja`. A missing database, an empty wall, a hidden note, or a partial row is skipped, and digest plus soft year still appear. Note images under `/og/note/` stay out of the sitemap.
+
 `/account/activity` is a personal desk. It stays `noindex`, out of the sitemap, and behind locale-prefixed `/account` rules in `robots.txt`. Digest and soft year are public product pages: a crawler without a session sees the locked tease, not someone else’s weeks.
 
 ## Guest wall spotlight
