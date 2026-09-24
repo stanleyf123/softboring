@@ -1,6 +1,8 @@
 "use client";
 
+import { DeskEdges } from "@/components/desk-edges";
 import { Link } from "@/i18n/navigation";
+import { WEEK_PAUSE_ANCHOR } from "@/lib/desk-edges";
 import { WEEK_PAUSE_CHANGED_EVENT } from "@/lib/pause-week";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -43,7 +45,8 @@ export function SoftPauseCard({
   if (!signedIn) {
     return (
       <section
-        className="rounded-[1.75rem] bg-cream/90 px-5 py-5 shadow-card sm:px-6"
+        id={WEEK_PAUSE_ANCHOR}
+        className="scroll-mt-28 rounded-[1.75rem] bg-cream/90 px-5 py-5 shadow-card sm:px-6"
         data-soft-pause="guest"
       >
         <p className="font-display text-sm italic text-accent">{t("eyebrow")}</p>
@@ -91,7 +94,8 @@ export function SoftPauseCard({
 
   return (
     <section
-      className={`rounded-[1.75rem] px-5 py-5 shadow-card sm:px-6 ${
+      id={WEEK_PAUSE_ANCHOR}
+      className={`scroll-mt-28 rounded-[1.75rem] px-5 py-5 shadow-card sm:px-6 ${
         paused ? "bg-blush/75" : "bg-cream/90"
       }`}
       aria-labelledby="soft-pause-title"
@@ -126,6 +130,7 @@ export function SoftPauseCard({
           {t("saveError")}
         </p>
       ) : null}
+      <DeskEdges signedIn variant="beside-pause" />
     </section>
   );
 }

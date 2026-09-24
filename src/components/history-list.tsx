@@ -5,6 +5,7 @@ import { SoftTagFilter } from "@/components/soft-tag-filter";
 import { EmptyState, ListSkeleton } from "@/components/empty-state";
 import { WeekMoodChip } from "@/components/week-mood-picker";
 import { Link } from "@/i18n/navigation";
+import { groupHistoryByMonth, resolvedHistoryZone } from "@/lib/history-months";
 import { reviewMatchesQuery } from "@/lib/plus-insights";
 import { reviewHasSoftTag, uniqueSoftTags } from "@/lib/soft-tags";
 import { isWeekMood } from "@/lib/week-mood";
@@ -39,7 +40,7 @@ function CompareHistoryTease({ isGuest }: { isGuest: boolean }) {
   );
 }
 
-export function HistoryList() {
+export function HistoryList({ timeZone = null }: { timeZone?: string | null }) {
   const t = useTranslations("History");
   const tPast = useTranslations("PastLetter");
   const tMood = useTranslations("WeekMood");
@@ -91,6 +92,12 @@ export function HistoryList() {
       return reviewMatchesQuery(review, query, moodLabel);
     });
   }, [reviews, access, query, tag, tMood]);
+
+  const zone = resolvedHistoryZone(
+    timeZone,
+    hydrated ? readBrowserTimeZone() : null,
+  );
+  const groups = useMemo(() => groupHistoryByMonth(visible, zone), [visible, zone]);
 
   if (!hydrated || (reviews === null && !error)) {
     return <ListSkeleton label={t("loading")} />;
@@ -248,71 +255,116 @@ export function HistoryList() {
           illustration="history"
         />
       ) : (
-        <ul className="grid gap-4 lg:grid-cols-2">
-          {visible.map((review) =>
-            review.locked ? (
-              <li key={review.id}>
-                <div className="rounded-[1.75rem] border border-dashed border-line bg-paper/70 px-6 py-5">
-                  <p className="text-sm text-muted">
-                    {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
-                  </p>
-                  <p className="mt-2 font-display text-lg tracking-tight">{t("lockedTitle")}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{t("lockedBody")}</p>
-                  <Link href="/pricing" className="mt-4 inline-block text-sm text-accent">
-                    {t("lockedCta")}
-                  </Link>
-                </div>
-              </li>
-            ) : (
-              <li key={review.id} className="flex flex-col gap-2">
-                <Link
-                  href={`/history/${review.id}`}
-                  className="block rounded-[1.75rem] bg-paper px-6 py-5 shadow-card"
-                >
-                  <p className="text-sm text-muted">
-                    {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
-                  </p>
-                  <p className="mt-2 text-base leading-relaxed">
-                    {review.summary.trim() || t("untitled")}
-                  </p>
-                  {review.mood && isWeekMood(review.mood) ? (
-                    <span className="mt-3 inline-flex">
-                      <WeekMoodChip mood={review.mood} />
-                    </span>
-                  ) : null}
-                  {access?.softPlus && (review.softTags ?? []).length > 0 ? (
-                    <span className="mt-3 flex flex-wrap gap-1.5">
-                      {(review.softTags ?? []).map((item) => (
-                        <span
-                          key={item.toLocaleLowerCase()}
-                          className="rounded-full bg-mint/70 px-2.5 py-0.5 text-xs"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </span>
-                  ) : null}
-                  {review.feeling ? (
-                    <p className="mt-3 text-sm text-muted">
-                      {t("feeling", { value: review.feeling })}
-                    </p>
-                  ) : null}
-                  <span className="mt-4 inline-block text-sm text-accent">{t("open")}</span>
-                </Link>
-                {access?.softPlus ? (
-                  <Link
-                    href={`/history/${review.id}#past-self-letter`}
-                    className="self-start px-2 text-sm text-accent"
-                    data-past-letter-link={review.id}
+        <div className="space-y-8" data-history-months="open">
+          <p className="text-sm leading-relaxed text-muted">{t("monthLead")}</p>
+          {groups.map((group) => {
+            const heading =
+              group.year != null && group.month != null
+                ? format.dateTime(new Date(Date.UTC(group.year, group.month - 1, 15, 12)), {
+                    month: "long",
+                    year: "numeric",
+                    timeZone: zone,
+                  })
+                : t("undatedTitle");
+            return (
+              <section
+                key={group.key}
+                className="space-y-4"
+                data-history-month={group.key}
+                aria-labelledby={`history-month-${group.key}`}
+              >
+                <div>
+                  <h2
+                    id={`history-month-${group.key}`}
+                    className="font-display text-xl tracking-tight"
                   >
-                    {tPast("historyLink")}
-                  </Link>
-                ) : null}
-              </li>
-            ),
-          )}
-        </ul>
+                    {heading}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted">
+                    {group.key === "undated"
+                      ? t("undatedHint")
+                      : t("monthCount", { count: group.items.length })}
+                  </p>
+                </div>
+                <ul className="grid gap-4 lg:grid-cols-2">
+                  {group.items.map((review) =>
+                    review.locked ? (
+                      <li key={review.id}>
+                        <div className="rounded-[1.75rem] border border-dashed border-line bg-paper/70 px-6 py-5">
+                          <p className="text-sm text-muted">
+                            {review.createdAt
+                              ? format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })
+                              : t("undatedTitle")}
+                          </p>
+                          <p className="mt-2 font-display text-lg tracking-tight">{t("lockedTitle")}</p>
+                          <p className="mt-2 text-sm leading-relaxed text-muted">{t("lockedBody")}</p>
+                          <Link href="/pricing" className="mt-4 inline-block text-sm text-accent">
+                            {t("lockedCta")}
+                          </Link>
+                        </div>
+                      </li>
+                    ) : (
+                      <li key={review.id} className="flex flex-col gap-2">
+                        <Link
+                          href={`/history/${review.id}`}
+                          className="block rounded-[1.75rem] bg-paper px-6 py-5 shadow-card"
+                        >
+                          <p className="text-sm text-muted">
+                            {format.dateTime(new Date(review.createdAt), { dateStyle: "medium" })}
+                          </p>
+                          <p className="mt-2 text-base leading-relaxed">
+                            {review.summary.trim() || t("untitled")}
+                          </p>
+                          {review.mood && isWeekMood(review.mood) ? (
+                            <span className="mt-3 inline-flex">
+                              <WeekMoodChip mood={review.mood} />
+                            </span>
+                          ) : null}
+                          {access?.softPlus && (review.softTags ?? []).length > 0 ? (
+                            <span className="mt-3 flex flex-wrap gap-1.5">
+                              {(review.softTags ?? []).map((item) => (
+                                <span
+                                  key={item.toLocaleLowerCase()}
+                                  className="rounded-full bg-mint/70 px-2.5 py-0.5 text-xs"
+                                >
+                                  {item}
+                                </span>
+                              ))}
+                            </span>
+                          ) : null}
+                          {review.feeling ? (
+                            <p className="mt-3 text-sm text-muted">
+                              {t("feeling", { value: review.feeling })}
+                            </p>
+                          ) : null}
+                          <span className="mt-4 inline-block text-sm text-accent">{t("open")}</span>
+                        </Link>
+                        {access?.softPlus ? (
+                          <Link
+                            href={`/history/${review.id}#past-self-letter`}
+                            className="self-start px-2 text-sm text-accent"
+                            data-past-letter-link={review.id}
+                          >
+                            {tPast("historyLink")}
+                          </Link>
+                        ) : null}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
       )}
     </div>
   );
+}
+
+function readBrowserTimeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return null;
+  }
 }

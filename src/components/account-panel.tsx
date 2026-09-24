@@ -8,6 +8,7 @@ import { PastLetterInbox } from "@/components/past-letter-inbox";
 import { SoftOpensInbox } from "@/components/soft-opens-inbox";
 import { SoftIntentionCard } from "@/components/soft-intention-card";
 import { SoftIntentionHistory } from "@/components/soft-intention-history";
+import { DeskEdges } from "@/components/desk-edges";
 import { SoftLeaveCard } from "@/components/soft-leave-card";
 import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftThanksHistory } from "@/components/soft-thanks-history";
@@ -233,6 +234,8 @@ export function AccountPanel({
               ) : null}
             </div>
           </dl>
+
+          <DeskEdges signedIn variant="account" />
 
           <div
             className="mt-8 rounded-[1.5rem] bg-cream/80 px-5 py-5"

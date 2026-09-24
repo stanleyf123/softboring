@@ -107,3 +107,43 @@ export function assembleMonthlySoftReport(
     pauseWeeks: sanitizeReportCount(counts.pauseWeeks),
   };
 }
+
+export const REPORT_BAR_KEYS = ["thanksGiven", "echoes", "gratitudesDrawn", "pauseWeeks"] as const;
+
+export type ReportBarKey = (typeof REPORT_BAR_KEYS)[number];
+
+export type ReportBar = {
+  key: ReportBarKey;
+  count: number;
+  /**
+   * 0–100. The largest count this month is 100.
+   * Zero stays 0. A positive count never rounds down to an invisible bar.
+   */
+  width: number;
+};
+
+/** Share of the largest count, rounded. A positive count keeps at least a hairline. */
+export function reportBarWidth(count: number, max: number) {
+  const safeCount = sanitizeReportCount(count);
+  const safeMax = sanitizeReportCount(max);
+  if (safeMax <= 0 || safeCount <= 0) return 0;
+  return Math.max(4, Math.min(100, Math.round((safeCount / safeMax) * 100)));
+}
+
+/**
+ * Quiet bars for the four monthly counts.
+ * They compare those counts with each other. They are not a score.
+ */
+export function monthlyReportBars(
+  counts: Pick<MonthlySoftReport, ReportBarKey>,
+): ReportBar[] {
+  const safe = REPORT_BAR_KEYS.map((key) => ({
+    key,
+    count: sanitizeReportCount(counts[key]),
+  }));
+  const max = safe.reduce((best, bar) => Math.max(best, bar.count), 0);
+  return safe.map((bar) => ({
+    ...bar,
+    width: reportBarWidth(bar.count, max),
+  }));
+}

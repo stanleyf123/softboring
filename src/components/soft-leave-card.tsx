@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { LEAVE_PHRASE } from "@/lib/account-leave";
+import { LEAVE_DESK_ANCHOR } from "@/lib/desk-edges";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 
@@ -53,8 +54,9 @@ export function SoftLeaveCard({ email }: { email: string }) {
 
   return (
     <form
+      id={LEAVE_DESK_ANCHOR}
       onSubmit={leave}
-      className="mt-10 rounded-[1.5rem] border border-line/80 bg-cream/40 px-5 py-5"
+      className="mt-10 scroll-mt-28 rounded-[1.5rem] border border-line/80 bg-cream/40 px-5 py-5"
     >
       <p className="font-display text-lg tracking-tight">{t("leaveTitle")}</p>
       <p className="mt-2 text-sm leading-relaxed text-muted">{t("leaveBody")}</p>
