@@ -24,6 +24,7 @@ import {
 } from "@/lib/plan";
 import { applyNightPreference } from "@/lib/night-mode";
 import { SoftBloomPreference } from "@/components/soft-save-bloom";
+import { FriendShareCard } from "@/components/friend-share-card";
 import { SoftCopyLink } from "@/components/soft-copy-link";
 import { softDeskSize } from "@/lib/soft-desk-size";
 import type { SoftSessionView } from "@/lib/soft-sessions";
@@ -281,6 +282,7 @@ export function AccountPanel({
           </div>
 
           <NicknameEditor initialNickname={nickname} />
+          <FriendShareCard nickname={nickname} />
           <SoftMemoryCard memory={softMemory} />
           <SoftIntentionCard signedIn variant="account" />
           <SoftIntentionHistory signedIn softPlus={softPlus} variant="account" />

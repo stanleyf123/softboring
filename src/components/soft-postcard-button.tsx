@@ -53,7 +53,18 @@ export function SoftPostcardFromReview({
   review,
   softPlus,
 }: {
-  review: Pick<Review, "id" | "createdAt" | "summary" | "feeling" | "energy" | "drain">;
+  review: Pick<
+    Review,
+    | "id"
+    | "createdAt"
+    | "summary"
+    | "feeling"
+    | "energy"
+    | "drain"
+    | "lessOf"
+    | "priorities"
+    | "customAnswers"
+  >;
   softPlus: boolean;
 }) {
   const t = useTranslations("Postcard");
@@ -62,8 +73,6 @@ export function SoftPostcardFromReview({
   const labels = usePostcardLabels();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
-
-  if (!softPlus) return null;
 
   async function onExport() {
     setBusy(true);
@@ -80,30 +89,42 @@ export function SoftPostcardFromReview({
 
   return (
     <>
-      <div className="mt-8 rounded-[1.75rem] bg-cream/80 px-5 py-5 shadow-card print:hidden sm:px-6">
-        <p className="font-display text-lg tracking-tight">{t("weekTitle")}</p>
-        <p className="mt-2 text-sm leading-relaxed text-muted">{t("weekLead")}</p>
+      <div
+        className="mt-8 rounded-[1.75rem] bg-cream/80 px-5 py-5 shadow-card print:hidden sm:px-6"
+        data-week-print={softPlus ? "plus" : "free"}
+      >
+        <p className="font-display text-lg tracking-tight">
+          {softPlus ? t("weekTitle") : t("printFreeTitle")}
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          {softPlus ? t("weekLead") : t("printFreeLead")}
+        </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={onExport}
-            disabled={busy}
-            className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
-          >
-            {busy ? t("exporting") : t("exportWeek")}
-          </button>
+          {softPlus ? (
+            <button
+              type="button"
+              onClick={onExport}
+              disabled={busy}
+              className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+            >
+              {busy ? t("exporting") : t("exportWeek")}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => window.print()}
+            data-print-week
             className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm shadow-card"
           >
             {t("printWeek")}
           </button>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-muted">{t("printWeekHint")}</p>
-        <div className="mt-4">
-          <SoftCopyLink kind="postcard" path={postcardSharePath(locale, review.id)} />
-        </div>
+        {softPlus ? (
+          <div className="mt-4">
+            <SoftCopyLink kind="postcard" path={postcardSharePath(locale, review.id)} />
+          </div>
+        ) : null}
         {error ? <p className="mt-3 text-sm text-muted">{t("exportError")}</p> : null}
       </div>
       <SoftWeekPrintPostcard review={review} />

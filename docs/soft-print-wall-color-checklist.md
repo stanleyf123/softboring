@@ -4,7 +4,7 @@ No new environment variables. Stripe and email are not required.
 
 ## Soft print / PDF of one week (client)
 
-Soft+ history detail keeps the cream/blush **PNG postcard**, and adds **Print this week** — browser print with a soft postcard layout and print-friendly CSS (`soft-week-print`). Choose “Save as PDF” in the print dialog. Free / signed-out do not see the controls.
+Soft+ history detail keeps the cream/blush **PNG postcard**. **Print this week** is on the open week for free and Soft+ — browser print with a cream sheet of the answers already on screen (`soft-week-print`). Choose “Save as PDF” in the print dialog. The PNG export stays on Soft+.
 
 ## Soft Wall preferred note color
 

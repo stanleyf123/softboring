@@ -217,8 +217,8 @@ html[data-night="on"] .text-paper {
   background:
     linear-gradient(145deg, #fff4e8 0%, #fff8f2 45%, #f4d4c6 100%);
   color: #3f342e;
-  page-break-inside: avoid;
-  break-inside: avoid;
+  page-break-inside: auto;
+  break-inside: auto;
 }
 
 .soft-week-print__brand {
@@ -266,6 +266,8 @@ html[data-night="on"] .text-paper {
   border-radius: 1.25rem;
   padding: 1rem 1.15rem;
   min-height: 8rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .soft-week-print__panel--mint {
@@ -274,6 +276,14 @@ html[data-night="on"] .text-paper {
 
 .soft-week-print__panel--blush {
   background: #f4d4c6;
+}
+
+.soft-week-print__panel--cream {
+  background: #fff4e8;
+}
+
+.soft-week-print__panel--sky {
+  background: #d5e4ea;
 }
 
 .soft-week-print__label {
@@ -845,7 +855,9 @@ html[data-quiet-writing="1"] main {
 
   .soft-week-print__card,
   .soft-week-print__panel--mint,
-  .soft-week-print__panel--blush {
+  .soft-week-print__panel--blush,
+  .soft-week-print__panel--cream,
+  .soft-week-print__panel--sky {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

@@ -76,7 +76,7 @@ import {
   noteMatchesWeekChip,
   type WallWeekChip,
 } from "@/lib/wall-week-chips";
-import { wallQuietEmptyKind } from "@/lib/wall-week-empty";
+import { otherWallWeekChip, wallQuietEmptyKind } from "@/lib/wall-week-empty";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -1161,6 +1161,7 @@ export function WallBoard({
                   <span className="sr-only">{t("guestSearchLabel")}</span>
                   <input
                     type="search"
+                    data-wall-search=""
                     value={guestQuery}
                     onChange={(event) => setGuestQuery(event.target.value)}
                     placeholder={t("guestSearchPlaceholder")}
@@ -1474,10 +1475,10 @@ export function WallBoard({
             }}
           >
             {notes.length === 0 ? (
-              <div className="absolute left-8 top-8 max-w-md">
+              <div className="absolute left-8 top-8 max-w-md" data-wall-empty="notes">
                 {softPlus ? (
                   <section
-                    className="rounded-[2rem] bg-peach/70 px-8 py-12 shadow-card"
+                    className="rounded-[2rem] bg-cream/90 px-8 py-12 shadow-card"
                     data-empty-state="wall"
                   >
                     <SoftCssEmpty kind="wall" />
@@ -1489,7 +1490,7 @@ export function WallBoard({
                     {latestOwnedReviewId ? (
                       <p className="mt-3 text-sm text-muted">{t("emptyShareHint")}</p>
                     ) : null}
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className="mt-8">
                       {latestOwnedReviewId ? (
                         <button
                           type="button"
@@ -1507,12 +1508,6 @@ export function WallBoard({
                           {t("emptyWriteCta")}
                         </Link>
                       )}
-                      <Link
-                        href="/history"
-                        className="inline-flex min-h-12 items-center rounded-full border border-line px-5 py-2.5 text-sm text-muted"
-                      >
-                        {t("emptyCta")}
-                      </Link>
                     </div>
                     {shareLatestError ? (
                       <p className="mt-4 text-sm text-accent" role="alert">
@@ -1524,9 +1519,9 @@ export function WallBoard({
                   <EmptyState
                     title={t("emptyTitle")}
                     body={t("empty")}
-                    ctaHref="/history"
-                    ctaLabel={t("emptyCta")}
-                    wash="bg-peach/70"
+                    ctaHref="/review"
+                    ctaLabel={t("emptyWriteCta")}
+                    wash="bg-cream/90"
                     illustration="wall"
                     whisper={t("emptyWhisper")}
                   />
@@ -1536,6 +1531,7 @@ export function WallBoard({
             {notes.length > 0 && visibleNotes.length === 0 ? (
               <div
                 className="absolute left-8 top-8 max-w-md rounded-[2rem] bg-cream/90 px-8 py-10 shadow-card"
+                data-wall-empty="filtered"
                 data-wall-week-empty={softPlus && !locked ? quietEmpty : "search"}
                 aria-live="polite"
               >
@@ -1547,19 +1543,34 @@ export function WallBoard({
                     <p className="mt-3 leading-relaxed text-muted">
                       {quietEmpty === "this-week" ? t("weekEmptyThis") : t("weekEmptyEarlier")}
                     </p>
-                    <button
-                      type="button"
-                      data-wall-week-empty-reset
-                      onClick={() => setWeekChip("all")}
-                      className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                    >
-                      {t("weekEmptyShowAll")}
-                    </button>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">{t("emptyFilterKeys")}</p>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        data-wall-week-empty-other
+                        onClick={() => {
+                          const next = otherWallWeekChip(weekChip);
+                          if (next) setWeekChip(next);
+                        }}
+                        className="inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                      >
+                        {quietEmpty === "this-week" ? t("weekEmptyTryEarlier") : t("weekEmptyTryThis")}
+                      </button>
+                      <button
+                        type="button"
+                        data-wall-week-empty-reset
+                        onClick={() => setWeekChip("all")}
+                        className="inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-5 py-2.5 text-sm text-muted shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                      >
+                        {t("weekEmptyShowAll")}
+                      </button>
+                    </div>
                   </>
                 ) : softPlus && !locked ? (
                   <>
                     <h2 className="font-display text-2xl tracking-tight">{t("filterEmptyTitle")}</h2>
                     <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">{t("emptyFilterKeys")}</p>
                     <button
                       type="button"
                       onClick={clearDiscovery}
@@ -1572,10 +1583,11 @@ export function WallBoard({
                   <>
                     <h2 className="font-display text-2xl tracking-tight">{t("guestSearchEmptyTitle")}</h2>
                     <p className="mt-3 leading-relaxed text-muted">{t("guestSearchEmpty")}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">{t("emptyFilterKeys")}</p>
                     <button
                       type="button"
                       onClick={() => setGuestQuery("")}
-                      className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+                      className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
                     >
                       {t("guestSearchClear")}
                     </button>
