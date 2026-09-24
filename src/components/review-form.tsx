@@ -5,6 +5,7 @@ import { ReviewSoftLimitHint } from "@/components/review-soft-limit-hint";
 import { ShareToWall } from "@/components/share-to-wall";
 import { SoftWordCount } from "@/components/soft-word-count";
 import { WeekMoodPicker } from "@/components/week-mood-picker";
+import { SeasonalVariantChip } from "@/components/seasonal-variant-chip";
 import {
   SeasonalPacksPanel,
   packPrompts,
@@ -38,6 +39,7 @@ import {
   type ReviewAnswers,
 } from "@/lib/reviews";
 import type { SeasonalPackId } from "@/lib/seasonal-packs";
+import { seasonForMonth } from "@/lib/seasonal-variants";
 import { reviewFieldNeedsSoftHint } from "@/lib/review-soft-limit";
 import { isWeekMood, WEEK_MOOD_TINT, type WeekMood } from "@/lib/week-mood";
 import { useHydrated } from "@/lib/use-hydrated";
@@ -120,7 +122,9 @@ function ReviewFormFields({
   const t = useTranslations("Review");
   const tQuestions = useTranslations("Questions");
   const tPacks = useTranslations("SeasonalPacks");
+  const tSeason = useTranslations("SeasonalVariants");
   const locale = useLocale();
+  const season = seasonForMonth(new Date().getMonth() + 1);
   const initial = useMemo(() => {
     const draft = loadDraft();
     if (!softPlus || customQuestions.length === 0) {
@@ -150,12 +154,16 @@ function ReviewFormFields({
   const [access, setAccess] = useState<ReviewAccessInfo | null>(null);
   const [milestone, setMilestone] = useState<StreakMilestone | null>(null);
   const [activePackId, setActivePackId] = useState<SeasonalPackId | null>(null);
+  const [seasonalOn, setSeasonalOn] = useState(false);
   const [liveCustomQuestions, setLiveCustomQuestions] =
     useState<CustomQuestion[]>(customQuestions);
 
   const questionLabel = (field: (typeof TEXT_FIELDS)[number] | "feeling") => {
     if (activePackId) {
       return packPrompts(tPacks, activePackId)[field];
+    }
+    if (seasonalOn && season) {
+      return tSeason(`seasons.${season}.${field}`);
     }
     return tQuestions(field);
   };
@@ -417,6 +425,15 @@ function ReviewFormFields({
           persistDraft(next, now);
         }}
       />
+
+      {season ? (
+        <SeasonalVariantChip
+          season={season}
+          active={seasonalOn && !activePackId}
+          hidden={Boolean(activePackId)}
+          onActive={setSeasonalOn}
+        />
+      ) : null}
 
       {softPlus ? (
         <SeasonalPacksPanel

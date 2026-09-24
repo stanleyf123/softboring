@@ -65,6 +65,11 @@ import { isWallNotePreviewOpen, wallEscapeAction } from "@/lib/soft-escape";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
 import { isWeekMood } from "@/lib/week-mood";
+import {
+  WALL_WEEK_CHIPS,
+  noteMatchesWeekChip,
+  type WallWeekChip,
+} from "@/lib/wall-week-chips";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -209,6 +214,7 @@ export function WallBoard({
   initialWallLargerText = false,
   guestSpotlight = [],
   guestSpotlightIndex = 0,
+  weekTimeZone = null,
 }: {
   signedIn: boolean;
   softPlus: boolean;
@@ -219,6 +225,7 @@ export function WallBoard({
   initialWallLargerText?: boolean;
   guestSpotlight?: SoftSpotlightPick[];
   guestSpotlightIndex?: number;
+  weekTimeZone?: string | null;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
@@ -260,6 +267,7 @@ export function WallBoard({
     ...EMPTY_WALL_FILTERS,
     hideDemo: false,
   }));
+  const [weekChip, setWeekChip] = useState<WallWeekChip>("all");
   const hydrated = useHydrated();
   const [frameOverride, setFrameOverride] = useState<boolean | null>(null);
   const [textOverride, setTextOverride] = useState<boolean | null>(null);
@@ -314,17 +322,32 @@ export function WallBoard({
     const ordered =
       !softPlus || locked
         ? filterNotesBySoftSearch(notes, guestQuery)
-        : withSortStacking(sortWallNotes(filterWallNotes(notes as FullNote[], filters), sort));
+        : withSortStacking(
+            sortWallNotes(
+              filterWallNotes(notes as FullNote[], filters).filter((note) =>
+                noteMatchesWeekChip(note.createdAt, weekChip, new Date(), weekTimeZone),
+              ),
+              sort,
+            ),
+          );
     if (shuffleSeed == null) return ordered;
     return withSortStacking(shuffleWallNotes(ordered, shuffleSeed));
-  }, [notes, filters, sort, softPlus, locked, shuffleSeed, guestQuery]);
+  }, [notes, filters, sort, softPlus, locked, shuffleSeed, guestQuery, weekChip, weekTimeZone]);
 
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
+  const weekChipOn = softPlus && !locked && weekChip !== "all";
+  const discoveryOn = filtersOn || weekChipOn;
+
+  function clearDiscovery() {
+    writeHideDemoPreference(false);
+    setFilters(EMPTY_WALL_FILTERS);
+    setWeekChip("all");
+  }
   const renderedNotes = visibleNotes.slice(0, wallShownCount(visibleNotes.length, shownCount));
 
   useEffect(() => {
     setArrivedFrom(0);
-  }, [filters, sort, guestQuery, shuffleSeed]);
+  }, [filters, sort, guestQuery, shuffleSeed, weekChip]);
 
   useEffect(() => {
     if (!initialNoteId || revealedInitialNote.current) return;
@@ -1231,6 +1254,39 @@ export function WallBoard({
               {t("filterTitle")}
             </p>
             <p className="mt-1 text-sm leading-relaxed text-muted">{t("filterLead")}</p>
+            <div
+              className="mt-4 flex flex-wrap gap-2"
+              role="group"
+              aria-label={t("weekChipsLabel")}
+              data-wall-week-chips=""
+            >
+              {WALL_WEEK_CHIPS.map((chip) => {
+                const selected = weekChip === chip;
+                const label =
+                  chip === "all"
+                    ? t("weekChipAll")
+                    : chip === "this-week"
+                      ? t("weekChipThis")
+                      : t("weekChipEarlier");
+                return (
+                  <button
+                    key={chip}
+                    type="button"
+                    aria-pressed={selected}
+                    data-wall-week-chip={chip}
+                    onClick={() => setWeekChip(chip)}
+                    className={
+                      selected
+                        ? "inline-flex min-h-11 items-center rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                        : "inline-flex min-h-11 items-center rounded-full border border-line bg-cream/80 px-4 py-2 text-sm text-muted shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    }
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-muted">{t("weekChipsHint")}</p>
             <label className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
               <span className="shrink-0">{t("sortLabel")}</span>
               <select
@@ -1307,11 +1363,8 @@ export function WallBoard({
               </label>
               <button
                 type="button"
-                onClick={() => {
-                  writeHideDemoPreference(false);
-                  setFilters(EMPTY_WALL_FILTERS);
-                }}
-                disabled={!filtersOn}
+                onClick={clearDiscovery}
+                disabled={!discoveryOn}
                 className="rounded-full border border-line px-4 py-2 text-sm text-muted disabled:opacity-40"
               >
                 {t("filterClear")}
@@ -1333,7 +1386,7 @@ export function WallBoard({
                 <span className="mt-0.5 block text-xs text-muted">{t("filterHideDemoHint")}</span>
               </span>
             </label>
-            {filtersOn ? (
+            {discoveryOn ? (
               <p className="mt-3 text-sm text-muted">
                 {t("filterResult", {
                   shown: visibleNotes.length,
@@ -1436,10 +1489,7 @@ export function WallBoard({
                     <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
                     <button
                       type="button"
-                      onClick={() => {
-                        writeHideDemoPreference(false);
-                        setFilters(EMPTY_WALL_FILTERS);
-                      }}
+                      onClick={clearDiscovery}
                       className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
                     >
                       {t("filterClear")}

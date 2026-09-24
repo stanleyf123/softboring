@@ -349,7 +349,16 @@
     "tagsCount": "{count} / 5",
     "tagsTeaseTitle": "私人標籤是 Soft+ 的安靜",
     "tagsTeaseBody": "為一週加上最多五個軟標籤，再從紀錄裡找回來。不會寄信。",
-    "tagsTeaseCta": "看看 Soft+"
+    "tagsTeaseCta": "看看 Soft+",
+    "weekNavLabel": "其他打開的週",
+    "earlier": "更早一週",
+    "later": "更近一週",
+    "earlierEnd": "這是最早打開的一週",
+    "laterEnd": "這是最近打開的一週",
+    "onlyOpen": "目前只打開這一週。更早的週先收著，Soft+ 才會打開。",
+    "onlyWeek": "這裡目前只存了這一週。",
+    "openPlace": "打開的第 {index} 週，共 {count} 週",
+    "neighborUntitled": "安靜的一週"
   },
   "NotFound": {
     "title": "這一頁悄悄走掉了。",
@@ -787,7 +796,7 @@
     "shareError_soft_plus_required": "把便利貼釘給鄰居看，需要 Soft+。",
     "shareError_forbidden": "這一週已經被釘過，或你沒有權限。",
     "filterTitle": "找一張軟軟的紙條",
-    "filterLead": "依感覺篩選、搜尋暱稱與摘錄、隱藏示範便利貼，或替軟軟牆排序。免費預覽仍會鎖住。",
+    "filterLead": "依感覺篩選、搜尋暱稱與摘錄、隱藏示範便利貼、替軟軟牆排序，或只看這一週。免費預覽仍會鎖住。",
     "sortLabel": "軟軟牆排序",
     "sortNewest": "最新",
     "sortMostPraised": "最多讚美",
@@ -800,9 +809,14 @@
     "filterClear": "清除",
     "filterResult": "顯示 {shown} / {total}",
     "filterEmptyTitle": "目前沒有符合的",
-    "filterEmpty": "試試更寬的感覺區間、清除搜尋，或再顯示示範便利貼。",
+    "filterEmpty": "試試更寬的感覺區間、清除搜尋、再顯示示範便利貼，或改看全部週。",
     "filterHideDemo": "隱藏示範便利貼",
     "filterHideDemoHint": "先把 @softboring.demo 帳號收起來，真實鄰居會清楚一點。",
+    "weekChipsLabel": "要看哪些週",
+    "weekChipAll": "全部週",
+    "weekChipThis": "這一週",
+    "weekChipEarlier": "更早的週",
+    "weekChipsHint": "這一週跟著帳號時區。便利貼還在牆上，變的只是你眼前看到的。",
     "seasonalFrame": "季節框",
     "seasonalFrameHint": "這個季節的安靜邊框。人人免費——只是視覺。",
     "largerText": "便利貼字再大一點",
@@ -1198,6 +1212,52 @@
         "priorities": "下週三個柔軟的感謝或收尾？",
         "feeling": "這週心有多滿，1 到 5？",
         "summary": "一句感謝的週結。"
+      }
+    }
+  },
+  "SeasonalVariants": {
+    "title": "用季節的方式聽見這些問題",
+    "lead": "還是那六個欄位。只在你寫的時候，換成比較溫柔的季節說法。答案仍存在原來的地方。這不是 Soft+ 題組，也不會寄信。",
+    "chipLabel": "問題的說法",
+    "usual": "平常的問題",
+    "hear": "聽聽{season}",
+    "on": "這次用{season}的說法。若你試用 Soft+ 題組，題組會改由它來說。",
+    "season_spring": "春天",
+    "season_summer": "夏天",
+    "season_autumn": "秋天",
+    "season_winter": "冬天",
+    "seasons": {
+      "spring": {
+        "energy": "這週有什麼新綠、或輕輕醒過來？",
+        "drain": "什麼還想慢慢解凍？",
+        "lessOf": "光線回來時，什麼可以先放下？",
+        "priorities": "下週想照顧的三件小事？",
+        "feeling": "這週有多輕，1 到 5？",
+        "summary": "為這個柔軟的開始寫一句。"
+      },
+      "summer": {
+        "energy": "什麼讓你覺得暖、不趕、或亮亮地活著？",
+        "drain": "什麼太熱、太滿、或太吵？",
+        "lessOf": "什麼可以留在陰影裡？",
+        "priorities": "下一週三個溫柔的打算？",
+        "feeling": "這週有多從容，1 到 5？",
+        "summary": "暖光裡的一句話。"
+      },
+      "autumn": {
+        "energy": "什麼覺得成熟、金黃、或已經夠了？",
+        "drain": "什麼像掉得太快？",
+        "lessOf": "什麼可以落下，不必再撿起來？",
+        "priorities": "帶進下週的三件柔軟的事？",
+        "feeling": "這週有多安穩，1 到 5？",
+        "summary": "為這個轉折的週寫一句。"
+      },
+      "winter": {
+        "energy": "什麼讓一小團暖意還在？",
+        "drain": "什麼覺得長、暗、或沉重？",
+        "lessOf": "什麼可以等到光多一點？",
+        "priorities": "下週三個安靜的意向？",
+        "feeling": "這週有多被接住，1 到 5？",
+        "summary": "安靜旁邊的一句話。"
       }
     }
   },

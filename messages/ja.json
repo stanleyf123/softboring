@@ -349,7 +349,16 @@
     "tagsCount": "{count} / 5",
     "tagsTeaseTitle": "非公開タグは Soft+ の静けさ",
     "tagsTeaseBody": "一週間にやわらかいタグを五つまで。履歴から探せます。メールは送りません。",
-    "tagsTeaseCta": "Soft+ を見る"
+    "tagsTeaseCta": "Soft+ を見る",
+    "weekNavLabel": "開いているほかの週",
+    "earlier": "前の週",
+    "later": "新しい週",
+    "earlierEnd": "開いている週のなかで、いちばん前です",
+    "laterEnd": "開いている週のなかで、いちばん新しいです",
+    "onlyOpen": "開いている週は、いまこれだけです。もっと前の週は、Soft+ が開きます。",
+    "onlyWeek": "ここに残っている週は、いまこれだけです。",
+    "openPlace": "開いている週 {index} / {count}",
+    "neighborUntitled": "静かな週"
   },
   "NotFound": {
     "title": "このページは、そっと迷子です。",
@@ -787,7 +796,7 @@
     "shareError_soft_plus_required": "となりの人に見せる付箋を留めるには、Soft+ が要ります。",
     "shareError_forbidden": "この週はもう留めてあるか、開く権限がありません。",
     "filterTitle": "やさしいメモを探す",
-    "filterLead": "気持ちで絞る、ニックネームや抜粋を探す、デモを隠す、または Soft Wall を並べ替える。無料のチラ見せは鍵のまま。",
+    "filterLead": "気持ちで絞る、ニックネームや抜粋を探す、デモを隠す、Soft Wall を並べ替える、またはこの週だけにする。無料のチラ見せは鍵のまま。",
     "sortLabel": "Soft Wall の並び",
     "sortNewest": "新しい順",
     "sortMostPraised": "賛が多い順",
@@ -800,9 +809,14 @@
     "filterClear": "クリア",
     "filterResult": "{total} 件中 {shown} 件",
     "filterEmptyTitle": "いまは一致しない",
-    "filterEmpty": "気持ちの幅を広げるか、検索を消すか、デモをまた見せてみて。",
+    "filterEmpty": "気持ちの幅を広げるか、検索を消すか、デモをまた見せるか、すべての週に戻してみて。",
     "filterHideDemo": "デモの付箋を隠す",
     "filterHideDemoHint": "@softboring.demo をしまうと、ほんとうのとなりが少し見えやすくなります。",
+    "weekChipsLabel": "どの週を見るか",
+    "weekChipAll": "すべての週",
+    "weekChipThis": "この週",
+    "weekChipEarlier": "もっと前の週",
+    "weekChipsHint": "この ISO 週は、アカウントの時計に従います。付箋はそのまま。見える範囲だけが変わります。",
     "seasonalFrame": "季節のフレーム",
     "seasonalFrameHint": "この季節の静かな枠。だれでも無料——見た目だけです。",
     "largerText": "付箋の文字を少し大きく",
@@ -1198,6 +1212,52 @@
         "priorities": "来週の、やわらかい感謝や締めは3つ？",
         "feeling": "今週はどれくらい心が満ちた？1から5。",
         "summary": "感謝の一文で、この週を。"
+      }
+    }
+  },
+  "SeasonalVariants": {
+    "title": "季節の聞き方で、問いを聞く",
+    "lead": "欄はいつもの六つ。書いているあいだだけ、季節のやさしい言い方にします。答えはいつもの場所に残ります。これは Soft+ のパックではなく、メールも送りません。",
+    "chipLabel": "問いの言い方",
+    "usual": "いつもの問い",
+    "hear": "{season}で聞く",
+    "on": "この訪問は{season}の言い方です。Soft+ のパックを試すと、そちらが話します。",
+    "season_spring": "春",
+    "season_summer": "夏",
+    "season_autumn": "秋",
+    "season_winter": "冬",
+    "seasons": {
+      "spring": {
+        "energy": "今週、新緑のように、またはそっと目を覚ましたものは？",
+        "drain": "まだゆっくり解けたがっているものは？",
+        "lessOf": "光が戻るとき、先に置いておけるものは？",
+        "priorities": "来週、世話をしたい小さなことが三つ？",
+        "feeling": "今週はどれくらい軽かった？1から5。",
+        "summary": "このやわらかい始まりの一文。"
+      },
+      "summer": {
+        "energy": "あたたかく、急がず、明るく生きていたものは？",
+        "drain": "暑すぎ、満ちすぎ、うるさすぎたものは？",
+        "lessOf": "日陰に残しておけるものは？",
+        "priorities": "来週の、やさしい予定は三つ？",
+        "feeling": "今週はどれくらい余裕があった？1から5。",
+        "summary": "あたたかい光の中の一文。"
+      },
+      "autumn": {
+        "energy": "熟して、金色で、もう十分だと感じたものは？",
+        "drain": "落ちるのが早すぎるように感じたものは？",
+        "lessOf": "拾い直さず、落としておけるものは？",
+        "priorities": "来週へ運ぶ、やわらかいことが三つ？",
+        "feeling": "今週はどれくらい落ち着いていた？1から5。",
+        "summary": "この移ろう週の一文。"
+      },
+      "winter": {
+        "energy": "小さなあたたかさを保っていたものは？",
+        "drain": "長く、暗く、重く感じたものは？",
+        "lessOf": "光が増えるまで待てるものは？",
+        "priorities": "来週の、静かな意向は三つ？",
+        "feeling": "今週はどれくらい包まれていた？1から5。",
+        "summary": "静けさのそばの一文。"
       }
     }
   },
