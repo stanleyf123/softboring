@@ -2,6 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
+import { INTENTION_EXPORT_FILENAME } from "@/lib/soft-intention-export";
 import type { SoftIntentionHistoryItem } from "@/lib/soft-intention-history";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useTranslations } from "next-intl";
@@ -11,6 +12,51 @@ type HistoryPayload = {
   history?: SoftIntentionHistoryItem[] | null;
   historyLocked?: boolean;
 };
+
+function IntentionExport({
+  mode,
+}: {
+  mode: "guest" | "tease" | "download";
+}) {
+  const t = useTranslations("SoftIntention");
+
+  if (mode === "download") {
+    return (
+      <div className="mt-5 rounded-[1.25rem] bg-mint/45 px-4 py-4" data-intention-export="download">
+        <p className="font-display text-base tracking-tight">{t("exportTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("exportBody")}</p>
+        <a
+          href="/api/soft-intentions/export"
+          download={INTENTION_EXPORT_FILENAME}
+          className={`${SOFT_CHROME_FOCUS} mt-4 inline-flex min-h-11 items-center rounded-full bg-paper px-4 py-2 text-sm shadow-card`}
+        >
+          {t("exportCta")}
+        </a>
+      </div>
+    );
+  }
+
+  if (mode === "guest") {
+    return (
+      <p className="mt-3 text-sm leading-relaxed text-muted" data-intention-export="guest">
+        {t("exportGuestBody")}
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-5 rounded-[1.25rem] bg-blush/40 px-4 py-4" data-intention-export="tease">
+      <p className="font-display text-base tracking-tight">{t("exportTeaseTitle")}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t("exportTeaseBody")}</p>
+      <Link
+        href="/pricing"
+        className={`${SOFT_CHROME_FOCUS} mt-4 inline-flex min-h-11 items-center rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card`}
+      >
+        {t("exportTeaseCta")}
+      </Link>
+    </div>
+  );
+}
 
 function isHistoryItem(value: unknown): value is SoftIntentionHistoryItem {
   if (!value || typeof value !== "object") return false;
@@ -82,6 +128,7 @@ export function SoftIntentionHistory({
           {t("historyTitle")}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("historyGuestBody")}</p>
+        <IntentionExport mode="guest" />
         <Link
           href={{ pathname: "/login", query: { next: nextPath } }}
           className={`${SOFT_CHROME_FOCUS} mt-4 inline-flex min-h-11 items-center rounded-full border border-line px-4 py-2 text-sm text-muted`}
@@ -105,6 +152,7 @@ export function SoftIntentionHistory({
         </p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("historyTeaseBody")}</p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("historyPrivacy")}</p>
+        <IntentionExport mode="tease" />
         <Link
           href="/pricing"
           className={`${SOFT_CHROME_FOCUS} mt-4 inline-flex min-h-11 items-center rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card`}
@@ -127,6 +175,7 @@ export function SoftIntentionHistory({
           {t("historyTitle")}
         </p>
         <p className="mt-2 text-sm text-muted">{t("historyLoading")}</p>
+        <IntentionExport mode="download" />
       </section>
     );
   }
@@ -142,6 +191,7 @@ export function SoftIntentionHistory({
           {t("historyTitle")}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t("historyError")}</p>
+        <IntentionExport mode="download" />
       </section>
     );
   }
@@ -179,6 +229,7 @@ export function SoftIntentionHistory({
           </ul>
         </>
       )}
+      <IntentionExport mode="download" />
       <p className="mt-4 text-xs leading-relaxed text-muted">{t("historyPrivacy")}</p>
     </section>
   );

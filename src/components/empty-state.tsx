@@ -87,17 +87,38 @@ export function ListSkeleton({
   );
 }
 
+const WALL_SKELETON_CARDS = ["-rotate-2", "rotate-1", "-rotate-1"] as const;
+
+/** Cream placeholders for the first Soft Wall paint. Not real notes. */
 export function WallSkeleton({ label }: { label: string }) {
   return (
     <div
-      className="relative min-h-[28rem] overflow-hidden rounded-[1.5rem] border border-line/80 bg-paper/40"
+      className="soft-wall-skeleton mt-6 rounded-[1.75rem] border border-line/70 bg-cream/90 px-5 py-6 sm:px-8"
       role="status"
       aria-live="polite"
+      aria-busy="true"
       aria-label={label}
+      data-wall-skeleton="cream"
     >
-      <div className="absolute left-10 top-10 h-36 w-52 animate-pulse rounded-[1.4rem] bg-peach/80 shadow-card" />
-      <div className="absolute left-72 top-24 h-36 w-52 animate-pulse rounded-[1.4rem] bg-blush/80 shadow-card" />
-      <div className="absolute left-40 top-56 h-36 w-52 animate-pulse rounded-[1.4rem] bg-mint/80 shadow-card" />
+      <div className="max-w-lg space-y-3" aria-hidden="true">
+        <div className="soft-wall-skeleton__bar h-3 w-24 rounded-full bg-blush/80" />
+        <div className="soft-wall-skeleton__bar h-8 w-2/3 max-w-xs rounded-full bg-peach/70" />
+        <div className="soft-wall-skeleton__bar h-4 w-full rounded-full bg-mint/60" />
+      </div>
+      <div className="mt-8 flex flex-wrap gap-4" aria-hidden="true">
+        {WALL_SKELETON_CARDS.map((tilt) => (
+          <div
+            key={tilt}
+            className={`soft-wall-skeleton__card h-40 w-full max-w-[13rem] rounded-[1.4rem] bg-cream px-4 py-4 shadow-card ${tilt}`}
+            data-wall-skeleton-card=""
+          >
+            <div className="soft-wall-skeleton__bar h-3 w-16 rounded-full bg-blush/90" />
+            <div className="soft-wall-skeleton__bar mt-4 h-3 w-4/5 rounded-full bg-peach/80" />
+            <div className="soft-wall-skeleton__bar mt-2 h-3 w-2/3 rounded-full bg-peach/55" />
+            <div className="soft-wall-skeleton__bar mt-6 h-3 w-10 rounded-full bg-mint/80" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
