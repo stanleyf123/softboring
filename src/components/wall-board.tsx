@@ -70,6 +70,7 @@ import {
   noteMatchesWeekChip,
   type WallWeekChip,
 } from "@/lib/wall-week-chips";
+import { wallQuietEmptyKind } from "@/lib/wall-week-empty";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -215,6 +216,7 @@ export function WallBoard({
   guestSpotlight = [],
   guestSpotlightIndex = 0,
   weekTimeZone = null,
+  initialNickname = null,
 }: {
   signedIn: boolean;
   softPlus: boolean;
@@ -226,6 +228,7 @@ export function WallBoard({
   guestSpotlight?: SoftSpotlightPick[];
   guestSpotlightIndex?: number;
   weekTimeZone?: string | null;
+  initialNickname?: string | null;
 }) {
   const t = useTranslations("Wall");
   const tStickers = useTranslations("WallStickers");
@@ -263,9 +266,11 @@ export function WallBoard({
   );
   const bookmarkUndo = useBookmarkUndo();
   const [shopError, setShopError] = useState<"not_configured" | "generic" | null>(null);
+  const nicknameSeed = initialNickname?.trim() ?? "";
   const [filters, setFilters] = useState<WallDiscoveryFilters>(() => ({
     ...EMPTY_WALL_FILTERS,
     hideDemo: false,
+    query: softPlus ? nicknameSeed : "",
   }));
   const [weekChip, setWeekChip] = useState<WallWeekChip>("all");
   const hydrated = useHydrated();
@@ -293,7 +298,7 @@ export function WallBoard({
   const largerText =
     textOverride !== null ? textOverride : signedIn ? initialWallLargerText : storedLargerText;
   const [sort, setSort] = useState<WallSortMode>(DEFAULT_WALL_SORT);
-  const [guestQuery, setGuestQuery] = useState("");
+  const [guestQuery, setGuestQuery] = useState(softPlus ? "" : nicknameSeed);
   const [shuffleSeed, setShuffleSeed] = useState<number | null>(null);
   const [shownCount, setShownCount] = useState(WALL_NOTE_PAGE);
   const [previewRest, setPreviewRest] = useState(false);
@@ -337,6 +342,23 @@ export function WallBoard({
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
   const weekChipOn = softPlus && !locked && weekChip !== "all";
   const discoveryOn = filtersOn || weekChipOn;
+  const quietEmpty = wallQuietEmptyKind(weekChip, filtersOn);
+  const nicknameSeedActive =
+    nicknameSeed.length > 0 &&
+    (softPlus && !locked ? filters.query === nicknameSeed : locked && guestQuery === nicknameSeed);
+
+  function nicknameSeedNote() {
+    if (!nicknameSeedActive) return null;
+    return (
+      <p
+        className="mt-3 text-sm leading-relaxed text-muted"
+        role="status"
+        data-wall-nickname-query={nicknameSeed}
+      >
+        {t("nicknameFromStrip", { name: nicknameSeed })}
+      </p>
+    );
+  }
 
   function clearDiscovery() {
     writeHideDemoPreference(false);
@@ -1147,6 +1169,7 @@ export function WallBoard({
                     </button>
                   </div>
                 ) : null}
+                {nicknameSeedNote()}
               </form>
             ) : null}
             {notes.length > 1 ? (
@@ -1394,6 +1417,7 @@ export function WallBoard({
                 })}
               </p>
             ) : null}
+            {nicknameSeedNote()}
           </section>
         ) : null}
         {softPlus && !locked ? <WallMoodLegend /> : null}
@@ -1482,15 +1506,36 @@ export function WallBoard({
               </div>
             ) : null}
             {notes.length > 0 && visibleNotes.length === 0 ? (
-              <div className="absolute left-8 top-8 max-w-md rounded-[2rem] bg-cream/90 px-8 py-10 shadow-card">
-                {softPlus && !locked ? (
+              <div
+                className="absolute left-8 top-8 max-w-md rounded-[2rem] bg-cream/90 px-8 py-10 shadow-card"
+                data-wall-week-empty={softPlus && !locked ? quietEmpty : "search"}
+                aria-live="polite"
+              >
+                {softPlus && !locked && (quietEmpty === "this-week" || quietEmpty === "earlier") ? (
+                  <>
+                    <h2 className="font-display text-2xl tracking-tight">
+                      {quietEmpty === "this-week" ? t("weekEmptyThisTitle") : t("weekEmptyEarlierTitle")}
+                    </h2>
+                    <p className="mt-3 leading-relaxed text-muted">
+                      {quietEmpty === "this-week" ? t("weekEmptyThis") : t("weekEmptyEarlier")}
+                    </p>
+                    <button
+                      type="button"
+                      data-wall-week-empty-reset
+                      onClick={() => setWeekChip("all")}
+                      className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      {t("weekEmptyShowAll")}
+                    </button>
+                  </>
+                ) : softPlus && !locked ? (
                   <>
                     <h2 className="font-display text-2xl tracking-tight">{t("filterEmptyTitle")}</h2>
                     <p className="mt-3 leading-relaxed text-muted">{t("filterEmpty")}</p>
                     <button
                       type="button"
                       onClick={clearDiscovery}
-                      className="mt-6 rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card"
+                      className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
                       {t("filterClear")}
                     </button>

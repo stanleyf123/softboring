@@ -1,17 +1,64 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { intentionWeeksAgo } from "@/lib/intention-weeks-ago";
+import { COPY_TOAST_MS, copyShareText } from "@/lib/soft-copy-link";
 import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import { INTENTION_EXPORT_FILENAME } from "@/lib/soft-intention-export";
 import type { SoftIntentionHistoryItem } from "@/lib/soft-intention-history";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type HistoryPayload = {
   history?: SoftIntentionHistoryItem[] | null;
   historyLocked?: boolean;
+  weekKey?: string;
 };
+
+function IntentionCopy({ text }: { text: string }) {
+  const t = useTranslations("SoftIntention");
+  const [tone, setTone] = useState<"idle" | "copied" | "error">("idle");
+  const timer = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timer.current != null) window.clearTimeout(timer.current);
+    };
+  }, []);
+
+  async function onCopy() {
+    const clipboard = typeof navigator === "undefined" ? null : navigator.clipboard;
+    const ok = await copyShareText(text, clipboard);
+    setTone(ok ? "copied" : "error");
+    if (timer.current != null) window.clearTimeout(timer.current);
+    if (ok) {
+      timer.current = window.setTimeout(() => setTone("idle"), COPY_TOAST_MS);
+    }
+  }
+
+  return (
+    <div className="mt-2" data-intention-copy>
+      <button
+        type="button"
+        onClick={() => void onCopy()}
+        className={`${SOFT_CHROME_FOCUS} inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-3 py-1.5 text-xs text-muted`}
+      >
+        {t("historyCopy")}
+      </button>
+      {tone === "copied" ? (
+        <p className="mt-2 text-xs leading-relaxed text-muted" role="status" data-intention-copied>
+          {t("historyCopied")}
+        </p>
+      ) : null}
+      {tone === "error" ? (
+        <p className="mt-2 text-xs leading-relaxed text-muted" role="alert">
+          {t("historyCopyError")}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 function IntentionExport({
   mode,
@@ -81,6 +128,7 @@ export function SoftIntentionHistory({
   const t = useTranslations("SoftIntention");
   const hydrated = useHydrated();
   const [items, setItems] = useState<SoftIntentionHistoryItem[] | null>(null);
+  const [weekKey, setWeekKey] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
@@ -96,6 +144,9 @@ export function SoftIntentionHistory({
         }
         const data = (await response.json()) as HistoryPayload;
         if (cancelled) return;
+        if (typeof data.weekKey === "string" && data.weekKey.trim()) {
+          setWeekKey(data.weekKey.trim());
+        }
         if (data.historyLocked || !Array.isArray(data.history)) {
           setLocked(true);
           return;
@@ -216,16 +267,30 @@ export function SoftIntentionHistory({
         <>
           <p className="mt-4 text-xs text-muted">{t("historyCount", { count: items.length })}</p>
           <ul className="mt-3 space-y-3" aria-label={t("historyAria")} data-intention-history-list>
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className="rounded-[1.25rem] bg-paper/90 px-4 py-3 shadow-card"
-                data-intention-week={item.weekKey}
-              >
-                <p className="text-xs text-muted">{t("weekLabel", { week: item.weekKey })}</p>
-                <p className="mt-1 text-sm leading-relaxed">“{item.body}”</p>
-              </li>
-            ))}
+            {items.map((item) => {
+              const weeks = weekKey ? intentionWeeksAgo(item.weekKey, weekKey) : null;
+              return (
+                <li
+                  key={item.id}
+                  className="rounded-[1.25rem] bg-paper/90 px-4 py-3 shadow-card"
+                  data-intention-week={item.weekKey}
+                  data-intention-ago={weeks ?? "week"}
+                >
+                  <p className="text-xs text-muted">
+                    {weeks === 1
+                      ? t("historyLastWeek")
+                      : weeks != null
+                        ? t("historyWeeksAgo", { count: weeks })
+                        : t("weekLabel", { week: item.weekKey })}
+                    {weeks != null ? (
+                      <span className="ml-2">{t("weekLabel", { week: item.weekKey })}</span>
+                    ) : null}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed">“{item.body}”</p>
+                  <IntentionCopy text={item.body} />
+                </li>
+              );
+            })}
           </ul>
         </>
       )}
