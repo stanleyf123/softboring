@@ -317,6 +317,10 @@
     "compareTeaseTitle": "Two weeks, side by side",
     "compareTeaseBody": "Soft+ lays two open weeks on cream cards — feeling, energy, and drain. Free keeps the latest four. Nothing is emailed, and this does not start a payment.",
     "compareTeaseGuest": "Log in on Soft+ to lay two weeks on cream cards. Free still holds the latest four. Nothing is emailed.",
+    "monthLead": "Weeks sit under the month this clock shows. A locked week still keeps its month.",
+    "monthCount": "{count, plural, one {# week} other {# weeks}}",
+    "undatedTitle": "Without a date",
+    "undatedHint": "These did not bring a date with them.",
     "tagsTitle": "Private soft tags",
     "tagsLead": "Up to five quiet labels on your own weeks. They stay on this desk.",
     "tagsAll": "All weeks",
@@ -636,6 +640,9 @@
     "pausesLabel": "Pause weeks",
     "reportCount": "{count}",
     "reportHint": "Zeros are welcome. Nothing here is emailed.",
+    "chartLead": "These bars only compare the four counts with each other. A longer bar is not a better month.",
+    "chartEmpty": "All four are zero, so the bars stay empty.",
+    "chartTeaseLead": "Soft+ draws these bars from the real counts. This sketch does not invent numbers.",
     "teaseTitle": "A monthly soft report waits on Soft+",
     "teaseBody": "Soft+ totals the thanks you gave, echoes you left, gratitudes you drew, and weeks you paused — in your timezone. Free sees this invitation, not the numbers.",
     "teaseValue": "—",
@@ -1883,6 +1890,14 @@
     "guestBody": "Signed-in weeks can rest. No email, no catch-up list — just a softer mark on this ISO week.",
     "loginCta": "Log in",
     "saveError": "Could not keep that pause just now."
+  },
+  "DeskEdges": {
+    "title": "Desk edges",
+    "lead": "Rest this week, or leave the desk. Both stay in the app. Nothing is emailed.",
+    "pause": "Rest this week",
+    "leave": "Leave the desk",
+    "leaveBeside": "If the desk itself has been enough, leaving lives on Account.",
+    "navLabel": "Rest this week or leave the desk"
   },
   "QuoteCard": {
     "brand": "Soft Boring Weekly",

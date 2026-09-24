@@ -102,7 +102,7 @@ export default async function HistoryPage({ params }: Props) {
           }
         />
         {softPlus ? <SoftLetterArchive letters={letters} /> : null}
-        <HistoryList />
+        <HistoryList timeZone={settings?.timezone ?? null} />
       </div>
     </div>
   );

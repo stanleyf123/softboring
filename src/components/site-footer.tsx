@@ -1,13 +1,16 @@
 import { gaMeasurementId } from "@/lib/analytics-note";
+import { DeskEdges } from "@/components/desk-edges";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SoftMark } from "@/components/soft-doodles";
 import { Link } from "@/i18n/navigation";
+import { getCurrentUser } from "@/lib/auth";
 import { SOFT_CHROME_FOCUS } from "@/lib/soft-focus";
 import { SITE_SHELL_CLASS } from "@/lib/site-shell";
 import { getTranslations } from "next-intl/server";
 
 export async function SiteFooter() {
   const t = await getTranslations("Footer");
+  const user = await getCurrentUser();
 
   return (
     <footer className={`${SITE_SHELL_CLASS} mt-auto pb-24 pt-10 text-sm text-muted print:hidden md:py-10`}>
@@ -45,6 +48,7 @@ export async function SiteFooter() {
           <LocaleSwitcher variant="footer" />
         </span>
       </nav>
+      <DeskEdges signedIn={Boolean(user)} variant="footer" />
     </footer>
   );
 }

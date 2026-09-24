@@ -317,6 +317,10 @@
     "compareTeaseTitle": "兩週，並排看看",
     "compareTeaseBody": "Soft+ 把兩週開放的回顧放在奶油色卡片上——心情、能量與消耗。免費仍保留最近四週。不會寄信，也不會開始付款。",
     "compareTeaseGuest": "登入 Soft+ 後，可以把兩週放上奶油色卡片。免費仍留著最近四週。不會寄信。",
+    "monthLead": "週次依這只時鐘顯示的月份輕輕分開。鎖住的週次仍留在它的月份裡。",
+    "monthCount": "{count, plural, other {# 週}}",
+    "undatedTitle": "沒有日期",
+    "undatedHint": "這幾週沒有帶著日期過來。",
     "tagsTitle": "私人的軟標籤",
     "tagsLead": "每週最多五個安靜的標籤，只留在這張桌子上。",
     "tagsAll": "所有週次",
@@ -1183,6 +1187,9 @@
     "pausesLabel": "休息週",
     "reportCount": "{count}",
     "reportHint": "零也很好。這裡不會寄信。",
+    "chartLead": "這些長條只拿上面四個數字互相比。比較長，不代表這個月比較好。",
+    "chartEmpty": "四個都是零，所以長條留白。",
+    "chartTeaseLead": "Soft+ 會用真實數字畫出長條。這張草稿不會編造數字。",
     "teaseTitle": "每月軟報告在 Soft+ 等你",
     "teaseBody": "Soft+ 會用你的時區，把你送出的謝謝、留下的回聲、抽出的感恩，以及休息的週安靜地加總。免費看得到邀請，看不到數字。",
     "teaseValue": "—",
@@ -1883,6 +1890,14 @@
     "guestBody": "登入後的週次可以休息。沒有信件，也沒有補課清單——只是在這個 ISO 週上輕輕做個記號。",
     "loginCta": "登入",
     "saveError": "目前無法留下這個暫停。"
+  },
+  "DeskEdges": {
+    "title": "桌子的邊緣",
+    "lead": "讓這一週休息，或離開這張桌子。兩件事都留在應用裡，不會寄信。",
+    "pause": "讓這一週休息",
+    "leave": "離開這張桌子",
+    "leaveBeside": "如果這張桌子已經夠了，離開的入口在帳戶頁。",
+    "navLabel": "讓這一週休息，或離開這張桌子"
   },
   "QuoteCard": {
     "brand": "Soft Boring Weekly",
