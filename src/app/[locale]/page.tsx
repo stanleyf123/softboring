@@ -6,6 +6,7 @@ import { SoftMemoryCard } from "@/components/soft-memory-card";
 import { SoftPauseCard } from "@/components/soft-pause-card";
 import { StreakProtectChip } from "@/components/streak-protect-chip";
 import { SoftRhythmCard } from "@/components/soft-rhythm-card";
+import { GuestSkyLegend } from "@/components/guest-sky-legend";
 import { SoftWeekWeather } from "@/components/soft-week-weather";
 import { SampleReviewCard } from "@/components/sample-review-card";
 import { HeroDoodle } from "@/components/soft-doodles";
@@ -153,6 +154,7 @@ export default async function HomePage({ params }: Props) {
           mood={weekMood}
           weekKey={user ? pauseWeekKey : ""}
         />
+        {user ? null : <GuestSkyLegend variant="home" />}
         {user ? <StreakProtectChip initial={readStreakProtect(user.id, softPlus)} /> : null}
         <SoftPauseCard
           signedIn={Boolean(user)}

@@ -14,7 +14,8 @@ import { SoftThanksHistory } from "@/components/soft-thanks-history";
 import { SoftTipsCard } from "@/components/soft-tips-card";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { CustomQuestion } from "@/lib/custom-questions";
-import { NICKNAME_MAX } from "@/lib/nickname";
+import { nicknameConfirmKind } from "@/lib/nickname-confirm";
+import { NICKNAME_MAX, NicknameError, parseNickname } from "@/lib/nickname";
 import type { MonthlyDigest } from "@/lib/plus-insights";
 import type { SoftMemory } from "@/lib/soft-memory";
 import { oauthIdentityLabel } from "@/lib/oauth-config";
@@ -988,17 +989,26 @@ function nicknameErrorCopy(
 
 function NicknameEditor({ initialNickname }: { initialNickname: string | null }) {
   const t = useTranslations("Account");
+  const [savedName, setSavedName] = useState(initialNickname ?? "");
   const [value, setValue] = useState(initialNickname ?? "");
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function save(event: FormEvent) {
-    event.preventDefault();
-    if (saving) return;
+  const kind = nicknameConfirmKind(savedName, value);
+  let clientError: string | null = null;
+  try {
+    parseNickname(value);
+  } catch (err) {
+    clientError = err instanceof NicknameError ? err.code : "invalid_nickname";
+  }
+  const shownError = clientError ?? error;
+
+  async function commit() {
+    if (saving || !kind || clientError) return;
     setSaving(true);
     setError(null);
-    setSaved(false);
+    setSavedFlash(false);
     try {
       const response = await fetch("/api/account/nickname", {
         method: "PATCH",
@@ -1013,8 +1023,10 @@ function NicknameEditor({ initialNickname }: { initialNickname: string | null })
         setError(data.error ?? "generic");
         return;
       }
-      setValue(data.nickname ?? "");
-      setSaved(true);
+      const next = data.nickname ?? "";
+      setSavedName(next);
+      setValue(next);
+      setSavedFlash(true);
     } catch {
       setError("generic");
     } finally {
@@ -1024,8 +1036,9 @@ function NicknameEditor({ initialNickname }: { initialNickname: string | null })
 
   return (
     <form
-      onSubmit={save}
+      onSubmit={(event) => event.preventDefault()}
       className="mt-8 rounded-[1.5rem] bg-blush/50 px-5 py-5"
+      data-nickname-editor
     >
       <p className="font-display text-lg tracking-tight">{t("nicknameTitle")}</p>
       <p className="mt-2 text-sm leading-relaxed text-muted">{t("nicknameBody")}</p>
@@ -1035,7 +1048,7 @@ function NicknameEditor({ initialNickname }: { initialNickname: string | null })
           value={value}
           onChange={(event) => {
             setValue(event.target.value);
-            setSaved(false);
+            setSavedFlash(false);
             setError(null);
           }}
           maxLength={NICKNAME_MAX}
@@ -1046,25 +1059,60 @@ function NicknameEditor({ initialNickname }: { initialNickname: string | null })
       </label>
       <p className="mt-2 text-xs text-muted">{t("nicknameHint")}</p>
       <p className="mt-1 text-xs text-muted">{t("nicknameEmptyHint")}</p>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-full bg-accent px-5 py-2.5 text-sm text-paper shadow-card disabled:opacity-60"
+      {kind && !clientError ? (
+        <div
+          className="mt-4 rounded-[1.25rem] bg-cream px-4 py-4"
+          data-nickname-confirm={kind}
+          role="status"
         >
-          {saving ? t("nicknameSaving") : t("nicknameSave")}
-        </button>
-        {saved ? (
-          <p className="text-sm text-muted" role="status">
-            {t("nicknameSaved")}
+          <p className="text-sm leading-relaxed">
+            {kind === "clear"
+              ? t("nicknameClearConfirm")
+              : t("nicknameChangeConfirm", { name: value.trim() })}
           </p>
-        ) : null}
-        {error ? (
-          <p className="text-sm text-accent" role="alert">
-            {nicknameErrorCopy(t, error)}
-          </p>
-        ) : null}
-      </div>
+          <p className="mt-2 text-xs leading-relaxed text-muted">{t("nicknameChangeHint")}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => void commit()}
+              className="rounded-full bg-paper px-4 py-1.5 text-sm shadow-card disabled:opacity-60"
+            >
+              {saving ? t("nicknameSaving") : t("nicknameConfirm")}
+            </button>
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => {
+                setValue(savedName);
+                setSavedFlash(false);
+                setError(null);
+              }}
+              className="rounded-full border border-line px-4 py-1.5 text-sm text-muted disabled:opacity-60"
+            >
+              {t("nicknameChangeKeep")}
+            </button>
+          </div>
+          {error ? (
+            <p className="mt-3 text-sm text-accent" role="alert">
+              {nicknameErrorCopy(t, error)}
+            </p>
+          ) : null}
+        </div>
+      ) : (
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          {!kind ? (
+            <p className="text-sm text-muted" data-nickname-confirm="same" role="status">
+              {savedFlash ? t("nicknameSaved") : t("nicknameUnchanged")}
+            </p>
+          ) : null}
+          {shownError ? (
+            <p className="text-sm text-accent" role="alert" data-nickname-confirm="invalid">
+              {nicknameErrorCopy(t, shownError)}
+            </p>
+          ) : null}
+        </div>
+      )}
     </form>
   );
 }
