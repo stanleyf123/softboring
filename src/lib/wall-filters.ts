@@ -2,6 +2,11 @@ export type WallFilterNote = {
   feeling?: number | null;
   excerpt?: string;
   summary?: string;
+  /** Words already on a readable note. Absent on locked teasers. */
+  energy?: string | null;
+  drain?: string | null;
+  lessOf?: string | null;
+  priorities?: string | null;
   ownerNickname?: string | null;
   ownerFallback?: string | null;
   ownerIsDemo?: boolean;
@@ -80,7 +85,25 @@ export function wallFiltersActive(filters: WallDiscoveryFilters) {
   );
 }
 
-/** Soft+ discovery: feeling range, nickname / excerpt search, optional demo mute. */
+/** Same visit cap as guest Soft Wall search. Kept local so this file stays import-free. */
+const PLUS_SEARCH_MAX = 80;
+
+function normalizePlusSearch(query: string) {
+  return query.trim().toLocaleLowerCase().slice(0, PLUS_SEARCH_MAX);
+}
+
+const NOTE_WORD_FIELDS = [
+  "ownerNickname",
+  "ownerFallback",
+  "excerpt",
+  "summary",
+  "energy",
+  "drain",
+  "lessOf",
+  "priorities",
+] as const;
+
+/** Soft+ discovery: feeling range, nickname and words already on the note, optional demo mute. */
 export function wallNoteMatchesFilters(
   note: WallFilterNote,
   filters: WallDiscoveryFilters,
@@ -95,18 +118,13 @@ export function wallNoteMatchesFilters(
     if (max != null && note.feeling > max) return false;
   }
 
-  const needle = filters.query.trim().toLowerCase();
+  const needle = normalizePlusSearch(filters.query);
   if (!needle) return true;
 
-  const haystack = [
-    note.ownerNickname,
-    note.ownerFallback,
-    note.excerpt,
-    note.summary,
-  ]
-    .filter((value): value is string => Boolean(value && value.trim()))
+  const haystack = NOTE_WORD_FIELDS.map((field) => note[field])
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
     .join("\n")
-    .toLowerCase();
+    .toLocaleLowerCase();
 
   return haystack.includes(needle);
 }

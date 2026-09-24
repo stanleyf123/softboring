@@ -350,11 +350,22 @@ export function SavedEmptyDoodle({ className = "h-24 w-24" }: DoodleProps) {
   );
 }
 
+export function TrendsEmptyDoodle({ className = "h-24 w-24" }: DoodleProps) {
+  return (
+    <svg className={className} viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      <rect x="14" y="22" width="68" height="52" rx="16" fill="#fff8f2" />
+      <path d="M26 62h44M26 50h44M26 38h44" stroke="#ead6c8" strokeWidth="1.4" />
+      <path d="M30 58h16" stroke="#c47f6e" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="46" cy="58" r="3.6" fill="#7d9b8c" />
+    </svg>
+  );
+}
+
 export function SoftShapesEmpty({
   kind = "default",
   className = "h-24 w-24",
 }: DoodleProps & {
-  kind?: "default" | "history" | "digest" | "year" | "saved";
+  kind?: "default" | "history" | "digest" | "year" | "saved" | "trends";
 }) {
   switch (kind) {
     case "history":
@@ -365,6 +376,8 @@ export function SoftShapesEmpty({
       return <YearEmptyDoodle className={className} />;
     case "saved":
       return <SavedEmptyDoodle className={className} />;
+    case "trends":
+      return <TrendsEmptyDoodle className={className} />;
     default:
       return <TeacupDoodle className={className} />;
   }
