@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { assertLocale } from "@/lib/locale";
 import { userIsSoftPlus } from "@/lib/plan";
 import { pageMetadata } from "@/lib/seo";
+import { nicknameWallQuery } from "@/lib/nickname-wall-link";
 import { wallNoteOgPath, wallNoteQueryPath } from "@/lib/wall-note-og";
 import { rotatingSpotlightIndex, toPublicSpotlightCard } from "@/lib/wall-spotlight";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sticker?: string; shared?: string; note?: string }>;
+  searchParams: Promise<{ sticker?: string; shared?: string; note?: string; nick?: string }>;
 };
 
 export async function generateMetadata({ params, searchParams }: Props) {
@@ -71,6 +72,7 @@ export default async function WallPage({ params, searchParams }: Props) {
         stickerSuccess={query.sticker === "success"}
         sharedSuccess={query.shared === "1"}
         initialNoteId={typeof query.note === "string" ? query.note : null}
+        initialNickname={nicknameWallQuery(query.nick)}
         initialSeasonalFrame={Boolean(settings?.seasonalFrame)}
         initialWallLargerText={Boolean(settings?.wallLargerText)}
         guestSpotlight={guestSpotlight}
