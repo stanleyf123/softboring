@@ -208,6 +208,9 @@ export function SoftShortcutsHelp() {
               </div>
               <ul className="mt-3 space-y-3 text-sm leading-relaxed">
                 <ShortcutRow keys="/">{t("search")}</ShortcutRow>
+                <ShortcutRow keys="← →">{t("weekChips")}</ShortcutRow>
+                <ShortcutRow keys="[ ]">{t("feelingFloor")}</ShortcutRow>
+                <ShortcutRow keys="{ }">{t("feelingCeiling")}</ShortcutRow>
                 <li className="text-muted">{t("filters")}</li>
               </ul>
             </section>

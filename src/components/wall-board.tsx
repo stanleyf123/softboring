@@ -12,6 +12,7 @@ import { WallKindnessStrip } from "@/components/wall-kindness-strip";
 import { QuietWallComposer } from "@/components/quiet-wall-composer";
 import { shareErrorCopy } from "@/components/share-to-wall";
 import { WallActivityStrip } from "@/components/wall-activity-strip";
+import { GuestSkyLegend } from "@/components/guest-sky-legend";
 import { WallMoodLegend } from "@/components/wall-mood-legend";
 import { DemoNeighborBadge, DemoNeighborNote } from "@/components/demo-neighbor-badge";
 import { GuestWallSpotlight } from "@/components/guest-wall-spotlight";
@@ -67,6 +68,7 @@ import {
 import { SoftCopyLink } from "@/components/soft-copy-link";
 import { wallNoteSharePath, withWallNoteQuery } from "@/lib/soft-copy-link";
 import { isTypingTarget } from "@/lib/soft-shortcuts";
+import { wallFilterKeyAction } from "@/lib/wall-filter-keys";
 import { isWallNotePreviewOpen, wallEscapeAction } from "@/lib/soft-escape";
 import { WALL_LARGER_TEXT_STORAGE_KEY } from "@/lib/wall-text";
 import { isWallStickerSlug } from "@/lib/wall-stickers";
@@ -612,6 +614,55 @@ export function WallBoard({
   }, [selectedId, shopOpen]);
 
   useEffect(() => {
+    if (!softPlus || locked) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (selectedId || shopOpen) return;
+      if (document.querySelector("[role='dialog']")) return;
+      const weekChipsFocused =
+        event.target instanceof Element &&
+        Boolean(event.target.closest("[data-wall-week-chips]"));
+      const action = wallFilterKeyAction({
+        key: event.key,
+        shiftKey: event.shiftKey,
+        metaKey: event.metaKey,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
+        repeat: event.repeat,
+        typing: isTypingTarget(event.target),
+        weekChipsFocused,
+        weekChip,
+        feelingMin: filters.feelingMin,
+        feelingMax: filters.feelingMax,
+      });
+      if (!action) return;
+      event.preventDefault();
+      if (action.type === "week") {
+        setWeekChip(action.chip);
+        const button = document.querySelector<HTMLElement>(
+          `[data-wall-week-chip="${action.chip}"]`,
+        );
+        button?.focus();
+        return;
+      }
+      setFilters((current) => ({
+        ...current,
+        feelingMin: action.feelingMin,
+        feelingMax: action.feelingMax,
+      }));
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [
+    softPlus,
+    locked,
+    selectedId,
+    shopOpen,
+    weekChip,
+    filters.feelingMin,
+    filters.feelingMax,
+  ]);
+
+  useEffect(() => {
     if (!previewRest) return;
     function onFocusIn(event: FocusEvent) {
       const target = event.target;
@@ -1065,6 +1116,7 @@ export function WallBoard({
         {!softPlus ? (
           <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
         ) : null}
+        {!softPlus ? <GuestSkyLegend variant="wall" /> : null}
         <WallSkeleton label={t("loading")} />
       </div>
     );
@@ -1078,6 +1130,7 @@ export function WallBoard({
         {!softPlus ? (
           <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
         ) : null}
+        {!softPlus ? <GuestSkyLegend variant="wall" /> : null}
         <section className="mt-6 rounded-[2rem] bg-paper px-8 py-12 shadow-card">
           <h1 className="font-display text-3xl tracking-tight">{t("loadErrorTitle")}</h1>
           <p className="mt-3 max-w-md leading-relaxed text-muted">{t("loadError")}</p>
@@ -1314,6 +1367,7 @@ export function WallBoard({
                     key={chip}
                     type="button"
                     aria-pressed={selected}
+                    tabIndex={selected ? 0 : -1}
                     data-wall-week-chip={chip}
                     onClick={() => setWeekChip(chip)}
                     className={
@@ -1328,6 +1382,9 @@ export function WallBoard({
               })}
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted">{t("weekChipsHint")}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted" data-wall-week-keys>
+              {t("weekChipsKeys")}
+            </p>
             <label className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
               <span className="shrink-0">{t("sortLabel")}</span>
               <select
@@ -1366,6 +1423,8 @@ export function WallBoard({
                 <span className="shrink-0">{t("filterFeelingMin")}</span>
                 <select
                   value={filters.feelingMin ?? ""}
+                  data-wall-feeling="min"
+                  aria-keyshortcuts="[ ]"
                   onChange={(event) =>
                     setFilters((current) => ({
                       ...current,
@@ -1386,6 +1445,8 @@ export function WallBoard({
                 <span className="shrink-0">{t("filterFeelingMax")}</span>
                 <select
                   value={filters.feelingMax ?? ""}
+                  data-wall-feeling="max"
+                  aria-keyshortcuts="{ }"
                   onChange={(event) =>
                     setFilters((current) => ({
                       ...current,
@@ -1435,6 +1496,9 @@ export function WallBoard({
                 })}
               </p>
             ) : null}
+            <p className="mt-3 text-xs leading-relaxed text-muted" data-wall-feeling-keys>
+              {t("filterFeelingKeys")}
+            </p>
             <p className="mt-3 text-xs leading-relaxed text-muted" data-wall-search-scope>
               {t("filterSearchScope")}
             </p>
@@ -1442,6 +1506,7 @@ export function WallBoard({
           </section>
         ) : null}
         {softPlus && !locked ? <WallMoodLegend /> : null}
+        {locked ? <GuestSkyLegend variant="wall" /> : null}
         {locked ? (
           <GuestWallSpotlight items={guestSpotlight} initialIndex={guestSpotlightIndex} />
         ) : null}
