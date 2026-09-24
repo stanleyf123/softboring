@@ -36,6 +36,11 @@ import {
   type WallDiscoveryFilters,
   type WallSortMode,
 } from "@/lib/wall-filters";
+import {
+  stickyFeelingLabel,
+  WALL_FILTER_CHIP_WRAP,
+  wallStickyFilterChips,
+} from "@/lib/wall-filter-sticky";
 import { noticeWallRateLimit } from "@/lib/wall-rate-notice";
 import { parseWallShareError, type WallShareErrorKey } from "@/lib/wall-share";
 import {
@@ -47,6 +52,7 @@ import {
 import { WALL_CANVAS } from "@/lib/wall-canvas";
 import { bookmarkUndoLabel } from "@/lib/bookmark-undo";
 import { nextShuffleSeed, shuffleWallNotes, wallShuffleFeelClass } from "@/lib/wall-shuffle";
+import { WallFilterSticky } from "@/components/wall-filter-sticky";
 import { filterNotesBySoftSearch } from "@/lib/wall-soft-search";
 import { SOFT_PLUS_RAISED_PIN_LIMIT } from "@/lib/wall-pin-limit";
 import { decorativeMotion } from "@/lib/reduced-motion";
@@ -342,6 +348,17 @@ export function WallBoard({
   const filtersOn = softPlus && !locked && wallFiltersActive(filters);
   const weekChipOn = softPlus && !locked && weekChip !== "all";
   const discoveryOn = filtersOn || weekChipOn;
+  const stickyChips = wallStickyFilterChips({
+    weekChip: softPlus && !locked ? weekChip : "all",
+    weekLabel:
+      weekChip === "this-week" ? t("weekChipThis") : weekChip === "earlier" ? t("weekChipEarlier") : "",
+    query: softPlus && !locked ? filters.query : "",
+    feelingMin: filters.feelingMin,
+    feelingMax: filters.feelingMax,
+    feelingLabel: stickyFeelingLabel(filters.feelingMin, filters.feelingMax),
+    hideDemo: Boolean(softPlus && !locked && filters.hideDemo),
+    demoLabel: t("filterHideDemo"),
+  });
   const quietEmpty = wallQuietEmptyKind(weekChip, filtersOn);
   const nicknameSeedActive =
     nicknameSeed.length > 0 &&
@@ -1282,6 +1299,7 @@ export function WallBoard({
               role="group"
               aria-label={t("weekChipsLabel")}
               data-wall-week-chips=""
+              data-wall-filter-wrap=""
             >
               {WALL_WEEK_CHIPS.map((chip) => {
                 const selected = weekChip === chip;
@@ -1300,8 +1318,8 @@ export function WallBoard({
                     onClick={() => setWeekChip(chip)}
                     className={
                       selected
-                        ? "inline-flex min-h-11 items-center rounded-full bg-accent px-4 py-2 text-sm text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                        : "inline-flex min-h-11 items-center rounded-full border border-line bg-cream/80 px-4 py-2 text-sm text-muted shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                        ? `${WALL_FILTER_CHIP_WRAP} rounded-full bg-accent px-4 py-2 text-paper shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent`
+                        : `${WALL_FILTER_CHIP_WRAP} rounded-full border border-line bg-cream/80 px-4 py-2 text-muted shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent`
                     }
                   >
                     {label}
@@ -1344,7 +1362,7 @@ export function WallBoard({
                   className="w-full rounded-full border border-line bg-cream/70 px-4 py-2.5 text-sm outline-none focus:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 />
               </label>
-              <label className="flex items-center gap-2 text-sm text-muted">
+              <label className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted">
                 <span className="shrink-0">{t("filterFeelingMin")}</span>
                 <select
                   value={filters.feelingMin ?? ""}
@@ -1364,7 +1382,7 @@ export function WallBoard({
                   ))}
                 </select>
               </label>
-              <label className="flex items-center gap-2 text-sm text-muted">
+              <label className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted">
                 <span className="shrink-0">{t("filterFeelingMax")}</span>
                 <select
                   value={filters.feelingMax ?? ""}
@@ -1417,6 +1435,9 @@ export function WallBoard({
                 })}
               </p>
             ) : null}
+            <p className="mt-3 text-xs leading-relaxed text-muted" data-wall-search-scope>
+              {t("filterSearchScope")}
+            </p>
             {nicknameSeedNote()}
           </section>
         ) : null}
@@ -1432,6 +1453,13 @@ export function WallBoard({
           className="overflow-auto rounded-[1.5rem] border border-line/80 bg-paper/40 shadow-card overscroll-contain"
           style={{ height: "min(70vh, 44rem)" }}
         >
+          <WallFilterSticky
+            chips={stickyChips}
+            label={t("stickyFilters")}
+            result={t("filterResult", { shown: visibleNotes.length, total: notes.length })}
+            clearLabel={t("filterClear")}
+            onClear={clearDiscovery}
+          />
           <div
             ref={canvasRef}
             data-wall-shuffled={shuffleSeed == null ? "0" : "1"}

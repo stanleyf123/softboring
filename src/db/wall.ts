@@ -64,14 +64,15 @@ export type WallNoteListItem = {
   ownerInviteBadge: boolean;
   ownerIsDemo: boolean;
   mood: WeekMood | null;
-  stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
-};
-
-export type WallNoteDetail = WallNoteListItem & {
+  /** Readable note words. Stripped before a locked teaser leaves the server. */
   energy: string;
   drain: string;
   lessOf: string;
   priorities: string;
+  stickers: Array<{ stickerId: string; slug: string; emoji: string; count: number }>;
+};
+
+export type WallNoteDetail = WallNoteListItem & {
   locale: string | null;
   reviewId: string;
   ownerUserId: string;
@@ -138,6 +139,10 @@ function toListItem(row: WallNoteRow, viewerId: string | null): WallNoteListItem
     ownerInviteBadge: row.invite_redeemed > 0,
     ownerIsDemo: Boolean(row.owner_is_demo) || isDemoEmail(row.owner_email),
     mood: parseWeekMood(row.review_mood),
+    energy: row.energy,
+    drain: row.drain,
+    lessOf: row.less_of,
+    priorities: row.priorities,
     stickers: [],
   };
 }

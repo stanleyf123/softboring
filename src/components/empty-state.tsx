@@ -11,7 +11,8 @@ export type EmptyIllustration =
   | "year"
   | "saved"
   | "wall"
-  | "activity";
+  | "activity"
+  | "trends";
 
 function isCssEmpty(kind: EmptyIllustration): kind is SoftEmptyKind {
   return kind === "wall" || kind === "history" || kind === "activity";
